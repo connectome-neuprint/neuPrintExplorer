@@ -1,0 +1,13 @@
+-find neurons counts by class to ppl neuron
+
+match (n:Neuron {name:"PPL1-06-A"})-[r:ConnectsTo]-(m ) where m.name =~ 'KC-.*' return m.name as KC, count(m.name) as contacted, sum(r.weight) as synapses
+
+-find neurons not connected to certain neurons:
+
+match (k:Neuron)<-[:ConnectsTo]-(p:Neuron) where k.name =~ 'KC-.*' and (p.name =~ 'PPL.*' or p.name =~ 'PAM.*') with collect (k) as x
+match (n:Neuron)<-[:ConnectsTo]-(m) where n.name =~ 'KC.*' and not n.name =~ 'KC-alpha.*' and not n in (x) return distinct n.bodyId, n.name
+
+n.bodyId	n.name
+1863402	"KC-s"
+158781	"KC-c"
+Started streaming 2 records after 525 ms and completed after 539 ms.

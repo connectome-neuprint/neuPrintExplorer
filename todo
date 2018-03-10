@@ -1,0 +1,46 @@
+todo:
+
+-add router to top level
+-make a top-level query with drop down and query forms route targets
+-make query list
+-test router and query list
+
+
+
+-make shell for js stuff (table viewer, some redux state, selector widget, base class for forms, simple sample query form plugin)
+    -Analyzer React (top-level page, contains query and results)
+    -Results (results) React (for handling >=1 tables and click expand and pagination, export to CSV)
+    -Table React (for individual table with pagination, export to CSV)
+    -Query widget (parent widget for query list and query form)
+    -QueryList (contains list of all queries/plugins) -- will cause form pop up
+    -QueryForm (generic base class for handling queries, allow query to be downloaded, loading data that will be subscribed by top level that will spawn a results, show query made)
+    -Specific Query Form (plugins) -- maybe eventually just a schema that is loaded at runtime so that new queries can be produced 
+    -Custom query box
+    -helper functions to help build form boxes
+    -redux stuff to manage queries and query state
+
+-make multi-table query that requires pagination (or lower pagination threshold artificially) -- test output table and pagination, multi table (click to expand), pagination for a lot of tables
+
+-try to make plugin very simple and decoupled from the rest of the js (maybe allow creation from a schema?)
+
+-modify ppt to explicitly list all denormalizations encoded
+
+-add query string to URL and re-execute query (form fields and query type) -- top-level query should initialize to null or whatever is in the url; can parse tables and sorts as well
+
+-add documentation and graph model picture to help documentation; provide graph picture for each query so people know what is going on -- probably use router
+
+why unique (compared to connectomeexplorer and catmaid):
+
+-ROIs are first class citizens -- ROIs are already known, should be in data model
+-very simple graph model, more intuitive -- no sql junk and no special algebra
+-emphasis on graph queries especially given approximate connectome stuff
+-special handling of uncertainty
+-simple interface for canned queries -- most analyses only use a couple widgets or things, don't need to over design
+-emphasize getting data out and not visualization (except for maybe the top couple use cases)
+-standalone, not tied to ecosystem
+-data-lite -- should be easy to import, skeletons and synapses, etc
+-schema-less but probably not as sophisticated as connectomeexplorer model, lot smpler
+-allow for incremental update through interface that models proofreading actions
+-neo4j is just easier
+
+
