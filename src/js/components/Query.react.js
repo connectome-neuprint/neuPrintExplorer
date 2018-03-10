@@ -11,7 +11,7 @@ import QueryForm from "./QueryForm.react";
 
 // list of all plugin options
 // TODO automatically set
-var search_plugins = ['', 'custom', 'conntable'];
+var search_plugins = ['custom', 'conntable'];
 
 export default class Query extends React.Component {
     constructor(props) {
@@ -28,10 +28,13 @@ export default class Query extends React.Component {
 
     render() {
         var queryname = "Select Query";
-        if (this.props.match.params.queryType !== "") {
+        var querytype = "";
+        if ("queryType" in this.props.match.params &&
+            search_plugins.includes(this.props.match.params.queryType)) {
             queryname = this.props.match.params.queryType;
+            querytype = queryname;
         }
-        
+
         return (
             <div>
                 <div>
@@ -46,18 +49,19 @@ export default class Query extends React.Component {
                     </button>
                     <div className="dropdown-menu">
                         {search_plugins.map(function (val) {
-                            return (<a className="dropdown-item" href="#">
-                                        <Link
-                                            to="/{val}"
+                            return (<Link to={val}>
+                                        <a
+                                            className="dropdown-item"
+                                            href="#"
                                         >
                                         {val}
-                                        </Link>
-                                    </a>
+                                        </a>
+                                    </Link>
                             );
                         })}
                     </div>
                 </div>
-                <QueryForm queryType={this.prop.match.params.queryType} />
+                <QueryForm queryType={querytype} />
             </div>
         )
     }

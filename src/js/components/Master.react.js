@@ -15,7 +15,7 @@ export default class Master extends React.Component {
                 <HashRouter history={hashHistory}>
                     <div>
                         <Route
-                            path="/"
+                            exact path="/"
                             component={Query}
                         />
                         <Route

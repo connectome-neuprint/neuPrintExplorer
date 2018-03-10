@@ -14,7 +14,7 @@ import PropTypes from 'prop-types';
 
 // ?! default a custom query
 
-export class QueryForm extends React.Component {
+export default class QueryForm extends React.Component {
     static defaultProps = {
         queryType: ""
     }
