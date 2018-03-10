@@ -18,7 +18,6 @@
     "grunt": "^0.4.5",
     "grunt-browserify": "latest",
     "grunt-contrib-connect": "latest",
-    "grunt-sass": "latest",
     "grunt-contrib-copy": "latest",
     "grunt-contrib-cssmin": "latest",
     "grunt-contrib-uglify": "latest",
@@ -34,11 +33,10 @@
     "jit-grunt": "latest"
   },
   "dependencies": {
-    "bootstrap": "latest",
     "jquery": "latest",
-    "react-bootstrap": "latest",
     "react": "latest",
     "react-dom": "latest",
+    "material-ui": "latest",
     "react-redux": "latest",
     "react-router": "latest",
     "react-router-dom": "latest",

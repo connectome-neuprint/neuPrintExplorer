@@ -13,28 +13,6 @@ module.exports = function(grunt) {
             }
         }
     },
-    sass: { 
-        dist: {
-            options: { 
-                style: 'expanded',
-                includePaths: ['node_modules/bootstrap/scss/']
-            },
-            files: {
-                'build/css/main.css': 'node_modules/bootstrap/scss/bootstrap.scss'
-            }
-        }
-    },
-    cssmin: {
-          dist: {
-              files: [{
-                  expand: true,
-                  cwd: 'build/css',
-                  src: ['*.css', '!*.min.css'],
-                  dest: 'dist/css',
-                  ext: '.min.css'
-              }]
-          }
-    },
     browserify: {
         app: {
             options: {
@@ -77,10 +55,6 @@ module.exports = function(grunt) {
                         cwd: 'node_modules/bootstrap/',
                         src: 'fonts/*',
                         dest: 'build/'
-                    },
-                    {
-                        src: 'build/css/main.css',
-                        dest: 'build/css/main.min.css',
                     }
                 ]
         },
@@ -132,8 +106,8 @@ module.exports = function(grunt) {
 
     // Default task(s).
     grunt.registerTask('serve', ['connect'])
-    grunt.registerTask('default', ['browserify:app', 'sass', 'copy:build','connect', 'watch']);
-    grunt.registerTask('dist', ['env:dist', 'browserify:app', 'sass', 'uglify', 'copy:dist', 'cssmin']);
+    grunt.registerTask('default', ['browserify:app', 'copy:build','connect', 'watch']);
+    grunt.registerTask('dist', ['env:dist', 'browserify:app', 'uglify', 'copy:dist']);
     grunt.registerTask('jlint', 'Running lint', ['jslint']);
     grunt.registerTask('lint', 'Running eslint', ['eslint']);
 

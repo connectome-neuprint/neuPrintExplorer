@@ -44,3 +44,21 @@ why unique (compared to connectomeexplorer and catmaid):
 -neo4j is just easier
 
 
+cool add-ons:
+
+-show visual documentation for graph model
+
+-record queries that people make; maybe keep stats and show distribution of query types made (don't show dev queries)
+
+-allow some basic plotting/histogram options in addition to basic table and export?
+
+-allow user to submit question on query they want to do -- basically for help (snack bar to show message sent?); allow user to submit a custom query for inclusion
+
+-form to create and save a custom query -- dedicated server?
+
+
+
+
+
+
+
