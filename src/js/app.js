@@ -1,6 +1,8 @@
 "use strict";
 
-var AppReducers = require('./reducers');
+//var AppReducers = require('./reducers');
+
+import AppReducers from './reducers';
 var Redux = require('redux');
 var ReactDOM = require('react-dom');
 

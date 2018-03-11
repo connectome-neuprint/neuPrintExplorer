@@ -5,7 +5,6 @@
 "use strict";
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
 
 import QueryForm from "./QueryForm.react";
@@ -13,21 +12,12 @@ import DropDownMenu from 'material-ui/DropDownMenu';
 import MenuItem from 'material-ui/MenuItem';
 
 class Query extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-    
-    static defaultProps = {
-        match: {
-            params: {
-                queryType: ""
-            }
-        }
-    }
-    
     render() {
         var queryname = "Select Query";
-        var initmenuitem = <MenuItem value={queryname} primaryText={queryname} />;
+        var initmenuitem = (<MenuItem
+                            value={queryname}
+                            primaryText={queryname}
+                           />);
         var querytype = "";
 
         // if query is selected, pass query along
@@ -49,10 +39,18 @@ class Query extends React.Component {
         // TODO: fix default menu option (maybe make the custom query the default)
         return (
             <div>
-                <DropDownMenu value={queryname} onChange={(event, index, value) => this.props.history.push(value)}>
+                <DropDownMenu
+                    value={queryname}
+                    onChange={(event, index, value) => 
+                        queryname === value ? 0 :this.props.history.push(value)}
+                >
                     {initmenuitem}
                     {this.props.pluginList.map(function (val) {
-                        return (<MenuItem value={val.name} primaryText={val.name} />
+                        return (<MenuItem
+                                    key={val.name}
+                                    value={val.name}
+                                    primaryText={val.name} 
+                                />
                         );
                     })}
                 </DropDownMenu>
@@ -62,13 +60,27 @@ class Query extends React.Component {
     }
 }
 
-Query.propTypes = {
+// establish default values for props
+/*
+Query.defaultProps = {
     match: {
         params: {
-            queryType: PropTypes.string   
+            queryType: ""
         }
     }
 };
+*/
+
+Query.propTypes = {
+    match: PropTypes.shape({
+        params: PropTypes.shape({
+            queryType: PropTypes.string   
+        })
+    }),
+    pluginList: PropTypes.array,
+    history: PropTypes.object
+};
+
 
 var QueryState = function(state){
     return {
@@ -76,6 +88,5 @@ var QueryState = function(state){
     }   
 };
 
-Query = connect(QueryState, null)(Query);
-export default Query;
+export default connect(QueryState, null)(Query);
 

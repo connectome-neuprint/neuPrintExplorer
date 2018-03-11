@@ -4,7 +4,7 @@
 
 "use strict";
 import React from 'react';
-import { HashRouter, Route, Match, hashHistory } from 'react-router-dom';
+import { HashRouter, Route, hashHistory } from 'react-router-dom';
 import Query from './Query.react';
 import Results from './Results.react';
 
@@ -15,7 +15,8 @@ export default class Master extends React.Component {
                 <HashRouter history={hashHistory}>
                     <div>
                         <Route
-                            exact path="/"
+                            exact
+                            path="/"
                             component={Query}
                         />
                         <Route

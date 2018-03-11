@@ -1,6 +1,6 @@
 "use strict"; 
 
-var Redux = require('redux');                                                                       
+//var Redux = require('redux');                                                                       
 var initialQueryState = {
     queryType: null,
     neoQuery: null,
@@ -35,15 +35,18 @@ var queryReducer = function(state, action) {
     }
 }
 
+/*
 var initialResState = {
     tablesRes: null,
     resPage: 1,
     tablePage: 1
 };
+/*
 
 /*
  * Manage state for displaying results.
 */
+/*
 var resReducer = function(action, state){
     if(state === undefined) {
         return initialResState;
@@ -66,8 +69,8 @@ var resReducer = function(action, state){
 
 
 }
-
-// ?! fix crash due to combiner
+*/
+// TODO fix crash due to combiner
 /*
 var AppReducers = Redux.combineReducers({
     queryReducer: queryReducer,
@@ -76,6 +79,4 @@ var AppReducers = Redux.combineReducers({
 */
 
 //export default
-var AppReducers = queryReducer;
-module.exports = AppReducers;
-
+export default queryReducer;

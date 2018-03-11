@@ -4,9 +4,6 @@
 
 "use strict";
 
-import AppReducers from './reducers';
-
-
 // import plugins (could probably write a pre-processing script)
 import FreeForm from './components/plugins/FreeForm.react';
 

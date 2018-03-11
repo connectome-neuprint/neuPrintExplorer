@@ -1,10 +1,11 @@
 todo:
 
-
--architect queryform and support custom query
+-architect queryform and support custom query -- fix static variable issue
 -implement jquery for neo4j
 -make result widget and connect with redux
 -table to display results
+-need server address add -- user name and password as well
+-just pass plugins as props directly to Query and Query Form (but don't remove until other redux stuff is added)
 -commit
 
 
@@ -50,6 +51,8 @@ why unique (compared to connectomeexplorer and catmaid):
 
 
 cool add-ons:
+
+-neo4j can log queries and metadata can be associated -- that might be sufficient -- might be able to set permission for users to a particular function on the server
 
 -show visual documentation for graph model
 
