@@ -9,7 +9,8 @@ var ReactDOM = require('react-dom');
 import {Provider} from 'react-redux';
 import React from 'react';
 import Master from "./components/Master.react";
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+
+import CssBaseline from 'material-ui/CssBaseline';
 
 // create redux store to handle app state
 var store = Redux.createStore(AppReducers);
@@ -39,6 +40,12 @@ fileref.setAttribute("rel", "stylesheet");
 fileref.setAttribute("href", filename);
 document.getElementsByTagName("head")[0].appendChild(fileref);
 
+var filename2 = "https://fonts.googleapis.com/icon?family=Material+Icons";
+var fileref2 = document.createElement("link");
+fileref2.setAttribute("rel", "stylesheet");
+fileref2.setAttribute("href", filename2);
+document.getElementsByTagName("head")[0].appendChild(fileref2);
+
 // load form plugins
 import loadPlugins from './initplugins';
 loadPlugins(store);
@@ -48,11 +55,12 @@ loadPlugins(store);
 */
 function loadInterface() {
     ReactDOM.render(
-        <MuiThemeProvider>
+        <div>    
+            <CssBaseline />
             <Provider store={store}>
                 <Master />
             </Provider>
-        </MuiThemeProvider>,
+        </div>,
         document.getElementById("analyzer")
     );
 }

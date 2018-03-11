@@ -5,32 +5,33 @@
 "use strict";
 import React from 'react';
 import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
 
-// ?! list of all plugin options -- or in Query?
 
-// ?! call plugins for form data and to process output
-
-// ?! basic neo4j calls for query
-
-// ?! default a custom query
-
-export default class QueryForm extends React.Component {
-    static defaultProps = {
-        queryType: ""
+class QueryForm extends React.Component {
+    submitQuery = (query) => {
+        if (query === "") {
+            return;
+        }
+        this.props.updateQuery(query);
     }
 
     render() {
-        if (this.props.queryType === "") {
-            return <div />;
-        } else {
-            return <div> {this.props.queryType} </div>;
+        // assume the first query is the default
+        var CurrentQuery = this.props.pluginList[0];
 
+        // find matching query type
+        for (var i in this.props.pluginList) {
+            if (this.props.pluginList[i].name === this.props.QueryType) {
+                CurrentQuery = this.props.pluginList[i];
+                break;
+            }
         }
+     
+        return (
+            <CurrentQuery callback={this.submitQuery} disable={this.props.isQuerying} />
+        );
 
-
-        // ?! render widgets for query type -- how?? (how to call plugin, how to make simple so it doesn't have to worry about redux)
-            // ?! prop could be callback for onclick submit
-            // ?! just import all plugin and store in array -- could be done outside
 
         // ?! submitted query will be in redux store
             // ?! will make neo4j query and save result and status (potentially in a different file)
@@ -41,8 +42,35 @@ export default class QueryForm extends React.Component {
     }
 }
 
-QueryForm.propTypes = {
-    queryType: PropTypes.string   
+
+QueryForm.defaultProps = {
+    queryType: ""
 };
 
-// query form that houses specific query props; neo4j logic will go here
+QueryForm.propTypes = {
+    queryType: PropTypes.string, 
+    neoQuery: PropTypes.string, 
+    pluginList: PropTypes.array
+};
+
+
+var QueryFormState  = function(state){
+    return {
+        pluginList: state.pluginList,
+        neoQuery: state.neoQuery,
+        isQuerying: state.isQuerying
+    }   
+};
+
+var QueryFormDispatch = function(dispatch) {
+    return {
+        updateQuery: function(query) {
+            dispatch({
+                type: 'UPDATE_QUERY',
+                neoQuery: query
+            });
+        }
+    }
+}
+
+export default connect(QueryFormState, QueryFormDispatch)(QueryForm);

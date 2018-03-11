@@ -8,6 +8,9 @@ todo:
 -just pass plugins as props directly to Query and Query Form (but don't remove until other redux stuff is added)
 -commit
 
+-maybe stylize query to side pop-up menu and auto-expand if direct query and no results
+
+
 
 
 

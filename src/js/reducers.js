@@ -2,9 +2,9 @@
 
 //var Redux = require('redux');                                                                       
 var initialQueryState = {
-    queryType: null,
-    neoQuery: null,
+    neoQuery: "",
     neoResults: null,
+    isQuerying: false,
     pluginList: []
 };
 
@@ -23,8 +23,8 @@ var queryReducer = function(state, action) {
         case 'SET_QUERY_TYPE': {
             return Object.assign({}, state, {queryType: action.QueryType});
         }
-        case 'SET_NEO_QUERY' : {
-            return Object.assign({}, state, {neoQuery: action.neoQuery});
+        case 'UPDATE_QUERY' : {
+            return Object.assign({}, state, {neoQuery: action.neoQuery, isQuerying: true});
         }
         case 'SET_NEO_RESULTS' : {
             return Object.assign({}, state, {neoResults: action.neoResults});
