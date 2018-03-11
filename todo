@@ -1,9 +1,14 @@
 todo:
 
--add router to top level
--make a top-level query with drop down and query forms route targets
--make query list
--test router and query list
+
+-architect queryform and support custom query
+-implement jquery for neo4j
+-make result widget and connect with redux
+-table to display results
+-commit
+
+
+
 
 
 

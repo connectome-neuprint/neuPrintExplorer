@@ -24,7 +24,20 @@ export default class QueryForm extends React.Component {
             return <div />;
         } else {
             return <div> {this.props.queryType} </div>;
+
         }
+
+
+        // ?! render widgets for query type -- how?? (how to call plugin, how to make simple so it doesn't have to worry about redux)
+            // ?! prop could be callback for onclick submit
+            // ?! just import all plugin and store in array -- could be done outside
+
+        // ?! submitted query will be in redux store
+            // ?! will make neo4j query and save result and status (potentially in a different file)
+            // ?! raw results will be stored store plugin can handle
+        
+
+        // ?! parse table info basic -- over-ride in plugin how?? -- maybe just use functions??
     }
 }
 

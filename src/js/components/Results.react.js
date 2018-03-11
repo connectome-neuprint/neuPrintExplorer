@@ -13,5 +13,9 @@ import React from 'react';
 export default class Results extends React.Component {
     render() {
         return <div>Hello World</div>;
+    
+        // ?! will show current query has been submitted with current status of query
+        // ?! if query fails the message will be red, if succeed show runtime stats`
+    
     }
 }

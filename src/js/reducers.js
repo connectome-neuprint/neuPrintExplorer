@@ -4,7 +4,8 @@ var Redux = require('redux');
 var initialQueryState = {
     queryType: null,
     neoQuery: null,
-    neoResults: null
+    neoResults: null,
+    pluginList: []
 };
 
 /*
@@ -16,6 +17,9 @@ var queryReducer = function(state, action) {
     }
 
     switch(action.type) {
+        case 'INIT_PLUGINS': {
+            return Object.assign({}, state, {pluginList: action.pluginList});
+        }
         case 'SET_QUERY_TYPE': {
             return Object.assign({}, state, {queryType: action.QueryType});
         }

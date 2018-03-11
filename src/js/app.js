@@ -37,7 +37,9 @@ fileref.setAttribute("rel", "stylesheet");
 fileref.setAttribute("href", filename);
 document.getElementsByTagName("head")[0].appendChild(fileref);
 
-
+// load form plugins
+import loadPlugins from './initplugins';
+loadPlugins(store);
 
 /*
  * Load interface into a DIV anchored by analyzer.
