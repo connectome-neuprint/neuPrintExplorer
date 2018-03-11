@@ -70,6 +70,13 @@ cool add-ons:
 
 
 
+documentation and theory:
+
+-add more information to PPT; clean up errors or changes; add property nodes?
+-how to handle multi-tenancy -- just use labels and maybe auto-inject from webpage -- this will still slow down queries but maybe not so bad -- synapses and neurons are the only ones that probably need labels -- it is kinda like an ROI type
+-denoralizations: skeleton is really just adding more info on neuron -- could be out of sync with neuron if not careful; synapse summary per ROI is duplicate of synapse set -- those can be out of sync if not careful
+
+
 
 
 

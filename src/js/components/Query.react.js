@@ -14,9 +14,20 @@ import { FormControl } from 'material-ui/Form';
 import Select from 'material-ui/Select';
 import { InputLabel } from 'material-ui/Input';
 import Grid from 'material-ui/Grid';
+import Divider from 'material-ui/Divider';
+import { withStyles } from 'material-ui/styles';
+
+const styles = theme => ({
+    gridTopLevel: {
+        padding: theme.spacing.unit*3,
+        align: "center"
+    }
+});
 
 class Query extends React.Component {
     render() {
+        const { classes } = this.props;
+        
         var queryname = "Select Query";
         var initmenuitem = (
                                 <MenuItem value={queryname}>
@@ -43,8 +54,8 @@ class Query extends React.Component {
 
         // TODO: fix default menu option (maybe make the custom query the default)
         return (
-            <div>
-                <Grid item xs={12}> 
+
+            <Grid className={classes.gridTopLevel}>
                     <FormControl>
                         <InputLabel htmlFor="controlled-open-select">Query Type</InputLabel>
                         <Select
@@ -68,11 +79,9 @@ class Query extends React.Component {
                             })}
                         </Select>
                     </FormControl>
-                </Grid>
-                <Grid item xs={12}> 
+                    <Divider />
                     <QueryForm queryType={querytype} />
-                </Grid>
-            </div>
+            </Grid>
         );
     }
 }
@@ -105,5 +114,5 @@ var QueryState = function(state){
     }   
 };
 
-export default connect(QueryState, null)(Query);
+export default withStyles(styles)(connect(QueryState, null)(Query));
 
