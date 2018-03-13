@@ -5,7 +5,9 @@
 "use strict";
 import React from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
+import Fade from 'material-ui/transitions/Fade';
+import { CircularProgress } from 'material-ui/Progress';
 
 
 class QueryForm extends React.Component {
@@ -27,11 +29,19 @@ class QueryForm extends React.Component {
                 break;
             }
         }
+        
+        if (this.props.neoResults !== null) {
+            this.props.neoResults.records.forEach(function (record) {
+                alert(record.get('labelname'));
+            });
+        }
      
         return (
-            <CurrentQuery callback={this.submitQuery} disable={this.props.isQuerying} />
+            <div>
+                <br />
+                <CurrentQuery callback={this.submitQuery} disable={this.props.isQuerying} />
+            </div>
         );
-
 
         // ?! submitted query will be in redux store
             // ?! will make neo4j query and save result and status (potentially in a different file)
@@ -58,7 +68,9 @@ var QueryFormState  = function(state){
     return {
         pluginList: state.pluginList,
         neoQuery: state.neoQuery,
-        isQuerying: state.isQuerying
+        isQuerying: state.isQuerying,
+        neoResults: state.neoResults,
+        neoError: state.neoError
     }   
 };
 

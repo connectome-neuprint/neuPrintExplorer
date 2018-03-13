@@ -1,6 +1,9 @@
 todo:
 
--architect queryform and support custom query -- fix static variable issue
+X-architect queryform and support custom query -- fix static variable issue
+
+
+
 -implement jquery for neo4j
 -make result widget and connect with redux
 -table to display results
@@ -8,7 +11,6 @@ todo:
 -just pass plugins as props directly to Query and Query Form (but don't remove until other redux stuff is added)
 -commit
 
--maybe stylize query to side pop-up menu and auto-expand if direct query and no results
 
 
 

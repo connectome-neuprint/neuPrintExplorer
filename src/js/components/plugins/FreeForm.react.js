@@ -30,7 +30,6 @@ export default class FreeForm extends React.Component {
         return (<FormControl>
                     <TextField 
                         label="Custom Cypher Query"
-                        placeholder="Placeholder"
                         multiline
                         rows={1}
                         rowsMax={4}

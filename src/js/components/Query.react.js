@@ -16,6 +16,7 @@ import { InputLabel } from 'material-ui/Input';
 import Grid from 'material-ui/Grid';
 import Divider from 'material-ui/Divider';
 import { withStyles } from 'material-ui/styles';
+import Neo4jQuery from './Neo4jQuery.react';
 
 const styles = theme => ({
     gridTopLevel: {
@@ -81,6 +82,7 @@ class Query extends React.Component {
                     </FormControl>
                     <Divider />
                     <QueryForm queryType={querytype} />
+                    <Neo4jQuery />
             </Grid>
         );
     }

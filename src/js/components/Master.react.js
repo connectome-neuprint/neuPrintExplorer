@@ -12,6 +12,7 @@ import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
 import Drawer from 'material-ui/Drawer';
 import { withStyles } from 'material-ui/styles';
+import NeoServer from './NeoServer.react';
 
 const drawerWidth = 400;
 
@@ -51,6 +52,7 @@ class Master extends React.Component {
                         <Typography variant="title" color="inherit" noWrap>
                             Connectome Analyzer    
                         </Typography>
+                        <NeoServer />
                     </Toolbar>
                 </AppBar>
                 <Drawer

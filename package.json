@@ -41,6 +41,7 @@
     "react-redux": "latest",
     "react-router": "latest",
     "react-router-dom": "latest",
-    "redux": "latest"
+    "redux": "latest",
+    "neo4j-driver": "^1.5.0"
   }
 }
