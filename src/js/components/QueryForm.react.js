@@ -18,37 +18,39 @@ class QueryForm extends React.Component {
         this.props.updateQuery(query);
     }
 
-    render() {
-        // assume the first query is the default
-        var CurrentQuery = this.props.pluginList[0];
-
+    findCurrentPlugin = () => {
         // find matching query type
+        var CurrentQuery = this.props.pluginList[0];
         for (var i in this.props.pluginList) {
             if (this.props.pluginList[i].name === this.props.QueryType) {
                 CurrentQuery = this.props.pluginList[i];
                 break;
             }
         }
-        
-        if (this.props.neoResults !== null) {
-            this.props.neoResults.records.forEach(function (record) {
-                alert(record.get('labelname'));
-            });
+        return CurrentQuery;
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (!nextProps.isQuerying && 
+            nextProps.isQuerying != this.props.isQuerying &&
+            nextProps.neoResults !== null) {
+            
+            var CurrentQuery = this.findCurrentPlugin();
+            var results = CurrentQuery.parseResults(nextProps.neoResults);
+            this.props.updateData(results);
         }
-     
+    }
+
+    render() {
+        // assume the first query is the default
+        var CurrentQuery = this.findCurrentPlugin();
+            
         return (
             <div>
                 <br />
                 <CurrentQuery callback={this.submitQuery} disable={this.props.isQuerying} />
             </div>
         );
-
-        // ?! submitted query will be in redux store
-            // ?! will make neo4j query and save result and status (potentially in a different file)
-            // ?! raw results will be stored store plugin can handle
-        
-
-        // ?! parse table info basic -- over-ride in plugin how?? -- maybe just use functions??
     }
 }
 
@@ -80,6 +82,12 @@ var QueryFormDispatch = function(dispatch) {
             dispatch({
                 type: 'UPDATE_QUERY',
                 neoQuery: query
+            });
+        },
+        updateData: function(results) {
+            dispatch({
+                type: 'UPDATE_RESULTS',
+                allTables: results
             });
         }
     }

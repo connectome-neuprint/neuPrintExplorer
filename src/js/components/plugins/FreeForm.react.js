@@ -9,8 +9,22 @@ import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
 import { FormControl } from 'material-ui/Form';
 import PropTypes from 'prop-types';
+var neo4j = require('neo4j-driver').v1;
+import { withStyles } from 'material-ui/styles';
 
-export default class FreeForm extends React.Component {
+
+const styles = theme => ({
+  textField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+  },
+  formControl: {
+    margin: theme.spacing.unit,
+    width: "80%"
+  },
+});
+
+class FreeForm extends React.Component {
     static get name() {
         return "Custom";
     }
@@ -22,17 +36,54 @@ export default class FreeForm extends React.Component {
         };
     }
 
+    static parseResults(neoResults) {
+        // load one table from neoResults
+        var tables = [];
+        var maindata = [];
+        var headerdata = [];
+
+        neoResults.records.forEach(function (record) {
+            var recorddata = [];
+            record.forEach( function (value, key, rec) {
+                var newval = neo4j.isInt(value) ?
+                        (neo4j.integer.inSafeRange(value) ? 
+                            value.toNumber() : value.toString()) 
+                        : value;
+
+                recorddata.push(newval);
+            });
+            maindata.push(recorddata);
+        });
+            
+        if (neoResults.records.length > 0) {
+            for(var i = 0; i< neoResults.records[0].length; i++) { 
+                 headerdata.push(neoResults.records[0].keys[i]);
+            }
+        }
+        
+        tables.push({
+            header: headerdata,
+            body: maindata,
+            name: "Custom Query"
+        });
+        
+        return tables;
+    }
+
+
     processRequest = (event) => {
         this.props.callback(this.state.textValue);
     }
 
     render() {
-        return (<FormControl>
+        const { classes } = this.props;
+        return (<FormControl className={classes.formControl}>
                     <TextField 
                         label="Custom Cypher Query"
                         multiline
                         rows={1}
                         rowsMax={4}
+                        className={classes.textField}
                         onChange={(event) => this.setState({textValue: event.target.value})}
                     />
                     {this.props.disable ?
@@ -58,6 +109,8 @@ export default class FreeForm extends React.Component {
         );
     }
 }
+
+export default withStyles(styles)(FreeForm);
 
 FreeForm.propTypes = {
     callback: PropTypes.func,

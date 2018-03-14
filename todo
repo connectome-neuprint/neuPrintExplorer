@@ -3,12 +3,44 @@ todo:
 X-architect queryform and support custom query -- fix static variable issue
 
 
+near-term:
+
+
+-test basic table processing
+-add improved neo4j session start on toolbar (pretty?, how to do default config.json for params, support dataset name -- at least eventually)
+-add custom plugin (one that will test multi-table) and fix default
+-fix outstanding control flow bugs
+-add pagination and expand panels for tables
+-add home page with default description (routing?); add github link on top
+-allow drawer to be minimized
+-download csv
+-re-run eslint
+-add basic install readme
+-get shinya to test
+-"release"
+
+
+architecture/refactor:
+
+-just pass plugins as props directly to Query and Query Form (but don't remove until other redux stuff is added)
+-fix routing issues (at least basic stuff) -- drawer vs menu vs homepage (might move some of this to future work)
+
+prettiness:
+
+-make top bar look nicer
+-make sure works on mobile browser
+
+
+
+
+
+
+
 
 -implement jquery for neo4j
 -make result widget and connect with redux
 -table to display results
 -need server address add -- user name and password as well
--just pass plugins as props directly to Query and Query Form (but don't remove until other redux stuff is added)
 -commit
 
 

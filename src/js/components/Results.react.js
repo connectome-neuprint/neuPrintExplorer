@@ -10,18 +10,12 @@ import Typography from 'material-ui/Typography';
 import Fade from 'material-ui/transitions/Fade';
 import { CircularProgress } from 'material-ui/Progress';
 import { connect } from 'react-redux';
+import SimpleTables from './SimpleTables.react';
 
-
-// ?! connect to redux store
-// ?! allow pagination and expact of individual tables
-// ?! include table components
 class Results extends React.Component {
     render() {
         //return <Typography noWrap>Hello World</Typography>;
-        if (this.props.neoError !== null) {
-            alert(this.props.neoError);
-        }
-
+        // TODO: show query runtime results
         return (
             <div>
                 <Fade
@@ -34,23 +28,28 @@ class Results extends React.Component {
                     <CircularProgress />
                 </Fade>
                 { (this.props.neoError !== null) ? 
-                    <div>{String(this.props.neoError)}</div> : <div />
+                    (<div>{this.props.neoError}</div>) :
+                    (this.props.allTables !== null ?
+                        (
+                            <div>
+                                <Typography>Query succeeded</Typography>
+                                <SimpleTables allTables={this.props.allTables} />
+                            </div>
+                        ) : 
+                        (<div />)
+                    )
                 }
             </div>
         );
-            
-            <Typography noWrap>Hello World</Typography>;
-    
-        // ?! will show current query has been submitted with current status of query
-        // ?! if query fails the message will be red, if succeed show runtime stats`
-    
     }
 }
 
+// result data [{name: "table name", header: [headers...], body: [rows...]
 var ResultsState  = function(state){
     return {
         isQuerying: state.isQuerying,
-        neoError: state.neoError
+        neoError: state.neoError,
+        allTables: state.allTables
     }   
 };
 

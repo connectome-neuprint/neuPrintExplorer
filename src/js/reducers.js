@@ -9,6 +9,7 @@ var initialQueryState = {
     neoServer: "",
     neoError: null,
     neoResults: null,
+    allTables: null
 };
 
 /*
@@ -40,6 +41,9 @@ var queryReducer = function(state, action) {
         }
         case 'SET_NEO_RESULTS' : {
             return Object.assign({}, state, {neoResults: action.neoResults, isQuerying: false});
+        }
+        case 'UPDATE_RESULTS' : {
+            return Object.assign({}, state, {allTables: action.allTables});
         }
         default: {
             return state;
