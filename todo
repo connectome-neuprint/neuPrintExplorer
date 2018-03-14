@@ -7,9 +7,12 @@ near-term:
 
 
 X-test basic table processing
+
+
 -add improved neo4j session start on toolbar (pretty?, how to do default config.json for params, support dataset name -- at least eventually)
--add custom plugin (one that will test multi-table) and fix default
 -fix outstanding control flow bugs
+
+-add custom plugin (one that will test multi-table) and fix default
 -add pagination and expand panels for tables
 -add home page with default description (routing?); add github link on top
 -allow drawer to be minimized

@@ -1,6 +1,5 @@
 "use strict"; 
 
-//var Redux = require('redux');                                                                       
 var initialQueryState = {
     pluginList: [],
     neoQuery: "",

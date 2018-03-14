@@ -28,6 +28,9 @@ const styles = theme => ({
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
   },
+  flex: {
+    flex: 1,
+  },
   drawerPaper: {
     position: 'relative',
     width: drawerWidth,
@@ -48,7 +51,7 @@ class Master extends React.Component {
             <div className={classes.root}>    
                 <AppBar position="absolute" className={classes.appBar}>
                     <Toolbar>
-                        <Typography variant="title" color="inherit" noWrap>
+                        <Typography variant="title" color="inherit" className={classes.flex} noWrap>
                             Connectome Analyzer    
                         </Typography>
                         <NeoServer />
