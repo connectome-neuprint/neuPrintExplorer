@@ -7,26 +7,30 @@ near-term:
 
 
 X-test basic table processing
+X-add improved neo4j session start on toolbar (pretty?, how to do default config.json for params, support dataset name -- at least eventually)
+X-add custom plugin (one that will test multi-table) and fix default
 
-
--add improved neo4j session start on toolbar (pretty?, how to do default config.json for params, support dataset name -- at least eventually)
--fix outstanding control flow bugs
-
--add custom plugin (one that will test multi-table) and fix default
 -add pagination and expand panels for tables
+
+-add more session defaults to settings widget; make resource available to build
+
+-fix outstanding control flow bugs
 -add home page with default description (routing?); add github link on top
--allow drawer to be minimized
 -download csv
 -re-run eslint
 -add basic install readme
 -get shinya to test
 -"release"
 
+-allow drawer to be minimized
+
 
 architecture/refactor:
 
 -just pass plugins as props directly to Query and Query Form (but don't remove until other redux stuff is added)
 -fix routing issues (at least basic stuff) -- drawer vs menu vs homepage (might move some of this to future work)
+-could add custom components for <neuron> <synapse> etc to allow relevant formatting
+-enable minimal interface for neu3
 
 prettiness:
 

@@ -6,8 +6,9 @@
 
 // import plugins (could probably write a pre-processing script)
 import FreeForm from './components/plugins/FreeForm.react';
+import SimpleConnections from './components/plugins/SimpleConnections.react';
 
-var pluginList = [FreeForm];
+const pluginList = [FreeForm, SimpleConnections];
 
 export default function loadPlugins(store) {
     store.dispatch({type: 'INIT_PLUGINS', pluginList: pluginList});

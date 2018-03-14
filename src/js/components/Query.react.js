@@ -42,7 +42,7 @@ class Query extends React.Component {
             // check if query is in the list of plugins
             var found = false;
             for (var i in this.props.pluginList) {
-                if (this.props.match.params.queryType === this.props.pluginList[i].name) {
+                if (this.props.match.params.queryType === this.props.pluginList[i].queryName) {
                     found = true;
                 }
             }
@@ -55,7 +55,6 @@ class Query extends React.Component {
 
         // TODO: fix default menu option (maybe make the custom query the default)
         return (
-
             <Grid className={classes.gridTopLevel}>
                     <FormControl>
                         <InputLabel htmlFor="controlled-open-select">Query Type</InputLabel>
@@ -71,10 +70,10 @@ class Query extends React.Component {
                             {initmenuitem}
                             {this.props.pluginList.map(function (val) {
                                 return (<MenuItem
-                                            key={val.name}
-                                            value={val.name}
+                                            key={val.queryName}
+                                            value={val.queryName}
                                         >
-                                            {val.name}
+                                            {val.queryName}
                                         </MenuItem>
                                 );
                             })}

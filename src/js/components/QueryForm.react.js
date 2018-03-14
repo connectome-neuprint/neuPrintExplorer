@@ -22,7 +22,7 @@ class QueryForm extends React.Component {
         // find matching query type
         var CurrentQuery = this.props.pluginList[0];
         for (var i in this.props.pluginList) {
-            if (this.props.pluginList[i].name === this.props.QueryType) {
+            if (this.props.pluginList[i].queryName === this.props.queryType) {
                 CurrentQuery = this.props.pluginList[i];
                 break;
             }
@@ -44,7 +44,8 @@ class QueryForm extends React.Component {
     render() {
         // assume the first query is the default
         var CurrentQuery = this.findCurrentPlugin();
-            
+        //alert(CurrentQuery.queryName);
+
         return (
             <div>
                 <br />

@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
 var neo4j = require('neo4j-driver').v1;
 import { withStyles } from 'material-ui/styles';
 
+const mainQuery = 'match (m:Neuron)-[e:ConnectsTo]->(n:Neuron) where m.name =~"ZZ" return m.name as NeuronPre, n.name as NeuronPost, e.weight as Weight order by m.name, e.weight desc';
 
 const styles = theme => ({
   textField: {
@@ -20,19 +21,19 @@ const styles = theme => ({
   },
   formControl: {
     margin: theme.spacing.unit,
-    width: "80%"
+    padding: 5
   },
 });
 
-class FreeForm extends React.Component {
+class SimpleConnections extends React.Component {
     static get queryName() {
-        return "Custom";
+        return "Simple Connections";
     }
 
     constructor(props) {
         super(props);
         this.state = {
-            textValue: ""
+            nameRestriction: ""
         };
     }
 
@@ -64,7 +65,7 @@ class FreeForm extends React.Component {
         tables.push({
             header: headerdata,
             body: maindata,
-            name: "Custom Query"
+            name: "Find Connections"
         });
         
         return tables;
@@ -72,47 +73,35 @@ class FreeForm extends React.Component {
 
 
     processRequest = (event) => {
-        this.props.callback(this.state.textValue);
+        var query = mainQuery.replace("ZZ", this.state.nameRestriction)
+        this.props.callback(query);
     }
 
     render() {
         const { classes } = this.props;
         return (<FormControl className={classes.formControl}>
                     <TextField 
-                        label="Custom Cypher Query"
+                        label="Neuron name"
                         multiline
                         rows={1}
                         rowsMax={4}
                         className={classes.textField}
-                        onChange={(event) => this.setState({textValue: event.target.value})}
+                        onChange={(event) => this.setState({nameRestriction: event.target.value})}
                     />
-                    {this.props.disable ?
-                        (
-                            <Button
-                                variant="raised"
-                                onClick={this.processRequest}
-                                disabled
-                            >
-                                Submit
-                            </Button>
-                        ) :
-                        (
-                            <Button
-                                variant="raised"
-                                onClick={this.processRequest}
-                            >
-                                Submit
-                            </Button>
-                        )
-                    }
+                    <Button
+                        variant="raised"
+                        onClick={this.processRequest}
+                    >
+                        Submit
+                    </Button>
                 </FormControl>
         );
     }
 }
 
-export default withStyles(styles)(FreeForm);
+export default withStyles(styles)(SimpleConnections);
 
-FreeForm.propTypes = {
+SimpleConnections.propTypes = {
     callback: PropTypes.func,
     disable: PropTypes.bool
 };

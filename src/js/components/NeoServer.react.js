@@ -43,7 +43,6 @@ class NeoServer extends React.Component {
     };
 
     handleSave = () => {
-        alert(this.state.neoServer);
         this.setState({ open: false });
         this.props.setNeoServer(this.state.neoServer);
     };
