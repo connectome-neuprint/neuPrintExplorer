@@ -12,6 +12,25 @@ import Master from "./components/Master.react";
 
 import CssBaseline from 'material-ui/CssBaseline';
 
+// set theme colors
+import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      light: '#4ca8b1',
+      main: '#017982',
+      dark: '#004d55',
+      contrastText: '#ffffff',
+    },
+    secondary: {
+      light: '#ceff76',
+      main: '#9adb43',
+      dark: '#67a900',
+      contrastText: '#000000',
+    },
+  },
+});
+
 // create redux store to handle app state
 var store = Redux.createStore(AppReducers);
 
@@ -55,11 +74,13 @@ loadPlugins(store);
 */
 function loadInterface() {
     ReactDOM.render(
-        <div>    
+        <div>   
             <CssBaseline />
+            <MuiThemeProvider theme={theme}>
             <Provider store={store}>
                 <Master />
             </Provider>
+            </MuiThemeProvider>
         </div>,
         document.getElementById("analyzer")
     );

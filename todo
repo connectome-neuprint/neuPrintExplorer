@@ -6,7 +6,7 @@ X-architect queryform and support custom query -- fix static variable issue
 near-term:
 
 
--test basic table processing
+X-test basic table processing
 -add improved neo4j session start on toolbar (pretty?, how to do default config.json for params, support dataset name -- at least eventually)
 -add custom plugin (one that will test multi-table) and fix default
 -fix outstanding control flow bugs
