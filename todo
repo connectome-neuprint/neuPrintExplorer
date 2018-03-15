@@ -12,17 +12,15 @@ X-add custom plugin (one that will test multi-table) and fix default
 
 -add pagination and expand panels for tables
 
--add more session defaults to settings widget; make resource available to build
-
--fix outstanding control flow bugs
+-add more session defaults to settings widget
 -add home page with default description (routing?); add github link on top
 -download csv
+
+-fix outstanding control flow bugs
 -re-run eslint
 -add basic install readme
 -get shinya to test
 -"release"
-
--allow drawer to be minimized
 
 
 architecture/refactor:

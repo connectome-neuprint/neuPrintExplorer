@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 var neo4j = require('neo4j-driver').v1;
 import { withStyles } from 'material-ui/styles';
 
-const mainQuery = 'match (m:Neuron)-[e:ConnectsTo]->(n:Neuron) where m.name =~"ZZ" return m.name as NeuronPre, n.name as NeuronPost, e.weight as Weight order by m.name, e.weight desc';
+const mainQuery = 'match (m:Neuron)-[e:ConnectsTo]->(n:Neuron) where m.name =~"ZZ" return m.name as NeuronPre, n.name as NeuronPost, e.weight as Weight, m.bodyId as Body order by m.bodyId, e.weight desc';
 
 const styles = theme => ({
   textField: {
@@ -42,7 +42,17 @@ class SimpleConnections extends React.Component {
         var tables = [];
         var maindata = [];
         var headerdata = [];
+        var currtable = [];
+        var lastbody = -1;
 
+        // grab headers
+        if (neoResults.records.length > 0) {
+            for(var i = 0; i< (neoResults.records[0].length-1); i++) { 
+                 headerdata.push(neoResults.records[0].keys[i]);
+            }
+        }
+
+        // retrieve records
         neoResults.records.forEach(function (record) {
             var recorddata = [];
             record.forEach( function (value, key, rec) {
@@ -51,23 +61,31 @@ class SimpleConnections extends React.Component {
                             value.toNumber() : value.toString()) 
                         : value;
 
-                recorddata.push(newval);
+                if (key === "Body") {
+                    if ((lastbody !== -1) && (newval !== lastbody)) {
+                        tables.push({
+                            header: headerdata,
+                            body: currtable,
+                            name: "Connections from neuron " + String(newval),
+                        });
+                        currtable = [];
+                    } 
+                    lastbody = newval; 
+                } else {
+                    recorddata.push(newval);
+                }
             });
-            maindata.push(recorddata);
+            currtable.push(recorddata);
         });
-            
-        if (neoResults.records.length > 0) {
-            for(var i = 0; i< neoResults.records[0].length; i++) { 
-                 headerdata.push(neoResults.records[0].keys[i]);
-            }
+        
+        if (lastbody !== -1) {
+            tables.push({
+                header: headerdata,
+                body: currtable,
+                name: "Connections from neuron " + String(lastbody),
+            });
         }
-        
-        tables.push({
-            header: headerdata,
-            body: maindata,
-            name: "Find Connections"
-        });
-        
+
         return tables;
     }
 
