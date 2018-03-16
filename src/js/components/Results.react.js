@@ -28,7 +28,7 @@ class Results extends React.Component {
                     <CircularProgress />
                 </Fade>
                 { (this.props.neoError !== null) ? 
-                    (<div>{this.props.neoError}</div>) :
+                    (<Typography>Error: {this.props.neoError.code}</Typography>) :
                     (this.props.allTables !== null ?
                         (
                             <div>

@@ -8,10 +8,21 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Fade from 'material-ui/transitions/Fade';
 import { CircularProgress } from 'material-ui/Progress';
-
+import Snackbar from 'material-ui/Snackbar';
 
 class QueryForm extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            openSnack: false
+        };
+    }
+
     submitQuery = (query) => {
+        if (this.props.neoServer === "") {
+            this.setState({openSnack: true});
+            return;
+        }
         if (query === "") {
             return;
         }
@@ -28,6 +39,10 @@ class QueryForm extends React.Component {
             }
         }
         return CurrentQuery;
+    }
+    
+    handleClose = () => {
+        this.setState({openSnack: false});
     }
 
     componentWillReceiveProps(nextProps) {
@@ -48,7 +63,15 @@ class QueryForm extends React.Component {
 
         return (
             <div>
-                <br />
+                <Snackbar
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                    open={this.state.openSnack}
+                    onClose={this.handleClose}
+                    SnackbarContentProps={{
+                        'aria-describedby': 'message-id',
+                    }}
+                    message={<span id="message-id">Must initialize settings</span>}
+                /> 
                 <CurrentQuery callback={this.submitQuery} disable={this.props.isQuerying} />
             </div>
         );
@@ -73,7 +96,8 @@ var QueryFormState  = function(state){
         neoQuery: state.neoQuery,
         isQuerying: state.isQuerying,
         neoResults: state.neoResults,
-        neoError: state.neoError
+        neoError: state.neoError,
+        neoServer: state.neoServer
     }   
 };
 
