@@ -52,6 +52,8 @@ class SimpleConnections extends React.Component {
             }
         }
 
+        var currname = "";
+        var lastname = "";
         // retrieve records
         neoResults.records.forEach(function (record) {
             var recorddata = [];
@@ -66,12 +68,16 @@ class SimpleConnections extends React.Component {
                         tables.push({
                             header: headerdata,
                             body: currtable,
-                            name: "Connections from neuron " + String(newval),
+                            name: "Connections from " + lastname + " id=(" + String(lastbody) + ")",
                         });
                         currtable = [];
                     } 
                     lastbody = newval; 
                 } else {
+                    if (key === "NeuronPre") {
+                        lastname = currname;
+                        currname = value;
+                    }
                     recorddata.push(newval);
                 }
             });
@@ -82,7 +88,7 @@ class SimpleConnections extends React.Component {
             tables.push({
                 header: headerdata,
                 body: currtable,
-                name: "Connections from neuron " + String(lastbody),
+                name: "Connections from " + lastname + " id=(" + String(lastbody) + ")",
             });
         }
 
