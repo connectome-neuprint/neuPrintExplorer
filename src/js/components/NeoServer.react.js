@@ -10,7 +10,9 @@ import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
 import SettingsIcon from 'material-ui-icons/Settings';
 import IconButton from 'material-ui/IconButton';
+import Icon from 'material-ui/Icon';
 import Warning from 'material-ui-icons/Warning';
+import Badge from 'material-ui/Badge';
 
 import sessionJSON from '../../resources/sessiondefaults.json';
 
@@ -22,9 +24,24 @@ import Dialog, {
   DialogTitle,
 } from 'material-ui/Dialog';
 
-
 const styles = theme => ({
     buttonAlign: {
+    },
+    badge: {
+        margin: 0,
+    },
+    badgeIcon: {
+        fontWeight: "bolder",
+        width: "18px",
+        height: "18px",
+        right: "18px",
+        top: "-4px",
+    },
+    padding: {
+        padding: `0 ${theme.spacing.unit * 2}px`,
+    },
+    settingsIcon: {
+        color: "white",
     }
 });
 
@@ -57,12 +74,25 @@ class NeoServer extends React.Component {
         //<Button className={classes.buttonAlign} color="inherit" onClick={this.handleClickOpen}>Connect</Button>
         return (
             <div>
-                <IconButton aria-label="Settings" onClick={this.handleClickOpen}>
-                    {this.props.neoServer === "" ? 
-                        <Warning color="error"/> : <div />
-                    }
-                    <SettingsIcon color="secondary" />
-                </IconButton>
+                {this.props.neoServer === "" ? 
+                    (
+                    <Badge color="error"
+                            classes={{badge: classes.badgeIcon}}
+                            badgeContent={"!"} className={classes.badge}>
+                        <Button className={classes.padding}
+                                aria-label="Settings"
+                                onClick={this.handleClickOpen}>
+                            <Icon className={classes.settingsIcon}>settings</Icon>
+                        </Button>
+                    </Badge>
+                    ) : 
+                    (
+                    <Button className={classes.padding}
+                            aria-label="Settings"
+                            onClick={this.handleClickOpen}>
+                        <Icon className={classes.settingsIcon}>settings</Icon>
+                    </Button>)
+                }
                 <Dialog
                     open={this.state.open}
                     onClose={this.handleClose}

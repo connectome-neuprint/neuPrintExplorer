@@ -9,18 +9,34 @@ near-term:
 X-test basic table processing
 X-add improved neo4j session start on toolbar (pretty?, how to do default config.json for params, support dataset name -- at least eventually)
 X-add custom plugin (one that will test multi-table) and fix default
+X-add pagination and expand panels for tables
+X-add home page with default description
 
--add pagination and expand panels for tables
+
+X-fix routing and menu
+-add qs for forms
+-fix formatting for menu (get rid of grid and set to 100%); side-bar dark gray?
+-try google analytics and auth to manage config files (potentially consider a way to disable logins for non-Google dependency)
+-download csv
+-dataset settings can be saved but should be toggleable on query menu top level -- use tags and make available in query strings
+-specialized tables
+
+
+
+
 
 -add more session defaults to settings widget
--add home page with default description (routing?); add github link on top
--download csv
 
 -fix outstanding control flow bugs
 -re-run eslint
 -add basic install readme
 -get shinya to test
 -"release"
+
+
+
+-session/settings: probably set default dataset in settings, neo4j probably implicit, maybe color schemes?
+-google auth, then somehow call resource https to get neo4j information being configured
 
 
 architecture/refactor:

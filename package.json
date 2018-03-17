@@ -33,6 +33,7 @@
     "jit-grunt": "latest"
   },
   "dependencies": {
+    "qs": "latest",
     "jquery": "latest",
     "react": "latest",
     "react-dom": "latest",

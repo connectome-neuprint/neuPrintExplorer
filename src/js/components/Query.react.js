@@ -17,6 +17,7 @@ import Grid from 'material-ui/Grid';
 import Divider from 'material-ui/Divider';
 import { withStyles } from 'material-ui/styles';
 import Neo4jQuery from './Neo4jQuery.react';
+import qs from 'qs';
 
 const styles = theme => ({
     gridTopLevel: {
@@ -26,28 +27,52 @@ const styles = theme => ({
 });
 
 class Query extends React.Component {
+    constructor(props) {
+        super(props);
+        var query = qs.parse(window.location.search.substring(1));
+        var queryType = "";
+        if ("queryType" in query) {
+            queryType = query["queryType"];
+        }
+        this.state = {
+            queryType: queryType 
+        };
+    }
+   
+    setQuery = (event) => {
+        if (event.target.value !== this.state.queryType) {
+            var query = qs.parse(window.location.search.substring(1));
+            query["queryType"] = event.target.value; 
+            history.replaceState(null, null, window.location.pathname + "?" + qs.stringify(query));
+     
+            this.setState({queryType: event.target.value});
+        }
+    };
+
     render() {
         const { classes } = this.props;
         
         var queryname = "Select Query";
+        var querytype = "";
         var initmenuitem = (
                                 <MenuItem value={queryname}>
                                     {queryname}
                                 </MenuItem>
                             );
-        var querytype = "";
+
+        // ?! on submit link to results
 
         // if query is selected, pass query along
-        if ("queryType" in this.props.match.params) {
+        if (this.state.queryType !== "") {
             // check if query is in the list of plugins
             var found = false;
             for (var i in this.props.pluginList) {
-                if (this.props.match.params.queryType === this.props.pluginList[i].queryName) {
+                if (this.state.queryType === this.props.pluginList[i].queryName) {
                     found = true;
                 }
             }
             if (found) {
-                queryname = this.props.match.params.queryType;
+                queryname = this.state.queryType;
                 querytype = queryname;
                 initmenuitem = <div />
             }
@@ -60,8 +85,7 @@ class Query extends React.Component {
                         <InputLabel htmlFor="controlled-open-select">Query Type</InputLabel>
                         <Select
                             value={queryname}
-                            onChange={(event) => 
-                                queryname === event.target.value ? 0 :this.props.history.push(event.target.value)}
+                            onChange={this.setQuery}
                             inputProps={{
                                 name: 'query',
                                 id: 'controlled-open-select',
@@ -90,20 +114,10 @@ class Query extends React.Component {
 // establish default values for props
 /*
 Query.defaultProps = {
-    match: {
-        params: {
-            queryType: ""
-        }
-    }
 };
 */
 
 Query.propTypes = {
-    match: PropTypes.shape({
-        params: PropTypes.shape({
-            queryType: PropTypes.string   
-        })
-    }),
     pluginList: PropTypes.array,
     history: PropTypes.object
 };

@@ -9,12 +9,16 @@ import { connect } from 'react-redux';
 import Fade from 'material-ui/transitions/Fade';
 import { CircularProgress } from 'material-ui/Progress';
 import Snackbar from 'material-ui/Snackbar';
+//import { Redirect } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
+
 
 class QueryForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            openSnack: false
+            openSnack: false,
+            //redirectResults: false
         };
     }
 
@@ -26,6 +30,10 @@ class QueryForm extends React.Component {
         if (query === "") {
             return;
         }
+       
+        //this.setState({redirectResults: true})
+        this.props.history.push("/results");
+        //(<Redirect to={{ pathname: '/', state: { from: this.props.location }}} />) : 
         this.props.updateQuery(query);
     }
 
@@ -60,6 +68,7 @@ class QueryForm extends React.Component {
         // assume the first query is the default
         var CurrentQuery = this.findCurrentPlugin();
         //alert(CurrentQuery.queryName);
+        //{this.state.redirectResults ? (<Redirect to={{pathname: '/results'}} />) : <div />}
 
         return (
             <div>
@@ -118,4 +127,7 @@ var QueryFormDispatch = function(dispatch) {
     }
 }
 
-export default connect(QueryFormState, QueryFormDispatch)(QueryForm);
+var conncomp = connect(QueryFormState, QueryFormDispatch)(QueryForm);
+
+export default withRouter(conncomp);
+
