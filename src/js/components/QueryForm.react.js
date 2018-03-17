@@ -32,7 +32,7 @@ class QueryForm extends React.Component {
         }
        
         //this.setState({redirectResults: true})
-        this.props.history.push("/results");
+        this.props.history.push("/results" + window.location.search);
         //(<Redirect to={{ pathname: '/', state: { from: this.props.location }}} />) : 
         this.props.updateQuery(query);
     }

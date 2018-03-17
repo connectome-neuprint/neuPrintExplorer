@@ -11,6 +11,7 @@ import { FormControl } from 'material-ui/Form';
 import PropTypes from 'prop-types';
 var neo4j = require('neo4j-driver').v1;
 import { withStyles } from 'material-ui/styles';
+import qs from 'qs';
 
 
 const styles = theme => ({
@@ -31,8 +32,15 @@ class FreeForm extends React.Component {
 
     constructor(props) {
         super(props);
+        var textValue = "";
+        var query = qs.parse(window.location.search.substring(1));
+        if (("Query:" + this.constructor.queryName) in query) {
+            var currentparams = query["Query:" + this.constructor.queryName];
+            textValue = currentparams.text;
+        }
+
         this.state = {
-            textValue: ""
+            textValue: textValue
         };
     }
 
@@ -71,7 +79,10 @@ class FreeForm extends React.Component {
     }
 
 
-    processRequest = (event) => {
+    processRequest = () => {
+        var query = qs.parse(window.location.search.substring(1));
+        query["Query:" + this.constructor.queryName] = { text: this.state.textValue };
+        history.replaceState(null, null, window.location.pathname + "?" + qs.stringify(query));
         this.props.callback(this.state.textValue);
     }
 
@@ -81,6 +92,7 @@ class FreeForm extends React.Component {
                     <TextField 
                         label="Custom Cypher Query"
                         multiline
+                        value={this.state.textValue}
                         rows={1}
                         rowsMax={4}
                         className={classes.textField}

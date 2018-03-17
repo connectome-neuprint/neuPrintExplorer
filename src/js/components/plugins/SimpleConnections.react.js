@@ -11,6 +11,7 @@ import { FormControl } from 'material-ui/Form';
 import PropTypes from 'prop-types';
 var neo4j = require('neo4j-driver').v1;
 import { withStyles } from 'material-ui/styles';
+import qs from 'qs';
 
 const mainQuery = 'match (m:Neuron)-[e:ConnectsTo]->(n:Neuron) where m.name =~"ZZ" return m.name as NeuronPre, n.name as NeuronPost, e.weight as Weight, m.bodyId as Body order by m.bodyId, e.weight desc';
 
@@ -32,8 +33,16 @@ class SimpleConnections extends React.Component {
 
     constructor(props) {
         super(props);
+        
+        var neuronpre = "";
+        var query = qs.parse(window.location.search.substring(1));
+        if (("Query:" + this.constructor.queryName) in query) {
+            var currentparams = query["Query:" + this.constructor.queryName];
+            neuronpre = currentparams.neuronpre;
+        }
+            
         this.state = {
-            nameRestriction: ""
+            neuronpre: neuronpre
         };
     }
 
@@ -97,8 +106,11 @@ class SimpleConnections extends React.Component {
 
 
     processRequest = (event) => {
-        var query = mainQuery.replace("ZZ", this.state.nameRestriction)
-        this.props.callback(query);
+        var querystr= qs.parse(window.location.search.substring(1));
+        querystr["Query:" + this.constructor.queryName] = { neuronpre: this.state.neuronpre };
+        history.replaceState(null, null, window.location.pathname + "?" + qs.stringify(querystr));
+        var neoquery = mainQuery.replace("ZZ", this.state.neuronpre)
+        this.props.callback(neoquery);
     }
 
     render() {
@@ -108,9 +120,10 @@ class SimpleConnections extends React.Component {
                         label="Neuron name"
                         multiline
                         rows={1}
+                        value={this.state.neuronpre}
                         rowsMax={4}
                         className={classes.textField}
-                        onChange={(event) => this.setState({nameRestriction: event.target.value})}
+                        onChange={(event) => this.setState({neuronpre: event.target.value})}
                     />
                     <Button
                         variant="raised"
