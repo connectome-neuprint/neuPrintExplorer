@@ -18,6 +18,7 @@ class Results extends React.Component {
         // TODO: show query runtime results
         return (
             <div>
+                <Typography variant="title">Query Results</Typography>
                 <Fade
                     in={this.props.isQuerying}
                     style={{

@@ -14,7 +14,6 @@ import Icon from 'material-ui/Icon';
 import Warning from 'material-ui-icons/Warning';
 import Badge from 'material-ui/Badge';
 
-import sessionJSON from '../../resources/sessiondefaults.json';
 
 import {withStyles} from 'material-ui/styles';
 import Dialog, {
@@ -50,9 +49,28 @@ class NeoServer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            neoServer: sessionJSON.neo4jserver,
+            neoServer: "",
             open: false
         };
+
+        fetch('/neo4jconfig')
+            .then(result=>result.json())
+            .then(items=> {
+                var servername = this.state.neoServer;
+                for (var item in items) {
+                    servername = items[item].server
+                    if ("default" in items[item] && items[item].default) {
+                        break;
+                    }
+                }
+                this.setState({
+                        neoServer: servername 
+                    }
+                );
+                if (servername != "") {
+                    this.props.setNeoServer(this.state.neoServer);
+                }
+            });
     }
 
     handleClickOpen = () => {
@@ -66,7 +84,7 @@ class NeoServer extends React.Component {
 
     render () {
         const { classes } = this.props;
-        var defaultserver = sessionJSON.neo4jserver;
+        var defaultserver = this.state.neoServer;
         if (this.props.neoServer !== "") {
             defaultserver = this.props.neoServer;
         }

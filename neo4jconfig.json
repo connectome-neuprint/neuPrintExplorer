@@ -1,0 +1,11 @@
+{
+    "public" : [
+        {
+            "server": "dolafit-ws.int.janelia.org",
+            "user": "neo4j",
+            "password": "n304j", 
+            "datasets": ["MB6"],
+            "default": true
+        }
+    ]
+}

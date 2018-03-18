@@ -14,10 +14,20 @@ authorization.
 """
 
 from flask import Flask
+import json
+import sys
 
-#app = Flask(__name__, static_url_path='/build')
 app = Flask(__name__, static_folder='build')
+neo4j_databases_config = None
 
+"""Provides neo4j / dataset information for the website.
+
+Proper authorization will unlock more options.
+"""
+@app.route('/neo4jconfig')
+def configinfo():
+    neo4jdatabases = json.load(open(neo4j_databases_config))
+    return json.dumps(neo4jdatabases["public"])
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
@@ -27,4 +37,5 @@ def static_page(path):
     return app.send_static_file('index.html')
 
 if __name__ == '__main__':
+    neo4j_databases_config = sys.argv[1]
     app.run()
