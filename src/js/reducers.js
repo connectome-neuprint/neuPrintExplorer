@@ -8,7 +8,8 @@ var initialQueryState = {
     neoServer: "",
     neoError: null,
     neoResults: null,
-    allTables: null
+    allTables: null,
+    userInfo: null,
 };
 
 /*
@@ -43,6 +44,12 @@ var queryReducer = function(state, action) {
         }
         case 'UPDATE_RESULTS' : {
             return Object.assign({}, state, {allTables: action.allTables});
+        }
+        case 'LOGIN_USER' : {
+            return Object.assign({}, state, {userInfo: action.userInfo});
+        }
+        case 'LOGOUT_USER' : {
+            return Object.assign({}, state, {userInfo: null});
         }
         default: {
             return state;

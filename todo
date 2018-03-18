@@ -18,9 +18,9 @@ X-add qs for forms
 
 X-flask server and router and config file
 
+
 -flask handle authorization
 -allow basic favorites
--flask handle analytics
 -fix formatting for menu (get rid of grid and set to 100%); side-bar dark gray?
 -download csv
 -dataset settings can be saved but should be toggleable on query menu top level -- use tags and make available in query strings (maybe save in user settings)
@@ -28,10 +28,20 @@ X-flask server and router and config file
 -refactor plugins so there is generic handling of querystring -- maybe one of those wrapper classes
 
 
-
-
-
+-flask handle analytics
 -settings (allow default datasets and setting neo4j database user/password, etc)
+
+
+
+
+
+-fix outstanding control flow bugs
+-re-run eslint
+-add basic install readme
+-get shinya to test
+-"release"
+
+
 
 
 
@@ -40,12 +50,6 @@ X-flask server and router and config file
 
 
 -add more session defaults to settings widget
-
--fix outstanding control flow bugs
--re-run eslint
--add basic install readme
--get shinya to test
--"release"
 
 
 

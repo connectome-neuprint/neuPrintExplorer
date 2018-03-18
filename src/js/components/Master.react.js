@@ -20,6 +20,9 @@ import classNames from 'classnames';
 import { Redirect, NavLink, Link, Switch } from 'react-router-dom';
 import Button from 'material-ui/Button';
 import qs from 'qs';
+import { GoogleLogin, GoogleLogout } from 'react-google-login';
+import { connect } from 'react-redux';
+import Divider from 'material-ui/Divider';
 
 const drawerWidth = 400;
 
@@ -39,7 +42,12 @@ const styles = theme => ({
     flex: 1,
   },
   button: {
-    background: "gray"
+    background: "rgba(0, 0, 0, 0.12)"
+  },
+  buttonWrap: {
+    '&:hover': {
+          backgroundColor: "rgba(0, 0, 0, 0.12)"
+      }
   },
   drawerPaperQuery: {
     position: 'relative',
@@ -68,12 +76,24 @@ const styles = theme => ({
   itemsAlign: {
       alignItems: 'center',
   },
+  googleButton: {
+      padding: "0 16px",
+      fontSize: "0.875rem",
+      color: "inherit",
+      background: "inherit",
+      boxSizing: "border-box",
+      minWidth: "88px",
+      borderWidth: "0",
+      minHeight: "36px",
+      borderRadius: "2px"
+  },
   content: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
     padding: theme.spacing.unit * 3,
     minWidth: 0, // So the Typography noWrap works
   },
+  buttonFont: theme.typography.button,
   toolbar: theme.mixins.toolbar,
 });
 
@@ -105,9 +125,18 @@ class Master extends React.Component {
         this.setState({openQuery: !this.state.openQuery});
     }
 
+    loginGoogle = (response) => {
+        //document.write(JSON.stringify(response));
+        //alert(JSON.stringify(response));
+        this.props.loginUser(response);
+    }
+
+    logoutGoogle = () => {
+        this.props.logoutUser();
+    }
+
     render() {
        // alert(JSON.stringify(qs.parse(window.location.search)));
-
         const { classes } = this.props;
         return (
             <div className={classes.root}>    
@@ -116,6 +145,28 @@ class Master extends React.Component {
                         <Typography variant="title" color="inherit" className={classes.flex} noWrap>
                             Connectome Analyzer    
                         </Typography>
+                        <div className={classes.buttonWrap}>
+                        {this.props.userInfo === null ?
+                            (
+                                <GoogleLogin
+                                    className={classes.googleButton + " " + classes.buttonFont}
+                                    clientId="274750196357-an9v0e8u0q0gmtt1ipv6riv18i77vatm.apps.googleusercontent.com"
+                                    buttonText="Login"
+                                    onSuccess={this.loginGoogle}
+                                    onFailure={(response) => { alert("Login Failed")}}
+                                    isSignedIn="true"
+                                />
+                            ) :
+                            (
+                                <GoogleLogout
+                                    className={classes.googleButton + " " + classes.buttonFont}
+                                    clientId="274750196357-an9v0e8u0q0gmtt1ipv6riv18i77vatm.apps.googleusercontent.com"
+                                    buttonText="Logout"
+                                    onLogoutSuccess={this.logoutGoogle}
+                                / >
+                            )
+                        }
+                        </div>
                         <NeoServer />
                     </Toolbar>
                 </AppBar>
@@ -130,13 +181,14 @@ class Master extends React.Component {
                         >
                             <div className={classes.toolbar} />
                             <div className={classes.itemsAlign}>
-                                <Button component={Link} to="/"><List><Icon>home</Icon></List></Button>
-                                <Button component={Link} to="/results"><List><Icon>storages</Icon></List></Button>
                                 <Button className={(this.state.openQuery) ? classNames(classes.button) : ""}
                                         onClick={this.toggleQuery}
                                 >
                                     <List><Icon>search</Icon></List>
-                                </Button> 
+                                </Button>
+                                <Divider />
+                                <Button component={Link} to="/"><List><Icon>home</Icon></List></Button>
+                                <Button component={Link} to="/results"><List><Icon>storages</Icon></List></Button>
                             </div>
                         </Drawer>
                         {this.state.openQuery ? (
@@ -178,4 +230,26 @@ class Master extends React.Component {
     }
 }
 
-export default withStyles(styles)(Master);
+var MasterState = function(state) {
+    return {
+        userInfo: state.userInfo,
+    }
+}
+
+var MasterDispatch = function(dispatch) {
+    return {
+        loginUser: function(info) {
+            dispatch({
+                type: 'LOGIN_USER',
+                userInfo: info,
+            });
+        },
+        logoutUser: function() {
+            dispatch({
+                type: 'LOGOUT_USER',
+            });
+        }
+    }
+}
+
+export default withStyles(styles)(connect(MasterState, MasterDispatch)(Master));
