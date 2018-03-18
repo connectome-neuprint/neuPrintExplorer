@@ -38,4 +38,4 @@ def static_page(path):
 
 if __name__ == '__main__':
     neo4j_databases_config = sys.argv[1]
-    app.run()
+    app.run(threaded=True)

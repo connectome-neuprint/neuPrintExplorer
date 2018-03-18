@@ -68,7 +68,7 @@ class NeoServer extends React.Component {
                     }
                 );
                 if (servername != "") {
-                    this.props.setNeoServer(this.state.neoServer);
+                    this.props.setNeoServer(servername);
                 }
             });
     }
