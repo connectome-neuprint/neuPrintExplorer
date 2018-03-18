@@ -12,11 +12,14 @@ X-add custom plugin (one that will test multi-table) and fix default
 X-add pagination and expand panels for tables
 X-add home page with default description
 X-fix routing and menu
+X-add qs for forms
 
 
--add qs for forms
--fix formatting for menu (get rid of grid and set to 100%); side-bar dark gray?
 -try google analytics and auth to manage config files (potentially consider a way to disable logins for non-Google dependency)
+
+
+
+-fix formatting for menu (get rid of grid and set to 100%); side-bar dark gray?
 -download csv
 -dataset settings can be saved but should be toggleable on query menu top level -- use tags and make available in query strings
 -specialized tables

@@ -1,3 +1,4 @@
+var rewrite = require( "connect-modrewrite" );
 module.exports = function(grunt) {
     // load npm modules at runtime
     require('jit-grunt')(grunt);
@@ -6,12 +7,23 @@ module.exports = function(grunt) {
     grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     connect: {
+        options: {
+            middleware: function ( connect, options, middlewares ) {
+                    var rules = [
+                        "!\\.html|\\.js|\\.css|\\.svg|\\.jp(e?)g|\\.png|\\.gif$ /index.html"
+                    ];
+                    middlewares.unshift( rewrite( rules ) );
+                    return middlewares;
+                }
+        },
         server: {
             options: {
               port: 9500,
-              base: 'build'
-            }
-        }
+              base: 'build',
+            
+           
+            },
+        },
     },
     browserify: {
         app: {
@@ -110,5 +122,4 @@ module.exports = function(grunt) {
     grunt.registerTask('dist', ['env:dist', 'browserify:app', 'uglify', 'copy:dist']);
     grunt.registerTask('jlint', 'Running lint', ['jslint']);
     grunt.registerTask('lint', 'Running eslint', ['eslint']);
-
 };

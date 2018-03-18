@@ -17,7 +17,7 @@ import {Home} from './Home.react';
 import List from 'material-ui/List';
 import Icon from 'material-ui/Icon';
 import classNames from 'classnames';
-import { NavLink, Link } from 'react-router-dom';
+import { Redirect, NavLink, Link, Switch } from 'react-router-dom';
 import Button from 'material-ui/Button';
 import qs from 'qs';
 
@@ -156,15 +156,20 @@ class Master extends React.Component {
             
                         <main className={classes.content} >
                             <div className={classes.toolbar} />
-                                <Route
-                                    exact
-                                    path="/"
-                                    component={Home}
-                                />
-                                <Route
-                                    path="/results"
-                                    component={Results}
-                                />
+                                <Switch>
+                                    <Route
+                                        exact
+                                        path="/"
+                                        component={Home}
+                                    />
+                                    <Route
+                                        path="/results"
+                                        component={Results}
+                                    />
+                                    <Route
+                                        component={Home}
+                                    />
+                                </Switch>
                         </main>
                     </div>
                 </BrowserRouter>
