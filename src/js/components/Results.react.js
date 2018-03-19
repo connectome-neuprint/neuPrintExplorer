@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
 import SimpleTables from './SimpleTables.react';
 import Icon from 'material-ui/Icon';
 import IconButton from 'material-ui/IconButton';
+import Button from 'material-ui/Button';
 
 class Results extends React.Component {
     addFavorite = () => {
@@ -45,12 +46,10 @@ class Results extends React.Component {
             <div>
                 <Typography variant="title">Query Results</Typography>
                 { (this.props.userInfo !== null && this.props.allTables !== null) ? (
-                    <IconButton color="secondary"
-                                aria-label="Bookmark"
-                                onClick={this.addFavorite}
-                    >
+                    <Button variant="raised" color="primary" onClick={this.addFavorite}>
+                        Bookmark
                         <Icon>star</Icon>
-                    </IconButton>
+                    </Button>
                   ) : (
                     <div />
                   )

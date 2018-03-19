@@ -17,12 +17,8 @@ const mainQuery = 'match (m:Neuron)-[e:ConnectsTo]->(n:Neuron) where m.name =~"Z
 
 const styles = theme => ({
   textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
   },
   formControl: {
-    margin: theme.spacing.unit,
-    padding: 5
   },
 });
 

@@ -17,9 +17,10 @@ X-add qs for forms
 
 
 X-flask server and router and config file
+X-flask handle authorization
 
 
--flask handle authorization
+
 -allow basic favorites
 -fix formatting for menu (get rid of grid and set to 100%); side-bar dark gray?
 -download csv
