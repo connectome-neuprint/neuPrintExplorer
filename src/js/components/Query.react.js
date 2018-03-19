@@ -20,9 +20,12 @@ import Neo4jQuery from './Neo4jQuery.react';
 import qs from 'qs';
 
 const styles = theme => ({
-    gridTopLevel: {
+    root: {
         padding: theme.spacing.unit*3,
-        align: "center"
+    },
+    divider: {
+        marginTop: theme.spacing.unit,
+        marginBottom: theme.spacing.unit,
     }
 });
 
@@ -80,33 +83,33 @@ class Query extends React.Component {
 
         // TODO: fix default menu option (maybe make the custom query the default)
         return (
-            <Grid className={classes.gridTopLevel}>
-                    <FormControl>
-                        <InputLabel htmlFor="controlled-open-select">Query Type</InputLabel>
-                        <Select
-                            value={queryname}
-                            onChange={this.setQuery}
-                            inputProps={{
-                                name: 'query',
-                                id: 'controlled-open-select',
-                            }}
-                        >
-                            {initmenuitem}
-                            {this.props.pluginList.map(function (val) {
-                                return (<MenuItem
-                                            key={val.queryName}
-                                            value={val.queryName}
-                                        >
-                                            {val.queryName}
-                                        </MenuItem>
-                                );
-                            })}
-                        </Select>
-                    </FormControl>
-                    <Divider />
-                    <QueryForm queryType={querytype} />
-                    <Neo4jQuery />
-            </Grid>
+            <div className={classes.root}>
+                <FormControl>
+                    <InputLabel htmlFor="controlled-open-select">Query Type</InputLabel>
+                    <Select
+                        value={queryname}
+                        onChange={this.setQuery}
+                        inputProps={{
+                            name: 'query',
+                            id: 'controlled-open-select',
+                        }}
+                    >
+                        {initmenuitem}
+                        {this.props.pluginList.map(function (val) {
+                            return (<MenuItem
+                                        key={val.queryName}
+                                        value={val.queryName}
+                                    >
+                                        {val.queryName}
+                                    </MenuItem>
+                            );
+                        })}
+                    </Select>
+                </FormControl>
+                <Divider className={classes.divider} />
+                <QueryForm queryType={querytype} />
+                <Neo4jQuery />
+            </div>
         );
     }
 }
