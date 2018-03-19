@@ -14,16 +14,49 @@ import SimpleTables from './SimpleTables.react';
 import Icon from 'material-ui/Icon';
 import IconButton from 'material-ui/IconButton';
 import Button from 'material-ui/Button';
+import TextField from 'material-ui/TextField';
+import { withStyles } from 'material-ui/styles';
+import Dialog, {
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from 'material-ui/Dialog';
+
+
+const styles = theme => ({
+  button: {
+    margin: theme.spacing.unit,
+  },
+});
 
 class Results extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            open: false,
+            bookmarkname: ""
+        }
+    }
+
+    handleClose = () => {
+        this.setState({open: false});
+    }
+
+    openPopup = () => {
+        this.setState({open: true, bookmarkname: ""});
+    }
+
     addFavorite = () => {
         var googleToken = "";
         if (this.props.userInfo !== null) {
             googleToken = this.props.userInfo["Zi"]["id_token"];
         }
         var loc = window.location.pathname + window.location.search;
+        this.setState({open: false});
+
         return fetch("/favorites", {
-            body: JSON.stringify({"name": "bookmarkname", "url": loc}),
+            body: JSON.stringify({"name": this.state.bookmarkname, "url": loc}),
             headers: {
                 'Authorization': googleToken,
                 'content-type': 'application/json'
@@ -40,16 +73,47 @@ class Results extends React.Component {
     }
 
     render() {
-        //return <Typography noWrap>Hello World</Typography>;
         // TODO: show query runtime results
+        const { classes } = this.props; 
+
         return (
             <div>
                 <Typography variant="title">Query Results</Typography>
                 { (this.props.userInfo !== null && this.props.allTables !== null) ? (
-                    <Button variant="raised" color="primary" onClick={this.addFavorite}>
+                    <div>
+                    <Button className={classes.button} variant="raised" color="primary" onClick={this.openPopup}>
                         Bookmark
                         <Icon>star</Icon>
                     </Button>
+                    <Dialog
+                            open={this.state.open}
+                            onClose={this.handleClose}
+                            aria-labelledby="form-dialog-title"
+                    >
+                        <DialogTitle id="form-dialog-title">Save Bookmark</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText>
+                            Name and save a query.
+                            </DialogContentText>
+                            <TextField
+                                        autoFocus
+                                        margin="dense"
+                                        id="name"
+                                        label="bookmark name"
+                                        fullWidth
+                                        onChange={(event) => this.setState({bookmarkname: event.target.value})}
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={this.handleClose} color="primary">
+                                Cancel
+                            </Button>
+                            <Button onClick={this.addFavorite} color="primary">
+                                Save
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                    </div>
                   ) : (
                     <div />
                   )
@@ -100,4 +164,4 @@ var ResultsDispatch = function(dispatch) {
    }
 }
 
-export default connect(ResultsState, ResultsDispatch)(Results);
+export default withStyles(styles)(connect(ResultsState, ResultsDispatch)(Results));

@@ -18,29 +18,48 @@ X-add qs for forms
 
 X-flask server and router and config file
 X-flask handle authorization
-
+X-fix formatting for menu (get rid of grid and set to 100%); side-bar dark gray?
 
 
 -allow basic favorites
--fix formatting for menu (get rid of grid and set to 100%); side-bar dark gray?
+
+
 -download csv
 -dataset settings can be saved but should be toggleable on query menu top level -- use tags and make available in query strings (maybe save in user settings)
--specialized tables
 -refactor plugins so there is generic handling of querystring -- maybe one of those wrapper classes
 
-
--flask handle analytics
--settings (allow default datasets and setting neo4j database user/password, etc)
-
-
-
+-specialized tables
+-roi querying
 
 
 -fix outstanding control flow bugs
 -re-run eslint
--add basic install readme
+-add basic install readme; improve home description
 -get shinya to test
 -"release"
+
+
+-settings (allow default datasets and setting neo4j database user/password, user db, etc)
+-handle multiple DBs properly (how to generically configure)
+-basic analytics
+-finish adding new plugins (including simple incompleteness queries, timestamps, and what's new, dataset queries like ROIs list and neuron name list, uncertainty queries, etc)
+-minimal qt mode
+
+
+-robust documentation for graph model and hopefully public available neo4j datasets
+-add dashboard for stats per db (or separate button) (could be changes and maybe just generic stuff that can be static on page like the basic breakdown of each DB)
+-public release (video, tweet, launch on appengine or other); talk
+
+
+
+
+
+
+
+
+
+
+
 
 
 
