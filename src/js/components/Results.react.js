@@ -48,28 +48,27 @@ class Results extends React.Component {
     }
 
     addFavorite = () => {
-        var googleToken = "";
         if (this.props.userInfo !== null) {
-            googleToken = this.props.userInfo["Zi"]["id_token"];
-        }
-        var loc = window.location.pathname + window.location.search;
-        this.setState({open: false});
+            var googleToken = this.props.userInfo["Zi"]["id_token"];
+            var loc = window.location.pathname + window.location.search;
+            this.setState({open: false});
 
-        return fetch("/favorites", {
-            body: JSON.stringify({"name": this.state.bookmarkname, "url": loc}),
-            headers: {
-                'Authorization': googleToken,
-                'content-type': 'application/json'
-            },
-            method: 'POST',
-        })
-        .then((resp) => {
-            if (resp.status === 401) {
-                // need to re-authenticate
-                this.props.reAuth();
-                alert("User must re-authenticate");
-            }
-        });
+            return fetch("/favoritesdb", {
+                body: JSON.stringify({"name": this.state.bookmarkname, "url": loc, "cypher": this.props.cypher}),
+                headers: {
+                    'Authorization': googleToken,
+                    'content-type': 'application/json'
+                },
+                method: 'POST',
+            })
+                .then((resp) => {
+                    if (resp.status === 401) {
+                        // need to re-authenticate
+                        this.props.reAuth();
+                        alert("User must re-authenticate");
+                    }
+                });
+        }
     }
 
     render() {
@@ -150,7 +149,8 @@ var ResultsState = function(state){
         isQuerying: state.isQuerying,
         neoError: state.neoError,
         allTables: state.allTables,
-        userInfo: state.userInfo
+        userInfo: state.userInfo,
+        cypher: state.neoQuery
     }   
 };
 

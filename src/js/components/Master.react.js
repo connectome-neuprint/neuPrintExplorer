@@ -23,6 +23,7 @@ import qs from 'qs';
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import { connect } from 'react-redux';
 import Divider from 'material-ui/Divider';
+import Favorites from './Favorites.react';
 
 const drawerWidth = 400;
 
@@ -189,6 +190,10 @@ class Master extends React.Component {
                                 <Divider />
                                 <Button component={Link} to="/"><List><Icon>home</Icon></List></Button>
                                 <Button component={Link} to="/results"><List><Icon>storages</Icon></List></Button>
+                                {this.userInfo !== null ? 
+                                    (<Button component={Link} to="/favorites"><List><Icon>star</Icon></List></Button>) :
+                                    (<div />)
+                                }
                             </div>
                         </Drawer>
                         {this.state.openQuery ? (
@@ -217,6 +222,10 @@ class Master extends React.Component {
                                     <Route
                                         path="/results"
                                         component={Results}
+                                    />
+                                    <Route
+                                        path="/favorites"
+                                        component={Favorites}
                                     />
                                     <Route
                                         component={Home}

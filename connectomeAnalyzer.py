@@ -29,7 +29,28 @@ neo4j_databases_config = None
 MasterDatabase = None
 GlobalLock = Lock()
 
-@app.route('/favorites', methods = ['POST'])
+
+@app.route('/favoritesdb', methods = ['GET'])
+def get_favorite():
+    # verify user
+    token = flaskrequest.headers.get('authorization')
+    res = requests.get("https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + str(token))
+    if res.status_code != 200:
+        abort(401)
+
+    useremail = res.json()["email"]
+
+    query = Query()
+    favorites = []
+    with GlobalLock: 
+        favorites = MasterDatabase.search((query.user == useremail) & (query.favorite != ''))
+    parsedfavorites = []
+    for favorite in favorites:
+        parsedfavorites.append(favorite["favorite"])
+    return json.dumps(parsedfavorites)
+
+
+@app.route('/favoritesdb', methods = ['POST'])
 def add_favorite():
     # verify user
     token = flaskrequest.headers.get('authorization')
