@@ -14,15 +14,41 @@ authorization.
 """
 
 from flask import Flask
+from flask import abort
+from flask import request as flaskrequest
+import requests
 import json
 import sys
+from tinydb import TinyDB, Query
+from threading import Lock
+
+
 
 app = Flask(__name__, static_folder='build')
 neo4j_databases_config = None
+MasterDatabase = None
+GlobalLock = Lock()
+
+@app.route('/favorites', methods = ['POST'])
+def add_favorite():
+    # verify user
+    token = flaskrequest.headers.get('authorization')
+    res = requests.get("https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + str(token))
+    if res.status_code != 200:
+        abort(401)
+
+    useremail = res.json()["email"]
+    data = flaskrequest.get_json()
+
+    with GlobalLock:
+        MasterDatabase.insert({"user": useremail, "favorite": data})
+
+    return ""
 
 """Provides neo4j / dataset information for the website.
 
-Proper authorization will unlock more options.
+Description:
+    Proper authorization will unlock more options.
 """
 @app.route('/neo4jconfig')
 def configinfo():
@@ -37,5 +63,9 @@ def static_page(path):
     return app.send_static_file('index.html')
 
 if __name__ == '__main__':
-    neo4j_databases_config = sys.argv[1]
+    config = sys.argv[1]
+    neo4j_databases_config = sys.argv[2]
+    configdata = json.load(open(config))
+    MasterDatabase = TinyDB(configdata["appInfoDB"])
+    
     app.run(threaded=True)
