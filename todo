@@ -21,11 +21,11 @@ X-flask handle authorization
 X-fix formatting for menu (get rid of grid and set to 100%); side-bar dark gray?
 X-allow basic favorites
 X-potential some bugs in using componentwillupdate (maybe need in constructor)
+X-download csv
 
 
--download csv
--dataset settings can be saved but should be toggleable on query menu top level -- use tags and make available in query strings (maybe save in user settings)
 -refactor plugins so there is generic handling of querystring -- maybe one of those wrapper classes
+-dataset settings can be saved but should be toggleable on query menu top level -- use tags and make available in query strings (maybe save in user settings)
 
 
 -specialized tables

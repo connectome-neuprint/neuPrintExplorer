@@ -74,7 +74,7 @@ class Results extends React.Component {
             // load data
             tableinfo.body.map( (rowinfo, bindex) => {
                 rowinfo.map( (elinfo, bindex) => {
-                    csvdata = csvdata + String(elinfo) + ",";
+                    csvdata = csvdata + JSON.stringify(elinfo) + ",";
                 });
                 csvdata = csvdata + "\n";
             });
@@ -117,7 +117,7 @@ class Results extends React.Component {
 
         return (
             <div>
-                <Grid container spacing={12}>
+                <Grid container spacing={24}>
                     <Grid item xs={8} className={classes.align}>
                     <Typography variant="title">Query Results</Typography>
                     </Grid>

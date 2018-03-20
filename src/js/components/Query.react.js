@@ -16,7 +16,7 @@ import { InputLabel } from 'material-ui/Input';
 import Grid from 'material-ui/Grid';
 import Divider from 'material-ui/Divider';
 import { withStyles } from 'material-ui/styles';
-import qs from 'qs';
+import { LoadQueryString, SaveQueryString, RemoveQueryString } from '../qsparser';
 
 const styles = theme => ({
     root: {
@@ -31,23 +31,35 @@ const styles = theme => ({
 class Query extends React.Component {
     constructor(props) {
         super(props);
-        var query = qs.parse(window.location.search.substring(1));
-        var queryType = "";
-        if ("queryType" in query) {
-            queryType = query["queryType"];
+        var initqsParams = {
+            queryType: "",
         }
+        var qsParams = LoadQueryString("Query", initqsParams);
         this.state = {
-            queryType: queryType 
+            qsParams: qsParams
         };
     }
-   
+  
+    componentWillUpdate(nextProps, nextState) {
+        SaveQueryString("Query", nextState.qsParams);
+    }
+
     setQuery = (event) => {
-        if (event.target.value !== this.state.queryType) {
-            var query = qs.parse(window.location.search.substring(1));
-            query["queryType"] = event.target.value; 
-            history.replaceState(null, null, window.location.pathname + "?" + qs.stringify(query));
-     
-            this.setState({queryType: event.target.value});
+        if (event.target.value !== this.state.qsParams.queryType) {
+            // delete query string from last query
+            var found = false;
+            for (var i in this.props.pluginList) {
+                if (this.state.qsParams.queryType === this.props.pluginList[i].queryName) {
+                    found = true;
+                }
+            }
+
+            if (found) {
+                RemoveQueryString("Query:" + this.state.qsParams.queryType);
+            }
+
+            this.setState({qsParams: {
+                            queryType: event.target.value}});
         }
     };
 
@@ -62,19 +74,17 @@ class Query extends React.Component {
                                 </MenuItem>
                             );
 
-        // ?! on submit link to results
-
         // if query is selected, pass query along
-        if (this.state.queryType !== "") {
+        if (this.state.qsParams.queryType !== "") {
             // check if query is in the list of plugins
             var found = false;
             for (var i in this.props.pluginList) {
-                if (this.state.queryType === this.props.pluginList[i].queryName) {
+                if (this.state.qsParams.queryType === this.props.pluginList[i].queryName) {
                     found = true;
                 }
             }
             if (found) {
-                queryname = this.state.queryType;
+                queryname = this.state.qsParams.queryType;
                 querytype = queryname;
                 initmenuitem = <div />
             }
