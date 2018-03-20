@@ -112,8 +112,7 @@ const TablePaginationActionsWrapped = withStyles(actionsStyles, { withTheme: tru
 
 const styles = theme => ({
   root: {
-    width: '100%',
-    marginTop: theme.spacing.unit * 3,
+    width: '80%',
   },
   table: {
     minWidth: 500,
@@ -178,7 +177,7 @@ class Favorites extends React.Component {
         const startRecord = page * rowsPerPage;
         
         return (
-            <div>
+            <div className={classes.root}>
                 <Typography variant="title">Favorites</Typography>
                 {this.props.userInfo !== null ? 
                 (<Table className={classes.table}>

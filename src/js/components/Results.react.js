@@ -14,6 +14,7 @@ import SimpleTables from './SimpleTables.react';
 import Icon from 'material-ui/Icon';
 import IconButton from 'material-ui/IconButton';
 import Button from 'material-ui/Button';
+import Divider from 'material-ui/Divider';
 import TextField from 'material-ui/TextField';
 import { withStyles } from 'material-ui/styles';
 import Dialog, {
@@ -23,11 +24,15 @@ import Dialog, {
   DialogTitle,
 } from 'material-ui/Dialog';
 
+import Grid from 'material-ui/Grid';
 
 const styles = theme => ({
   button: {
     margin: theme.spacing.unit,
   },
+  align: {
+    paddingTop: theme.spacing.unit*2,
+  }
 });
 
 class Results extends React.Component {
@@ -45,6 +50,41 @@ class Results extends React.Component {
 
     openPopup = () => {
         this.setState({open: true, bookmarkname: ""});
+    }
+
+    downloadFile = () => {
+        var csvdata = "";
+        this.props.allTables.map( (tableinfo, index) => {
+            // load one table -- fixed width
+            
+            // load table name
+            var numelements = tableinfo.header.length;
+            csvdata = csvdata + tableinfo.name + ",";
+            for (var i = 1; i < numelements; i++) {
+                csvdata = csvdata + ",";
+            }
+            csvdata = csvdata + "\n";
+
+            // load headers
+            tableinfo.header.map( (headinfo, hindex) => {
+                csvdata = csvdata + headinfo + ",";
+            });
+            csvdata = csvdata + "\n";
+
+            // load data
+            tableinfo.body.map( (rowinfo, bindex) => {
+                rowinfo.map( (elinfo, bindex) => {
+                    csvdata = csvdata + String(elinfo) + ",";
+                });
+                csvdata = csvdata + "\n";
+            });
+        });
+
+        var element = document.createElement("a");
+        var file = new Blob([csvdata], {type: 'text/csv'});
+        element.href = URL.createObjectURL(file);
+        element.download = "results.csv";
+        element.click();
     }
 
     addFavorite = () => {
@@ -77,46 +117,64 @@ class Results extends React.Component {
 
         return (
             <div>
-                <Typography variant="title">Query Results</Typography>
-                { (this.props.userInfo !== null && this.props.allTables !== null) ? (
-                    <div>
-                    <Button className={classes.button} variant="raised" color="primary" onClick={this.openPopup}>
-                        Bookmark
-                        <Icon>star</Icon>
-                    </Button>
-                    <Dialog
-                            open={this.state.open}
-                            onClose={this.handleClose}
-                            aria-labelledby="form-dialog-title"
-                    >
-                        <DialogTitle id="form-dialog-title">Save Bookmark</DialogTitle>
-                        <DialogContent>
-                            <DialogContentText>
-                            Name and save a query.
-                            </DialogContentText>
-                            <TextField
-                                        autoFocus
-                                        margin="dense"
-                                        id="name"
-                                        label="bookmark name"
-                                        fullWidth
-                                        onChange={(event) => this.setState({bookmarkname: event.target.value})}
-                            />
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={this.handleClose} color="primary">
-                                Cancel
-                            </Button>
-                            <Button onClick={this.addFavorite} color="primary">
-                                Save
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
-                    </div>
-                  ) : (
-                    <div />
-                  )
-                }
+                <Grid container spacing={12}>
+                    <Grid item xs={8} className={classes.align}>
+                    <Typography variant="title">Query Results</Typography>
+                    </Grid>
+                    { (this.props.userInfo !== null && this.props.allTables !== null) ? (
+                        <Grid item xs={2}>
+                        <Button className={classes.button} variant="raised" color="primary" onClick={this.openPopup}>
+                            Bookmark
+                            <Icon>star</Icon>
+                        </Button>
+                        <Dialog
+                                open={this.state.open}
+                                onClose={this.handleClose}
+                                aria-labelledby="form-dialog-title"
+                        >
+                            <DialogTitle id="form-dialog-title">Save Bookmark</DialogTitle>
+                            <DialogContent>
+                                <DialogContentText>
+                                Name and save a query.
+                                </DialogContentText>
+                                <TextField
+                                            autoFocus
+                                            margin="dense"
+                                            id="name"
+                                            label="bookmark name"
+                                            fullWidth
+                                            onChange={(event) => this.setState({bookmarkname: event.target.value})}
+                                />
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={this.handleClose} color="primary">
+                                    Cancel
+                                </Button>
+                                <Button onClick={this.addFavorite} color="primary">
+                                    Save
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
+                        </Grid>
+                      ) : (
+                        <div />
+                      )
+                    }
+                    { (this.props.allTables !== null) ? (
+                        <Grid item xs={2}>
+                        <IconButton color="primary" className={classes.button} aria-label="Download data" onClick={this.downloadFile}>
+                            <Icon>file_download</Icon>
+                        </IconButton>
+
+                        </Grid>
+
+                    ) : (
+                        <div />
+                    )
+                    }
+                </Grid> 
+
+                <Divider />
                 <Fade
                     in={this.props.isQuerying}
                     style={{

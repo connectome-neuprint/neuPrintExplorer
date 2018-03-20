@@ -24,6 +24,7 @@ import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import { connect } from 'react-redux';
 import Divider from 'material-ui/Divider';
 import Favorites from './Favorites.react';
+import Neo4jQuery from './Neo4jQuery.react';
 
 const drawerWidth = 400;
 
@@ -168,6 +169,7 @@ class Master extends React.Component {
                             )
                         }
                         </div>
+                        <Neo4jQuery />
                         <NeoServer />
                     </Toolbar>
                 </AppBar>
