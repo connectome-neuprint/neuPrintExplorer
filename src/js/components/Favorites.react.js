@@ -181,14 +181,16 @@ class Favorites extends React.Component {
                 <Typography variant="title">Favorites</Typography>
                 {this.props.userInfo !== null ? 
                 (<Table className={classes.table}>
-                {this.state.favoritesArr.slice(startRecord, page * rowsPerPage + rowsPerPage).map( (tableinfo, index) => {
-                    return (
-                        <TableRow key={startRecord + index}>
-                            <TableCell><a href={tableinfo.url}>{tableinfo.name}</a></TableCell>
-                            <TableCell>{tableinfo.cypher}</TableCell>
-                        </TableRow>
-                    );
-                })}
+                    <TableBody>
+                    {this.state.favoritesArr.slice(startRecord, page * rowsPerPage + rowsPerPage).map( (tableinfo, index) => {
+                        return (
+                            <TableRow key={startRecord + index}>
+                                <TableCell><Typography variant="body2"><a href={tableinfo.url}>{tableinfo.name}</a></Typography></TableCell>
+                                <TableCell><Typography variant="body1">{tableinfo.cypher}</Typography></TableCell>
+                            </TableRow>
+                        );
+                    })}
+                    </TableBody>
                     <TableFooter>
                       <TableRow>
                         <TablePagination

@@ -120,6 +120,9 @@ const styles = theme => ({
   tableWrapper: {
     overflowX: 'auto',
   },
+  cellborder: {
+    borderBottom: 0,
+  }
 });
 
 class SimpleTables extends React.Component {
@@ -148,22 +151,26 @@ class SimpleTables extends React.Component {
             <div>
             {this.props.allTables !== null ?
                 (<Table className={classes.table}>
-                {this.props.allTables.slice(startRecord, page * rowsPerPage + rowsPerPage).map( (tableinfo, index) => {
-                    return (
-                        <TableRow key={startRecord + index}>
-                            <ExpansionPanel>
-                                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                    <Typography>
-                                        {tableinfo.name}
-                                    </Typography> 
-                                </ExpansionPanelSummary>
-                                <ExpansionPanelDetails>
-                                    <SimpleTable data={tableinfo} />
-                                </ExpansionPanelDetails>
-                            </ExpansionPanel>
-                        </TableRow>
-                    );
-                })}
+                    <TableBody>
+                    {this.props.allTables.slice(startRecord, page * rowsPerPage + rowsPerPage).map( (tableinfo, index) => {
+                        return (
+                            <TableRow key={startRecord + index}>
+                                <TableCell className={classes.cellborder}>
+                                    <ExpansionPanel>
+                                        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                                            <Typography>
+                                                {tableinfo.name}
+                                            </Typography> 
+                                        </ExpansionPanelSummary>
+                                        <ExpansionPanelDetails>
+                                            <SimpleTable data={tableinfo} />
+                                        </ExpansionPanelDetails>
+                                    </ExpansionPanel>
+                                </TableCell>
+                            </TableRow>
+                        );
+                    })}
+                    </TableBody>
                     <TableFooter>
                       <TableRow>
                         <TablePagination

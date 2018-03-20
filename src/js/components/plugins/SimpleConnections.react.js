@@ -101,10 +101,11 @@ class SimpleConnections extends React.Component {
         return tables;
     }
 
-
     processRequest = (event) => {
-        var neoquery = mainQuery.replace("ZZ", this.state.qsParams.neuronpre)
-        this.props.callback(neoquery);
+        if (this.state.qsParams.neuronpre !== "") {
+            var neoquery = mainQuery.replace("ZZ", this.state.qsParams.neuronpre)
+            this.props.callback(neoquery);
+        }
     }
 
     render() {

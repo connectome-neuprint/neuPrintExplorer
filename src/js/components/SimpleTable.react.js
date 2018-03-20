@@ -150,9 +150,9 @@ class SimpleTable extends React.Component {
           <Table className={classes.table}>
             <TableHead>
                 <TableRow>
-                {this.props.data.header.map(header => {
+                {this.props.data.header.map((header, index) => {
                     return (
-                        <TableCell>
+                        <TableCell key={index}>
                             {header}
                         </TableCell>
                     );
@@ -161,9 +161,9 @@ class SimpleTable extends React.Component {
             </TableHead>
             <TableBody>
               {this.props.data.body.slice(startRecord, page * rowsPerPage + rowsPerPage).map( (rec, index)  => {
-                var cells = rec.map( entry => {
+                var cells = rec.map( (entry, index2) => {
                     return (
-                        <TableCell>{JSON.stringify(entry)}</TableCell>
+                        <TableCell key={String(index)+"-"+String(index2)}>{JSON.stringify(entry)}</TableCell>
                     )
                 });
                 return (

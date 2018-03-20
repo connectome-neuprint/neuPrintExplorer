@@ -40,7 +40,7 @@ var queryReducer = function(state, action) {
             return Object.assign({}, state, {neoError: action.neoError, isQuerying: false, neoResults: null});
         }
         case 'SET_NEO_RESULTS' : {
-            return Object.assign({}, state, {neoResults: action.neoResults, isQuerying: false});
+            return Object.assign({}, state, {neoResults: action.neoResults, isQuerying: false, neoError: null});
         }
         case 'UPDATE_RESULTS' : {
             return Object.assign({}, state, {allTables: action.allTables});

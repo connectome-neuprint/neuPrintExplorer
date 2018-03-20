@@ -25,7 +25,7 @@ class Neo4jQuery extends React.Component {
         }
 
         // start query if query state changed
-        if (nextProps.neoQuery !== this.props.neoQuery) {
+        if (nextProps.isQuerying) {
             if (nextProps.neoQuery !== "" && nextProps.neoSever !== "") {
                 // run query (TODO: handle blocking query??) 
                 var session = driver.session();
@@ -54,6 +54,7 @@ var Neo4jQueryState  = function(state){
         neoQuery: state.neoQuery,
         neoServer: state.neoServer,
         neoDriver: state.neoDriver,
+        isQuerying: state.isQuerying,
     }   
 };
 
