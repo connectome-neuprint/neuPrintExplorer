@@ -50,6 +50,7 @@ class NeoServer extends React.Component {
         super(props);
         this.state = {
             neoServer: "",
+            datasets: [],
             open: false
         };
 
@@ -57,18 +58,21 @@ class NeoServer extends React.Component {
             .then(result=>result.json())
             .then(items=> {
                 var servername = this.state.neoServer;
+                var datasets = this.state.datasets;
                 for (var item in items) {
                     servername = items[item].server
+                    datasets = items[item].datasets;
                     if ("default" in items[item] && items[item].default) {
                         break;
                     }
                 }
                 this.setState({
-                        neoServer: servername 
+                        neoServer: servername,
+                        datasets: datasets,
                     }
                 );
                 if (servername != "") {
-                    this.props.setNeoServer(servername);
+                    this.props.setNeoServer(servername, datasets);
                 }
             });
     }
@@ -149,10 +153,11 @@ var NeoServerState = function(state) {
 
 var NeoServerDispatch = function(dispatch) {
     return {
-        setNeoServer: function(servername) {
+        setNeoServer: function(servername, datasets) {
             dispatch({
                 type: 'SET_NEO_SERVER',
-                neoServer: servername
+                neoServer: servername,
+                availableDatasets: datasets,
             });
         }
     }

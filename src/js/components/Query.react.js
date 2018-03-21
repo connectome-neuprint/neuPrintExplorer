@@ -12,11 +12,12 @@ import QueryForm from "./QueryForm.react";
 import { MenuItem } from 'material-ui/Menu';
 import { FormControl } from 'material-ui/Form';
 import Select from 'material-ui/Select';
-import { InputLabel } from 'material-ui/Input';
+import Input, { InputLabel } from 'material-ui/Input';
 import Grid from 'material-ui/Grid';
 import Divider from 'material-ui/Divider';
 import { withStyles } from 'material-ui/styles';
 import { LoadQueryString, SaveQueryString, RemoveQueryString } from '../qsparser';
+import Chip from 'material-ui/Chip';
 
 const styles = theme => ({
     root: {
@@ -25,15 +26,47 @@ const styles = theme => ({
     divider: {
         marginTop: theme.spacing.unit,
         marginBottom: theme.spacing.unit,
+    },
+    chips: {
+        display: 'flex',
+        flexWrap: 'wrap',
+    },
+    chip: {
+        margin: theme.spacing.unit / 4,
+    },
+    formControl: {
+        margin: theme.spacing.unit,
+        minWidth: 120,
+        maxWidth: 300,
+    },
+    formControl2: {
+        margin: theme.spacing.unit,
+        minWidth: 250,
+        maxWidth: 300,
+    },
+    selectWidth: {
+        minWidth: 250,
     }
 });
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
 
 class Query extends React.Component {
     constructor(props) {
         super(props);
         var initqsParams = {
             queryType: "",
-        }
+            datasets: [],
+        };
         var qsParams = LoadQueryString("Query", initqsParams);
         this.state = {
             qsParams: qsParams
@@ -63,9 +96,15 @@ class Query extends React.Component {
         }
     };
 
+    handleChange = (ev) => {
+        this.setState({qsParams: {
+            datasets: ev.target.value,
+        }});
+    }
+
     render() {
-        const { classes } = this.props;
-        
+        const { classes, theme } = this.props;
+
         var queryname = "Select Query";
         var querytype = "";
         var initmenuitem = (
@@ -93,7 +132,7 @@ class Query extends React.Component {
         // TODO: fix default menu option (maybe make the custom query the default)
         return (
             <div className={classes.root}>
-                <FormControl>
+                <FormControl className={classes.formControl}>
                     <InputLabel htmlFor="controlled-open-select">Query Type</InputLabel>
                     <Select
                         value={queryname}
@@ -113,6 +152,36 @@ class Query extends React.Component {
                                     </MenuItem>
                             );
                         })}
+                    </Select>
+                </FormControl>
+                <FormControl className={classes.formControl2}>
+                    <InputLabel htmlFor="select-multiple-chip">Select datasets (default all)</InputLabel>
+                    <Select
+                        multiple
+                        value={this.state.qsParams.datasets}
+                        onChange={this.handleChange}
+                        input={<Input id="select-multiple-chip" />}
+                        renderValue={selected => (
+                            <div className={classes.chips}>
+                                {selected.map(value => <Chip key={value} label={value} className={classes.chip} />)}
+                            </div>
+                        )}
+                        MenuProps={MenuProps}
+                    >
+                    {this.props.availableDatasets.map(name => (
+                        <MenuItem
+                        key={name}
+                        value={name}
+                        style={{
+                            fontWeight:
+                            this.state.qsParams.datasets.indexOf(name) === -1
+                                ? theme.typography.fontWeightRegular
+                                : theme.typography.fontWeightMedium,
+                        }}
+                        >
+                        {name}
+                        </MenuItem>
+                    ))}
                     </Select>
                 </FormControl>
                 <Divider className={classes.divider} />
@@ -136,9 +205,10 @@ Query.propTypes = {
 
 var QueryState = function(state){
     return {
-        pluginList: state.pluginList
+        pluginList: state.pluginList,
+        availableDatasets: state.availableDatasets,
     }   
 };
 
-export default withStyles(styles)(connect(QueryState, null)(Query));
+export default withStyles(styles, { withTheme: true })(connect(QueryState, null)(Query));
 

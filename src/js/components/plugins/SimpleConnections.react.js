@@ -22,6 +22,51 @@ const styles = theme => ({
   },
 });
 
+/*
+ *
+ * colors
+ *
+
+#8dd3c7
+#ffffb3
+#bebada
+#fb8072
+#80b1d3
+#fdb462
+#b3de69
+#fccde5
+#d9d9d9
+#bc80bd
+#ccebc5
+#ffed6f
+
+*/
+
+/* color blind
+ *
+#8e0152
+#c51b7d
+#de77ae
+#f1b6da
+#fde0ef
+#f7f7f7
+#e6f5d0
+#b8e186
+#7fbc41
+#4d9221
+#276419
+
+or
+
+#a6cee3
+#1f78b4
+#b2df8a
+#33a02c
+    
+*/
+
+
+
 class SimpleConnections extends React.Component {
     static get queryName() {
         return "Simple Connections";

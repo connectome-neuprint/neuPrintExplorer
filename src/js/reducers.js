@@ -10,6 +10,7 @@ var initialQueryState = {
     neoResults: null,
     allTables: null,
     userInfo: null,
+    availableDatasets: []
 };
 
 /*
@@ -34,7 +35,7 @@ var queryReducer = function(state, action) {
             return Object.assign({}, state, {neoDriver: action.neoDriver});
         }
         case 'SET_NEO_SERVER' : {
-            return Object.assign({}, state, {neoServer: action.neoServer, neoResults: null, neoError: null, isQuerying: false});
+            return Object.assign({}, state, {neoServer: action.neoServer, neoResults: null, neoError: null, isQuerying: false, availableDatasets: action.availableDatasets});
         }
         case 'SET_NEO_ERROR' : {
             return Object.assign({}, state, {neoError: action.neoError, isQuerying: false, neoResults: null});
