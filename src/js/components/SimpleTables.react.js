@@ -112,7 +112,8 @@ const TablePaginationActionsWrapped = withStyles(actionsStyles, { withTheme: tru
 const styles = theme => ({
   root: {
     width: '100%',
-    marginTop: theme.spacing.unit * 3,
+    marginTop: theme.spacing.unit * 1,
+    overflowX: 'auto',
   },
   table: {
     minWidth: 500,
@@ -148,43 +149,53 @@ class SimpleTables extends React.Component {
         const startRecord = page * rowsPerPage;
         
         return (
-            <div>
+            <div className={classes.root}>
             {this.props.allTables !== null ?
-                (<Table className={classes.table}>
-                    <TableBody>
-                    {this.props.allTables.slice(startRecord, page * rowsPerPage + rowsPerPage).map( (tableinfo, index) => {
-                        return (
-                            <TableRow key={startRecord + index}>
-                                <TableCell className={classes.cellborder}>
-                                    <ExpansionPanel>
-                                        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                            <Typography>
-                                                {tableinfo.name}
-                                            </Typography> 
-                                        </ExpansionPanelSummary>
-                                        <ExpansionPanelDetails>
-                                            <SimpleTable data={tableinfo} />
-                                        </ExpansionPanelDetails>
-                                    </ExpansionPanel>
-                                </TableCell>
-                            </TableRow>
-                        );
-                    })}
-                    </TableBody>
-                    <TableFooter>
-                      <TableRow>
-                        <TablePagination
-                          colSpan={1}
-                          count={this.props.allTables.length}
-                          rowsPerPage={rowsPerPage}
-                          page={page}
-                          onChangePage={this.handleChangePage}
-                          onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                          Actions={TablePaginationActionsWrapped}
-                        />
-                      </TableRow>
-                    </TableFooter>
-                </Table>) :
+                ((this.props.allTables.length != 1) ?
+                    (<Table className={classes.table}>
+                        <TableBody>
+                        {this.props.allTables.slice(startRecord, page * rowsPerPage + rowsPerPage).map( (tableinfo, index) => {
+                            return (
+                                <TableRow key={startRecord + index}>
+                                    <TableCell className={classes.cellborder}>
+                                        <ExpansionPanel>
+                                            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                                                <Typography>
+                                                    {tableinfo.name}
+                                                </Typography> 
+                                            </ExpansionPanelSummary>
+                                            <ExpansionPanelDetails>
+                                                <SimpleTable data={tableinfo} />
+                                            </ExpansionPanelDetails>
+                                        </ExpansionPanel>
+                                    </TableCell>
+                                </TableRow>
+                            );
+                        })}
+                        </TableBody>
+                        <TableFooter>
+                          <TableRow>
+                            <TablePagination
+                              colSpan={1}
+                              count={this.props.allTables.length}
+                              rowsPerPage={rowsPerPage}
+                              page={page}
+                              onChangePage={this.handleChangePage}
+                              onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                              Actions={TablePaginationActionsWrapped}
+                            />
+                          </TableRow>
+                        </TableFooter>
+                    </Table>) :
+                    (
+                        <div>
+                        <Typography variant="subheading">
+                        {this.props.allTables[0].name}
+                        </Typography> 
+                        <SimpleTable data={this.props.allTables[0]} />
+                        </div>
+                    )
+                ) :
                 <div />
             }
             </div>

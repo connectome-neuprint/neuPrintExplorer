@@ -106,14 +106,15 @@ const TablePaginationActionsWrapped = withStyles(actionsStyles, { withTheme: tru
 const styles = theme => ({
   root: {
     width: '100%',
-    marginTop: theme.spacing.unit * 3,
+    marginTop: theme.spacing.unit * 1,
+    overflowX: 'auto',
   },
   table: {
     minWidth: 500,
   },
-  tableWrapper: {
-    overflowX: 'auto',
-  },
+  cellpad: {
+    padding: 0,
+  }
 });
 
 class SimpleTable extends React.Component {
@@ -146,7 +147,6 @@ class SimpleTable extends React.Component {
 
     return (
       <Paper className={classes.root}>
-        <div className={classes.tableWrapper}>
           <Table className={classes.table}>
             <TableHead>
                 <TableRow>
@@ -160,18 +160,36 @@ class SimpleTable extends React.Component {
                 </TableRow>
             </TableHead>
             <TableBody>
-              {this.props.data.body.slice(startRecord, page * rowsPerPage + rowsPerPage).map( (rec, index)  => {
-                var cells = rec.map( (entry, index2) => {
+              {("formatbody" in this.props.data) ? 
+                (
+                    this.props.data.formatbody.slice(startRecord, page * rowsPerPage + rowsPerPage).map( (rec, index)  => {
+                    var cells = rec.map( (entry, index2) => {
+                        return (
+                            <TableCell key={String(index)+"-"+String(index2)} padding="none">{entry}</TableCell>
+                        )
+                    });
                     return (
-                        <TableCell key={String(index)+"-"+String(index2)}>{JSON.stringify(entry)}</TableCell>
-                    )
-                });
-                return (
-                    <TableRow key={startRecord + index}>
-                        {cells}
-                    </TableRow>
-                );
-              })}
+                        <TableRow key={startRecord + index}>
+                            {cells}
+                        </TableRow>
+                    );
+                  })
+                ) :
+                (
+                    this.props.data.body.slice(startRecord, page * rowsPerPage + rowsPerPage).map( (rec, index)  => {
+                    var cells = rec.map( (entry, index2) => {
+                        return (
+                            <TableCell key={String(index)+"-"+String(index2)}>{JSON.stringify(entry)}</TableCell>
+                        )
+                    });
+                    return (
+                        <TableRow key={startRecord + index}>
+                            {cells}
+                        </TableRow>
+                    );
+                  })
+                )
+              }
             </TableBody>
             <TableFooter>
               <TableRow>
@@ -187,7 +205,6 @@ class SimpleTable extends React.Component {
               </TableRow>
             </TableFooter>
           </Table>
-        </div>
       </Paper>
     );
   }

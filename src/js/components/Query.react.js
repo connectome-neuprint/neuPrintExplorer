@@ -91,15 +91,20 @@ class Query extends React.Component {
                 RemoveQueryString("Query:" + this.state.qsParams.queryType);
             }
 
-            this.setState({qsParams: {
-                            queryType: event.target.value}});
+            var oldparams = this.state.qsParams;
+            oldparams.queryType = event.target.value;
+            this.setState({qsParams: oldparams});
         }
     };
 
     handleChange = (ev) => {
-        this.setState({qsParams: {
-            datasets: ev.target.value,
-        }});
+        var newdatasets = ev.target.value;
+        if (ev === undefined) {
+            newdatasets = [];
+        }
+        var oldparams = this.state.qsParams;
+        oldparams.datasets = newdatasets;
+        this.setState({qsParams: oldparams});
     }
 
     render() {
