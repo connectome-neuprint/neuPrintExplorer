@@ -25,6 +25,7 @@ import { connect } from 'react-redux';
 import Divider from 'material-ui/Divider';
 import Favorites from './Favorites.react';
 import Neo4jQuery from './Neo4jQuery.react';
+import Popover from 'material-ui/Popover';
 
 const drawerWidth = 400;
 
@@ -50,6 +51,9 @@ const styles = theme => ({
     '&:hover': {
           backgroundColor: "rgba(0, 0, 0, 0.12)"
       }
+  },
+  buttonBasic: {
+    padding: 0,
   },
   drawerPaperQuery: {
     position: 'relative',
@@ -97,6 +101,12 @@ const styles = theme => ({
   },
   buttonFont: theme.typography.button,
   toolbar: theme.mixins.toolbar,
+  icon: {
+        padding: theme.spacing.unit,
+        height: "4em",
+        width: "4em",
+        borderRadius: "500px"
+  }
 });
 
 //const MyLink = props => <NavLink to="/results" {...props} />
@@ -111,7 +121,9 @@ class Master extends React.Component {
         }
 
         this.state = {
-            openQuery: openQuery
+            openQuery: openQuery,
+            openUser: false,
+            userTarget: null
         };
     }
 
@@ -137,9 +149,20 @@ class Master extends React.Component {
         this.props.logoutUser();
     }
 
+    launchUserPopup = (event) => {
+        this.setState({openUser: true, userTarget: event.target});
+    }
+
+    closeUser = () => {
+        this.setState({openUser: false, userTarget: null});
+    }
+
     render() {
        // alert(JSON.stringify(qs.parse(window.location.search)));
         const { classes } = this.props;
+        if (this.props.userInfo !== null) {
+            //document.write(JSON.stringify(this.props.userInfo));
+        }
         return (
             <div className={classes.root}>    
                 <AppBar position="absolute" className={classes.appBar}>
@@ -160,12 +183,36 @@ class Master extends React.Component {
                                 />
                             ) :
                             (
-                                <GoogleLogout
-                                    className={classes.googleButton + " " + classes.buttonFont}
-                                    clientId="274750196357-an9v0e8u0q0gmtt1ipv6riv18i77vatm.apps.googleusercontent.com"
-                                    buttonText="Logout"
-                                    onLogoutSuccess={this.logoutGoogle}
-                                / >
+                                <div>
+                                    <Button
+                                            ref="userbutton"    
+                                            className={classes.buttonBasic}
+                                            onClick={this.launchUserPopup}>
+                                        <img src={this.props.userInfo.profileObj.imageUrl} className={classes.icon} />
+                                    </Button>
+                                    <Popover
+                                            open={this.state.openUser}
+                                            anchorEl={this.state.userTarget}
+                                            anchorReference="anchorEl"
+                                            onClose={this.closeUser}
+                                            anchorOrigin={{
+                                                vertical: "bottom",
+                                                horizontal: "center",
+                                            }}
+                                            transformOrigin={{
+                                                vertical: "bottom",
+                                                horizontal: "center",
+                                            }}
+                                    >
+                                        <GoogleLogout
+                                                       className={classes.googleButton + " " + classes.buttonFont}
+                                                       clientId="274750196357-an9v0e8u0q0gmtt1ipv6riv18i77vatm.apps.googleusercontent.com"
+                                                       buttonText="Logout"
+                                                       onLogoutSuccess={this.logoutGoogle}
+                                        />
+                                    </Popover>
+
+                                </div>
                             )
                         }
                         </div>
