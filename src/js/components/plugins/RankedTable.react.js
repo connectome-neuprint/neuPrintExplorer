@@ -18,7 +18,7 @@ import { FormLabel, FormControl, FormControlLabel, FormHelperText } from 'materi
 import Typography from 'material-ui/Typography';
 import {connect} from 'react-redux';
 
-const mainQuery = 'match (m:Neuron)-[e:ConnectsTo]-(n:Neuron) where ZZ return m.name as Neuron1, n.name as Neuron2, e.weight as Weight, n.bodyId as Body2, m.className as Neuron1Type, n.className as Neuron2Type, id(m) as m_id, id(n) as n_id, id(startNode(e)) as pre_id, m.bodyId as Body1 order by m.bodyId, e.weight desc';
+const mainQuery = 'match (m:NeuronYY)-[e:ConnectsTo]-(n:NeuronYY) where ZZ return m.name as Neuron1, n.name as Neuron2, e.weight as Weight, n.bodyId as Body2, m.className as Neuron1Type, n.className as Neuron2Type, id(m) as m_id, id(n) as n_id, id(startNode(e)) as pre_id, m.bodyId as Body1 order by m.bodyId, e.weight desc';
 
 function convert64bit(value) {
     return neo4j.isInt(value) ?
@@ -239,6 +239,7 @@ class RankedTable extends React.Component {
             } else {
                 neoquery = mainQuery.replace("ZZ", 'm.bodyId ="' + this.state.qsParams.neuronsrc + '"');
             }
+            neoquery = neoquery.replace(/YY/g, this.props.datasetstr)
             PreOrPostHack = this.state.qsParams.preorpost;
             NeuronSrcHack = this.state.qsParams.neuronsrc;
             this.props.callback(neoquery);

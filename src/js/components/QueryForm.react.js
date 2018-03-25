@@ -81,7 +81,7 @@ class QueryForm extends React.Component {
                     }}
                     message={<span id="message-id">Must initialize settings</span>}
                 /> 
-                <CurrentQuery callback={this.submitQuery} disable={this.props.isQuerying} />
+                <CurrentQuery datasetstr={this.props.datasetstr} callback={this.submitQuery} disable={this.props.isQuerying} />
             </div>
         );
     }

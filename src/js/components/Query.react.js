@@ -133,6 +133,11 @@ class Query extends React.Component {
             }
         }
 
+        var datasetstr = "";
+        for (item in this.props.datasets) {
+            datasetstr = this.props.datasets[item];
+        }
+
         // TODO: fix default menu option (maybe make the custom query the default)
         return (
             <div className={classes.root}>
@@ -189,7 +194,7 @@ class Query extends React.Component {
                     </Select>
                 </FormControl>
                 <Divider className={classes.divider} />
-                <QueryForm queryType={querytype} />
+                <QueryForm queryType={querytype} datasetstr={datasetstr} />
             </div>
         );
     }

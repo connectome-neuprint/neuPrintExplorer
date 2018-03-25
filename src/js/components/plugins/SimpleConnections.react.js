@@ -14,7 +14,7 @@ import { withStyles } from 'material-ui/styles';
 import { LoadQueryString, SaveQueryString } from '../../qsparser';
 import {connect} from 'react-redux';
 
-const mainQuery = 'match (m:Neuron)-[e:ConnectsTo]->(n:Neuron) where m.name =~"ZZ" return m.name as NeuronPre, n.name as NeuronPost, e.weight as Weight, m.bodyId as Body order by m.bodyId, e.weight desc';
+const mainQuery = 'match (m:NeuronYY)-[e:ConnectsTo]->(n:NeuronYY) where m.name =~"ZZ" return m.name as NeuronPre, n.name as NeuronPost, e.weight as Weight, m.bodyId as Body order by m.bodyId, e.weight desc';
 
 const styles = theme => ({
   textField: {
@@ -145,6 +145,7 @@ class SimpleConnections extends React.Component {
     processRequest = (event) => {
         if (this.state.qsParams.neuronpre !== "") {
             var neoquery = mainQuery.replace("ZZ", this.state.qsParams.neuronpre)
+            neoquery = neoquery.replace(/YY/g, this.props.datasetstr)
             this.props.callback(neoquery);
         }
     }
