@@ -41,7 +41,8 @@ class Results extends React.Component {
         super(props);
         this.state = {
             open: false,
-            bookmarkname: ""
+            bookmarkname: "",
+            showQuery: false
         }
     }
 
@@ -191,6 +192,22 @@ class Results extends React.Component {
                 >
                     <CircularProgress />
                 </Fade>
+                { ((this.props.neoError !== null) || (this.props.alTables !== null)) ?
+                    ( 
+                        <div>
+                        <Button onClick={() => { this.setState({showQuery: !this.state.showQuery}) }} color="primary">
+                            { this.state.showQuery ? "Hide Query" : "Show Query" }
+                        </Button>
+                        { (this.state.showQuery) ? 
+                            (
+                                <Typography variant="body1">{this.props.cypher}</Typography>
+                            ) :
+                            (<div />)
+                        }
+                        </div>
+                    )  :
+                    (<div />)
+                }
                 { (this.props.neoError !== null) ? 
                     (<Typography>Error: {this.props.neoError.code}</Typography>) :
                     (this.props.allTables !== null ?
@@ -215,7 +232,7 @@ var ResultsState = function(state){
         neoError: state.neoError,
         allTables: state.allTables,
         userInfo: state.userInfo,
-        cypher: state.neoQuery
+        cypher: state.neoQuery,
     }   
 };
 
