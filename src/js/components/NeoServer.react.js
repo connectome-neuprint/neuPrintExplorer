@@ -51,6 +51,7 @@ class NeoServer extends React.Component {
         this.state = {
             neoServer: "",
             datasets: [],
+            rois: [],
             open: false
         };
 
@@ -59,9 +60,11 @@ class NeoServer extends React.Component {
             .then(items=> {
                 var servername = this.state.neoServer;
                 var datasets = this.state.datasets;
+                var rois = this.state.rois;
                 for (var item in items) {
                     servername = items[item].server
                     datasets = items[item].datasets;
+                    rois = items[item].rois;
                     if ("default" in items[item] && items[item].default) {
                         break;
                     }
@@ -69,10 +72,11 @@ class NeoServer extends React.Component {
                 this.setState({
                         neoServer: servername,
                         datasets: datasets,
+                        rois: rois,
                     }
                 );
                 if (servername != "") {
-                    this.props.setNeoServer(servername, datasets);
+                    this.props.setNeoServer(servername, datasets, rois);
                 }
             });
     }
@@ -82,8 +86,8 @@ class NeoServer extends React.Component {
     };
 
     handleSave = () => {
-        this.setState({ open: false });
-        this.props.setNeoServer(this.state.neoServer);
+        this.setState({ open: false, rois: [], datasets: []});
+        this.props.setNeoServer(this.state.neoServer, [], []);
     };
 
     render () {
@@ -153,11 +157,12 @@ var NeoServerState = function(state) {
 
 var NeoServerDispatch = function(dispatch) {
     return {
-        setNeoServer: function(servername, datasets) {
+        setNeoServer: function(servername, datasets, rois) {
             dispatch({
                 type: 'SET_NEO_SERVER',
                 neoServer: servername,
                 availableDatasets: datasets,
+                availableROIs: rois,
             });
         }
     }

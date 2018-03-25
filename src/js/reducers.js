@@ -11,6 +11,7 @@ var initialQueryState = {
     allTables: null,
     userInfo: null,
     availableDatasets: [],
+    availableROIs: [],
     urlQueryString: window.location.search.substring(1),
     enableUrlQs: false,
 };
@@ -37,7 +38,7 @@ var queryReducer = function(state, action) {
             return Object.assign({}, state, {neoDriver: action.neoDriver});
         }
         case 'SET_NEO_SERVER' : {
-            return Object.assign({}, state, {neoServer: action.neoServer, neoResults: null, neoError: null, isQuerying: false, availableDatasets: action.availableDatasets});
+            return Object.assign({}, state, {neoServer: action.neoServer, neoResults: null, neoError: null, isQuerying: false, availableDatasets: action.availableDatasets, availableROIs: action.availableROIs});
         }
         case 'SET_NEO_ERROR' : {
             return Object.assign({}, state, {neoError: action.neoError, isQuerying: false, neoResults: null});

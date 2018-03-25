@@ -5,7 +5,8 @@
             "user": "neo4j",
             "password": "n304j", 
             "datasets": ["MB6"],
-            "default": true
+            "default": true,
+            "rois": ["Alpha1", "Alpha2", "Alpha3", "MB"]
         }
     ]
 }
