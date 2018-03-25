@@ -11,6 +11,18 @@ import { CircularProgress } from 'material-ui/Progress';
 import Snackbar from 'material-ui/Snackbar';
 //import { Redirect } from 'react-router-dom';
 import { withRouter } from 'react-router-dom';
+import Typography from 'material-ui/Typography';
+import Divider from 'material-ui/Divider';
+import { withStyles } from 'material-ui/styles';
+
+
+const styles = theme => ({
+    divider: {
+        marginTop: theme.spacing.unit,
+        marginBottom: theme.spacing.unit,
+    }
+});
+
 
 
 class QueryForm extends React.Component {
@@ -67,8 +79,7 @@ class QueryForm extends React.Component {
     render() {
         // assume the first query is the default
         var CurrentQuery = this.findCurrentPlugin();
-        //alert(CurrentQuery.queryName);
-        //{this.state.redirectResults ? (<Redirect to={{pathname: '/results'}} />) : <div />}
+        const { classes } = this.props;
 
         return (
             <div>
@@ -81,6 +92,8 @@ class QueryForm extends React.Component {
                     }}
                     message={<span id="message-id">Must initialize settings</span>}
                 /> 
+                <Typography variant="body1">{CurrentQuery.queryDescription}</Typography>
+                <Divider className={classes.divider} />
                 <CurrentQuery datasetstr={this.props.datasetstr} callback={this.submitQuery} disable={this.props.isQuerying} />
             </div>
         );
@@ -127,7 +140,5 @@ var QueryFormDispatch = function(dispatch) {
     }
 }
 
-var conncomp = connect(QueryFormState, QueryFormDispatch)(QueryForm);
-
-export default withRouter(conncomp);
+export default withRouter(withStyles(styles)(connect(QueryFormState, QueryFormDispatch)(QueryForm)));
 

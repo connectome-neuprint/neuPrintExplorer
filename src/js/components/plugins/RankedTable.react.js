@@ -84,6 +84,10 @@ class RankedTable extends React.Component {
     static get queryName() {
         return "Ranked Table";
     }
+    
+    static get queryDescription() {
+        return "Show connections to neuron(s) ranked in order and colored by neuron class";
+    }
 
     constructor(props) {
         super(props);

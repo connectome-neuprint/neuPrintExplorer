@@ -72,6 +72,10 @@ class SimpleConnections extends React.Component {
     static get queryName() {
         return "Simple Connections";
     }
+    
+    static get queryDescription() {
+        return "List inputs or outputs to provided neuron(s)";
+    }
 
     constructor(props) {
         super(props);

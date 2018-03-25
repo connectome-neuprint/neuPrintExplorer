@@ -27,6 +27,10 @@ class FreeForm extends React.Component {
     static get queryName() {
         return "Custom";
     }
+    
+    static get queryDescription() {
+        return "Enter custom Neo4j Cypher query";
+    }
 
     constructor(props) {
         super(props);
