@@ -162,9 +162,7 @@ class Master extends React.Component {
 
     render() {
         const { classes } = this.props;
-        if (this.props.userInfo !== null) {
-            //document.write(JSON.stringify(this.props.userInfo));
-        }
+        
         return (
             <div className={classes.root}>    
                 <AppBar position="absolute" className={classes.appBar}>
@@ -249,7 +247,7 @@ class Master extends React.Component {
                                 >
                                     <List><Icon>storages</Icon></List>
                                 </Button>
-                                {this.userInfo !== null ? 
+                                {this.props.userInfo !== null ? 
                                     (<Button
                                                 component={Link}
                                                 to={{pathname: "/favorites", search: (this.state.openQuery ? this.props.urlQueryString : "")}}
