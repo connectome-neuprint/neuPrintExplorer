@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
 var neo4j = require('neo4j-driver').v1;
 import { withStyles } from 'material-ui/styles';
 import { LoadQueryString, SaveQueryString } from '../../qsparser';
+import {connect} from 'react-redux';
 
 
 const styles = theme => ({
@@ -32,17 +33,12 @@ class FreeForm extends React.Component {
         var initqsParams = {
             textValue: "",
         }
-        var qsParams = LoadQueryString("Query:" + this.constructor.queryName, initqsParams);
+        var qsParams = LoadQueryString("Query:" + this.constructor.queryName, initqsParams, this.props.urlQueryString);
         this.state = {
             qsParams: qsParams
         };
     }
     
-    componentWillUpdate(nextProps, nextState) {
-        SaveQueryString("Query:" + this.constructor.queryName,
-            nextState.qsParams);
-    }
-
     static parseResults(neoResults) {
         // load one table from neoResults
         var tables = [];
@@ -81,6 +77,11 @@ class FreeForm extends React.Component {
         this.props.callback(this.state.qsParams.textValue);
     }
 
+    handleClick = (event) => {
+        this.props.setURLQs(SaveQueryString("Query:" + this.constructor.queryName, {textValue: event.target.value}));
+        this.setState({qsParams: {textValue: event.target.value}});
+    }
+
     render() {
         const { classes } = this.props;
         return (<FormControl className={classes.formControl}>
@@ -91,7 +92,7 @@ class FreeForm extends React.Component {
                         rows={1}
                         rowsMax={4}
                         className={classes.textField}
-                        onChange={(event) => this.setState({qsParams: {textValue: event.target.value}})}
+                        onChange={this.handleClick}
                     />
                     {this.props.disable ?
                         (
@@ -117,11 +118,27 @@ class FreeForm extends React.Component {
     }
 }
 
-export default withStyles(styles)(FreeForm);
 
 FreeForm.propTypes = {
     callback: PropTypes.func,
     disable: PropTypes.bool
 };
 
+var FreeFormState = function(state){
+    return {
+        urlQueryString: state.urlQueryString,
+    }   
+};
 
+var FreeFormDispatch = function(dispatch) {
+    return {
+        setURLQs: function(querystring) {
+            dispatch({
+                type: 'SET_URL_QS',
+                urlQueryString: querystring
+            });
+        }
+    }
+}
+
+export default withStyles(styles)(connect(FreeFormState, FreeFormDispatch)(FreeForm));

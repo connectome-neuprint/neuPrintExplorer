@@ -114,11 +114,12 @@ const styles = theme => ({
 class Master extends React.Component {
     constructor(props) {
         super(props);
-        var query = qs.parse(window.location.search.substring(1));
+        var querystr = this.props.urlQueryString;
+        var query = qs.parse(querystr); 
         var openQuery = false;
         if ("openQuery" in query && query["openQuery"] === "true") {
             openQuery = true;
-        }
+        } 
 
         this.state = {
             openQuery: openQuery,
@@ -128,14 +129,16 @@ class Master extends React.Component {
     }
 
     toggleQuery = () => {
-        var query = qs.parse(window.location.search.substring(1));
-        if (this.state.openQuery) {
-            query["openQuery"] = "false";     
+        if (!this.state.openQuery) {
+            var query = qs.parse(this.props.urlQueryString);
+            query["openQuery"] = "true";
+            var urlqs = qs.stringify(query);
+            this.props.setURLQs(urlqs);
+            history.replaceState(null, null, window.location.pathname + "?" + urlqs);
         } else {
-            query["openQuery"] = "true";     
+            history.replaceState(null, null, window.location.pathname);
         }
 
-        history.replaceState(null, null, window.location.pathname + "?" + qs.stringify(query));
         this.setState({openQuery: !this.state.openQuery});
     }
 
@@ -158,7 +161,6 @@ class Master extends React.Component {
     }
 
     render() {
-       // alert(JSON.stringify(qs.parse(window.location.search)));
         const { classes } = this.props;
         if (this.props.userInfo !== null) {
             //document.write(JSON.stringify(this.props.userInfo));
@@ -237,10 +239,23 @@ class Master extends React.Component {
                                     <List><Icon>search</Icon></List>
                                 </Button>
                                 <Divider />
-                                <Button component={Link} to="/"><List><Icon>home</Icon></List></Button>
-                                <Button component={Link} to="/results"><List><Icon>storages</Icon></List></Button>
+                                <Button component={Link}
+                                        to={{pathname: "/", search: (this.state.openQuery ? this.props.urlQueryString : "")}}
+                                >
+                                    <List><Icon>home</Icon></List>
+                                </Button>
+                                <Button component={Link} 
+                                        to={{pathname: "/results", search: (this.state.openQuery ? this.props.urlQueryString : "")}}
+                                >
+                                    <List><Icon>storages</Icon></List>
+                                </Button>
                                 {this.userInfo !== null ? 
-                                    (<Button component={Link} to="/favorites"><List><Icon>star</Icon></List></Button>) :
+                                    (<Button
+                                                component={Link}
+                                                to={{pathname: "/favorites", search: (this.state.openQuery ? this.props.urlQueryString : "")}}
+                                     >
+                                        <List><Icon>star</Icon></List>
+                                    </Button>) :
                                     (<div />)
                                 }
                             </div>
@@ -291,6 +306,7 @@ class Master extends React.Component {
 var MasterState = function(state) {
     return {
         userInfo: state.userInfo,
+        urlQueryString: state.urlQueryString,
     }
 }
 
@@ -305,6 +321,12 @@ var MasterDispatch = function(dispatch) {
         logoutUser: function() {
             dispatch({
                 type: 'LOGOUT_USER',
+            });
+        },
+        setURLQs: function(querystring) {
+            dispatch({
+                type: 'SET_URL_QS',
+                urlQueryString: querystring
             });
         }
     }

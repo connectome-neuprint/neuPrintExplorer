@@ -67,16 +67,12 @@ class Query extends React.Component {
             queryType: "",
             datasets: [],
         };
-        var qsParams = LoadQueryString("Query", initqsParams);
+        var qsParams = LoadQueryString("Query", initqsParams, this.props.urlQueryString);
         this.state = {
             qsParams: qsParams
         };
     }
   
-    componentWillUpdate(nextProps, nextState) {
-        SaveQueryString("Query", nextState.qsParams);
-    }
-
     setQuery = (event) => {
         if (event.target.value !== this.state.qsParams.queryType) {
             // delete query string from last query
@@ -93,6 +89,7 @@ class Query extends React.Component {
 
             var oldparams = this.state.qsParams;
             oldparams.queryType = event.target.value;
+            this.props.setURLQs(SaveQueryString("Query", oldparams));
             this.setState({qsParams: oldparams});
         }
     };
@@ -104,6 +101,8 @@ class Query extends React.Component {
         }
         var oldparams = this.state.qsParams;
         oldparams.datasets = newdatasets;
+        this.props.setURLQs(SaveQueryString("Query", oldparams));
+        
         this.setState({qsParams: oldparams});
     }
 
@@ -212,8 +211,20 @@ var QueryState = function(state){
     return {
         pluginList: state.pluginList,
         availableDatasets: state.availableDatasets,
+        urlQueryString: state.urlQueryString,
     }   
 };
 
-export default withStyles(styles, { withTheme: true })(connect(QueryState, null)(Query));
+var QueryDispatch = function(dispatch) {
+    return {
+        setURLQs: function(querystring) {
+            dispatch({
+                type: 'SET_URL_QS',
+                urlQueryString: querystring
+            });
+        }
+    }
+}
+
+export default withStyles(styles, { withTheme: true })(connect(QueryState, QueryDispatch)(Query));
 

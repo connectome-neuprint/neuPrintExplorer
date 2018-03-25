@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
 var neo4j = require('neo4j-driver').v1;
 import { withStyles } from 'material-ui/styles';
 import { LoadQueryString, SaveQueryString } from '../../qsparser';
+import {connect} from 'react-redux';
 
 const mainQuery = 'match (m:Neuron)-[e:ConnectsTo]->(n:Neuron) where m.name =~"ZZ" return m.name as NeuronPre, n.name as NeuronPost, e.weight as Weight, m.bodyId as Body order by m.bodyId, e.weight desc';
 
@@ -77,17 +78,12 @@ class SimpleConnections extends React.Component {
         var initqsParams = {
             neuronpre: "",
         }
-        var qsParams = LoadQueryString("Query:" + this.constructor.queryName, initqsParams);
+        var qsParams = LoadQueryString("Query:" + this.constructor.queryName, initqsParams, this.props.urlQueryString);
         this.state = {
             qsParams: qsParams
         };
     }
     
-    componentWillUpdate(nextProps, nextState) {
-        SaveQueryString("Query:" + this.constructor.queryName,
-            nextState.qsParams);
-    }
-
     static parseResults(neoResults) {
         // load one table from neoResults
         var tables = [];
@@ -153,6 +149,11 @@ class SimpleConnections extends React.Component {
         }
     }
 
+    handleClick = (event) => {
+        this.props.setURLQs(SaveQueryString("Query:" + this.constructor.queryName, {neuronpre: event.target.value}));
+        this.setState({qsParams: {neuronpre: event.target.value}});
+    }
+
     render() {
         const { classes } = this.props;
         return (<FormControl className={classes.formControl}>
@@ -163,7 +164,7 @@ class SimpleConnections extends React.Component {
                         value={this.state.qsParams.neuronpre}
                         rowsMax={4}
                         className={classes.textField}
-                        onChange={(event) => this.setState({qsParams: {neuronpre: event.target.value}})}
+                        onChange={this.handleClick}
                     />
                     <Button
                         variant="raised"
@@ -176,11 +177,28 @@ class SimpleConnections extends React.Component {
     }
 }
 
-export default withStyles(styles)(SimpleConnections);
-
 SimpleConnections.propTypes = {
     callback: PropTypes.func,
     disable: PropTypes.bool
 };
 
 
+var SimpleConnectionsState = function(state){
+    return {
+        urlQueryString: state.urlQueryString,
+    }   
+};
+
+var SimpleConnectionsDispatch = function(dispatch) {
+    return {
+        setURLQs: function(querystring) {
+            dispatch({
+                type: 'SET_URL_QS',
+                urlQueryString: querystring
+            });
+        }
+    }
+}
+
+
+export default withStyles(styles)(connect(SimpleConnectionsState, SimpleConnectionsDispatch)(SimpleConnections));

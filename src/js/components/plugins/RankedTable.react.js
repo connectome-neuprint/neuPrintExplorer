@@ -16,6 +16,7 @@ import { LoadQueryString, SaveQueryString } from '../../qsparser';
 import Radio, { RadioGroup } from 'material-ui/Radio';
 import { FormLabel, FormControl, FormControlLabel, FormHelperText } from 'material-ui/Form';
 import Typography from 'material-ui/Typography';
+import {connect} from 'react-redux';
 
 const mainQuery = 'match (m:Neuron)-[e:ConnectsTo]-(n:Neuron) where ZZ return m.name as Neuron1, n.name as Neuron2, e.weight as Weight, n.bodyId as Body2, m.className as Neuron1Type, n.className as Neuron2Type, id(m) as m_id, id(n) as n_id, id(startNode(e)) as pre_id, m.bodyId as Body1 order by m.bodyId, e.weight desc';
 
@@ -90,17 +91,12 @@ class RankedTable extends React.Component {
             neuronsrc: "",
             preorpost: "pre",
         }
-        var qsParams = LoadQueryString("Query:" + this.constructor.queryName, initqsParams);
+        var qsParams = LoadQueryString("Query:" + this.constructor.queryName, initqsParams, this.props.urlQueryString);
         this.state = {
             qsParams: qsParams
         };
     }
     
-    componentWillUpdate(nextProps, nextState) {
-        SaveQueryString("Query:" + this.constructor.queryName,
-            nextState.qsParams);
-    }
-
     static parseResults(neoResults) {
         // create one comparison table
         var tables = [];
@@ -252,12 +248,14 @@ class RankedTable extends React.Component {
     addNeuron = (event) => {
         var oldparams = this.state.qsParams;
         oldparams.neuronsrc = event.target.value;
+        this.props.setURLQs(SaveQueryString("Query:" + this.constructor.queryName, oldparams));
         this.setState({qsParams: oldparams});
     }
 
     setDirection = (event) => {
         var oldparams = this.state.qsParams;
         oldparams.preorpost = event.target.value;
+        this.props.setURLQs(SaveQueryString("Query:" + this.constructor.queryName, oldparams));
         this.setState({qsParams: oldparams});
     }
 
@@ -299,11 +297,27 @@ class RankedTable extends React.Component {
     }
 }
 
-export default withStyles(styles)(RankedTable);
-
 RankedTable.propTypes = {
     callback: PropTypes.func,
     disable: PropTypes.bool
 };
 
+var RankedTableState = function(state){
+    return {
+        urlQueryString: state.urlQueryString,
+    }   
+};
 
+var RankedTableDispatch = function(dispatch) {
+    return {
+        setURLQs: function(querystring) {
+            dispatch({
+                type: 'SET_URL_QS',
+                urlQueryString: querystring
+            });
+        }
+    }
+}
+
+
+export default withStyles(styles)(connect(RankedTableState, RankedTableDispatch)(RankedTable));

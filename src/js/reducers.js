@@ -10,7 +10,9 @@ var initialQueryState = {
     neoResults: null,
     allTables: null,
     userInfo: null,
-    availableDatasets: []
+    availableDatasets: [],
+    urlQueryString: window.location.search.substring(1),
+    enableUrlQs: false,
 };
 
 /*
@@ -51,6 +53,9 @@ var queryReducer = function(state, action) {
         }
         case 'LOGOUT_USER' : {
             return Object.assign({}, state, {userInfo: null});
+        }
+        case 'SET_URL_QS' : {
+            return Object.assign({}, state, {urlQueryString: action.urlQueryString});
         }
         default: {
             return state;
