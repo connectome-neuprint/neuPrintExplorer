@@ -192,7 +192,7 @@ class Results extends React.Component {
                 >
                     <CircularProgress />
                 </Fade>
-                { ((this.props.neoError !== null) || (this.props.alTables !== null)) ?
+                { ((this.props.neoError !== null) || (this.props.allTables !== null)) ?
                     ( 
                         <div>
                         <Button onClick={() => { this.setState({showQuery: !this.state.showQuery}) }} color="primary">

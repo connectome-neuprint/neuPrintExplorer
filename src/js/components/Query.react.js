@@ -134,8 +134,8 @@ class Query extends React.Component {
         }
 
         var datasetstr = "";
-        for (item in this.props.datasets) {
-            datasetstr = this.props.datasets[item];
+        for (var item in this.state.qsParams.datasets) {
+            datasetstr = datasetstr + ":" + this.state.qsParams.datasets[item];
         }
 
         // TODO: fix default menu option (maybe make the custom query the default)
