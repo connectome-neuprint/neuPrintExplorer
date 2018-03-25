@@ -6,8 +6,15 @@
 import React from 'react';
 import Typography from 'material-ui/Typography';
 import { Redirect } from 'react-router-dom';
+import _ from "underscore";
 
 export class Home extends React.Component {
+    // if only query string has updated, prevent re-render
+    shouldComponentUpdate(nextProps, nextState) {
+        nextProps.location["search"] = this.props.location["search"];
+        return (!_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state));
+    }
+    
     render() {
         var redirectHome = false;
         if (window.location.pathname !== '/') {

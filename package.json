@@ -34,6 +34,7 @@
   },
   "dependencies": {
     "qs": "latest",
+    "underscore": "latest",
     "react-google-login": "latest",
     "jquery": "latest",
     "react": "latest",

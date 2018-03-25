@@ -23,6 +23,7 @@ import Dialog, {
   DialogContentText,
   DialogTitle,
 } from 'material-ui/Dialog';
+import _ from "underscore";
 
 import Grid from 'material-ui/Grid';
 
@@ -109,6 +110,12 @@ class Results extends React.Component {
                     }
                 });
         }
+    }
+
+    // if only query string has updated, prevent re-render
+    shouldComponentUpdate(nextProps, nextState) {
+        nextProps.location["search"] = this.props.location["search"];
+        return (!_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state));
     }
 
     render() {

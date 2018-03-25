@@ -30,6 +30,7 @@ import KeyboardArrowRight from 'material-ui-icons/KeyboardArrowRight';
 import LastPageIcon from 'material-ui-icons/LastPage';
 import Link from 'react-router-dom';
 import { connect } from 'react-redux';
+import _ from "underscore";
 
 const actionsStyles = theme => ({
   root: {
@@ -159,7 +160,10 @@ class Favorites extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.fetchBookmarks(nextProps);        
+        nextProps.location["search"] = this.props.location["search"];
+        if (!_.isEqual(nextProps, this.props)) {
+            this.fetchBookmarks(nextProps);        
+        }
     }
 
     handleChangePage = (event, page) => {
@@ -169,6 +173,12 @@ class Favorites extends React.Component {
     handleChangeRowsPerPage = event => {
         this.setState({ rowsPerPage: event.target.value });
     };
+
+    // if only query string has updated, prevent re-render
+    shouldComponentUpdate(nextProps, nextState) {
+        nextProps.location["search"] = this.props.location["search"];
+        return ((!_.isEqual(nextProps, this.props)) || (!_.isEqual(nextState, this.state)));
+    }
 
     // TODO: add favorites deletion
     render() {
