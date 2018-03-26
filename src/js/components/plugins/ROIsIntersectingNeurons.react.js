@@ -13,6 +13,7 @@ var neo4j = require('neo4j-driver').v1;
 import { withStyles } from 'material-ui/styles';
 import { LoadQueryString, SaveQueryString } from '../../qsparser';
 import {connect} from 'react-redux';
+import NeuronHelp from '../NeuronHelp.react';
 
 const mainQuery = 'match (neuron :NeuronYY)<-[:PartOf]-(roi :Neuropart) where ZZ return neuron.bodyId as bodyid, neuron.name as bodyname, roi.pre as pre, roi.post as post, labels(roi) as rois order by neuron.bodyId';
 
@@ -145,6 +146,7 @@ class ROIsIntersectingNeurons extends React.Component {
     render() {
         const { classes } = this.props;
         return (<FormControl className={classes.formControl}>
+                    <NeuronHelp>
                     <TextField 
                         label="Neuron name"
                         multiline
@@ -154,6 +156,7 @@ class ROIsIntersectingNeurons extends React.Component {
                         className={classes.textField}
                         onChange={this.handleClick}
                     />
+                    </NeuronHelp>
                     <Button
                         variant="raised"
                         onClick={this.processRequest}

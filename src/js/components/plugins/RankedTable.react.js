@@ -17,6 +17,7 @@ import Radio, { RadioGroup } from 'material-ui/Radio';
 import { FormLabel, FormControl, FormControlLabel, FormHelperText } from 'material-ui/Form';
 import Typography from 'material-ui/Typography';
 import {connect} from 'react-redux';
+import NeuronHelp from '../NeuronHelp.react';
 
 const mainQuery = 'match (m:NeuronYY)-[e:ConnectsTo]-(n:NeuronYY) where ZZ return m.name as Neuron1, n.name as Neuron2, e.weight as Weight, n.bodyId as Body2, m.className as Neuron1Type, n.className as Neuron2Type, id(m) as m_id, id(n) as n_id, id(startNode(e)) as pre_id, m.bodyId as Body1 order by m.bodyId, e.weight desc';
 
@@ -268,6 +269,7 @@ class RankedTable extends React.Component {
         const { classes } = this.props;
         return (<div> 
                     <FormControl className={classes.formControl}>
+                        <NeuronHelp>
                         <TextField 
                             label="Neuron name"
                             multiline
@@ -277,6 +279,7 @@ class RankedTable extends React.Component {
                             className={classes.textField}
                             onChange={this.addNeuron}
                         />
+                        </NeuronHelp>
                     </FormControl>
                     <FormControl component="fieldset" required className={classes.formControl}>
                         <FormLabel component="legend">Neuron Direction</FormLabel>

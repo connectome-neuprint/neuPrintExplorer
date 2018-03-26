@@ -14,6 +14,7 @@ import { FormLabel, FormControl, FormControlLabel, FormHelperText } from 'materi
 import { withStyles } from 'material-ui/styles';
 import { LoadQueryString, SaveQueryString } from '../../qsparser';
 import {connect} from 'react-redux';
+import NeuronHelp from '../NeuronHelp.react';
 
 const mainQuery = 'match (m:NeuronYY)XX(n:NeuronYY) where ZZ return m.name as Neuron1, n.name as Neuron2, n.bodyId as Neuron2Id, e.weight as Weight, m.bodyId as Neuron1Id order by m.name, m.bodyId, e.weight desc';
 
@@ -25,10 +26,16 @@ function convert64bit(value) {
 }
 
 const styles = theme => ({
-  textField: {
-  },
-  formControl: {
-  },
+    textField: {
+    },
+    formControl: {
+    },
+    badge: {
+        right: "-10px",
+        width: "100px",
+        height: "50px",
+        top: "-10px",
+    }
 });
 
 var PreOrPostHack = "pre";
@@ -147,15 +154,17 @@ class SimpleConnections extends React.Component {
         const { classes } = this.props;
         return (<div>
                     <FormControl className={classes.formControl}>
-                    <TextField 
-                        label="Neuron name"
-                        multiline
-                        rows={1}
-                        value={this.state.qsParams.neuronpre}
-                        rowsMax={4}
-                        className={classes.textField}
-                        onChange={this.handleClick}
-                    />
+                    <NeuronHelp>
+                        <TextField 
+                            label="Neuron name"
+                            multiline
+                            rows={1}
+                            value={this.state.qsParams.neuronpre}
+                            rowsMax={4}
+                            className={classes.textField}
+                            onChange={this.handleClick}
+                        />
+                    </NeuronHelp>
                     </FormControl>
                     <FormControl component="fieldset" required className={classes.formControl}>
                         <FormLabel component="legend">Neuron Direction</FormLabel>
