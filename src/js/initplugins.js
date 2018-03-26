@@ -9,8 +9,9 @@ import FreeForm from './components/plugins/FreeForm.react';
 import SimpleConnections from './components/plugins/SimpleConnections.react';
 import RankedTable from './components/plugins/RankedTable.react';
 import NeuronsInROIs from './components/plugins/NeuronsInROIs.react';
+import ROIsIntersectingNeurons from './components/plugins/ROIsIntersectingNeurons.react';
 
-const pluginList = [FreeForm, SimpleConnections, RankedTable, NeuronsInROIs];
+const pluginList = [FreeForm, SimpleConnections, RankedTable, NeuronsInROIs, ROIsIntersectingNeurons];
 
 export default function loadPlugins(store) {
     store.dispatch({type: 'INIT_PLUGINS', pluginList: pluginList});

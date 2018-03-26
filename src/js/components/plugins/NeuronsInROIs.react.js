@@ -51,7 +51,6 @@ function compareNeuronRows(row1, row2) {
     }
 
     return total2 - total;
-
 }
 
 const styles = theme => ({

@@ -241,7 +241,7 @@ class RankedTable extends React.Component {
             if (isNaN(this.state.qsParams.neuronsrc)) {
                 neoquery = mainQuery.replace("ZZ", 'm.name =~"' + this.state.qsParams.neuronsrc + '"');
             } else {
-                neoquery = mainQuery.replace("ZZ", 'm.bodyId ="' + this.state.qsParams.neuronsrc + '"');
+                neoquery = mainQuery.replace("ZZ", 'm.bodyId =' + this.state.qsParams.neuronsrc);
             }
             neoquery = neoquery.replace(/YY/g, this.props.datasetstr)
             PreOrPostHack = this.state.qsParams.preorpost;
