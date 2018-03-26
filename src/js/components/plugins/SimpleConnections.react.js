@@ -14,7 +14,14 @@ import { withStyles } from 'material-ui/styles';
 import { LoadQueryString, SaveQueryString } from '../../qsparser';
 import {connect} from 'react-redux';
 
-const mainQuery = 'match (m:NeuronYY)-[e:ConnectsTo]->(n:NeuronYY) where ZZ return m.name as NeuronPre, n.name as NeuronPost, e.weight as Weight, m.bodyId as Body order by m.bodyId, e.weight desc';
+const mainQuery = 'match (m:NeuronYY)-[e:ConnectsTo]->(n:NeuronYY) where ZZ return m.name as Neuron1, n.name as Neuron2, n.bodyId as Neuron2Id, e.weight as Weight, m.bodyId as Neuron1Id order by m.name, m.bodyId, e.weight desc';
+
+function convert64bit(value) {
+    return neo4j.isInt(value) ?
+        (neo4j.integer.inSafeRange(value) ? 
+            value.toNumber() : value.toString()) 
+        : value;
+}
 
 const styles = theme => ({
   textField: {
@@ -47,54 +54,38 @@ class SimpleConnections extends React.Component {
         // load one table from neoResults
         var tables = [];
         var maindata = [];
-        var headerdata = [];
+        var headerdata = ["Name", "Body ID", "Weight"];
         var currtable = [];
         var lastbody = -1;
-
-        // grab headers
-        if (neoResults.records.length > 0) {
-            for(var i = 0; i< (neoResults.records[0].length-1); i++) { 
-                 headerdata.push(neoResults.records[0].keys[i]);
-            }
-        }
 
         var currname = "";
         var lastname = "";
         // retrieve records
         neoResults.records.forEach(function (record) {
-            var recorddata = [];
-            record.forEach( function (value, key, rec) {
-                var newval = neo4j.isInt(value) ?
-                        (neo4j.integer.inSafeRange(value) ? 
-                            value.toNumber() : value.toString()) 
-                        : value;
+            var newval = convert64bit(record.get("Neuron1Id"));  
+            if ((lastbody !== -1) && (newval !== lastbody)) {
+                tables.push({
+                    header: headerdata,
+                    body: currtable,
+                    name: lastname + " id=(" + String(lastbody) + ") => ...",
+                });
+                currtable = [];
+            } 
+            lastbody = newval; 
+            lastname = record.get("Neuron1");
 
-                if (key === "Body") {
-                    if ((lastbody !== -1) && (newval !== lastbody)) {
-                        tables.push({
-                            header: headerdata,
-                            body: currtable,
-                            name: "Connections from " + lastname + " id=(" + String(lastbody) + ")",
-                        });
-                        currtable = [];
-                    } 
-                    lastbody = newval; 
-                } else {
-                    if (key === "NeuronPre") {
-                        lastname = currname;
-                        currname = value;
-                    }
-                    recorddata.push(newval);
-                }
-            });
-            currtable.push(recorddata);
+            currtable.push([
+                record.get("Neuron2"), 
+                convert64bit(record.get("Neuron2Id")), 
+                convert64bit(record.get("Weight")) 
+            ]);
         });
         
         if (lastbody !== -1) {
             tables.push({
                 header: headerdata,
                 body: currtable,
-                name: "Connections from " + lastname + " id=(" + String(lastbody) + ")",
+                name: lastname + " id=(" + String(lastbody) + ") => ...",
             });
         }
 
