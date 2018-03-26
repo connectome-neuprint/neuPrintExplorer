@@ -5,7 +5,6 @@
 "use strict"
 
 import React from 'react';
-import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
 import { FormControl } from 'material-ui/Form';
 import PropTypes from 'prop-types';
@@ -45,7 +44,7 @@ function convert64bit(value) {
 function compareNeuronRows(row1, row2) {
     var total = 0;
     var total2 = 0;
-    for (var i = 2; i < row1.length; i++) {
+    for (let i = 2; i < row1.length; i++) {
         total += row1[i];
         total2 += row2[i];
     }
@@ -78,19 +77,7 @@ class NeuronsInROIs extends React.Component {
     static get queryDescription() {
         return "Find neurons that have inputs or outputs in ROIs";
     }
-
-    constructor(props) {
-        super(props);
-        var initqsParams = {
-            InputROIs: [],
-            OutputROIs: []
-        }
-        var qsParams = LoadQueryString("Query:" + this.constructor.queryName, initqsParams, this.props.urlQueryString);
-        this.state = {
-            qsParams: qsParams
-        };
-    }
-  
+ 
     static parseResults(neoResults) {
         var inputneuronROIs = {};
         var outputneuronROIs = {};
@@ -105,7 +92,7 @@ class NeuronsInROIs extends React.Component {
             }
 
             var rois = record.get("rois");
-            for (var item in rois) {
+            for (let item in rois) {
                 if (inputROIsHack.indexOf(rois[item]) !== -1) {
                     var presize = convert64bit(record.get("pre"));
                     if (presize > 0) {
@@ -127,16 +114,16 @@ class NeuronsInROIs extends React.Component {
       
         var titlename = "Neurons with inputs in: " + JSON.stringify(inputROIsHack) + " and outputs in: " + JSON.stringify(outputROIsHack); 
         
-        for (var item in inputROIsHack) {
+        for (let item in inputROIsHack) {
             headerdata.push("In:" + inputROIsHack[item]);
         }
-        for (var item in outputROIsHack) {
+        for (let item in outputROIsHack) {
             headerdata.push("Out:" + outputROIsHack[item]);
         }
 
         // load table body
         var tableinfo = [];
-        for (var bodyid in neuronnames) {
+        for (let bodyid in neuronnames) {
             if (Object.keys(inputneuronROIs[bodyid]).length !== inputROIsHack.length) {
                 continue;
             }
@@ -147,10 +134,10 @@ class NeuronsInROIs extends React.Component {
             var presizes = inputneuronROIs[bodyid];
             var postsizes = outputneuronROIs[bodyid];
 
-            for (var index = 0; index < inputROIsHack.length; index++) {
+            for (let index = 0; index < inputROIsHack.length; index++) {
                 rowinfo.push(presizes[inputROIsHack[index]]);
             }
-            for (var index = 0; index < outputROIsHack.length; index++) {
+            for (let index = 0; index < outputROIsHack.length; index++) {
                 rowinfo.push(postsizes[outputROIsHack[index]]);
             }
             tableinfo.push(rowinfo);
@@ -168,7 +155,19 @@ class NeuronsInROIs extends React.Component {
         return tables;
     }
 
-    processRequest = (event) => {
+    constructor(props) {
+        super(props);
+        var initqsParams = {
+            InputROIs: [],
+            OutputROIs: []
+        }
+        var qsParams = LoadQueryString("Query:" + this.constructor.queryName, initqsParams, this.props.urlQueryString);
+        this.state = {
+            qsParams: qsParams
+        };
+    }
+
+    processRequest = () => {
         if ((this.state.qsParams.InputROIs.length > 0) ||
             (this.state.qsParams.OutputROIs.length > 0)) {
    
@@ -177,10 +176,10 @@ class NeuronsInROIs extends React.Component {
 
             // parse ROIs
             var roisstr = "";
-            for (var item in this.state.qsParams.InputROIs) {
+            for (let item in this.state.qsParams.InputROIs) {
                 roisstr = roisstr + ":" + this.state.qsParams.InputROIs[item];
             }
-            for (var item in this.state.qsParams.OutputROIs) {
+            for (let item in this.state.qsParams.OutputROIs) {
                 roisstr = roisstr + ":" + this.state.qsParams.OutputROIs[item];
             }
 
@@ -227,7 +226,12 @@ class NeuronsInROIs extends React.Component {
                         input={<Input id="select-multiple-chip" />}
                         renderValue={selected => (
                             <div className={classes.chips}>
-                                {selected.map(value => <Chip key={value} label={value} className={classes.chip} />)}
+                                {selected.map(value => (<Chip
+                                                            key={value}
+                                                            label={value}
+                                                            className={classes.chip} 
+                                                        />)
+                                )}
                             </div>
                         )}
                         MenuProps={MenuProps}
@@ -257,7 +261,12 @@ class NeuronsInROIs extends React.Component {
                         input={<Input id="select-multiple-chip" />}
                         renderValue={selected => (
                             <div className={classes.chips}>
-                                {selected.map(value => <Chip key={value + "_post"} label={value} className={classes.chip} />)}
+                                {selected.map(value => (<Chip 
+                                                            key={value + "_post"}
+                                                            label={value}
+                                                            className={classes.chip} 
+                                                        />)
+                                )}
                             </div>
                         )}
                         MenuProps={MenuProps}

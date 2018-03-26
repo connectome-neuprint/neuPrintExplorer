@@ -7,19 +7,12 @@
 
 import React from 'react';
 import Typography from 'material-ui/Typography';
-import SimpleTable from './SimpleTable.react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
-import ExpansionPanel, {
-  ExpansionPanelSummary,
-  ExpansionPanelDetails,
-} from 'material-ui/ExpansionPanel';
-import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
 import Table, {
   TableBody,
   TableCell,
   TableFooter,
-  TableHead,
   TablePagination,
   TableRow,
 } from 'material-ui/Table';
@@ -28,7 +21,6 @@ import FirstPageIcon from 'material-ui-icons/FirstPage';
 import KeyboardArrowLeft from 'material-ui-icons/KeyboardArrowLeft';
 import KeyboardArrowRight from 'material-ui-icons/KeyboardArrowRight';
 import LastPageIcon from 'material-ui-icons/LastPage';
-import Link from 'react-router-dom';
 import { connect } from 'react-redux';
 import _ from "underscore";
 
@@ -111,7 +103,7 @@ const TablePaginationActionsWrapped = withStyles(actionsStyles, { withTheme: tru
   TablePaginationActions,
 );
 
-const styles = theme => ({
+const styles = () => ({
   root: {
     width: '80%',
   },
@@ -133,7 +125,20 @@ class Favorites extends React.Component {
         };
         this.fetchBookmarks(props);
     }
-    
+
+    componentWillReceiveProps(nextProps) {
+        nextProps.location["search"] = this.props.location["search"];
+        if (!_.isEqual(nextProps, this.props)) {
+            this.fetchBookmarks(nextProps);        
+        }
+    }
+
+    // if only query string has updated, prevent re-render
+    shouldComponentUpdate(nextProps, nextState) {
+        nextProps.location["search"] = this.props.location["search"];
+        return ((!_.isEqual(nextProps, this.props)) || (!_.isEqual(nextState, this.state)));
+    }
+
     fetchBookmarks = (props) => {
         if (props.userInfo !== null) {
             // fetch favorites and add to state
@@ -159,13 +164,6 @@ class Favorites extends React.Component {
         }
     }
 
-    componentWillReceiveProps(nextProps) {
-        nextProps.location["search"] = this.props.location["search"];
-        if (!_.isEqual(nextProps, this.props)) {
-            this.fetchBookmarks(nextProps);        
-        }
-    }
-
     handleChangePage = (event, page) => {
         this.setState({ page });
     };
@@ -174,11 +172,6 @@ class Favorites extends React.Component {
         this.setState({ rowsPerPage: event.target.value });
     };
 
-    // if only query string has updated, prevent re-render
-    shouldComponentUpdate(nextProps, nextState) {
-        nextProps.location["search"] = this.props.location["search"];
-        return ((!_.isEqual(nextProps, this.props)) || (!_.isEqual(nextState, this.state)));
-    }
 
     // TODO: add favorites deletion
     render() {

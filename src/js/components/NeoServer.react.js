@@ -8,18 +8,14 @@ import React from 'React';
 import { connect } from 'react-redux';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
-import SettingsIcon from 'material-ui-icons/Settings';
-import IconButton from 'material-ui/IconButton';
 import Icon from 'material-ui/Icon';
-import Warning from 'material-ui-icons/Warning';
 import Badge from 'material-ui/Badge';
-
+import PropTypes from 'prop-types';
 
 import {withStyles} from 'material-ui/styles';
 import Dialog, {
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
 } from 'material-ui/Dialog';
 
@@ -104,7 +100,9 @@ class NeoServer extends React.Component {
                     (
                     <Badge color="error"
                             classes={{badge: classes.badgeIcon}}
-                            badgeContent={"!"} className={classes.badge}>
+                            badgeContent={"!"}
+                            className={classes.badge}
+                    >
                         <Button className={classes.padding}
                                 aria-label="Settings"
                                 onClick={this.handleClickOpen}>
@@ -139,7 +137,10 @@ class NeoServer extends React.Component {
                         />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.handleSave} color="primary">
+                        <Button 
+                                onClick={this.handleSave}
+                                color="primary"
+                        >
                             Save 
                         </Button>
                     </DialogActions>
@@ -148,6 +149,14 @@ class NeoServer extends React.Component {
         );
     }
 }
+
+NeoServer.propTypes = {
+    classes: PropTypes.object,
+    setNeoServer: PropTypes.func,
+    neoServer: PropTypes.string,
+};
+
+
 
 var NeoServerState = function(state) {
     return {

@@ -19,7 +19,6 @@ import Table, {
   TableBody,
   TableCell,
   TableFooter,
-  TableHead,
   TablePagination,
   TableRow,
 } from 'material-ui/Table';

@@ -14,7 +14,7 @@ var neo4j = require('neo4j-driver').v1;
 import { withStyles } from 'material-ui/styles';
 import { LoadQueryString, SaveQueryString } from '../../qsparser';
 import Radio, { RadioGroup } from 'material-ui/Radio';
-import { FormLabel, FormControl, FormControlLabel, FormHelperText } from 'material-ui/Form';
+import { FormLabel, FormControl, FormControlLabel } from 'material-ui/Form';
 import Typography from 'material-ui/Typography';
 import {connect} from 'react-redux';
 import NeuronHelp from '../NeuronHelp.react';
@@ -31,7 +31,7 @@ function convert64bit(value) {
 var PreOrPostHack = "pre";
 var NeuronSrcHack = "";
 
-const styles = theme => ({
+const styles = () => ({
   textField: {
   },
   formControl: {
@@ -65,10 +65,6 @@ or
 #33a02c
 */
 
-const cellpadding = {
-    padding: "1em",
-};
-
 class RankCell extends React.Component {
     render() {
         return (
@@ -89,19 +85,7 @@ class RankedTable extends React.Component {
     static get queryDescription() {
         return "Show connections to neuron(s) ranked in order and colored by neuron class";
     }
-
-    constructor(props) {
-        super(props);
-        var initqsParams = {
-            neuronsrc: "",
-            preorpost: "pre",
-        }
-        var qsParams = LoadQueryString("Query:" + this.constructor.queryName, initqsParams, this.props.urlQueryString);
-        this.state = {
-            qsParams: qsParams
-        };
-    }
-    
+   
     static parseResults(neoResults) {
         // create one comparison table
         var tables = [];
@@ -152,7 +136,7 @@ class RankedTable extends React.Component {
         
         // load colors
         var count = 0;
-        for (var type in type2color) {
+        for (let type in type2color) {
             type2color[type] = count % colorArray.length;
             count += 1;
         }
@@ -183,19 +167,24 @@ class RankedTable extends React.Component {
                     lastbody = body1;
                
                     // set first cell element
-                    var neuronmatch = record.get("Neuron1");
-                    if (neuronmatch === null) {
-                        neuronmatch = body1;
+                    var neuronmatch1 = record.get("Neuron1");
+                    if (neuronmatch1 === null) {
+                        neuronmatch1 = body1;
                     }
-                    rowstats.push(neuronmatch);
-                    rowcomps.push(<Typography variant="body1" align="center">{neuronmatch}</Typography>);
+                    rowstats.push(neuronmatch1);
+                    rowcomps.push(<Typography 
+                                              variant="body1"
+                                              align="center"
+                                  >
+                                  {neuronmatch1}
+                                  </Typography>);
                 }
 
-                var neuronmatch = record.get("Neuron2");
-                if (neuronmatch === null) {
-                    neuronmatch = convert64bit(record.get("Body2"));
+                var neuronmatch2 = record.get("Neuron2");
+                if (neuronmatch2 === null) {
+                    neuronmatch2 = convert64bit(record.get("Body2"));
                 }
-                rowstats.push(neuronmatch);
+                rowstats.push(neuronmatch2);
 
                 // add custom cell element 
                 var weight = convert64bit(record.get("Weight"));
@@ -211,7 +200,7 @@ class RankedTable extends React.Component {
                     weight2 = reversecounts[body2][body1];
                 }
 
-                rowcomps.push(<RankCell name={neuronmatch}
+                rowcomps.push(<RankCell name={neuronmatch2}
                                         weight={weight}
                                         reverse={weight2}
                                         color={typecolor}
@@ -229,14 +218,26 @@ class RankedTable extends React.Component {
             
         // load headers based on max number of columns
         headerdata.push("neuron");
-        for (var i = 1; i < maxcols; i++) {
+        for (let i = 1; i < maxcols; i++) {
             headerdata.push("#" + String(i));
         }
 
         return tables;
     }
 
-    processRequest = (event) => {
+    constructor(props) {
+        super(props);
+        var initqsParams = {
+            neuronsrc: "",
+            preorpost: "pre",
+        }
+        var qsParams = LoadQueryString("Query:" + this.constructor.queryName, initqsParams, this.props.urlQueryString);
+        this.state = {
+            qsParams: qsParams
+        };
+    }
+
+    processRequest = () => {
         if (this.state.qsParams.neuronsrc !== "") {
             var neoquery = "";
             if (isNaN(this.state.qsParams.neuronsrc)) {
@@ -281,7 +282,11 @@ class RankedTable extends React.Component {
                         />
                         </NeuronHelp>
                     </FormControl>
-                    <FormControl component="fieldset" required className={classes.formControl}>
+                    <FormControl
+                                component="fieldset"
+                                required
+                                className={classes.formControl}
+                    >
                         <FormLabel component="legend">Neuron Direction</FormLabel>
                         <RadioGroup
                                     aria-label="preorpost"
@@ -290,8 +295,16 @@ class RankedTable extends React.Component {
                                     value={this.state.qsParams.preorpost}
                                     onChange={this.setDirection}
                         >
-                            <FormControlLabel value="pre" control={<Radio />} label="Pre-synaptic" />
-                            <FormControlLabel value="post" control={<Radio />} label="Post-synaptic" />
+                            <FormControlLabel 
+                                                value="pre"
+                                                control={<Radio />}
+                                                label="Pre-synaptic"
+                            />
+                            <FormControlLabel
+                                                value="post"
+                                                control={<Radio />}
+                                                label="Post-synaptic"
+                            />
                         </RadioGroup>
                     </FormControl> 
                     <Button

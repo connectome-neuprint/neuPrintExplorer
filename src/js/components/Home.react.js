@@ -7,6 +7,7 @@ import React from 'react';
 import Typography from 'material-ui/Typography';
 import { Redirect } from 'react-router-dom';
 import _ from "underscore";
+import PropTypes from 'prop-types';
 
 export class Home extends React.Component {
     // if only query string has updated, prevent re-render
@@ -27,10 +28,15 @@ export class Home extends React.Component {
                     Analysis tools for conenctomics
                 </Typography>
                 <Typography variant="body1">
-                    ConnectomeAnalyzer provides tools to query and visualize connectomic data stored in a neo4j database.
+                    ConnectomeAnalyzer provides tools to query and visualize connectomic data stored in a neo4j database.  More information on this tool and underlying data model can be found <a href="https://github.com/janelia-flyem/ConnectomeAnalyzer">here</a>.
                 </Typography>
             </div>
         );
     }
 }
 
+Home.propTypes = {
+    location: PropTypes.shape({
+        search: PropTypes.string.isRequired
+    })
+}

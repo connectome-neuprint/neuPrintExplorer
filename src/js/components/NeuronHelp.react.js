@@ -1,5 +1,5 @@
 /*
- * Home page contains basic information for the page.
+ * Debug pop-up for neuron text fields.
 */
 
 "use strict";
@@ -8,8 +8,9 @@ import Typography from 'material-ui/Typography';
 import Tooltip from 'material-ui/Tooltip';
 import { withStyles } from 'material-ui/styles';
 import Badge from 'material-ui/Badge';
+import PropTypes from 'prop-types';
 
-const styles = theme => ({
+const styles = () => ({
     badge: {
         right: "-10px",
         width: "100px",
@@ -41,6 +42,12 @@ class NeuronHelp extends React.Component {
             </Badge>
         );
     }
+}
+
+NeuronHelp.propTypes = {
+    children: PropTypes.element.isRequired,
+    classes: PropTypes.object,
+
 }
 
 export default withStyles(styles)(NeuronHelp);

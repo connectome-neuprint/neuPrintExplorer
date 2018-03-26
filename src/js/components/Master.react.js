@@ -17,7 +17,7 @@ import {Home} from './Home.react';
 import List from 'material-ui/List';
 import Icon from 'material-ui/Icon';
 import classNames from 'classnames';
-import { Redirect, NavLink, Link, Switch } from 'react-router-dom';
+import { Link, Switch } from 'react-router-dom';
 import Button from 'material-ui/Button';
 import qs from 'qs';
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
@@ -165,9 +165,17 @@ class Master extends React.Component {
         
         return (
             <div className={classes.root}>    
-                <AppBar position="absolute" className={classes.appBar}>
+                <AppBar 
+                        position="absolute" 
+                        className={classes.appBar}
+                >
                     <Toolbar>
-                        <Typography variant="title" color="inherit" className={classes.flex} noWrap>
+                        <Typography 
+                                    variant="title"
+                                    color="inherit"
+                                    className={classes.flex}
+                                    noWrap
+                        >
                             Connectome Analyzer    
                         </Typography>
                         <div className={classes.buttonWrap}>
@@ -178,7 +186,7 @@ class Master extends React.Component {
                                     clientId="274750196357-an9v0e8u0q0gmtt1ipv6riv18i77vatm.apps.googleusercontent.com"
                                     buttonText="Login"
                                     onSuccess={this.loginGoogle}
-                                    onFailure={(response) => { alert("Login Failed")}}
+                                    onFailure={() => { alert("Login Failed")}}
                                     isSignedIn="true"
                                 />
                             ) :
@@ -188,7 +196,10 @@ class Master extends React.Component {
                                             ref="userbutton"    
                                             className={classes.buttonBasic}
                                             onClick={this.launchUserPopup}>
-                                        <img src={this.props.userInfo.profileObj.imageUrl} className={classes.icon} />
+                                        <img 
+                                                src={this.props.userInfo.profileObj.imageUrl}
+                                                className={classes.icon} 
+                                        />
                                     </Button>
                                     <Popover
                                             open={this.state.openUser}

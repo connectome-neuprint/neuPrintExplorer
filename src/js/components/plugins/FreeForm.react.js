@@ -15,7 +15,7 @@ import { LoadQueryString, SaveQueryString } from '../../qsparser';
 import {connect} from 'react-redux';
 
 
-const styles = theme => ({
+const styles = () => ({
   textField: {
     width: 300
   },
@@ -31,18 +31,7 @@ class FreeForm extends React.Component {
     static get queryDescription() {
         return "Enter custom Neo4j Cypher query";
     }
-
-    constructor(props) {
-        super(props);
-        var initqsParams = {
-            textValue: "",
-        }
-        var qsParams = LoadQueryString("Query:" + this.constructor.queryName, initqsParams, this.props.urlQueryString);
-        this.state = {
-            qsParams: qsParams
-        };
-    }
-    
+  
     static parseResults(neoResults) {
         // load one table from neoResults
         var tables = [];
@@ -51,7 +40,7 @@ class FreeForm extends React.Component {
 
         neoResults.records.forEach(function (record) {
             var recorddata = [];
-            record.forEach( function (value, key, rec) {
+            record.forEach( function (value) {
                 var newval = neo4j.isInt(value) ?
                         (neo4j.integer.inSafeRange(value) ? 
                             value.toNumber() : value.toString()) 
@@ -77,6 +66,17 @@ class FreeForm extends React.Component {
         return tables;
     }
 
+    constructor(props) {
+        super(props);
+        var initqsParams = {
+            textValue: "",
+        }
+        var qsParams = LoadQueryString("Query:" + this.constructor.queryName, initqsParams, this.props.urlQueryString);
+        this.state = {
+            qsParams: qsParams
+        };
+    }
+  
     processRequest = () => {
         this.props.callback(this.state.qsParams.textValue);
     }
@@ -125,7 +125,10 @@ class FreeForm extends React.Component {
 
 FreeForm.propTypes = {
     callback: PropTypes.func,
-    disable: PropTypes.bool
+    disable: PropTypes.bool,
+    urlQueryString: PropTypes.string,
+    classes: PropTypes.object,
+    setURLQs: PropTypes.func,
 };
 
 var FreeFormState = function(state){

@@ -10,7 +10,7 @@ import Button from 'material-ui/Button';
 import PropTypes from 'prop-types';
 var neo4j = require('neo4j-driver').v1;
 import Radio, { RadioGroup } from 'material-ui/Radio';
-import { FormLabel, FormControl, FormControlLabel, FormHelperText } from 'material-ui/Form';
+import { FormLabel, FormControl, FormControlLabel } from 'material-ui/Form';
 import { withStyles } from 'material-ui/styles';
 import { LoadQueryString, SaveQueryString } from '../../qsparser';
 import {connect} from 'react-redux';
@@ -25,7 +25,7 @@ function convert64bit(value) {
         : value;
 }
 
-const styles = theme => ({
+const styles = () => ({
     textField: {
     },
     formControl: {
@@ -48,28 +48,14 @@ class SimpleConnections extends React.Component {
     static get queryDescription() {
         return "List inputs or outputs to provided neuron(s)";
     }
-
-    constructor(props) {
-        super(props);
-        var initqsParams = {
-            neuronpre: "",
-            preorpost: "pre",
-        }
-        var qsParams = LoadQueryString("Query:" + this.constructor.queryName, initqsParams, this.props.urlQueryString);
-        this.state = {
-            qsParams: qsParams
-        };
-    }
-    
+   
     static parseResults(neoResults) {
         // load one table from neoResults
         var tables = [];
-        var maindata = [];
         var headerdata = ["Name", "Body ID", "Weight"];
         var currtable = [];
         var lastbody = -1;
 
-        var currname = "";
         var lastname = "";
         // retrieve records
         neoResults.records.forEach(function (record) {
@@ -117,7 +103,19 @@ class SimpleConnections extends React.Component {
         return tables;
     }
 
-    processRequest = (event) => {
+    constructor(props) {
+        super(props);
+        var initqsParams = {
+            neuronpre: "",
+            preorpost: "pre",
+        }
+        var qsParams = LoadQueryString("Query:" + this.constructor.queryName, initqsParams, this.props.urlQueryString);
+        this.state = {
+            qsParams: qsParams
+        };
+    }
+ 
+    processRequest = () => {
         if (this.state.qsParams.neuronpre !== "") {
             var neoquery = ""; 
             if (isNaN(this.state.qsParams.neuronpre)) {
@@ -166,7 +164,10 @@ class SimpleConnections extends React.Component {
                         />
                     </NeuronHelp>
                     </FormControl>
-                    <FormControl component="fieldset" required className={classes.formControl}>
+                    <FormControl    component="fieldset"
+                                    required
+                                    className={classes.formControl}
+                    >
                         <FormLabel component="legend">Neuron Direction</FormLabel>
                         <RadioGroup
                                     aria-label="preorpost"
@@ -175,8 +176,16 @@ class SimpleConnections extends React.Component {
                                     value={this.state.qsParams.preorpost}
                                     onChange={this.setDirection}
                         >
-                            <FormControlLabel value="pre" control={<Radio />} label="Pre-synaptic" />
-                            <FormControlLabel value="post" control={<Radio />} label="Post-synaptic" />
+                            <FormControlLabel
+                                                value="pre"
+                                                control={<Radio />}
+                                                label="Pre-synaptic" 
+                            />
+                            <FormControlLabel
+                                                value="post"
+                                                control={<Radio />} 
+                                                label="Post-synaptic"
+                            />
                         </RadioGroup>
                     </FormControl> 
                     <Button

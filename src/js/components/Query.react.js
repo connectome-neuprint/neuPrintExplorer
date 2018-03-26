@@ -13,7 +13,6 @@ import { MenuItem } from 'material-ui/Menu';
 import { FormControl } from 'material-ui/Form';
 import Select from 'material-ui/Select';
 import Input, { InputLabel } from 'material-ui/Input';
-import Grid from 'material-ui/Grid';
 import Divider from 'material-ui/Divider';
 import { withStyles } from 'material-ui/styles';
 import { LoadQueryString, SaveQueryString, RemoveQueryString } from '../qsparser';
@@ -172,7 +171,11 @@ class Query extends React.Component {
                         input={<Input id="select-multiple-chip" />}
                         renderValue={selected => (
                             <div className={classes.chips}>
-                                {selected.map(value => <Chip key={value} label={value} className={classes.chip} />)}
+                                {selected.map(value => (<Chip key={value}
+                                                            label={value}
+                                                            className={classes.chip}
+                                                        />)
+                                )}
                             </div>
                         )}
                         MenuProps={MenuProps}
@@ -194,7 +197,10 @@ class Query extends React.Component {
                     </Select>
                 </FormControl>
                 <Divider className={classes.divider} />
-                <QueryForm queryType={querytype} datasetstr={datasetstr} />
+                <QueryForm 
+                            queryType={querytype}
+                            datasetstr={datasetstr} 
+                />
             </div>
         );
     }

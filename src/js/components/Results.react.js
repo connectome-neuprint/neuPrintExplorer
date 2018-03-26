@@ -46,6 +46,12 @@ class Results extends React.Component {
         }
     }
 
+    // if only query string has updated, prevent re-render
+    shouldComponentUpdate(nextProps, nextState) {
+        nextProps.location["search"] = this.props.location["search"];
+        return (!_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state));
+    }
+
     handleClose = () => {
         this.setState({open: false});
     }
@@ -56,7 +62,7 @@ class Results extends React.Component {
 
     downloadFile = () => {
         var csvdata = "";
-        this.props.allTables.map( (tableinfo, index) => {
+        this.props.allTables.map( (tableinfo) => {
             // load one table -- fixed width
             
             // load table name
@@ -68,14 +74,14 @@ class Results extends React.Component {
             csvdata = csvdata + "\n";
 
             // load headers
-            tableinfo.header.map( (headinfo, hindex) => {
+            tableinfo.header.map( (headinfo) => {
                 csvdata = csvdata + headinfo + ",";
             });
             csvdata = csvdata + "\n";
 
             // load data
-            tableinfo.body.map( (rowinfo, bindex) => {
-                rowinfo.map( (elinfo, bindex) => {
+            tableinfo.body.map( (rowinfo) => {
+                rowinfo.map( (elinfo) => {
                     csvdata = csvdata + JSON.stringify(elinfo) + ",";
                 });
                 csvdata = csvdata + "\n";
@@ -113,25 +119,34 @@ class Results extends React.Component {
         }
     }
 
-    // if only query string has updated, prevent re-render
-    shouldComponentUpdate(nextProps, nextState) {
-        nextProps.location["search"] = this.props.location["search"];
-        return (!_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state));
-    }
-
     render() {
         // TODO: show query runtime results
         const { classes } = this.props; 
 
         return (
             <div>
-                <Grid container spacing={24}>
-                    <Grid item xs={8} className={classes.align}>
+                <Grid 
+                        container 
+                        spacing={24}
+                >
+                    <Grid 
+                            item
+                            xs={8}
+                            className={classes.align}
+                    >
                     <Typography variant="title">Query Results</Typography>
                     </Grid>
                     { (this.props.userInfo !== null && this.props.allTables !== null) ? (
-                        <Grid item xs={2}>
-                        <Button className={classes.button} variant="raised" color="primary" onClick={this.openPopup}>
+                        <Grid 
+                                item 
+                                xs={2}
+                        >
+                        <Button
+                                className={classes.button}
+                                variant="raised"
+                                color="primary"
+                                onClick={this.openPopup}
+                        >
                             Bookmark
                             <Icon>star</Icon>
                         </Button>
@@ -155,10 +170,14 @@ class Results extends React.Component {
                                 />
                             </DialogContent>
                             <DialogActions>
-                                <Button onClick={this.handleClose} color="primary">
+                                <Button
+                                        onClick={this.handleClose}
+                                        color="primary">
                                     Cancel
                                 </Button>
-                                <Button onClick={this.addFavorite} color="primary">
+                                <Button 
+                                        onClick={this.addFavorite}
+                                        color="primary">
                                     Save
                                 </Button>
                             </DialogActions>
@@ -169,8 +188,16 @@ class Results extends React.Component {
                       )
                     }
                     { (this.props.allTables !== null) ? (
-                        <Grid item xs={2}>
-                        <IconButton color="primary" className={classes.button} aria-label="Download data" onClick={this.downloadFile}>
+                        <Grid 
+                                item 
+                                xs={2}
+                        >
+                        <IconButton
+                                    color="primary"
+                                    className={classes.button}
+                                    aria-label="Download data"
+                                    onClick={this.downloadFile}
+                        >
                             <Icon>file_download</Icon>
                         </IconButton>
 
@@ -195,7 +222,10 @@ class Results extends React.Component {
                 { ((this.props.neoError !== null) || (this.props.allTables !== null)) ?
                     ( 
                         <div>
-                        <Button onClick={() => { this.setState({showQuery: !this.state.showQuery}) }} color="primary">
+                        <Button
+                                onClick={() => { this.setState({showQuery: !this.state.showQuery}) }}
+                                color="primary"
+                        >
                             { this.state.showQuery ? "Hide Query" : "Show Query" }
                         </Button>
                         { (this.state.showQuery) ? 

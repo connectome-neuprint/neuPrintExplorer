@@ -6,8 +6,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Fade from 'material-ui/transitions/Fade';
-import { CircularProgress } from 'material-ui/Progress';
 import Snackbar from 'material-ui/Snackbar';
 //import { Redirect } from 'react-router-dom';
 import { withRouter } from 'react-router-dom';
@@ -94,7 +92,11 @@ class QueryForm extends React.Component {
                 /> 
                 <Typography variant="body1">{CurrentQuery.queryDescription}</Typography>
                 <Divider className={classes.divider} />
-                <CurrentQuery datasetstr={this.props.datasetstr} callback={this.submitQuery} disable={this.props.isQuerying} />
+                <CurrentQuery
+                                datasetstr={this.props.datasetstr}
+                                callback={this.submitQuery}
+                                disable={this.props.isQuerying}
+                />
             </div>
         );
     }

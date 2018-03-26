@@ -26,7 +26,7 @@ function convert64bit(value) {
         : value;
 }
 
-const styles = theme => ({
+const styles = () => ({
   textField: {
   },
   formControl: {
@@ -36,7 +36,7 @@ const styles = theme => ({
 function compareNeuronRows1plus(row1, row2) {
     var total = 0;
     var total2 = 0;
-    for (var i = 1; i < row1.length; i++) {
+    for (let i = 1; i < row1.length; i++) {
         total += row1[i];
         total2 += row2[i];
     }
@@ -61,17 +61,6 @@ class ROIsIntersectingNeurons extends React.Component {
         return "Find ROIs that intersect a given neuron(s).  A putative name is given based on top two ROI inputs and outputs";
     }
 
-    constructor(props) {
-        super(props);
-        var initqsParams = {
-            neuronsrc: "",
-        }
-        var qsParams = LoadQueryString("Query:" + this.constructor.queryName, initqsParams, this.props.urlQueryString);
-        this.state = {
-            qsParams: qsParams
-        };
-    }
-
     static parseResults(neoResults) {
         var tableBody = {}
         var tables = [];
@@ -86,20 +75,20 @@ class ROIsIntersectingNeurons extends React.Component {
             }
           
             var rois = record.get("rois");
-            for (var item in rois) {
+            for (let item in rois) {
                 if (availableROIsHack.indexOf(rois[item]) !== -1) {
                     tableBody[bodyid]["body"].push([rois[item], convert64bit(record.get("pre")), convert64bit(record.get("post"))]);
                 }
             }
         });
         
-        for (var item in tableBody) {
+        for (let item in tableBody) {
             var data = tableBody[item]["body"];
             
             // grab name based on top two ids
             data.sort(compareNeuronRows1); // sort by pre
             var prename = "";
-            for (var i = 0; i < data.length; i++) {
+            for (let i = 0; i < data.length; i++) {
                 if (i == 2 || data[i][1] === null) {
                     break;
                 }
@@ -107,7 +96,7 @@ class ROIsIntersectingNeurons extends React.Component {
             }
             data.sort(compareNeuronRows2); // sort by post
             var postname = "";
-            for (var i = 0; i < data.length; i++) {
+            for (let i = 0; i < data.length; i++) {
                 if (i == 2 || data[i][2] === null) {
                     break;
                 }
@@ -123,7 +112,18 @@ class ROIsIntersectingNeurons extends React.Component {
         return tables;
     }
 
-    processRequest = (event) => {
+    constructor(props) {
+        super(props);
+        var initqsParams = {
+            neuronsrc: "",
+        }
+        var qsParams = LoadQueryString("Query:" + this.constructor.queryName, initqsParams, this.props.urlQueryString);
+        this.state = {
+            qsParams: qsParams
+        };
+    }
+
+    processRequest = () => {
         if (this.state.qsParams.neuronsrc !== "") {
             availableROIsHack = this.props.availableROIs;
             var neoquery = "";
@@ -170,7 +170,12 @@ class ROIsIntersectingNeurons extends React.Component {
 
 ROIsIntersectingNeurons.propTypes = {
     callback: PropTypes.func,
-    disable: PropTypes.bool
+    disable: PropTypes.bool,
+    urlQueryString: PropTypes.string,
+    classes: PropTypes.object,
+    setURLQs: PropTypes.func,
+    availableROIs: PropTypes.array,
+    datasetstr: PropTypes.string,
 };
 
 

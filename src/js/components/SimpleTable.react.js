@@ -165,7 +165,11 @@ class SimpleTable extends React.Component {
                     this.props.data.formatbody.slice(startRecord, page * rowsPerPage + rowsPerPage).map( (rec, index)  => {
                     var cells = rec.map( (entry, index2) => {
                         return (
-                            <TableCell key={String(index)+"-"+String(index2)} padding="none">{entry}</TableCell>
+                            <TableCell
+                                        key={String(index)+"-"+String(index2)}
+                                        padding="none">
+                            {entry}
+                            </TableCell>
                         )
                     });
                     return (
