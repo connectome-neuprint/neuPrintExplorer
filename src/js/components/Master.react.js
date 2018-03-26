@@ -13,7 +13,7 @@ import Typography from 'material-ui/Typography';
 import Drawer from 'material-ui/Drawer';
 import { withStyles } from 'material-ui/styles';
 import NeoServer from './NeoServer.react';
-import {Home} from './Home.react';
+import Home from './Home.react';
 import List from 'material-ui/List';
 import Icon from 'material-ui/Icon';
 import classNames from 'classnames';

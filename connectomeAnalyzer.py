@@ -79,7 +79,7 @@ def configinfo():
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def static_page(path):
-    if path.startswith("js/") or path.startswith("css/"):
+    if path.startswith("js/") or path.startswith("css/") or path.startswith("public/"):
         return app.send_static_file(path)
     return app.send_static_file('index.html')
 
