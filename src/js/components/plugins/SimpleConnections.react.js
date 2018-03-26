@@ -14,7 +14,7 @@ import { withStyles } from 'material-ui/styles';
 import { LoadQueryString, SaveQueryString } from '../../qsparser';
 import {connect} from 'react-redux';
 
-const mainQuery = 'match (m:NeuronYY)-[e:ConnectsTo]->(n:NeuronYY) where m.name =~"ZZ" return m.name as NeuronPre, n.name as NeuronPost, e.weight as Weight, m.bodyId as Body order by m.bodyId, e.weight desc';
+const mainQuery = 'match (m:NeuronYY)-[e:ConnectsTo]->(n:NeuronYY) where ZZ return m.name as NeuronPre, n.name as NeuronPost, e.weight as Weight, m.bodyId as Body order by m.bodyId, e.weight desc';
 
 const styles = theme => ({
   textField: {
@@ -22,51 +22,6 @@ const styles = theme => ({
   formControl: {
   },
 });
-
-/*
- *
- * colors
- *
-
-#8dd3c7
-#ffffb3
-#bebada
-#fb8072
-#80b1d3
-#fdb462
-#b3de69
-#fccde5
-#d9d9d9
-#bc80bd
-#ccebc5
-#ffed6f
-
-*/
-
-/* color blind
- *
-#8e0152
-#c51b7d
-#de77ae
-#f1b6da
-#fde0ef
-#f7f7f7
-#e6f5d0
-#b8e186
-#7fbc41
-#4d9221
-#276419
-
-or
-
-#a6cee3
-#1f78b4
-#b2df8a
-#33a02c
-    
-*/
-
-
 
 class SimpleConnections extends React.Component {
     static get queryName() {
@@ -148,7 +103,13 @@ class SimpleConnections extends React.Component {
 
     processRequest = (event) => {
         if (this.state.qsParams.neuronpre !== "") {
-            var neoquery = mainQuery.replace("ZZ", this.state.qsParams.neuronpre)
+            var neoquery = ""; 
+            if (isNaN(this.state.qsParams.neuronpre)) {
+                neoquery = mainQuery.replace("ZZ", 'm.name =~"' + this.state.qsParams.neuronpre + '"');
+            } else {
+                neoquery = mainQuery.replace("ZZ", 'm.bodyId =' + this.state.qsParams.neuronpre);
+            }
+            
             neoquery = neoquery.replace(/YY/g, this.props.datasetstr)
             this.props.callback(neoquery);
         }
