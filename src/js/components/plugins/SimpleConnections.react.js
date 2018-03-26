@@ -7,14 +7,15 @@
 import React from 'react';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
-import { FormControl } from 'material-ui/Form';
 import PropTypes from 'prop-types';
 var neo4j = require('neo4j-driver').v1;
+import Radio, { RadioGroup } from 'material-ui/Radio';
+import { FormLabel, FormControl, FormControlLabel, FormHelperText } from 'material-ui/Form';
 import { withStyles } from 'material-ui/styles';
 import { LoadQueryString, SaveQueryString } from '../../qsparser';
 import {connect} from 'react-redux';
 
-const mainQuery = 'match (m:NeuronYY)-[e:ConnectsTo]->(n:NeuronYY) where ZZ return m.name as Neuron1, n.name as Neuron2, n.bodyId as Neuron2Id, e.weight as Weight, m.bodyId as Neuron1Id order by m.name, m.bodyId, e.weight desc';
+const mainQuery = 'match (m:NeuronYY)XX(n:NeuronYY) where ZZ return m.name as Neuron1, n.name as Neuron2, n.bodyId as Neuron2Id, e.weight as Weight, m.bodyId as Neuron1Id order by m.name, m.bodyId, e.weight desc';
 
 function convert64bit(value) {
     return neo4j.isInt(value) ?
@@ -30,6 +31,8 @@ const styles = theme => ({
   },
 });
 
+var PreOrPostHack = "pre";
+
 class SimpleConnections extends React.Component {
     static get queryName() {
         return "Simple Connections";
@@ -43,6 +46,7 @@ class SimpleConnections extends React.Component {
         super(props);
         var initqsParams = {
             neuronpre: "",
+            preorpost: "pre",
         }
         var qsParams = LoadQueryString("Query:" + this.constructor.queryName, initqsParams, this.props.urlQueryString);
         this.state = {
@@ -64,10 +68,17 @@ class SimpleConnections extends React.Component {
         neoResults.records.forEach(function (record) {
             var newval = convert64bit(record.get("Neuron1Id"));  
             if ((lastbody !== -1) && (newval !== lastbody)) {
+                var tabname = lastname + " id=(" + String(lastbody) + ")";
+                if (PreOrPostHack === "pre") {
+                    tabname = tabname + " => ...";
+                } else {
+                    tabname = "... => " + tabname;
+                }
+
                 tables.push({
                     header: headerdata,
                     body: currtable,
-                    name: lastname + " id=(" + String(lastbody) + ") => ...",
+                    name: tabname,
                 });
                 currtable = [];
             } 
@@ -80,12 +91,19 @@ class SimpleConnections extends React.Component {
                 convert64bit(record.get("Weight")) 
             ]);
         });
-        
+
         if (lastbody !== -1) {
+            var tabname = lastname + " id=(" + String(lastbody) + ")";
+            if (PreOrPostHack === "pre") {
+                tabname = tabname + " => ...";
+            } else {
+                tabname = "... => " + tabname;
+            }
+                
             tables.push({
                 header: headerdata,
                 body: currtable,
-                name: lastname + " id=(" + String(lastbody) + ") => ...",
+                name: tabname,
             });
         }
 
@@ -102,6 +120,13 @@ class SimpleConnections extends React.Component {
             }
             
             neoquery = neoquery.replace(/YY/g, this.props.datasetstr)
+            if (this.state.qsParams.preorpost === "pre") {
+                neoquery = neoquery.replace("XX", '-[e:ConnectsTo]->');
+            } else {
+                neoquery = neoquery.replace("XX", '<-[e:ConnectsTo]-');
+            }
+            
+            PreOrPostHack = this.state.qsParams.preorpost;
             this.props.callback(neoquery);
         }
     }
@@ -111,9 +136,17 @@ class SimpleConnections extends React.Component {
         this.setState({qsParams: {neuronpre: event.target.value}});
     }
 
+    setDirection = (event) => {
+        var oldparams = this.state.qsParams;
+        oldparams.preorpost = event.target.value;
+        this.props.setURLQs(SaveQueryString("Query:" + this.constructor.queryName, oldparams));
+        this.setState({qsParams: oldparams});
+    }
+
     render() {
         const { classes } = this.props;
-        return (<FormControl className={classes.formControl}>
+        return (<div>
+                    <FormControl className={classes.formControl}>
                     <TextField 
                         label="Neuron name"
                         multiline
@@ -123,13 +156,27 @@ class SimpleConnections extends React.Component {
                         className={classes.textField}
                         onChange={this.handleClick}
                     />
+                    </FormControl>
+                    <FormControl component="fieldset" required className={classes.formControl}>
+                        <FormLabel component="legend">Neuron Direction</FormLabel>
+                        <RadioGroup
+                                    aria-label="preorpost"
+                                    name="preorpost"
+                                    className={classes.group}
+                                    value={this.state.qsParams.preorpost}
+                                    onChange={this.setDirection}
+                        >
+                            <FormControlLabel value="pre" control={<Radio />} label="Pre-synaptic" />
+                            <FormControlLabel value="post" control={<Radio />} label="Post-synaptic" />
+                        </RadioGroup>
+                    </FormControl> 
                     <Button
                         variant="raised"
                         onClick={this.processRequest}
                     >
                         Submit
                     </Button>
-                </FormControl>
+            </div>
         );
     }
 }
