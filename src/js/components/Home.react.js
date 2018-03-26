@@ -9,6 +9,8 @@ import { Redirect } from 'react-router-dom';
 import _ from "underscore";
 import PropTypes from 'prop-types';
 import {withStyles} from 'material-ui/styles';
+import Button from 'material-ui/Button';
+import Modal from 'material-ui/Modal';
 
 const styles = theme => ({
     root: {
@@ -27,14 +29,32 @@ const styles = theme => ({
     flex: {
         flex: 1,
         padding: '1em'
+    },
+    overflow: {
+        overflow: "auto"
     }
 });
 
 class Home extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            open: false,
+        }
+    }
+    
     // if only query string has updated, prevent re-render
     shouldComponentUpdate(nextProps, nextState) {
         nextProps.location["search"] = this.props.location["search"];
         return (!_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state));
+    }
+   
+    handleOpen = () => {
+        this.setState({open: true});
+    }
+
+    handleClose = () => {
+        this.setState({open: false});
     }
     
     render() {
@@ -85,10 +105,24 @@ class Home extends React.Component {
                     </Typography>
                 </div>
                 <div className={classes.flex}>
+                    <Button onClick={this.handleOpen}>
                     <img
                         src="/public/overview.jpg"
                         className={classes.img}
                     />
+                    </Button>
+                    <Modal
+                            aria-labelledby="Neo4j Graph Model"
+                            aria-describedby="simple-modal-description"
+                            open={this.state.open}
+                            onClose={this.handleClose}
+                    >
+                        <div className={classes.overflow}>
+                        <Button onClick={this.handleClose}>
+                            <img src="/public/overview.jpg" />
+                        </Button>
+                        </div>
+                    </Modal>
                 </div>
             </div>
         );
