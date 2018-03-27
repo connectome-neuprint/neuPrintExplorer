@@ -24,7 +24,7 @@ from threading import Lock
 
 
 
-app = Flask(__name__, static_folder='build')
+app = Flask(__name__, static_folder='dist')
 neo4j_databases_config = None
 MasterDatabase = None
 GlobalLock = Lock()

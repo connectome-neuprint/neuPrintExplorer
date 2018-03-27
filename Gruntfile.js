@@ -44,12 +44,6 @@ module.exports = function(grunt) {
                     },
                     {
                         expand: "true",
-                        cwd: 'node_modules/bootstrap/',
-                        src: 'fonts/*',
-                        dest: 'build/'
-                    },
-                    {
-                        expand: "true",
                         src: 'public/*',
                         dest: 'build/'
                     }
@@ -59,8 +53,7 @@ module.exports = function(grunt) {
                 files: [
                     {
                         expand: "true",
-                        cwd: 'node_modules/bootstrap/',
-                        src: 'fonts/*',
+                        src: 'public/*',
                         dest: 'dist/'
                     },
                     {
