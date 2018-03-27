@@ -200,8 +200,12 @@ class SimpleConnections extends React.Component {
 }
 
 SimpleConnections.propTypes = {
-    callback: PropTypes.func,
-    disable: PropTypes.bool
+    callback: PropTypes.func.isRequired,
+    disable: PropTypes.bool,
+    setURLQs: PropTypes.func.isRequired,
+    classes: PropTypes.object.isRequired,
+    datasetstr: PropTypes.string.isRequired,
+    urlQueryString: PropTypes.string.isRequired,
 };
 
 

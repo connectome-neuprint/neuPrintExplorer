@@ -124,11 +124,11 @@ class FreeForm extends React.Component {
 
 
 FreeForm.propTypes = {
-    callback: PropTypes.func,
+    callback: PropTypes.func.isRequired,
     disable: PropTypes.bool,
-    urlQueryString: PropTypes.string,
-    classes: PropTypes.object,
-    setURLQs: PropTypes.func,
+    urlQueryString: PropTypes.string.isRequired,
+    classes: PropTypes.object.isRequired,
+    setURLQs: PropTypes.func.isRequired,
 };
 
 var FreeFormState = function(state){

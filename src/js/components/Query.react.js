@@ -213,8 +213,12 @@ Query.defaultProps = {
 */
 
 Query.propTypes = {
-    pluginList: PropTypes.array,
-    history: PropTypes.object
+    pluginList: PropTypes.array.isRequired,
+    classes: PropTypes.object.isRequired,
+    theme: PropTypes.object.isRequired,
+    setURLQs: PropTypes.func.isRequired,
+    urlQueryString: PropTypes.string.isRequired,
+    availableDatasets: PropTypes.array.isRequired,
 };
 
 

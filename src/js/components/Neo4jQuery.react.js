@@ -6,6 +6,7 @@
 
 import React from 'react';
 import {connect} from 'react-redux';
+import PropTypes from 'prop-types';
 
 var neo4j = require('neo4j-driver').v1;
 
@@ -25,7 +26,7 @@ class Neo4jQuery extends React.Component {
 
         // start query if query state changed
         if (nextProps.isQuerying) {
-            if (nextProps.neoQuery !== "" && nextProps.neoSever !== "") {
+            if (nextProps.neoQuery !== "" && nextProps.neoServer !== "") {
                 // run query (TODO: handle blocking query??) 
                 var session = driver.session();
                 var setError = this.props.setQueryError;
@@ -79,5 +80,15 @@ var Neo4jQueryDispatch = function(dispatch) {
         }
     }
 }
+
+Neo4jQuery.propTypes = {
+    neoDriver: PropTypes.object,
+    neoServer: PropTypes.string.isRequired,
+    neoQuery: PropTypes.string.isRequired,
+    isQuerying: PropTypes.bool.isRequired,
+    setDriver: PropTypes.func.isRequired,
+    setQueryError: PropTypes.func.isRequired,
+    saveResults: PropTypes.func.isRequired,
+};
 
 export default connect(Neo4jQueryState, Neo4jQueryDispatch)(Neo4jQuery);

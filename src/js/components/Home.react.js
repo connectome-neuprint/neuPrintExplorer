@@ -12,7 +12,7 @@ import {withStyles} from 'material-ui/styles';
 import Button from 'material-ui/Button';
 import Modal from 'material-ui/Modal';
 
-const styles = theme => ({
+const styles = () => ({
     root: {
         flexGrow: 1,
         flexWrap: "wrap",

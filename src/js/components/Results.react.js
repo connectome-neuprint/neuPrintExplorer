@@ -24,7 +24,7 @@ import Dialog, {
   DialogTitle,
 } from 'material-ui/Dialog';
 import _ from "underscore";
-
+import PropTypes from 'prop-types';
 import Grid from 'material-ui/Grid';
 
 const styles = theme => ({
@@ -243,7 +243,6 @@ class Results extends React.Component {
                     (this.props.allTables !== null ?
                         (
                             <div>
-                                <Typography>Query succeeded</Typography>
                                 <SimpleTables allTables={this.props.allTables} />
                             </div>
                         ) : 
@@ -254,6 +253,26 @@ class Results extends React.Component {
         );
     }
 }
+
+Results.propTypes = {
+    location: PropTypes.shape({
+        search: PropTypes.string.isRequired
+    }),
+    allTables: PropTypes.array,
+    cypher: PropTypes.string.isRequired, 
+    reAuth: PropTypes.func.isRequired, 
+    neoError: PropTypes.object,
+    isQuerying: PropTypes.bool.isRequired,
+    classes: PropTypes.object.isRequired,
+    userInfo: PropTypes.shape({
+        Zi: PropTypes.shape({
+            id_token: PropTypes.string
+        })
+    }),
+};
+
+
+
 
 // result data [{name: "table name", header: [headers...], body: [rows...]
 var ResultsState = function(state){

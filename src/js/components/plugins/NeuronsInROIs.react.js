@@ -299,8 +299,14 @@ class NeuronsInROIs extends React.Component {
 }
 
 NeuronsInROIs.propTypes = {
-    callback: PropTypes.func,
-    disable: PropTypes.bool
+    callback: PropTypes.func.isRequired,
+    disable: PropTypes.bool,
+    setURLQs: PropTypes.func.isRequired,
+    classes: PropTypes.object.isRequired,
+    datasetstr: PropTypes.string.isRequired,
+    theme: PropTypes.object.isRequired,
+    urlQueryString: PropTypes.string.isRequired,
+    availableROIs: PropTypes.array.isRequired
 };
 
 

@@ -18,6 +18,8 @@ import { FormLabel, FormControl, FormControlLabel } from 'material-ui/Form';
 import Typography from 'material-ui/Typography';
 import {connect} from 'react-redux';
 import NeuronHelp from '../NeuronHelp.react';
+import RankCell from '../RankCell.react';
+
 
 const mainQuery = 'match (m:NeuronYY)-[e:ConnectsTo]-(n:NeuronYY) where ZZ return m.name as Neuron1, n.name as Neuron2, e.weight as Weight, n.bodyId as Body2, m.className as Neuron1Type, n.className as Neuron2Type, id(m) as m_id, id(n) as n_id, id(startNode(e)) as pre_id, m.bodyId as Body1 order by m.bodyId, e.weight desc';
 
@@ -64,18 +66,6 @@ or
 #b2df8a
 #33a02c
 */
-
-class RankCell extends React.Component {
-    render() {
-        return (
-            <div style={{backgroundColor: this.props.color, padding: "1em", minWidth: "100px"}}>
-                <Typography variant="body1">{this.props.name}</Typography>
-                <Typography variant="body1">{this.props.weight}</Typography>
-                <Typography variant="caption">{this.props.reverse}</Typography>
-            </div>
-        );
-    }
-}
 
 class RankedTable extends React.Component {
     static get queryName() {
@@ -319,8 +309,12 @@ class RankedTable extends React.Component {
 }
 
 RankedTable.propTypes = {
-    callback: PropTypes.func,
-    disable: PropTypes.bool
+    callback: PropTypes.func.isRequired,
+    disable: PropTypes.bool,
+    setURLQs: PropTypes.func.isRequired,
+    classes: PropTypes.object.isRequired,
+    datasetstr: PropTypes.string.isRequired,
+    urlQueryString: PropTypes.string.isRequired,
 };
 
 var RankedTableState = function(state){

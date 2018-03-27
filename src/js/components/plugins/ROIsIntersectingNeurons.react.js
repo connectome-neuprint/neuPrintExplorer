@@ -169,13 +169,13 @@ class ROIsIntersectingNeurons extends React.Component {
 }
 
 ROIsIntersectingNeurons.propTypes = {
-    callback: PropTypes.func,
+    callback: PropTypes.func.isRequired,
     disable: PropTypes.bool,
-    urlQueryString: PropTypes.string,
-    classes: PropTypes.object,
-    setURLQs: PropTypes.func,
-    availableROIs: PropTypes.array,
-    datasetstr: PropTypes.string,
+    urlQueryString: PropTypes.string.isRequired,
+    classes: PropTypes.object.isRequired,
+    setURLQs: PropTypes.func.isRequired,
+    availableROIs: PropTypes.array.isRequired,
+    datasetstr: PropTypes.string.isRequired,
 };
 
 

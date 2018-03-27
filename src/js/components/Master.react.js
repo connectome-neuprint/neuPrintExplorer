@@ -26,6 +26,7 @@ import Divider from 'material-ui/Divider';
 import Favorites from './Favorites.react';
 import Neo4jQuery from './Neo4jQuery.react';
 import Popover from 'material-ui/Popover';
+import PropTypes from 'prop-types';
 
 const drawerWidth = 400;
 
@@ -340,5 +341,17 @@ var MasterDispatch = function(dispatch) {
         }
     }
 }
+
+Master.propTypes = {
+    classes: PropTypes.object.isRequired,
+    userInfo: PropTypes.object,
+    urlQueryString: PropTypes.string.isRequired,
+    setURLQs: PropTypes.func.isRequired,
+    logoutUser: PropTypes.func.isRequired,
+    loginUser: PropTypes.func.isRequired,
+};
+
+
+
 
 export default withStyles(styles)(connect(MasterState, MasterDispatch)(Master));

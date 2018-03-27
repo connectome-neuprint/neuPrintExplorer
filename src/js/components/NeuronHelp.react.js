@@ -46,7 +46,7 @@ class NeuronHelp extends React.Component {
 
 NeuronHelp.propTypes = {
     children: PropTypes.element.isRequired,
-    classes: PropTypes.object,
+    classes: PropTypes.object.isRequired,
 
 }
 

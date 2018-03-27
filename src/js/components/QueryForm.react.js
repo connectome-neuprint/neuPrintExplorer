@@ -21,8 +21,6 @@ const styles = theme => ({
     }
 });
 
-
-
 class QueryForm extends React.Component {
     constructor(props) {
         super(props);
@@ -30,6 +28,17 @@ class QueryForm extends React.Component {
             openSnack: false,
             //redirectResults: false
         };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (!nextProps.isQuerying && 
+            nextProps.isQuerying != this.props.isQuerying &&
+            nextProps.neoResults !== null) {
+            
+            var CurrentQuery = this.findCurrentPlugin();
+            var results = CurrentQuery.parseResults(nextProps.neoResults);
+            this.props.updateData(results);
+        }
     }
 
     submitQuery = (query) => {
@@ -61,17 +70,6 @@ class QueryForm extends React.Component {
     
     handleClose = () => {
         this.setState({openSnack: false});
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (!nextProps.isQuerying && 
-            nextProps.isQuerying != this.props.isQuerying &&
-            nextProps.neoResults !== null) {
-            
-            var CurrentQuery = this.findCurrentPlugin();
-            var results = CurrentQuery.parseResults(nextProps.neoResults);
-            this.props.updateData(results);
-        }
     }
 
     render() {
@@ -108,9 +106,17 @@ QueryForm.defaultProps = {
 };
 
 QueryForm.propTypes = {
-    queryType: PropTypes.string, 
-    neoQuery: PropTypes.string, 
-    pluginList: PropTypes.array
+    queryType: PropTypes.string.isRequired, 
+    neoQuery: PropTypes.string.isRequired, 
+    neoServer: PropTypes.string.isRequired, 
+    updateQuery: PropTypes.func.isRequired, 
+    updateData: PropTypes.func.isRequired, 
+    pluginList: PropTypes.array.isRequired,
+    datasetstr: PropTypes.string.isRequired,
+    isQuerying: PropTypes.bool.isRequired,
+    classes: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
+    neoResults: PropTypes.object,
 };
 
 

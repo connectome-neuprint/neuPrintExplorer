@@ -151,9 +151,9 @@ class NeoServer extends React.Component {
 }
 
 NeoServer.propTypes = {
-    classes: PropTypes.object,
-    setNeoServer: PropTypes.func,
-    neoServer: PropTypes.string,
+    classes: PropTypes.object.isRequired,
+    setNeoServer: PropTypes.func.isRequired,
+    neoServer: PropTypes.string.isRequired,
 };
 
 
