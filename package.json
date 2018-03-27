@@ -46,5 +46,8 @@
     "react-router-dom": "^4.2.2",
     "redux": "^3.7.2",
     "neo4j-driver": "^1.5.0"
+  },
+  "scripts": {
+        "test": "grunt eslint"
   }
 }
