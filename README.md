@@ -10,8 +10,8 @@ The application is written using REACT+Redux and Material-UI.
 There is a pre-build distribution in the 'dist' directory that can be served by the included Python Flask server.  To build
 the package for development:
 
-% npm install
-% grunt #(or grunt dist to build the distribution)
+    % npm install
+    % grunt #(or grunt dist to build the distribution)
 
 The python server has the following dependencies:
 
@@ -22,7 +22,7 @@ The python server has the following dependencies:
 
 To launch a server (port 5000 by default):
 
-% python connectomeAnalyzer.py config.json neo4jconfig.json
+    % python connectomeAnalyzer.py config.json neo4jconfig.json
 
 config.json points to a json file that stores user data and other application information logs (TBD).  neo4jconfig.json provides
 a path to the neo4jconfiguration.  At this point, the password information for the Neo4j server is embedded in this file.
