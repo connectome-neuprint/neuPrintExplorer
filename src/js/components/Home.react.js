@@ -77,7 +77,7 @@ class Home extends React.Component {
                     <br />
                     <Typography>
                         The data is store in Neo4j, a graph database, and is accessible
-                        through custom Cypher queries.  This interface provides a series
+                        through custom Cypher queries.  This app provides a series
                         of interfaces to simplify common access patterns.
                     </Typography>
                     <br />

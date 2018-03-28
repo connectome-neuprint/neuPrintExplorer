@@ -15,13 +15,16 @@ import Input, { InputLabel } from 'material-ui/Input';
 import {connect} from 'react-redux';
 import Chip from 'material-ui/Chip';
 import { MenuItem } from 'material-ui/Menu';
+import TextField from 'material-ui/TextField';
 import Select from 'material-ui/Select';
+import NeuronHelp from '../NeuronHelp.react';
 
-const mainQuery = 'match (neuron :NeuronZZYY)<-[:PartOf]-(roi :Neuropart) return neuron.bodyId as bodyid, neuron.name as bodyname, roi.pre as pre, roi.post as post, labels(roi) as rois order by neuron.bodyId';
+const mainQuery = 'match (neuron :NeuronZZYY)<-[:PartOf]-(roi :Neuropart) XX return neuron.bodyId as bodyid, neuron.name as bodyname, roi.pre as pre, roi.post as post, labels(roi) as rois, neuron.size as size, neuron.pre as npre, neuron.post as npost order by neuron.bodyId';
 
 
 var inputROIsHack = [];
 var outputROIsHack = [];
+var NeuronSrcHack = "";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -71,7 +74,7 @@ const styles = theme => ({
 
 class NeuronsInROIs extends React.Component {
     static get queryName() {
-        return "Neurons in ROIs";
+        return "Find neurons";
     }
     
     static get queryDescription() {
@@ -88,7 +91,11 @@ class NeuronsInROIs extends React.Component {
             if (!(bodyid in inputneuronROIs)) {
                 inputneuronROIs[bodyid] = {};
                 outputneuronROIs[bodyid] = {};
-                neuronnames[bodyid] = record.get("bodyname");
+                neuronnames[bodyid] = {};
+                neuronnames[bodyid]["name"] = record.get("bodyname");
+                neuronnames[bodyid]["size"] = convert64bit(record.get("size"));
+                neuronnames[bodyid]["pre"] = convert64bit(record.get("npre"));
+                neuronnames[bodyid]["post"] = convert64bit(record.get("npost"));
             }
 
             var rois = record.get("rois");
@@ -110,9 +117,9 @@ class NeuronsInROIs extends React.Component {
 
         // create table
         var tables = [];
-        var headerdata = ["neuron", "id"];
+        var headerdata = ["neuron", "id", "#voxels", "#pre", "#post"];
       
-        var titlename = "Neurons with inputs in: " + JSON.stringify(inputROIsHack) + " and outputs in: " + JSON.stringify(outputROIsHack); 
+        var titlename = "Neurons " + NeuronSrcHack + " with inputs in: " + JSON.stringify(inputROIsHack) + " and outputs in: " + JSON.stringify(outputROIsHack); 
         
         for (let item in inputROIsHack) {
             headerdata.push("In:" + inputROIsHack[item]);
@@ -130,7 +137,7 @@ class NeuronsInROIs extends React.Component {
             if (Object.keys(outputneuronROIs[bodyid]).length !== outputROIsHack.length) {
                 continue;
             }
-            var rowinfo = [neuronnames[bodyid], bodyid];
+            var rowinfo = [neuronnames[bodyid].name, bodyid, neuronnames[bodyid].size, neuronnames[bodyid].npre, neuronnames[bodyid].npost];
             var presizes = inputneuronROIs[bodyid];
             var postsizes = outputneuronROIs[bodyid];
 
@@ -159,7 +166,8 @@ class NeuronsInROIs extends React.Component {
         super(props);
         var initqsParams = {
             InputROIs: [],
-            OutputROIs: []
+            OutputROIs: [],
+            neuronsrc: "",
         }
         var qsParams = LoadQueryString("Query:" + this.constructor.queryName, initqsParams, this.props.urlQueryString);
         this.state = {
@@ -185,6 +193,19 @@ class NeuronsInROIs extends React.Component {
 
             var neoquery = mainQuery.replace(/ZZ/g, roisstr);
             neoquery = neoquery.replace(/YY/g, this.props.datasetstr);
+
+            // filter neuron information
+            if (this.state.qsParams.neuronsrc === "") {
+                neoquery = neoquery.replace("XX", "");
+
+            } else if (isNaN(this.state.qsParams.neuronsrc)) {
+                neoquery = neoquery.replace("XX", 'where neuron.name =~"' + this.state.qsParams.neuronsrc + '"');
+            } else {
+                neoquery = neoquery.replace("XX", 'where neuron.bodyId =' + this.state.qsParams.neuronsrc);
+            }
+            NeuronSrcHack = this.state.qsParams.neuronsrc;
+
+            
             this.props.callback(neoquery);
         }
 
@@ -211,6 +232,13 @@ class NeuronsInROIs extends React.Component {
         oldparams.OutputROIs = rois;
         this.props.setURLQs(SaveQueryString("Query:" + this.constructor.queryName, oldparams));
         
+        this.setState({qsParams: oldparams});
+    }
+
+    addNeuron = (event) => {
+        var oldparams = this.state.qsParams;
+        oldparams.neuronsrc = event.target.value;
+        this.props.setURLQs(SaveQueryString("Query:" + this.constructor.queryName, oldparams));
         this.setState({qsParams: oldparams});
     }
 
@@ -286,7 +314,21 @@ class NeuronsInROIs extends React.Component {
                         </MenuItem>
                     ))}
                     </Select>
-               </FormControl>
+                </FormControl>
+                <FormControl className={classes.formControl}>
+                    <NeuronHelp>
+                    <TextField 
+                        label="Neuron name (optional)"
+                        multiline
+                        rows={1}
+                        value={this.state.qsParams.neuronsrc}
+                        rowsMax={4}
+                        className={classes.textField}
+                        onChange={this.addNeuron}
+                    />
+                    </NeuronHelp>
+                </FormControl>
+
                     <Button
                         variant="raised"
                         onClick={this.processRequest}
