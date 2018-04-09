@@ -44,7 +44,7 @@ module.exports = function(grunt) {
                     },
                     {
                         expand: "true",
-                        src: 'public/*',
+                        src: 'public/**/*',
                         dest: 'build/'
                     }
                 ]
