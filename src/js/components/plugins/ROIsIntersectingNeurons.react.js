@@ -11,7 +11,7 @@ import { FormControl } from 'material-ui/Form';
 import PropTypes from 'prop-types';
 var neo4j = require('neo4j-driver').v1;
 import { withStyles } from 'material-ui/styles';
-import { LoadQueryString, SaveQueryString } from '../../qsparser';
+import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 import {connect} from 'react-redux';
 import NeuronHelp from '../NeuronHelp.react';
 

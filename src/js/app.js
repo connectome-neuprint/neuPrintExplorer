@@ -66,7 +66,7 @@ fileref2.setAttribute("href", filename2);
 document.getElementsByTagName("head")[0].appendChild(fileref2);
 
 // load form plugins
-import loadPlugins from './initplugins';
+import loadPlugins from './helpers/initplugins';
 loadPlugins(store);
 
 /*

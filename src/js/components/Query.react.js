@@ -15,7 +15,7 @@ import Select from 'material-ui/Select';
 import Input, { InputLabel } from 'material-ui/Input';
 import Divider from 'material-ui/Divider';
 import { withStyles } from 'material-ui/styles';
-import { LoadQueryString, SaveQueryString, RemoveQueryString } from '../qsparser';
+import { LoadQueryString, SaveQueryString, RemoveQueryString } from '../helpers/qsparser';
 import Chip from 'material-ui/Chip';
 
 const styles = theme => ({

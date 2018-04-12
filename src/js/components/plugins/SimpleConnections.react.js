@@ -12,7 +12,7 @@ var neo4j = require('neo4j-driver').v1;
 import Radio, { RadioGroup } from 'material-ui/Radio';
 import { FormLabel, FormControl, FormControlLabel } from 'material-ui/Form';
 import { withStyles } from 'material-ui/styles';
-import { LoadQueryString, SaveQueryString } from '../../qsparser';
+import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 import {connect} from 'react-redux';
 import NeuronHelp from '../NeuronHelp.react';
 

@@ -12,7 +12,7 @@ import Button from 'material-ui/Button';
 import PropTypes from 'prop-types';
 var neo4j = require('neo4j-driver').v1;
 import { withStyles } from 'material-ui/styles';
-import { LoadQueryString, SaveQueryString } from '../../qsparser';
+import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 import Radio, { RadioGroup } from 'material-ui/Radio';
 import { FormLabel, FormControl, FormControlLabel } from 'material-ui/Form';
 import Typography from 'material-ui/Typography';
