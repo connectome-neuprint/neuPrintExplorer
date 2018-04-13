@@ -45,7 +45,7 @@ class Neo4jQuery extends React.Component {
     }
     
     render() {
-        return <div />
+        return null
     }
 }
 
