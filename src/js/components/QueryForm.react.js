@@ -120,14 +120,14 @@ QueryForm.propTypes = {
 };
 
 
-var QueryFormState  = function(state){
+var QueryFormState = function(state){
     return {
-        pluginList: state.pluginList,
-        neoQuery: state.neoQuery,
-        isQuerying: state.isQuerying,
-        neoResults: state.neoResults,
-        neoError: state.neoError,
-        neoServer: state.neoServer
+        pluginList: state.app.pluginList,
+        neoQuery: state.query.neoQuery,
+        isQuerying: state.query.isQuerying,
+        neoResults: state.query.neoResults,
+        neoError: state.query.neoError,
+        neoServer: state.neo4jsettings.neoServer
     }   
 };
 

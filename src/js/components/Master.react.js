@@ -326,8 +326,8 @@ class Master extends React.Component {
 
 var MasterState = function(state) {
     return {
-        userInfo: state.userInfo,
-        urlQueryString: state.urlQueryString,
+        userInfo: state.user.userInfo,
+        urlQueryString: state.app.urlQueryString,
     }
 }
 

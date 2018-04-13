@@ -160,7 +160,7 @@ NeoServer.propTypes = {
 
 var NeoServerState = function(state) {
     return {
-        neoServer: state.neoServer,
+        neoServer: state.neo4jsettings.neoServer,
     }
 }
 

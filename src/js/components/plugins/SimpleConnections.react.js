@@ -211,7 +211,7 @@ SimpleConnections.propTypes = {
 
 var SimpleConnectionsState = function(state){
     return {
-        urlQueryString: state.urlQueryString,
+        urlQueryString: state.app.urlQueryString,
     }   
 };
 

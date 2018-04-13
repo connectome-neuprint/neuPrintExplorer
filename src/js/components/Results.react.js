@@ -277,11 +277,11 @@ Results.propTypes = {
 // result data [{name: "table name", header: [headers...], body: [rows...]
 var ResultsState = function(state){
     return {
-        isQuerying: state.isQuerying,
-        neoError: state.neoError,
-        allTables: state.allTables,
-        userInfo: state.userInfo,
-        cypher: state.neoQuery,
+        isQuerying: state.query.isQuerying,
+        neoError: state.query.neoError,
+        allTables: state.results.allTables,
+        userInfo: state.user.userInfo,
+        cypher: state.query.neoQuery,
     }   
 };
 

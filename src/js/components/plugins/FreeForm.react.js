@@ -133,7 +133,7 @@ FreeForm.propTypes = {
 
 var FreeFormState = function(state){
     return {
-        urlQueryString: state.urlQueryString,
+        urlQueryString: state.app.urlQueryString,
     }   
 };
 

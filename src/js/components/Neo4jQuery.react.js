@@ -49,12 +49,12 @@ class Neo4jQuery extends React.Component {
     }
 }
 
-var Neo4jQueryState  = function(state){
+var Neo4jQueryState = function(state){
     return {
-        neoQuery: state.neoQuery,
-        neoServer: state.neoServer,
-        neoDriver: state.neoDriver,
-        isQuerying: state.isQuerying,
+        neoQuery: state.query.neoQuery,
+        isQuerying: state.query.isQuerying,
+        neoServer: state.neo4jsettings.neoServer,
+        neoDriver: state.neo4jsettings.neoDriver,
     }   
 };
 

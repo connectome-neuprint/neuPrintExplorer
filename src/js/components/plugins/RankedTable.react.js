@@ -319,7 +319,7 @@ RankedTable.propTypes = {
 
 var RankedTableState = function(state){
     return {
-        urlQueryString: state.urlQueryString,
+        urlQueryString: state.app.urlQueryString,
     }   
 };
 

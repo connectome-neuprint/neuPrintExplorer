@@ -354,8 +354,8 @@ NeuronsInROIs.propTypes = {
 
 var NeuronsInROIsState = function(state){
     return {
-        urlQueryString: state.urlQueryString,
-        availableROIs: state.availableROIs,
+        urlQueryString: state.app.urlQueryString,
+        availableROIs: state.neo4jsettings.availableROIs,
     }   
 };
 
