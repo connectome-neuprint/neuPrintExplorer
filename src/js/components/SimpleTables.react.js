@@ -103,12 +103,7 @@ class SimpleTables extends React.Component {
                         </TableFooter>
                     </Table>) :
                     (
-                        <div>
-                        <Typography variant="subheading">
-                        {this.props.allTables[0].name}
-                        </Typography> 
                         <SimpleTable data={this.props.allTables[0]} />
-                        </div>
                     )
                 ) :
                 <div />
