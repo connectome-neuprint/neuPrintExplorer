@@ -18,7 +18,10 @@ import ResultsTopBar from './ResultsTopBar.react';
 
 const styles = () => ({
     root: {
-        padding: 0,
+        flexGrow: 1,
+    },
+    flex: {
+        flex: 1,
     }
 });
 
@@ -29,9 +32,9 @@ class Results extends React.Component {
         return (!_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state));
     }
 
-    downloadFile = () => {
+    downloadFile = (index) => {
         var csvdata = "";
-        this.props.allTables.map( (tableinfo) => {
+        this.props.allTables[index].map( (tableinfo) => {
             // load one table -- fixed width
             
             // load table name
@@ -68,18 +71,8 @@ class Results extends React.Component {
         // TODO: show query runtime results
         const { classes } = this.props; 
 
-        let resultName = "";
-
-        if (this.props.allTables !== null) {
-            if (this.props.allTables.length == 1) {
-                resultName = this.props.allTables[0].name;
-            } else {
-                resultName = String(this.props.allTables.length) + " tables";
-            }
-        }
-
         return (
-            <div className={classes.root}>
+            <div>
                 { (this.props.userInfo !== null && this.props.allTables !== null) ? (
                     <div />    
                 ) : (
@@ -99,13 +92,27 @@ class Results extends React.Component {
                     (<Typography>Error: {this.props.neoError.code}</Typography>) :
                     (this.props.allTables !== null ?
                         (
-                            <div>
-                                <ResultsTopBar 
-                                                downloadCallback={this.downloadFile}
-                                                name={resultName} 
-                                                queryStr={this.props.queryObj.queryStr}
-                                />
-                                <SimpleTables allTables={this.props.allTables} />
+                            <div className={classes.root}>
+                                {this.props.allTables.map( (result, index) => {
+                                    return (
+                                        <div className={classes.flex} 
+                                                key={String(index)}
+                                        >
+                                            <ResultsTopBar
+                                                            downloadCallback={this.downloadFile}
+                                                            name={(result.length == 1) ? 
+                                                                    result[0].name :
+                                                                    String(result.length) + " tables"
+                                                            } 
+                                                            queryStr={result[0].queryStr}
+                                                            index={index}
+                                            />
+                                            <SimpleTables 
+                                                            allTables={result}
+                                            />
+                                        </div>
+                                    )
+                                })}
                             </div>
                         ) : 
                         (<div />)

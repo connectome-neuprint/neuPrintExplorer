@@ -32,11 +32,18 @@ class Neo4jQuery extends React.Component {
                 var setError = this.props.setQueryError;
                 var processResults = nextProps.neoQueryObj.callback;
                 var state = nextProps.neoQueryObj.state;
-                var saveData = this.props.saveData;
+                let saveData = this.props.saveData;
+                if (nextProps.neoQueryObj.isChild) {
+                    saveData = this.props.appendData;
+                }
+                let queryStr = nextProps.neoQueryObj.queryStr;
                 session
-                    .run(nextProps.neoQueryObj.queryStr)
+                    .run(queryStr)
                     .then(function (result) {
                         let data = processResults(result, state);
+                        if (data !== null) {
+                            data[0]["queryStr"] = queryStr;
+                        }
                         saveData(data);
                         session.close();
                     })
@@ -75,6 +82,15 @@ var Neo4jQueryDispatch = function(dispatch) {
                 neoError: error
             });
         },
+        appendData: function(results) {
+            dispatch({
+                type: 'APPEND_RESULTS',
+                allTables: results
+            });
+            dispatch({
+                type: 'FINISH_QUERY',
+            });
+        },
         saveData: function(results) {
             dispatch({
                 type: 'UPDATE_RESULTS',
@@ -83,7 +99,6 @@ var Neo4jQueryDispatch = function(dispatch) {
             dispatch({
                 type: 'FINISH_QUERY',
             });
-
         }
     }
 }
@@ -95,12 +110,13 @@ Neo4jQuery.propTypes = {
         queryStr: PropTypes.string.isRequired,
         callback: PropTypes.func.isRequired,
         state: PropTypes.object.isRequred,
+        isChild: PropTypes.bool
     }),
+    appendData: PropTypes.func.isRequired, 
     saveData: PropTypes.func.isRequired, 
     isQuerying: PropTypes.bool.isRequired,
     setDriver: PropTypes.func.isRequired,
     setQueryError: PropTypes.func.isRequired,
-    saveResults: PropTypes.func.isRequired,
 };
 
 export default connect(Neo4jQueryState, Neo4jQueryDispatch)(Neo4jQuery);

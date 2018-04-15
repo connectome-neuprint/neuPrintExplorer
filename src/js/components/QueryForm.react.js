@@ -45,6 +45,9 @@ class QueryForm extends React.Component {
         */
 
         this.props.history.push("/results" + window.location.search);
+
+        // flush all other results
+        query["isChild"] = false;
         this.props.updateQuery(query);
     }
 
@@ -99,7 +102,6 @@ QueryForm.defaultProps = {
 
 QueryForm.propTypes = {
     queryType: PropTypes.string.isRequired, 
-    neoQuery: PropTypes.string.isRequired, 
     neoServer: PropTypes.string.isRequired, 
     updateQuery: PropTypes.func.isRequired, 
     pluginList: PropTypes.array.isRequired,
@@ -114,7 +116,6 @@ QueryForm.propTypes = {
 var QueryFormState = function(state){
     return {
         pluginList: state.app.pluginList,
-        neoQuery: state.query.neoQuery,
         isQuerying: state.query.isQuerying,
         neoResults: state.query.neoResults,
         neoError: state.query.neoError,

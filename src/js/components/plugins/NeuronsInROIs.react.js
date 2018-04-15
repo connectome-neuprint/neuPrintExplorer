@@ -175,11 +175,13 @@ var parseResults = function(neoResults, state) {
         let neoPre = {
             queryStr: preq,
             callback: processConnections,
+            isChild: true,
             state: statepre,
         };
         let neoPost = {
             queryStr: postq,
             callback: processConnections,
+            isChild: true,
             state: statepost,
         }
 

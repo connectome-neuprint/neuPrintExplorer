@@ -146,7 +146,7 @@ class ResultsTopBar extends React.Component {
                     <IconButton
                                 className={classes.button}
                                 aria-label="Download data"
-                                onClick={this.props.downloadCallback}
+                                onClick={() => {this.props.downloadCallback(this.props.index)}}
                     >
                         <Icon style={{fontSize:18}}>file_download</Icon>
                     </IconButton>
@@ -178,6 +178,7 @@ ResultsTopBar.propTypes = {
     downloadCallback: PropTypes.func.isRequired,
     queryStr: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
+    index: PropTypes.number.isRequired,
     userInfo: PropTypes.shape({
         Zi: PropTypes.shape({
             id_token: PropTypes.string
