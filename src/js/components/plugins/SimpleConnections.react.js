@@ -38,8 +38,6 @@ const styles = () => ({
     }
 });
 
-var PreOrPostHack = "pre";
-
 class SimpleConnections extends React.Component {
     static get queryName() {
         return "Simple Connections";
@@ -49,7 +47,7 @@ class SimpleConnections extends React.Component {
         return "List inputs or outputs to provided neuron(s)";
     }
    
-    static parseResults(neoResults) {
+    static parseResults(neoResults, state) {
         // load one table from neoResults
         var tables = [];
         var headerdata = ["Name", "Body ID", "Weight"];
@@ -62,7 +60,7 @@ class SimpleConnections extends React.Component {
             var newval = convert64bit(record.get("Neuron1Id"));  
             if ((lastbody !== -1) && (newval !== lastbody)) {
                 var tabname = lastname + " id=(" + String(lastbody) + ")";
-                if (PreOrPostHack === "pre") {
+                if (state.preOrPost === "pre") {
                     tabname = tabname + " => ...";
                 } else {
                     tabname = "... => " + tabname;
@@ -87,7 +85,7 @@ class SimpleConnections extends React.Component {
 
         if (lastbody !== -1) {
             var tabname = lastname + " id=(" + String(lastbody) + ")";
-            if (PreOrPostHack === "pre") {
+            if (state.preOrPost === "pre") {
                 tabname = tabname + " => ...";
             } else {
                 tabname = "... => " + tabname;
@@ -131,8 +129,15 @@ class SimpleConnections extends React.Component {
                 neoquery = neoquery.replace("XX", '<-[e:ConnectsTo]-');
             }
             
-            PreOrPostHack = this.state.qsParams.preorpost;
-            this.props.callback(neoquery);
+            let query = {
+                queryStr: neoquery,
+                callback: SimpleConnections.parseResults,    
+                state: {
+                    preOrPost: this.state.qsParams.preorpost,
+                },
+            }
+            
+            this.props.callback(query);
         }
     }
 

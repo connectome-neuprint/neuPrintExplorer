@@ -30,29 +30,21 @@ class QueryForm extends React.Component {
         };
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (!nextProps.isQuerying && 
-            nextProps.isQuerying != this.props.isQuerying &&
-            nextProps.neoResults !== null) {
-            
-            var CurrentQuery = this.findCurrentPlugin();
-            var results = CurrentQuery.parseResults(nextProps.neoResults);
-            this.props.updateData(results);
-        }
-    }
-
     submitQuery = (query) => {
         if (this.props.neoServer === "") {
             this.setState({openSnack: true});
             return;
         }
-        if (query === "") {
+        if (query.queryStr === "") {
             return;
         }
-       
-        //this.setState({redirectResults: true})
+        /*
+        assert("queryStr" in query);
+        assert("callback" in query);
+        assert("state" in query);
+        */
+
         this.props.history.push("/results" + window.location.search);
-        //(<Redirect to={{ pathname: '/', state: { from: this.props.location }}} />) : 
         this.props.updateQuery(query);
     }
 
@@ -110,7 +102,6 @@ QueryForm.propTypes = {
     neoQuery: PropTypes.string.isRequired, 
     neoServer: PropTypes.string.isRequired, 
     updateQuery: PropTypes.func.isRequired, 
-    updateData: PropTypes.func.isRequired, 
     pluginList: PropTypes.array.isRequired,
     datasetstr: PropTypes.string.isRequired,
     isQuerying: PropTypes.bool.isRequired,
@@ -136,13 +127,7 @@ var QueryFormDispatch = function(dispatch) {
         updateQuery: function(query) {
             dispatch({
                 type: 'UPDATE_QUERY',
-                neoQuery: query
-            });
-        },
-        updateData: function(results) {
-            dispatch({
-                type: 'UPDATE_RESULTS',
-                allTables: results
+                neoQueryObj: query
             });
         }
     }

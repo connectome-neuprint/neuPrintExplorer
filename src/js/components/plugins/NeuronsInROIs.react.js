@@ -21,11 +21,6 @@ import NeuronHelp from '../NeuronHelp.react';
 
 const mainQuery = 'match (neuron :NeuronZZYY)<-[:PartOf]-(roi :Neuropart) XX return neuron.bodyId as bodyid, neuron.name as bodyname, roi.pre as pre, roi.post as post, labels(roi) as rois, neuron.size as size, neuron.pre as npre, neuron.post as npost order by neuron.bodyId';
 
-
-var inputROIsHack = [];
-var outputROIsHack = [];
-var NeuronSrcHack = "";
-
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -72,6 +67,87 @@ const styles = theme => ({
     },
 });
 
+var parseResults = function(neoResults, state) {
+    var inputneuronROIs = {};
+    var outputneuronROIs = {};
+    var neuronnames = {}; 
+    
+    neoResults.records.forEach(function (record) {
+        var bodyid = convert64bit(record.get("bodyid"));
+        if (!(bodyid in inputneuronROIs)) {
+            inputneuronROIs[bodyid] = {};
+            outputneuronROIs[bodyid] = {};
+            neuronnames[bodyid] = {};
+            neuronnames[bodyid]["name"] = record.get("bodyname");
+            neuronnames[bodyid]["size"] = convert64bit(record.get("size"));
+            neuronnames[bodyid]["pre"] = convert64bit(record.get("npre"));
+            neuronnames[bodyid]["post"] = convert64bit(record.get("npost"));
+        }
+
+        var rois = record.get("rois");
+        for (let item in rois) {
+            if (state.inputROIs.indexOf(rois[item]) !== -1) {
+                var presize = convert64bit(record.get("pre"));
+                if (presize > 0) {
+                    inputneuronROIs[bodyid][rois[item]] = presize; 
+                }
+            }
+            if (state.outputROIs.indexOf(rois[item]) !== -1) {
+                var postsize = convert64bit(record.get("post"));
+                if (postsize > 0) {
+                    outputneuronROIs[bodyid][rois[item]] = postsize; 
+                }
+            }
+        }
+    });
+
+    // create table
+    var tables = [];
+    var headerdata = ["neuron", "id", "#voxels", "#pre", "#post"];
+  
+    var titlename = "Neurons " + state.neuronSrc + " with inputs in: " + JSON.stringify(state.inputROIs) + " and outputs in: " + JSON.stringify(state.outputROIs); 
+    
+    for (let item in state.inputROIs) {
+        headerdata.push("In:" + state.inputROIs[item]);
+    }
+    for (let item in state.outputROIs) {
+        headerdata.push("Out:" + state.outputROIs[item]);
+    }
+
+    // load table body
+    var tableinfo = [];
+    for (let bodyid in neuronnames) {
+        if (Object.keys(inputneuronROIs[bodyid]).length !== state.inputROIs.length) {
+            continue;
+        }
+        if (Object.keys(outputneuronROIs[bodyid]).length !== state.outputROIs.length) {
+            continue;
+        }
+        var rowinfo = [neuronnames[bodyid].name, bodyid, neuronnames[bodyid].size, neuronnames[bodyid].npre, neuronnames[bodyid].npost];
+        var presizes = inputneuronROIs[bodyid];
+        var postsizes = outputneuronROIs[bodyid];
+
+        for (let index = 0; index < state.inputROIs.length; index++) {
+            rowinfo.push(presizes[state.inputROIs[index]]);
+        }
+        for (let index = 0; index < state.outputROIs.length; index++) {
+            rowinfo.push(postsizes[state.outputROIs[index]]);
+        }
+        tableinfo.push(rowinfo);
+    }
+
+    // sort table so neurons with the most synapses in the ROIs are first
+    tableinfo.sort(compareNeuronRows);
+
+    tables.push({
+        header: headerdata,
+        body: tableinfo,
+        name: titlename
+    });
+
+    return tables;
+}
+
 class NeuronsInROIs extends React.Component {
     static get queryName() {
         return "Find neurons";
@@ -81,87 +157,6 @@ class NeuronsInROIs extends React.Component {
         return "Find neurons that have inputs or outputs in ROIs";
     }
  
-    static parseResults(neoResults) {
-        var inputneuronROIs = {};
-        var outputneuronROIs = {};
-        var neuronnames = {}; 
-        
-        neoResults.records.forEach(function (record) {
-            var bodyid = convert64bit(record.get("bodyid"));
-            if (!(bodyid in inputneuronROIs)) {
-                inputneuronROIs[bodyid] = {};
-                outputneuronROIs[bodyid] = {};
-                neuronnames[bodyid] = {};
-                neuronnames[bodyid]["name"] = record.get("bodyname");
-                neuronnames[bodyid]["size"] = convert64bit(record.get("size"));
-                neuronnames[bodyid]["pre"] = convert64bit(record.get("npre"));
-                neuronnames[bodyid]["post"] = convert64bit(record.get("npost"));
-            }
-
-            var rois = record.get("rois");
-            for (let item in rois) {
-                if (inputROIsHack.indexOf(rois[item]) !== -1) {
-                    var presize = convert64bit(record.get("pre"));
-                    if (presize > 0) {
-                        inputneuronROIs[bodyid][rois[item]] = presize; 
-                    }
-                }
-                if (outputROIsHack.indexOf(rois[item]) !== -1) {
-                    var postsize = convert64bit(record.get("post"));
-                    if (postsize > 0) {
-                        outputneuronROIs[bodyid][rois[item]] = postsize; 
-                    }
-                }
-            }
-        });
-
-        // create table
-        var tables = [];
-        var headerdata = ["neuron", "id", "#voxels", "#pre", "#post"];
-      
-        var titlename = "Neurons " + NeuronSrcHack + " with inputs in: " + JSON.stringify(inputROIsHack) + " and outputs in: " + JSON.stringify(outputROIsHack); 
-        
-        for (let item in inputROIsHack) {
-            headerdata.push("In:" + inputROIsHack[item]);
-        }
-        for (let item in outputROIsHack) {
-            headerdata.push("Out:" + outputROIsHack[item]);
-        }
-
-        // load table body
-        var tableinfo = [];
-        for (let bodyid in neuronnames) {
-            if (Object.keys(inputneuronROIs[bodyid]).length !== inputROIsHack.length) {
-                continue;
-            }
-            if (Object.keys(outputneuronROIs[bodyid]).length !== outputROIsHack.length) {
-                continue;
-            }
-            var rowinfo = [neuronnames[bodyid].name, bodyid, neuronnames[bodyid].size, neuronnames[bodyid].npre, neuronnames[bodyid].npost];
-            var presizes = inputneuronROIs[bodyid];
-            var postsizes = outputneuronROIs[bodyid];
-
-            for (let index = 0; index < inputROIsHack.length; index++) {
-                rowinfo.push(presizes[inputROIsHack[index]]);
-            }
-            for (let index = 0; index < outputROIsHack.length; index++) {
-                rowinfo.push(postsizes[outputROIsHack[index]]);
-            }
-            tableinfo.push(rowinfo);
-        }
-
-        // sort table so neurons with the most synapses in the ROIs are first
-        tableinfo.sort(compareNeuronRows);
-
-        tables.push({
-            header: headerdata,
-            body: tableinfo,
-            name: titlename
-        });
-
-        return tables;
-    }
-
     constructor(props) {
         super(props);
         var initqsParams = {
@@ -179,9 +174,6 @@ class NeuronsInROIs extends React.Component {
         if ((this.state.qsParams.InputROIs.length > 0) ||
             (this.state.qsParams.OutputROIs.length > 0)) {
    
-            inputROIsHack = this.state.qsParams.InputROIs;
-            outputROIsHack = this.state.qsParams.OutputROIs;
-
             // parse ROIs
             var roisstr = "";
             for (let item in this.state.qsParams.InputROIs) {
@@ -203,12 +195,19 @@ class NeuronsInROIs extends React.Component {
             } else {
                 neoquery = neoquery.replace("XX", 'where neuron.bodyId =' + this.state.qsParams.neuronsrc);
             }
-            NeuronSrcHack = this.state.qsParams.neuronsrc;
 
-            
-            this.props.callback(neoquery);
+            let query = {
+                queryStr: neoquery,
+                callback: parseResults,    
+                state: {
+                    neuronSrc: this.state.qsParams.neuronsrc,
+                    outputROIs: this.state.qsParams.OutputROIs,
+                    inputROIs: this.state.qsParams.InputROIs,
+                
+                },
+            }
+            this.props.callback(query);
         }
-
     }
 
     handleChangeROIsIn = (event) => {

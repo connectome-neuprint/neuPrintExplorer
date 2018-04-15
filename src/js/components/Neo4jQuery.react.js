@@ -26,15 +26,18 @@ class Neo4jQuery extends React.Component {
 
         // start query if query state changed
         if (nextProps.isQuerying) {
-            if (nextProps.neoQuery !== "" && nextProps.neoServer !== "") {
+            if (nextProps.neoQueryObj.queryStr !== "" && nextProps.neoServer !== "") {
                 // run query (TODO: handle blocking query??) 
                 var session = driver.session();
                 var setError = this.props.setQueryError;
-                var saveResults = this.props.saveResults;
+                var processResults = nextProps.neoQueryObj.callback;
+                var state = nextProps.neoQueryObj.state;
+                var saveData = this.props.saveData;
                 session
-                    .run(nextProps.neoQuery)
+                    .run(nextProps.neoQueryObj.queryStr)
                     .then(function (result) {
-                        saveResults(result);
+                        let data = processResults(result, state);
+                        saveData(data);
                         session.close();
                     })
                     .catch(function (error) {
@@ -51,7 +54,7 @@ class Neo4jQuery extends React.Component {
 
 var Neo4jQueryState = function(state){
     return {
-        neoQuery: state.query.neoQuery,
+        neoQueryObj: state.query.neoQueryObj,
         isQuerying: state.query.isQuerying,
         neoServer: state.neo4jsettings.neoServer,
         neoDriver: state.neo4jsettings.neoDriver,
@@ -60,12 +63,6 @@ var Neo4jQueryState = function(state){
 
 var Neo4jQueryDispatch = function(dispatch) {
     return {
-        saveResults: function(res) {
-            dispatch({
-                type: 'SET_NEO_RESULTS',
-                neoResults: res
-            });
-        },
         setDriver: function(driver) {
             dispatch({
                 type: 'SET_NEO_DRIVER',
@@ -77,6 +74,16 @@ var Neo4jQueryDispatch = function(dispatch) {
                 type: 'SET_NEO_ERROR',
                 neoError: error
             });
+        },
+        saveData: function(results) {
+            dispatch({
+                type: 'UPDATE_RESULTS',
+                allTables: results
+            });
+            dispatch({
+                type: 'FINISH_QUERY',
+            });
+
         }
     }
 }
@@ -84,7 +91,12 @@ var Neo4jQueryDispatch = function(dispatch) {
 Neo4jQuery.propTypes = {
     neoDriver: PropTypes.object,
     neoServer: PropTypes.string.isRequired,
-    neoQuery: PropTypes.string.isRequired,
+    neoQueryObj: PropTypes.shape({
+        queryStr: PropTypes.string.isRequired,
+        callback: PropTypes.func.isRequired,
+        state: PropTypes.object.isRequred,
+    }),
+    saveData: PropTypes.func.isRequired, 
     isQuerying: PropTypes.bool.isRequired,
     setDriver: PropTypes.func.isRequired,
     setQueryError: PropTypes.func.isRequired,

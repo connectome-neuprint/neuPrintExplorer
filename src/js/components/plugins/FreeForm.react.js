@@ -78,7 +78,13 @@ class FreeForm extends React.Component {
     }
   
     processRequest = () => {
-        this.props.callback(this.state.qsParams.textValue);
+        let query = {
+            queryStr: this.state.qsParams.textValue,
+            callback: FreeForm.parseResults,    
+            state: {},
+        }
+        
+        this.props.callback(query);
     }
 
     handleClick = (event) => {

@@ -30,9 +30,6 @@ function convert64bit(value) {
         : value;
 }
 
-var PreOrPostHack = "pre";
-var NeuronSrcHack = "";
-
 const styles = () => ({
   textField: {
   },
@@ -76,7 +73,7 @@ class RankedTable extends React.Component {
         return "Show connections to neuron(s) ranked in order and colored by neuron class";
     }
    
-    static parseResults(neoResults) {
+    static parseResults(neoResults, state) {
         // create one comparison table
         var tables = [];
         var headerdata = [];
@@ -85,10 +82,10 @@ class RankedTable extends React.Component {
 
         // create table info object
         var titlename = ""
-        if (PreOrPostHack === "pre") {
-            titlename = "Outputs from " + NeuronSrcHack;
+        if (state.preOrPost === "pre") {
+            titlename = "Outputs from " + state.neuronSrc;
         } else {
-            titlename = "Inputs to " + NeuronSrcHack;
+            titlename = "Inputs to " + state.neuronSrc;
         }
         tables.push({
             header: headerdata,
@@ -108,8 +105,8 @@ class RankedTable extends React.Component {
         
             var preid = convert64bit(record.get("pre_id"));
             var node1id = convert64bit(record.get("m_id"));
-            if (((PreOrPostHack === "pre") && (preid !== node1id)) ||
-                (PreOrPostHack === "post") && (preid === node1id)) { 
+            if (((state.preOrPost === "pre") && (preid !== node1id)) ||
+                (state.preOrPost === "post") && (preid === node1id)) { 
             
                 var body1 = convert64bit(record.get("Body1"));
                 var body2 = convert64bit(record.get("Body2"));
@@ -142,8 +139,8 @@ class RankedTable extends React.Component {
             // do not add reverse edges
             var preid = convert64bit(record.get("pre_id"));
             var node1id = convert64bit(record.get("m_id"));
-            if (((PreOrPostHack === "pre") && (preid === node1id))
-                || ((PreOrPostHack === "post") && (preid !== node1id))) { 
+            if (((state.preOrPost === "pre") && (preid === node1id))
+                || ((state.preOrPost === "post") && (preid !== node1id))) { 
                 if (lastbody != body1) {
                     if (lastbody != -1) {
                         valtable.push(rowstats);
@@ -236,9 +233,16 @@ class RankedTable extends React.Component {
                 neoquery = mainQuery.replace("ZZ", 'm.bodyId =' + this.state.qsParams.neuronsrc);
             }
             neoquery = neoquery.replace(/YY/g, this.props.datasetstr)
-            PreOrPostHack = this.state.qsParams.preorpost;
-            NeuronSrcHack = this.state.qsParams.neuronsrc;
-            this.props.callback(neoquery);
+            let query = {
+                queryStr: neoquery,
+                callback: RankedTable.parseResults,    
+                state: {
+                    preOrPost: this.state.qsParams.preorpost,
+                    neuronSrc: this.state.qsParams.neuronsrc,
+                },
+            }
+ 
+            this.props.callback(query);
         }
     }
 

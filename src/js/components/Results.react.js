@@ -102,7 +102,7 @@ class Results extends React.Component {
             this.setState({open: false});
 
             return fetch("/favoritesdb", {
-                body: JSON.stringify({"name": this.state.bookmarkname, "url": loc, "cypher": this.props.cypher}),
+                body: JSON.stringify({"name": this.state.bookmarkname, "url": loc, "cypher": this.props.queryObj.queryStr}),
                 headers: {
                     'Authorization': googleToken,
                     'content-type': 'application/json'
@@ -230,7 +230,7 @@ class Results extends React.Component {
                         </Button>
                         { (this.state.showQuery) ? 
                             (
-                                <Typography variant="body1">{this.props.cypher}</Typography>
+                                <Typography variant="body1">{this.props.queryObj.queryStr}</Typography>
                             ) :
                             (<div />)
                         }
@@ -259,7 +259,7 @@ Results.propTypes = {
         search: PropTypes.string.isRequired
     }),
     allTables: PropTypes.array,
-    cypher: PropTypes.string.isRequired, 
+    queryObj: PropTypes.object.isRequired, 
     reAuth: PropTypes.func.isRequired, 
     neoError: PropTypes.object,
     isQuerying: PropTypes.bool.isRequired,
@@ -281,7 +281,7 @@ var ResultsState = function(state){
         neoError: state.query.neoError,
         allTables: state.results.allTables,
         userInfo: state.user.userInfo,
-        cypher: state.query.neoQuery,
+        queryObj: state.query.neoQueryObj,
     }   
 };
 

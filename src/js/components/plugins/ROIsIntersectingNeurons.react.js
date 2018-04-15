@@ -17,8 +17,6 @@ import NeuronHelp from '../NeuronHelp.react';
 
 const mainQuery = 'match (neuron :NeuronYY)<-[:PartOf]-(roi :Neuropart) where ZZ return neuron.bodyId as bodyid, neuron.name as bodyname, roi.pre as pre, roi.post as post, labels(roi) as rois order by neuron.bodyId';
 
-var availableROIsHack = [];
-
 function convert64bit(value) {
     return neo4j.isInt(value) ?
         (neo4j.integer.inSafeRange(value) ? 
@@ -61,7 +59,7 @@ class ROIsIntersectingNeurons extends React.Component {
         return "Find ROIs that intersect a given neuron(s).  A putative name is given based on top two ROI inputs and outputs";
     }
 
-    static parseResults(neoResults) {
+    static parseResults(neoResults, state) {
         var tableBody = {}
         var tables = [];
         var headerdata = ["ROI name", "Inputs", "Outputs"];
@@ -76,7 +74,7 @@ class ROIsIntersectingNeurons extends React.Component {
           
             var rois = record.get("rois");
             for (let item in rois) {
-                if (availableROIsHack.indexOf(rois[item]) !== -1) {
+                if (state.availableROIs.indexOf(rois[item]) !== -1) {
                     tableBody[bodyid]["body"].push([rois[item], convert64bit(record.get("pre")), convert64bit(record.get("post"))]);
                 }
             }
@@ -125,7 +123,6 @@ class ROIsIntersectingNeurons extends React.Component {
 
     processRequest = () => {
         if (this.state.qsParams.neuronsrc !== "") {
-            availableROIsHack = this.props.availableROIs;
             var neoquery = "";
             
             if (isNaN(this.state.qsParams.neuronsrc)) {
@@ -134,7 +131,15 @@ class ROIsIntersectingNeurons extends React.Component {
                 neoquery = mainQuery.replace("ZZ", 'neuron.bodyId =' + this.state.qsParams.neuronsrc);
             }
             neoquery = neoquery.replace(/YY/g, this.props.datasetstr)
-            this.props.callback(neoquery);
+            let query = {
+                queryStr: neoquery,
+                callback: ROIsIntersectingNeurons.parseResults,    
+                state: {
+                    availableROIs: this.props.availableROIs
+                },
+            }
+            
+            this.props.callback(query);
         }
     }
 
