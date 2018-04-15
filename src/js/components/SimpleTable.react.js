@@ -26,6 +26,9 @@ const styles = theme => ({
     marginTop: theme.spacing.unit * 1,
     overflowX: 'auto',
   },
+  fcell: {
+    height: "1px",
+  },
   table: {
     minWidth: 500,
   },
@@ -83,6 +86,7 @@ class SimpleTable extends React.Component {
                     var cells = rec.map( (entry, index2) => {
                         return (
                             <TableCell
+                                        className={classes.fcell}
                                         key={String(index)+"-"+String(index2)}
                                         padding="none">
                             {entry}

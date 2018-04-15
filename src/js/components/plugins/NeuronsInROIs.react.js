@@ -18,8 +18,12 @@ import { MenuItem } from 'material-ui/Menu';
 import TextField from 'material-ui/TextField';
 import Select from 'material-ui/Select';
 import NeuronHelp from '../NeuronHelp.react';
+import ClickableQuery from '../ClickableQuery.react';
 
 const mainQuery = 'match (neuron :NeuronZZYY)<-[:PartOf]-(roi :Neuropart) XX return neuron.bodyId as bodyid, neuron.name as bodyname, roi.pre as pre, roi.post as post, labels(roi) as rois, neuron.size as size, neuron.pre as npre, neuron.post as npost order by neuron.bodyId';
+
+const preQuery = 'match (m:NeuronYY)-[e:ConnectsTo]->(n:NeuronYY) where m.bodyId=ZZ return n.name as Neuron, n.bodyId as NeuronId, e.weight as Weight order by e.weight desc';
+const postQuery = 'match (m:NeuronYY)<-[e:ConnectsTo]-(n:NeuronYY) where m.bodyId=ZZ return n.name as Neuron, n.bodyId as NeuronId, e.weight as Weight order by e.weight desc';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -42,12 +46,33 @@ function convert64bit(value) {
 function compareNeuronRows(row1, row2) {
     var total = 0;
     var total2 = 0;
-    for (let i = 2; i < row1.length; i++) {
-        total += row1[i];
-        total2 += row2[i];
+    for (let i = 5; i < row1.length; i++) {
+        total += parseInt(row1[i]);
+        total2 += parseInt(row2[i]);
     }
 
     return total2 - total;
+}
+
+var processConnections = function(results, state) {
+    // state: sourceId, sourceName, isPre
+  
+    let tables = [];
+    let headerdata = ["Neuron ID", "Neuron", "#connections"];
+    let data = [];
+    let table = {
+        header: headerdata,
+        body: data,
+        name: "Connections " + (state.isPre ? "from " : "to ") + state.sourceName + ":bodyID=" + String(state.sourceId), 
+    }
+    results.records.forEach(function (record) {
+        let bodyid = convert64bit(record.get("NeuronId"));
+        let bodyname = record.get("Neuron");
+        let weight = convert64bit(record.get("Weight"));
+        data.push([bodyid, bodyname, weight]) 
+    });
+    tables.push(table);
+    return tables;
 }
 
 const styles = theme => ({
@@ -71,7 +96,7 @@ var parseResults = function(neoResults, state) {
     var inputneuronROIs = {};
     var outputneuronROIs = {};
     var neuronnames = {}; 
-    
+
     neoResults.records.forEach(function (record) {
         var bodyid = convert64bit(record.get("bodyid"));
         if (!(bodyid in inputneuronROIs)) {
@@ -114,8 +139,19 @@ var parseResults = function(neoResults, state) {
         headerdata.push("Out:" + state.outputROIs[item]);
     }
 
+/*
+            }
+            
+            neoquery = neoquery.replace(/YY/g, this.props.datasetstr)
+*/
+
     // load table body
     var tableinfo = [];
+    var formatinfo = [];
+    
+    const basepreQ = preQuery.replace(/YY/g, state.datasetstr)
+    const basepostQ = postQuery.replace(/YY/g, state.datasetstr)
+
     for (let bodyid in neuronnames) {
         if (Object.keys(inputneuronROIs[bodyid]).length !== state.inputROIs.length) {
             continue;
@@ -124,24 +160,61 @@ var parseResults = function(neoResults, state) {
             continue;
         }
         var rowinfo = [neuronnames[bodyid].name, bodyid, neuronnames[bodyid].size, neuronnames[bodyid].npre, neuronnames[bodyid].npost];
+        let preq = basepreQ.replace("ZZ", bodyid);
+        let postq = basepostQ.replace("ZZ", bodyid);
+        let statepre = {
+            sourceId: bodyid,
+            sourceName: neuronnames[bodyid].name,
+            isPre: true,
+        };
+        let statepost = {
+            sourceId: bodyid,
+            sourceName: neuronnames[bodyid].name,
+            isPre: false,
+        };
+        let neoPre = {
+            queryStr: preq,
+            callback: processConnections,
+            state: statepre,
+        };
+        let neoPost = {
+            queryStr: postq,
+            callback: processConnections,
+            state: statepost,
+        }
+
+        var frowinfo = [JSON.stringify(neuronnames[bodyid].name),
+                        JSON.stringify(bodyid), 
+                        JSON.stringify(neuronnames[bodyid].size), 
+                        (<ClickableQuery neoQueryObj={neoPre}>
+                            {JSON.stringify(neuronnames[bodyid].npre)}
+                        </ClickableQuery>),
+                        (<ClickableQuery neoQueryObj={neoPost}>
+                            {JSON.stringify(neuronnames[bodyid].npost)}
+                        </ClickableQuery>)];
         var presizes = inputneuronROIs[bodyid];
         var postsizes = outputneuronROIs[bodyid];
 
         for (let index = 0; index < state.inputROIs.length; index++) {
             rowinfo.push(presizes[state.inputROIs[index]]);
+            frowinfo.push(JSON.stringify(presizes[state.inputROIs[index]]));
         }
         for (let index = 0; index < state.outputROIs.length; index++) {
             rowinfo.push(postsizes[state.outputROIs[index]]);
+            frowinfo.push(JSON.stringify(postsizes[state.outputROIs[index]]));
         }
         tableinfo.push(rowinfo);
+        formatinfo.push(frowinfo);
     }
 
     // sort table so neurons with the most synapses in the ROIs are first
     tableinfo.sort(compareNeuronRows);
+    formatinfo.sort(compareNeuronRows); // a bit of a hack
 
     tables.push({
         header: headerdata,
         body: tableinfo,
+        formatbody: formatinfo,
         name: titlename
     });
 
@@ -203,7 +276,7 @@ class NeuronsInROIs extends React.Component {
                     neuronSrc: this.state.qsParams.neuronsrc,
                     outputROIs: this.state.qsParams.OutputROIs,
                     inputROIs: this.state.qsParams.InputROIs,
-                
+                    datasetstr: this.props.datasetstr, 
                 },
             }
             this.props.callback(query);

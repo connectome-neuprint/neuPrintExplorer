@@ -7,7 +7,7 @@
 var queryState = {
     neoQueryObj: {
         queryStr: "",
-        callback: null,
+        callback: function(){},
         state: null,
     },
     isQuerying: false,
