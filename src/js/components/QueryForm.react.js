@@ -12,7 +12,7 @@ import { withRouter } from 'react-router-dom';
 import Typography from 'material-ui/Typography';
 import Divider from 'material-ui/Divider';
 import { withStyles } from 'material-ui/styles';
-
+import qs from 'qs';
 
 const styles = theme => ({
     divider: {
@@ -44,6 +44,11 @@ class QueryForm extends React.Component {
         assert("state" in query);
         */
 
+        let currqs = qs.parse(this.props.urlQueryString);
+        currqs["openQuery"] = "false";
+        let urlqs = qs.stringify(currqs);
+        this.props.setURLQs(urlqs);
+        
         this.props.history.push("/results" + window.location.search);
 
         // flush all other results
@@ -108,6 +113,8 @@ QueryForm.propTypes = {
     datasetstr: PropTypes.string.isRequired,
     isQuerying: PropTypes.bool.isRequired,
     classes: PropTypes.object.isRequired,
+    setURLQs: PropTypes.func.isRequired,
+    urlQueryString: PropTypes.string.isRequired,
     history: PropTypes.object.isRequired,
     neoResults: PropTypes.object,
 };
@@ -119,7 +126,8 @@ var QueryFormState = function(state){
         isQuerying: state.query.isQuerying,
         neoResults: state.query.neoResults,
         neoError: state.query.neoError,
-        neoServer: state.neo4jsettings.neoServer
+        neoServer: state.neo4jsettings.neoServer,
+        urlQueryString: state.app.urlQueryString,
     }   
 };
 
@@ -129,6 +137,12 @@ var QueryFormDispatch = function(dispatch) {
             dispatch({
                 type: 'UPDATE_QUERY',
                 neoQueryObj: query
+            });
+        },
+        setURLQs: function(querystring) {
+            dispatch({
+                type: 'SET_URL_QS',
+                urlQueryString: querystring
             });
         }
     }
