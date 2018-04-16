@@ -39,6 +39,14 @@ module.exports = function(grunt) {
                         dest: 'build/index.html'
                     },
                     {
+                        src: 'node_modules/react-grid-layout/css/styles.css',
+                        dest: 'build/css/grid.min.css'
+                    },
+                    {
+                        src: 'node_modules/react-resizable/css/styles.css',
+                        dest: 'build/css/resize.min.css'
+                    },
+                    {
                         src: 'build/js/bundle.js',
                         dest: 'build/js/bundle.min.js',
                     },
@@ -53,13 +61,21 @@ module.exports = function(grunt) {
                 files: [
                     {
                         expand: "true",
-                        src: 'public/*',
+                        src: 'public/**/*',
                         dest: 'dist/'
                     },
                     {
                         src: 'src/index.html',
                         dest: 'dist/index.html'
-                    }
+                    },
+                    {
+                        src: 'node_modules/react-grid-layout/css/styles.css',
+                        dest: 'dist/css/grid.min.css'
+                    },
+                    {
+                        src: 'node_modules/react-resizable/css/styles.css',
+                        dest: 'dist/css/resize.min.css'
+                    },
                 ]
         },
     },

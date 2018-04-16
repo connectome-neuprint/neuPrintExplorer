@@ -15,10 +15,17 @@ import { withStyles } from 'material-ui/styles';
 import _ from "underscore";
 import PropTypes from 'prop-types';
 import ResultsTopBar from './ResultsTopBar.react';
+import { Responsive, WidthProvider } from 'react-grid-layout';
+const ResponsiveGridLayout = WidthProvider(Responsive);
+
 
 const styles = () => ({
     root: {
         flexGrow: 1,
+    },
+    scroll: {
+        overflowY: "auto",
+        height: "100%",
     },
     flex: {
         flex: 1,
@@ -70,6 +77,7 @@ class Results extends React.Component {
     render() {
         // TODO: show query runtime results
         const { classes } = this.props; 
+        alert("rendering");
 
         return (
             <div>
@@ -92,28 +100,44 @@ class Results extends React.Component {
                     (<Typography>Error: {this.props.neoError.code}</Typography>) :
                     (this.props.allTables !== null ?
                         (
-                            <div className={classes.root}>
+                            <ResponsiveGridLayout 
+                                                    className="layout" 
+                                                    rowHeight={30} 
+                                                    breakpoints={{lg: 2000}}
+                                                    cols={{lg: 12}}
+                                                    draggableHandle=".topresultbar"
+                                                    compactType="horizontal"
+                            >
                                 {this.props.allTables.map( (result, index) => {
                                     return (
-                                        <div className={classes.flex} 
-                                                key={String(index)}
+                                        <div 
+                                            key={index} 
+                                            data-grid={{
+                                                x: (index*6)%12,
+                                                y: Math.floor(index/2)*18,
+                                                w: (this.props.allTables.length > 1) ? 6 : 12,
+                                                h: 18
+                                            }}
                                         >
-                                            <ResultsTopBar
-                                                            downloadCallback={this.downloadFile}
-                                                            name={(result.length == 1) ? 
-                                                                    result[0].name :
-                                                                    String(result.length) + " tables"
-                                                            } 
-                                                            queryStr={result[0].queryStr}
-                                                            index={index}
-                                            />
-                                            <SimpleTables 
-                                                            allTables={result}
-                                            />
+                                            <div className={classes.scroll}>
+                                                <ResultsTopBar
+                                                                id="blah"
+                                                                downloadCallback={this.downloadFile}
+                                                                name={(result.length == 1) ? 
+                                                                        result[0].name :
+                                                                        String(result.length) + " tables"
+                                                                } 
+                                                                queryStr={result[0].queryStr}
+                                                                index={index}
+                                                />
+                                                <SimpleTables 
+                                                                allTables={result}
+                                                />
+                                            </div>
                                         </div>
                                     )
                                 })}
-                            </div>
+                            </ResponsiveGridLayout>
                         ) : 
                         (<div />)
                     )

@@ -65,6 +65,22 @@ fileref2.setAttribute("rel", "stylesheet");
 fileref2.setAttribute("href", filename2);
 document.getElementsByTagName("head")[0].appendChild(fileref2);
 
+// load css files
+var css1 = "css/grid.min.css";
+var css1ref = document.createElement("link");
+css1ref.setAttribute("rel", "stylesheet");
+css1ref.setAttribute("type", "text/css");
+css1ref.setAttribute("href", css1);
+document.getElementsByTagName("head")[0].appendChild(css1ref);
+
+var css2 = "css/resize.min.css";
+var css2ref = document.createElement("link");
+css2ref.setAttribute("rel", "stylesheet");
+css2ref.setAttribute("type", "text/css");
+css2ref.setAttribute("href", css2);
+document.getElementsByTagName("head")[0].appendChild(css2ref);
+
+
 // load form plugins
 import loadPlugins from './helpers/initplugins';
 loadPlugins(store);
