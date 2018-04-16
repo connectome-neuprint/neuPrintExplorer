@@ -28,6 +28,7 @@ globals:
     React: true
     TestUtils: true
     routerHelper: true
+    Set: true
 parser:
     babel-eslint
 plugins:

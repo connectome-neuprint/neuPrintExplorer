@@ -77,7 +77,6 @@ class Results extends React.Component {
     render() {
         // TODO: show query runtime results
         const { classes } = this.props; 
-        alert("rendering");
 
         return (
             <div>
@@ -109,7 +108,7 @@ class Results extends React.Component {
                                                     compactType="horizontal"
                             >
                                 {this.props.allTables.map( (result, index) => {
-                                    return (
+                                    return (!this.props.clearIndices.has(index)) ? (
                                         <div 
                                             key={index} 
                                             data-grid={{
@@ -135,7 +134,7 @@ class Results extends React.Component {
                                                 />
                                             </div>
                                         </div>
-                                    )
+                                    ) : <div key={index} />;
                                 })}
                             </ResponsiveGridLayout>
                         ) : 
@@ -152,6 +151,8 @@ Results.propTypes = {
         search: PropTypes.string.isRequired
     }),
     allTables: PropTypes.array,
+    clearIndices: PropTypes.set,
+    numClear: PropTypes.number,
     queryObj: PropTypes.object.isRequired, 
     neoError: PropTypes.object,
     isQuerying: PropTypes.bool.isRequired,
@@ -165,6 +166,8 @@ var ResultsState = function(state){
         isQuerying: state.query.isQuerying,
         neoError: state.query.neoError,
         allTables: state.results.allTables,
+        clearIndices: state.results.clearIndices,
+        numClear: state.results.numClear,
         userInfo: state.user.userInfo,
         queryObj: state.query.neoQueryObj,
     }   

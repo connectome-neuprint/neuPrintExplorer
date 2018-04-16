@@ -150,6 +150,14 @@ class ResultsTopBar extends React.Component {
                     >
                         <Icon style={{fontSize:18}}>file_download</Icon>
                     </IconButton>
+                    <IconButton
+                                className={classes.button}
+                                aria-label="Close Window"
+                                onClick={() => {this.props.clearResult(this.props.index)}}
+                    >
+                        <Icon style={{fontSize:18}}>close</Icon>
+                    </IconButton>
+
                 </Toolbar>
             </div>
         );
@@ -168,6 +176,12 @@ var ResultsTopBarDispatch = function(dispatch) {
             dispatch({
                 type: 'LOGOUT_USER'
             });
+        },
+        clearResult: function(index) {
+            dispatch({
+                type: 'CLEAR_RESULT',
+                index: index
+            });
         }
    }
 }
@@ -175,6 +189,7 @@ var ResultsTopBarDispatch = function(dispatch) {
 ResultsTopBar.propTypes = {
     classes: PropTypes.object.isRequired,
     reAuth: PropTypes.func.isRequired,
+    clearResult: PropTypes.func.isRequired,
     downloadCallback: PropTypes.func.isRequired,
     queryStr: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
