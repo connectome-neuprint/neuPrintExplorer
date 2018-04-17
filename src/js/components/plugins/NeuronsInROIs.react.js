@@ -186,7 +186,7 @@ var parseResults = function(neoResults, state) {
         }
 
         var frowinfo = [JSON.stringify(neuronnames[bodyid].name),
-                        JSON.stringify(bodyid), 
+                        JSON.stringify(parseInt(bodyid)), 
                         JSON.stringify(neuronnames[bodyid].size), 
                         (<ClickableQuery neoQueryObj={neoPre}>
                             {JSON.stringify(neuronnames[bodyid].npre)}
