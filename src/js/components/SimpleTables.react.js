@@ -38,6 +38,9 @@ const styles = theme => ({
   },
   cellborder: {
     borderBottom: 0,
+  },
+  nopad: {
+    padding: 0,
   }
 });
 
@@ -72,14 +75,17 @@ class SimpleTables extends React.Component {
                         {this.props.allTables.slice(startRecord, page * rowsPerPage + rowsPerPage).map( (tableinfo, index) => {
                             return (
                                 <TableRow key={startRecord + index}>
-                                    <TableCell className={classes.cellborder}>
+                                    <TableCell 
+                                                className={classes.cellborder} 
+                                                padding="none"
+                                    >
                                         <ExpansionPanel>
                                             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                                                 <Typography>
                                                     {tableinfo.name}
                                                 </Typography> 
                                             </ExpansionPanelSummary>
-                                            <ExpansionPanelDetails>
+                                            <ExpansionPanelDetails className={classes.nopad}>
                                                 <SimpleTable data={tableinfo} />
                                             </ExpansionPanelDetails>
                                         </ExpansionPanel>
