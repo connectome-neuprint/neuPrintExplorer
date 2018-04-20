@@ -13,7 +13,7 @@ var neo4j = require('neo4j-driver').v1;
 import { withStyles } from 'material-ui/styles';
 import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 import {connect} from 'react-redux';
-
+import SimpleCellWrapper from '../../helpers/SimpleCellWrapper';
 
 const styles = () => ({
   textField: {
@@ -46,14 +46,18 @@ class FreeForm extends React.Component {
                             value.toNumber() : value.toString()) 
                         : value;
 
-                recorddata.push(newval);
+                recorddata.push(
+                    new SimpleCellWrapper(recorddata.length, JSON.stringify(newval))
+                );
             });
             maindata.push(recorddata);
         });
             
         if (neoResults.records.length > 0) {
             for(var i = 0; i< neoResults.records[0].length; i++) { 
-                 headerdata.push(neoResults.records[0].keys[i]);
+                 headerdata.push(
+                    new SimpleCellWrapper(i, neoResults.records[0].keys[i])
+                 );
             }
         }
         

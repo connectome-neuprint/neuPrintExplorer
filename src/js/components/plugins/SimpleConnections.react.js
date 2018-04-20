@@ -15,6 +15,7 @@ import { withStyles } from 'material-ui/styles';
 import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 import {connect} from 'react-redux';
 import NeuronHelp from '../NeuronHelp.react';
+import SimpleCellWrapper from '../../helpers/SimpleCellWrapper';
 
 const mainQuery = 'match (m:NeuronYY)XX(n:NeuronYY) where ZZ return m.name as Neuron1, n.name as Neuron2, n.bodyId as Neuron2Id, e.weight as Weight, m.bodyId as Neuron1Id order by m.name, m.bodyId, e.weight desc';
 
@@ -50,7 +51,12 @@ class SimpleConnections extends React.Component {
     static parseResults(neoResults, state) {
         // load one table from neoResults
         var tables = [];
-        var headerdata = ["Name", "Body ID", "Weight"];
+        let index = 0;
+        var headerdata = [
+            new SimpleCellWrapper(index++, "ID"),
+            new SimpleCellWrapper(index++, "Name"),
+            new SimpleCellWrapper(index++, "Weight"),
+        ];
         var currtable = [];
         var lastbody = -1;
 
@@ -75,11 +81,15 @@ class SimpleConnections extends React.Component {
             } 
             lastbody = newval; 
             lastname = record.get("Neuron1");
-
+            
+            let neuronname = record.get("Neuron2");
+            if (neuronname === null) {
+                neuronname = "";
+            }
             currtable.push([
-                record.get("Neuron2"), 
-                convert64bit(record.get("Neuron2Id")), 
-                convert64bit(record.get("Weight")) 
+                new SimpleCellWrapper(index++, convert64bit(record.get("Neuron2Id"))),
+                new SimpleCellWrapper(index++, neuronname),
+                new SimpleCellWrapper(index++, convert64bit(record.get("Weight"))),
             ]);
         });
 

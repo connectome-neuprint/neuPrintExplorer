@@ -6,7 +6,7 @@
 
 var resultsState = {
     allTables: null,
-    clearIndices: null,
+    clearIndices: new Set(),
     numClear: 0
 }
 

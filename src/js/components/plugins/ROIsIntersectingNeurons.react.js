@@ -14,6 +14,7 @@ import { withStyles } from 'material-ui/styles';
 import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 import {connect} from 'react-redux';
 import NeuronHelp from '../NeuronHelp.react';
+import SimpleCellWrapper from '../../helpers/SimpleCellWrapper';
 
 const mainQuery = 'match (neuron :NeuronYY)<-[:PartOf]-(roi :Neuropart) where ZZ return neuron.bodyId as bodyid, neuron.name as bodyname, roi.pre as pre, roi.post as post, labels(roi) as rois order by neuron.bodyId';
 
@@ -35,19 +36,19 @@ function compareNeuronRows1plus(row1, row2) {
     var total = 0;
     var total2 = 0;
     for (let i = 1; i < row1.length; i++) {
-        total += row1[i];
-        total2 += row2[i];
+        total += row1[i].getValue();
+        total2 += row2[i].getValue();
     }
 
     return total2 - total;
 }
 
 function compareNeuronRows1(row1, row2) {
-    return row2[1] - row1[1];    
+    return row2[1].getValue() - row1[1].getValue();    
 }
 
 function compareNeuronRows2(row1, row2) {
-    return row2[2] - row1[2];    
+    return row2[2].getValue() - row1[2].getValue();    
 }
 
 class ROIsIntersectingNeurons extends React.Component {
@@ -62,7 +63,12 @@ class ROIsIntersectingNeurons extends React.Component {
     static parseResults(neoResults, state) {
         var tableBody = {}
         var tables = [];
-        var headerdata = ["ROI name", "Inputs", "Outputs"];
+        let index = 0;
+        let headerdata = [
+            new SimpleCellWrapper(index++, "ROI name"),
+            new SimpleCellWrapper(index++, "inputs"),
+            new SimpleCellWrapper(index++, "outputs"),
+        ];
 
         neoResults.records.forEach(function (record) {
             var bodyid = convert64bit(record.get("bodyid"));
@@ -75,7 +81,20 @@ class ROIsIntersectingNeurons extends React.Component {
             var rois = record.get("rois");
             for (let item in rois) {
                 if (state.availableROIs.indexOf(rois[item]) !== -1) {
-                    tableBody[bodyid]["body"].push([rois[item], convert64bit(record.get("pre")), convert64bit(record.get("post"))]);
+
+                    let numpre = convert64bit(record.get("pre"));
+                    if (numpre === null) {
+                        numpre = 0;
+                    }
+                    let numpost = convert64bit(record.get("post"));
+                    if (numpost === null) {
+                        numpost = 0;
+                    }
+                    tableBody[bodyid]["body"].push([
+                        new SimpleCellWrapper(index++, rois[item]),
+                        new SimpleCellWrapper(index++, numpre),
+                        new SimpleCellWrapper(index++, numpost),
+                    ]);
                 }
             }
         });
@@ -87,10 +106,10 @@ class ROIsIntersectingNeurons extends React.Component {
             data.sort(compareNeuronRows1); // sort by pre
             var prename = "";
             for (let i = 0; i < data.length; i++) {
-                if (i == 2 || data[i][1] === null) {
+                if (i == 2 || data[i][1].getValue() === null) {
                     break;
                 }
-                prename += data[i][0];
+                prename += data[i][0].getValue();
             }
             data.sort(compareNeuronRows2); // sort by post
             var postname = "";
@@ -98,7 +117,7 @@ class ROIsIntersectingNeurons extends React.Component {
                 if (i == 2 || data[i][2] === null) {
                     break;
                 }
-                postname += data[i][0];
+                postname += data[i][0].getValue();
             }
 
             data.sort(compareNeuronRows1plus); // sort by total

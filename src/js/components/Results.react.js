@@ -54,14 +54,14 @@ class Results extends React.Component {
 
             // load headers
             tableinfo.header.map( (headinfo) => {
-                csvdata = csvdata + headinfo + ",";
+                csvdata = csvdata + headinfo.getValue() + ",";
             });
             csvdata = csvdata + "\n";
 
             // load data
             tableinfo.body.map( (rowinfo) => {
                 rowinfo.map( (elinfo) => {
-                    csvdata = csvdata + JSON.stringify(elinfo) + ",";
+                    csvdata = csvdata + elinfo.getValue() + ",";
                 });
                 csvdata = csvdata + "\n";
             });

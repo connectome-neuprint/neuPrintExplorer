@@ -41,7 +41,7 @@ class Neo4jQuery extends React.Component {
                     .run(queryStr)
                     .then(function (result) {
                         let data = processResults(result, state);
-                        if (data !== null) {
+                        if (data !== null && data.length > 0) {
                             data[0]["queryStr"] = queryStr;
                         }
                         saveData(data);

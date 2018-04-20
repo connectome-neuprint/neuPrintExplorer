@@ -11,7 +11,6 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import Table, {
   TableBody,
-  TableCell,
   TableFooter,
   TableHead,
   TablePagination,
@@ -70,41 +69,19 @@ class SimpleTable extends React.Component {
           <Table className={classes.table}>
             <TableHead>
                 <TableRow>
-                {this.props.data.header.map((header, index) => {
+                {this.props.data.header.map((header) => {
                     return (
-                        <TableCell key={index}>
-                            {header}
-                        </TableCell>
+                        header.getComponent()
                     );
                 })}
                 </TableRow>
             </TableHead>
             <TableBody>
-              {("formatbody" in this.props.data) ? 
-                (
-                    this.props.data.formatbody.slice(startRecord, page * rowsPerPage + rowsPerPage).map( (rec, index)  => {
-                    var cells = rec.map( (entry, index2) => {
-                        return (
-                            <TableCell
-                                        className={classes.fcell}
-                                        key={String(index)+"-"+String(index2)}
-                                        padding="none">
-                            {entry}
-                            </TableCell>
-                        )
-                    });
-                    return (
-                        <TableRow key={startRecord + index}>
-                            {cells}
-                        </TableRow>
-                    );
-                  })
-                ) :
-                (
+                {(
                     this.props.data.body.slice(startRecord, page * rowsPerPage + rowsPerPage).map( (rec, index)  => {
-                    var cells = rec.map( (entry, index2) => {
+                    var cells = rec.map( (entry) => {
                         return (
-                            <TableCell key={String(index)+"-"+String(index2)}>{JSON.stringify(entry)}</TableCell>
+                            entry.getComponent()
                         )
                     });
                     return (
@@ -113,8 +90,7 @@ class SimpleTable extends React.Component {
                         </TableRow>
                     );
                   })
-                )
-              }
+                )}
             </TableBody>
             <TableFooter>
               <TableRow>
@@ -140,7 +116,6 @@ SimpleTable.propTypes = {
     data: PropTypes.shape({
         body: PropTypes.array,
         header: PropTypes.array,
-        formatbody: PropTypes.array,
     })
 };
 

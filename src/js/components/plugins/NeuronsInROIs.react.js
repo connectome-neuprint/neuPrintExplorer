@@ -19,6 +19,7 @@ import TextField from 'material-ui/TextField';
 import Select from 'material-ui/Select';
 import NeuronHelp from '../NeuronHelp.react';
 import ClickableQuery from '../ClickableQuery.react';
+import SimpleCellWrapper from '../../helpers/SimpleCellWrapper';
 
 const mainQuery = 'match (neuron :NeuronZZYY)<-[:PartOf]-(roi :Neuropart) XX return neuron.bodyId as bodyid, neuron.name as bodyname, roi.pre as pre, roi.post as post, labels(roi) as rois, neuron.size as size, neuron.pre as npre, neuron.post as npost order by neuron.bodyId';
 
@@ -47,8 +48,8 @@ function compareNeuronRows(row1, row2) {
     var total = 0;
     var total2 = 0;
     for (let i = 5; i < row1.length; i++) {
-        total += parseInt(row1[i]);
-        total2 += parseInt(row2[i]);
+        total += row1[i].getValue();
+        total2 += row2[i].getValue();
     }
 
     return total2 - total;
@@ -58,7 +59,13 @@ var processConnections = function(results, state) {
     // state: sourceId, sourceName, isPre
   
     let tables = [];
-    let headerdata = ["Neuron ID", "Neuron", "#connections"];
+    let index = 0;
+    let headerdata = [
+        new SimpleCellWrapper(index++, "Neuron ID"),
+        new SimpleCellWrapper(index++, "Neuron"),
+        new SimpleCellWrapper(index++, "#connections"),
+    ];
+    
     let data = [];
     let table = {
         header: headerdata,
@@ -69,7 +76,11 @@ var processConnections = function(results, state) {
         let bodyid = convert64bit(record.get("NeuronId"));
         let bodyname = record.get("Neuron");
         let weight = convert64bit(record.get("Weight"));
-        data.push([bodyid, bodyname, weight]) 
+        data.push([
+            new SimpleCellWrapper(index++, bodyid),
+            new SimpleCellWrapper(index++, bodyname),
+            new SimpleCellWrapper(index++, weight),
+        ]);
     });
     tables.push(table);
     return tables;
@@ -128,25 +139,28 @@ var parseResults = function(neoResults, state) {
 
     // create table
     var tables = [];
-    var headerdata = ["neuron", "id", "#voxels", "#pre", "#post"];
-  
+ 
+    let index = 0;
+    let headerdata = [
+        new SimpleCellWrapper(index++, "id"),
+        new SimpleCellWrapper(index++, "neuron"),
+        new SimpleCellWrapper(index++, "#voxels"),
+        new SimpleCellWrapper(index++, "#pre"),
+        new SimpleCellWrapper(index++, "#post"),
+    ];
+
     var titlename = "Neurons " + state.neuronSrc + " with inputs in: " + JSON.stringify(state.inputROIs) + " and outputs in: " + JSON.stringify(state.outputROIs); 
     
     for (let item in state.inputROIs) {
-        headerdata.push("In:" + state.inputROIs[item]);
+        headerdata.push(new SimpleCellWrapper(index++,
+                                             "In:" + state.inputROIs[item]));
     }
     for (let item in state.outputROIs) {
-        headerdata.push("Out:" + state.outputROIs[item]);
+        headerdata.push(new SimpleCellWrapper(index++,
+                                             "Out:" + state.outputROIs[item]));
     }
 
-/*
-            }
-            
-            neoquery = neoquery.replace(/YY/g, this.props.datasetstr)
-*/
-
     // load table body
-    var tableinfo = [];
     var formatinfo = [];
     
     const basepreQ = preQuery.replace(/YY/g, state.datasetstr)
@@ -159,7 +173,6 @@ var parseResults = function(neoResults, state) {
         if (Object.keys(outputneuronROIs[bodyid]).length !== state.outputROIs.length) {
             continue;
         }
-        var rowinfo = [neuronnames[bodyid].name, bodyid, neuronnames[bodyid].size, neuronnames[bodyid].npre, neuronnames[bodyid].npost];
         let preq = basepreQ.replace("ZZ", bodyid);
         let postq = basepostQ.replace("ZZ", bodyid);
         let statepre = {
@@ -185,38 +198,47 @@ var parseResults = function(neoResults, state) {
             state: statepost,
         }
 
-        var frowinfo = [JSON.stringify(neuronnames[bodyid].name),
-                        JSON.stringify(parseInt(bodyid)), 
-                        JSON.stringify(neuronnames[bodyid].size), 
-                        (<ClickableQuery neoQueryObj={neoPre}>
+        let frowinfo = [];
+
+        frowinfo.push(new SimpleCellWrapper(index++,
+                         JSON.stringify(parseInt(bodyid))));
+        
+        frowinfo.push(new SimpleCellWrapper(index++,
+                         JSON.stringify(neuronnames[bodyid].name)));
+                    
+        frowinfo.push(new SimpleCellWrapper(index++,
+                         JSON.stringify(neuronnames[bodyid].size)));
+        
+        frowinfo.push(new SimpleCellWrapper(index++,
+                         (<ClickableQuery neoQueryObj={neoPre}>
                             {JSON.stringify(neuronnames[bodyid].npre)}
                         </ClickableQuery>),
-                        (<ClickableQuery neoQueryObj={neoPost}>
+                        false, parseInt(neuronnames[bodyid].npre)));
+        frowinfo.push(new SimpleCellWrapper(index++,
+                         (<ClickableQuery neoQueryObj={neoPost}>
                             {JSON.stringify(neuronnames[bodyid].npost)}
-                        </ClickableQuery>)];
+                        </ClickableQuery>),
+                        false, parseInt(neuronnames[bodyid].npost)));
+                        
         var presizes = inputneuronROIs[bodyid];
         var postsizes = outputneuronROIs[bodyid];
 
-        for (let index = 0; index < state.inputROIs.length; index++) {
-            rowinfo.push(presizes[state.inputROIs[index]]);
-            frowinfo.push(JSON.stringify(presizes[state.inputROIs[index]]));
+        for (let index2 = 0; index2 < state.inputROIs.length; index2++) {
+            frowinfo.push(new SimpleCellWrapper(index++,
+                                parseInt(presizes[state.inputROIs[index2]])));
         }
-        for (let index = 0; index < state.outputROIs.length; index++) {
-            rowinfo.push(postsizes[state.outputROIs[index]]);
-            frowinfo.push(JSON.stringify(postsizes[state.outputROIs[index]]));
+        for (let index2 = 0; index2 < state.outputROIs.length; index2++) {
+            frowinfo.push(new SimpleCellWrapper(index++,
+                                parseInt(postsizes[state.outputROIs[index2]])));
         }
-        tableinfo.push(rowinfo);
         formatinfo.push(frowinfo);
     }
 
-    // sort table so neurons with the most synapses in the ROIs are first
-    tableinfo.sort(compareNeuronRows);
-    formatinfo.sort(compareNeuronRows); // a bit of a hack
+    formatinfo.sort(compareNeuronRows);
 
     tables.push({
         header: headerdata,
-        body: tableinfo,
-        formatbody: formatinfo,
+        body: formatinfo,
         name: titlename
     });
 

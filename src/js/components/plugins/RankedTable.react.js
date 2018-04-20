@@ -19,6 +19,7 @@ import Typography from 'material-ui/Typography';
 import {connect} from 'react-redux';
 import NeuronHelp from '../NeuronHelp.react';
 import RankCell from '../RankCell.react';
+import SimpleCellWrapper from '../../helpers/SimpleCellWrapper';
 
 
 const mainQuery = 'match (m:NeuronYY)-[e:ConnectsTo]-(n:NeuronYY) where ZZ return m.name as Neuron1, n.name as Neuron2, e.weight as Weight, n.bodyId as Body2, m.className as Neuron1Type, n.className as Neuron2Type, id(m) as m_id, id(n) as n_id, id(startNode(e)) as pre_id, m.bodyId as Body1 order by m.bodyId, e.weight desc';
@@ -77,7 +78,6 @@ class RankedTable extends React.Component {
         // create one comparison table
         var tables = [];
         var headerdata = [];
-        var valtable = [];
         var formattable = [];
 
         // create table info object
@@ -89,8 +89,7 @@ class RankedTable extends React.Component {
         }
         tables.push({
             header: headerdata,
-            body: valtable,
-            formatbody: formattable,
+            body: formattable,
             name: titlename
         });
 
@@ -129,13 +128,13 @@ class RankedTable extends React.Component {
         }
         
         // load array of connections for each matching neuron
-        var rowstats = [];
         var rowcomps = [];
         var lastbody = -1;
         var maxcols = 0;
+        let index = 0;
         neoResults.records.forEach(function (record) {
             var body1 = convert64bit(record.get("Body1"));
-         
+
             // do not add reverse edges
             var preid = convert64bit(record.get("pre_id"));
             var node1id = convert64bit(record.get("m_id"));
@@ -143,12 +142,10 @@ class RankedTable extends React.Component {
                 || ((state.preOrPost === "post") && (preid !== node1id))) { 
                 if (lastbody != body1) {
                     if (lastbody != -1) {
-                        valtable.push(rowstats);
                         formattable.push(rowcomps);
-                        if (rowstats.length > maxcols) {
-                            maxcols = rowstats.length;
+                        if (rowcomps.length > maxcols) {
+                            maxcols = rowcomps.length;
                         }
-                        rowstats = [];
                         rowcomps = [];
                     }
                     lastbody = body1;
@@ -158,20 +155,22 @@ class RankedTable extends React.Component {
                     if (neuronmatch1 === null) {
                         neuronmatch1 = body1;
                     }
-                    rowstats.push(neuronmatch1);
-                    rowcomps.push(<Typography 
-                                              variant="body1"
-                                              align="center"
-                                  >
-                                  {neuronmatch1}
-                                  </Typography>);
+                    index += 1;
+                    rowcomps.push(new SimpleCellWrapper(
+                        index,
+                        (<Typography 
+                                    variant="body1"
+                                    align="center"
+                         >
+                            {neuronmatch1}
+                        </Typography>),
+                        false, neuronmatch1));
                 }
 
                 var neuronmatch2 = record.get("Neuron2");
                 if (neuronmatch2 === null) {
                     neuronmatch2 = convert64bit(record.get("Body2"));
                 }
-                rowstats.push(neuronmatch2);
 
                 // add custom cell element 
                 var weight = convert64bit(record.get("Weight"));
@@ -187,26 +186,29 @@ class RankedTable extends React.Component {
                     weight2 = reversecounts[body2][body1];
                 }
 
-                rowcomps.push(<RankCell name={neuronmatch2}
+                index += 1;
+                rowcomps.push(new SimpleCellWrapper(
+                                index,
+                                (<RankCell name={neuronmatch2}
                                         weight={weight}
                                         reverse={weight2}
                                         color={typecolor}
-                              />);
+                                />),
+                                false, neuronmatch2));
             }
         });
 
-        if (rowstats.length > 0) {
-            if (rowstats.length > maxcols) {
-                maxcols = rowstats.length;
+        if (rowcomps.length > 0) {
+            if (rowcomps.length > maxcols) {
+                maxcols = rowcomps.length;
             }
-            valtable.push(rowstats);
             formattable.push(rowcomps);
         }
             
         // load headers based on max number of columns
-        headerdata.push("neuron");
+        headerdata.push(new SimpleCellWrapper(0, "neuron"));
         for (let i = 1; i < maxcols; i++) {
-            headerdata.push("#" + String(i));
+            headerdata.push(new SimpleCellWrapper(i, "#" + String(i)));
         }
 
         return tables;
