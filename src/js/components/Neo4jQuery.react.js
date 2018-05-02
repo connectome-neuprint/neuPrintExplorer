@@ -48,6 +48,7 @@ class Neo4jQuery extends React.Component {
                         session.close();
                     })
                     .catch(function (error) {
+                        alert(error);
                         setError(error);
                     });
             }

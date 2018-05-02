@@ -92,6 +92,7 @@ class QueryForm extends React.Component {
                 <Divider className={classes.divider} />
                 <CurrentQuery
                                 datasetstr={this.props.datasetstr}
+                                availableROIs={this.props.availableROIs}
                                 callback={this.submitQuery}
                                 disable={this.props.isQuerying}
                 />
@@ -117,6 +118,7 @@ QueryForm.propTypes = {
     urlQueryString: PropTypes.string.isRequired,
     history: PropTypes.object.isRequired,
     neoResults: PropTypes.object,
+    availableROIs: PropTypes.array.isRequired
 };
 
 
@@ -128,6 +130,7 @@ var QueryFormState = function(state){
         neoError: state.query.neoError,
         neoServer: state.neo4jsettings.neoServer,
         urlQueryString: state.app.urlQueryString,
+        availableROIs: state.neo4jsettings.availableROIs,
     }   
 };
 

@@ -6,7 +6,7 @@
             "password": "n304j", 
             "datasets": ["MB6"],
             "default": true,
-            "rois": ["Alpha1", "Alpha2", "Alpha3", "MB"]
+            "rois": ["Alpha1", "Alpha2", "Alpha3"]
         }
     ]
 }

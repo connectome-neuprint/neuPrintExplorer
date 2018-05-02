@@ -7,9 +7,7 @@
 import React from 'react';
 import Button from 'material-ui/Button';
 import PropTypes from 'prop-types';
-
-// TODO: implement ROI connectivity query
-var queryROIConnections = function () {}
+import queryROIConnections from '../../neo4jqueries/roiConnectivity';
 
 export default class ROIConnectivity extends React.Component {
     static get queryName() {
@@ -26,7 +24,7 @@ export default class ROIConnectivity extends React.Component {
                         variant="raised"
                         onClick={() => {
                             queryROIConnections(this.props.callback, 
-                                this.props.datasets, this.props.rois);
+                                this.props.datasetstr, this.props.availableROIs);
                         }}
                     >
                         Submit
@@ -37,7 +35,7 @@ export default class ROIConnectivity extends React.Component {
 
 ROIConnectivity.propTypes = {
     callback: PropTypes.func.isRequired,
-    datasets: PropTypes.array.isRequired,
-    rois: PropTypes.array.isRequired
+    datasetstr: PropTypes.string.isRequired,
+    availableROIs: PropTypes.array.isRequired
 };
 

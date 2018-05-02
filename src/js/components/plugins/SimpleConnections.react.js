@@ -2,7 +2,7 @@
  * Supports simple, custom neo4j query.
 */
 
-"use strict"
+"use strict";
 
 import React from 'react';
 import TextField from 'material-ui/TextField';
