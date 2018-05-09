@@ -46,6 +46,8 @@ class NeoServer extends React.Component {
         super(props);
         this.state = {
             neoServer: "",
+            user: "neo4j",
+            password: "neo4j",
             datasets: [],
             rois: [],
             open: false
@@ -54,12 +56,16 @@ class NeoServer extends React.Component {
         fetch('/neo4jconfig')
             .then(result=>result.json())
             .then(items=> {
-                var servername = this.state.neoServer;
-                var datasets = this.state.datasets;
-                var rois = this.state.rois;
+                let servername = this.state.neoServer;
+                let datasets = this.state.datasets;
+                let user = this.state.user;
+                let password = this.state.password;
+                let rois = this.state.rois;
                 for (var item in items) {
                     servername = items[item].server
                     datasets = items[item].datasets;
+                    user = items[item].user;
+                    password = items[item].password;
                     rois = items[item].rois;
                     if ("default" in items[item] && items[item].default) {
                         break;
@@ -68,11 +74,13 @@ class NeoServer extends React.Component {
                 this.setState({
                         neoServer: servername,
                         datasets: datasets,
+                        user: user,
+                        password: password,
                         rois: rois,
                     }
                 );
                 if (servername != "") {
-                    this.props.setNeoServer(servername, datasets, rois);
+                    this.props.setNeoServer(servername, datasets, rois, user, password);
                 }
             });
     }
@@ -81,9 +89,11 @@ class NeoServer extends React.Component {
         this.setState({ open: true });
     };
 
+    // just use default user and password for now
+    // TODO: add custom user/password interface
     handleSave = () => {
-        this.setState({ open: false, rois: [], datasets: []});
-        this.props.setNeoServer(this.state.neoServer, [], []);
+        this.setState({ open: false, rois: [], datasets: [], user: "neo4j", password: "neo4j"});
+        this.props.setNeoServer(this.state.neoServer, [], [], "neo4j", "neo4j");
     };
 
     render () {
@@ -166,12 +176,14 @@ var NeoServerState = function(state) {
 
 var NeoServerDispatch = function(dispatch) {
     return {
-        setNeoServer: function(servername, datasets, rois) {
+        setNeoServer: function(servername, datasets, rois, user, password) {
             dispatch({
                 type: 'SET_NEO_SERVER',
                 neoServer: servername,
                 availableDatasets: datasets,
                 availableROIs: rois,
+                user: user,
+                password: password,
             });
         }
     }

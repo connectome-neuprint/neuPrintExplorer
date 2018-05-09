@@ -19,7 +19,7 @@ class Neo4jQuery extends React.Component {
                 this.props.neoDriver.close(); 
             }
             if (nextProps.neoServer !== "") {
-                driver = neo4j.driver("bolt://" + nextProps.neoServer, neo4j.auth.basic("neo4j", "n304j"));
+                driver = neo4j.driver("bolt://" + nextProps.neoServer, neo4j.auth.basic(nextProps.neoUser, nextProps.neoPassword));
                 this.props.setDriver(driver)
             }
         }
@@ -66,6 +66,8 @@ var Neo4jQueryState = function(state){
         isQuerying: state.query.isQuerying,
         neoServer: state.neo4jsettings.neoServer,
         neoDriver: state.neo4jsettings.neoDriver,
+        neoUser: state.neo4jsettings.user,
+        neoPassword: state.neo4jsettings.password,
     }   
 };
 
@@ -107,6 +109,8 @@ var Neo4jQueryDispatch = function(dispatch) {
 Neo4jQuery.propTypes = {
     neoDriver: PropTypes.object,
     neoServer: PropTypes.string.isRequired,
+    neoUser: PropTypes.string.isRequired,
+    neoPassword: PropTypes.string.isRequired,
     neoQueryObj: PropTypes.shape({
         queryStr: PropTypes.string.isRequired,
         callback: PropTypes.func.isRequired,
