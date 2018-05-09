@@ -16,7 +16,7 @@ import {connect} from 'react-redux';
 import NeuronHelp from '../NeuronHelp.react';
 import SimpleCellWrapper from '../../helpers/SimpleCellWrapper';
 
-const mainQuery = 'match (neuron :NeuronYY)<-[:PartOf]-(roi :Neuropart) where ZZ return neuron.bodyId as bodyid, neuron.name as bodyname, roi.pre as pre, roi.post as post, labels(roi) as rois order by neuron.bodyId';
+const mainQuery = 'match (neuron :NeuronYY)<-[:PartOf]-(roi :NeuronPart) where ZZ return neuron.bodyId as bodyid, neuron.name as bodyname, roi.pre as pre, roi.post as post, labels(roi) as rois order by neuron.bodyId';
 
 function convert64bit(value) {
     return neo4j.isInt(value) ?

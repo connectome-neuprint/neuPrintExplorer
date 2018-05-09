@@ -21,7 +21,7 @@ import NeuronHelp from '../NeuronHelp.react';
 import ClickableQuery from '../ClickableQuery.react';
 import SimpleCellWrapper from '../../helpers/SimpleCellWrapper';
 
-const mainQuery = 'match (neuron :NeuronZZYY)<-[:PartOf]-(roi :Neuropart) XX return neuron.bodyId as bodyid, neuron.name as bodyname, roi.pre as pre, roi.post as post, labels(roi) as rois, neuron.size as size, neuron.pre as npre, neuron.post as npost order by neuron.bodyId';
+const mainQuery = 'match (neuron :NeuronZZYY)<-[:PartOf]-(roi :NeuronPart) XX return neuron.bodyId as bodyid, neuron.name as bodyname, roi.pre as pre, roi.post as post, labels(roi) as rois, neuron.size as size, neuron.pre as npre, neuron.post as npost order by neuron.bodyId';
 
 const preQuery = 'match (m:NeuronYY)-[e:ConnectsTo]->(n:NeuronYY) where m.bodyId=ZZ return n.name as Neuron, n.bodyId as NeuronId, e.weight as Weight order by e.weight desc';
 const postQuery = 'match (m:NeuronYY)<-[e:ConnectsTo]-(n:NeuronYY) where m.bodyId=ZZ return n.name as Neuron, n.bodyId as NeuronId, e.weight as Weight order by e.weight desc';
@@ -211,12 +211,12 @@ var parseResults = function(neoResults, state) {
         
         frowinfo.push(new SimpleCellWrapper(index++,
                          (<ClickableQuery neoQueryObj={neoPre}>
-                            {JSON.stringify(neuronnames[bodyid].npre)}
+                            {JSON.stringify(neuronnames[bodyid].pre)}
                         </ClickableQuery>),
                         false, parseInt(neuronnames[bodyid].npre)));
         frowinfo.push(new SimpleCellWrapper(index++,
                          (<ClickableQuery neoQueryObj={neoPost}>
-                            {JSON.stringify(neuronnames[bodyid].npost)}
+                            {JSON.stringify(neuronnames[bodyid].post)}
                         </ClickableQuery>),
                         false, parseInt(neuronnames[bodyid].npost)));
                         
