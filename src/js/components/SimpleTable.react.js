@@ -40,9 +40,14 @@ class SimpleTable extends React.Component {
   constructor(props, context) {
     super(props, context);
 
+    let rows = 10;
+    if (("paginate" in this.props.data) && (!this.props.data.paginate)) {
+        rows = this.props.data.body.length;
+    }
+
     this.state = {
       page: 0,
-      rowsPerPage: 10,
+      rowsPerPage: rows,
     };
   }
 
@@ -64,6 +69,11 @@ class SimpleTable extends React.Component {
         numcols = this.props.data.body[0].length;
     }
 
+    let paginate = true;
+    if (("paginate" in this.props.data) && (!this.props.data.paginate)) {
+        paginate = false;
+    }
+    
     return (
       <Paper className={classes.root}>
           <Table className={classes.table}>
@@ -92,19 +102,25 @@ class SimpleTable extends React.Component {
                   })
                 )}
             </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TablePagination
-                  colSpan={numcols}
-                  count={this.props.data.body.length}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  onChangePage={this.handleChangePage}
-                  onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                  Actions={TablePaginationActions}
-                />
-              </TableRow>
-            </TableFooter>
+            {   
+                (paginate) ? 
+                (
+                    <TableFooter>
+                    <TableRow>
+                    <TablePagination
+                      colSpan={numcols}
+                      count={this.props.data.body.length}
+                      rowsPerPage={rowsPerPage}
+                      page={page}
+                      onChangePage={this.handleChangePage}
+                      onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                      Actions={TablePaginationActions}
+                    />
+                    </TableRow>
+                    </TableFooter>
+                ) :
+                 (null)
+            }
           </Table>
       </Paper>
     );
@@ -116,6 +132,7 @@ SimpleTable.propTypes = {
     data: PropTypes.shape({
         body: PropTypes.array,
         header: PropTypes.array,
+        paginate: PropTypes.bool,
     })
 };
 

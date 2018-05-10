@@ -127,6 +127,7 @@ var processResults = function(results, state) {
         
     let tables = [];
     let table = {
+        paginate: false,
         header: headerdata,
         body: data,
         name: "ROI Connectivity (column: inputs, row: outputs)"
