@@ -95,7 +95,10 @@ class SimpleTable extends React.Component {
                         )
                     });
                     return (
-                        <TableRow key={startRecord + index}>
+                        <TableRow 
+                                    hover
+                                    key={startRecord + index}
+                        >
                             {cells}
                         </TableRow>
                     );
