@@ -123,15 +123,15 @@ var parseResults = function(neoResults, state) {
         var rois = record.get("rois");
         for (let item in rois) {
             if (state.inputROIs.indexOf(rois[item]) !== -1) {
-                var presize = convert64bit(record.get("pre"));
-                if (presize > 0) {
-                    inputneuronROIs[bodyid][rois[item]] = presize; 
+                var insize = convert64bit(record.get("post"));
+                if (insize > 0) {
+                    inputneuronROIs[bodyid][rois[item]] = insize; 
                 }
             }
             if (state.outputROIs.indexOf(rois[item]) !== -1) {
-                var postsize = convert64bit(record.get("post"));
-                if (postsize > 0) {
-                    outputneuronROIs[bodyid][rois[item]] = postsize; 
+                var outsize = convert64bit(record.get("pre"));
+                if (outsize > 0) {
+                    outputneuronROIs[bodyid][rois[item]] = outsize; 
                 }
             }
         }
@@ -145,8 +145,8 @@ var parseResults = function(neoResults, state) {
         new SimpleCellWrapper(index++, "id"),
         new SimpleCellWrapper(index++, "neuron"),
         new SimpleCellWrapper(index++, "#voxels"),
-        new SimpleCellWrapper(index++, "#pre"),
-        new SimpleCellWrapper(index++, "#post"),
+        new SimpleCellWrapper(index++, "#post (inputs)"),
+        new SimpleCellWrapper(index++, "#pre (outputs)"),
     ];
 
     var titlename = "Neurons " + state.neuronSrc + " with inputs in: " + JSON.stringify(state.inputROIs) + " and outputs in: " + JSON.stringify(state.outputROIs); 
@@ -210,16 +210,17 @@ var parseResults = function(neoResults, state) {
                          JSON.stringify(neuronnames[bodyid].size)));
         
         frowinfo.push(new SimpleCellWrapper(index++,
-                         (<ClickableQuery neoQueryObj={neoPre}>
-                            {JSON.stringify(neuronnames[bodyid].pre)}
-                        </ClickableQuery>),
-                        false, parseInt(neuronnames[bodyid].npre)));
-        frowinfo.push(new SimpleCellWrapper(index++,
                          (<ClickableQuery neoQueryObj={neoPost}>
                             {JSON.stringify(neuronnames[bodyid].post)}
                         </ClickableQuery>),
                         false, parseInt(neuronnames[bodyid].npost)));
-                        
+        
+        frowinfo.push(new SimpleCellWrapper(index++,
+                         (<ClickableQuery neoQueryObj={neoPre}>
+                            {JSON.stringify(neuronnames[bodyid].pre)}
+                        </ClickableQuery>),
+                        false, parseInt(neuronnames[bodyid].npre)));
+                       
         var presizes = inputneuronROIs[bodyid];
         var postsizes = outputneuronROIs[bodyid];
 

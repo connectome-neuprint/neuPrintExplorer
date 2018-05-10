@@ -20,7 +20,7 @@ function convert64bit(value) {
 
 // create ROI tables
 var processResults = function(results, state) {
-    let bodypre = {};
+    let bodyin = {};
     let completerois = state.rois;
 
     // provides information for column and ROIs
@@ -31,7 +31,7 @@ var processResults = function(results, state) {
     // grab inputs for a body id
     results.records.forEach(function (record) {
         let bodyid = convert64bit(record.get("bodyid"));
-        let numpre = record.get("pre");
+        let numpost = record.get("post");
         let rois = record.get("rois");
         let currroi = ""; // default to no roi
 
@@ -44,13 +44,13 @@ var processResults = function(results, state) {
             }
         }
 
-        // add numpre to provide size distribution
-        if (!isNaN(numpre) && (parseInt(numpre) > 0)) {
-            numpre = parseInt(numpre);
-            if (!(bodyid in bodypre)) {
-                bodypre[bodyid] = [[currroi, numpre]];
+        // add numost to provide size distribution
+        if (!isNaN(numpost) && (parseInt(numpost) > 0)) {
+            numpost = parseInt(numpost);
+            if (!(bodyid in bodyin)) {
+                bodyin[bodyid] = [[currroi, numpost]];
             } else {
-                bodypre[bodyid].push([currroi, numpre]);
+                bodyin[bodyid].push([currroi, numpost]);
             }
         }
     });
@@ -60,12 +60,12 @@ var processResults = function(results, state) {
     // grab output and add table entry
     results.records.forEach(function (record) {
         let bodyid = convert64bit(record.get("bodyid"));
-        let numpost = record.get("post");
+        let numpre = record.get("pre");
         let rois = record.get("rois");
 
         let currroi = ""; // default to no roi
 
-        if (!isNaN(numpost) && (numpost > 0)) {
+        if (!isNaN(numpre) && (numpre > 0)) {
             // should only be one roi label (other label will be dataset)
             for (let i = 0; i < rois.length; i++) {
                 if (allrois.has(rois[i])) {
@@ -75,18 +75,18 @@ var processResults = function(results, state) {
             }
 
             // create roi2roi based on input distribution
-            if (currroi !== "" && (bodyid in bodypre)) {
+            if (currroi !== "" && (bodyid in bodyin)) {
                 let totalvalue = 0;
-                for (let i = 0; i < bodypre[bodyid].length; i++) {
-                    totalvalue += bodypre[bodyid][i][1];
+                for (let i = 0; i < bodyin[bodyid].length; i++) {
+                    totalvalue += bodyin[bodyid][i][1];
                 }
-                for (let i = 0; i < bodypre[bodyid].length; i++) {
-                    let roipre = bodypre[bodyid][i][0];
-                    if ((roipre === "") || (totalvalue === 0)) {
+                for (let i = 0; i < bodyin[bodyid].length; i++) {
+                    let roiin = bodyin[bodyid][i][0];
+                    if ((roiin === "") || (totalvalue === 0)) {
                         continue;
                     }
-                    let value = numpost * bodypre[bodyid][i][1] * 1.0 / totalvalue;
-                    let connname = roipre + "=>" + currroi;
+                    let value = numpre * bodyin[bodyid][i][1] * 1.0 / totalvalue;
+                    let connname = roiin + "=>" + currroi;
                     if (connname in roiroires) {
                         roiroires[connname] += value;
                     } else {
@@ -129,7 +129,7 @@ var processResults = function(results, state) {
     let table = {
         header: headerdata,
         body: data,
-        name: "ROI Connectivity"
+        name: "ROI Connectivity (column: inputs, row: outputs)"
     };
     tables.push(table);
     return tables;

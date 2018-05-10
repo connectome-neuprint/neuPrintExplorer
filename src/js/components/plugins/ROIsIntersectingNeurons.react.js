@@ -92,8 +92,8 @@ class ROIsIntersectingNeurons extends React.Component {
                     }
                     tableBody[bodyid]["body"].push([
                         new SimpleCellWrapper(index++, rois[item]),
-                        new SimpleCellWrapper(index++, numpre),
                         new SimpleCellWrapper(index++, numpost),
+                        new SimpleCellWrapper(index++, numpre),
                     ]);
                 }
             }
@@ -103,25 +103,25 @@ class ROIsIntersectingNeurons extends React.Component {
             var data = tableBody[item]["body"];
             
             // grab name based on top two ids
-            data.sort(compareNeuronRows1); // sort by pre
-            var prename = "";
+            data.sort(compareNeuronRows1); // sort by post
+            var postname = "";
             for (let i = 0; i < data.length; i++) {
                 if (i == 2 || data[i][1].getValue() === null) {
                     break;
                 }
-                prename += data[i][0].getValue();
+                postname += data[i][0].getValue();
             }
-            data.sort(compareNeuronRows2); // sort by post
-            var postname = "";
+            data.sort(compareNeuronRows2); // sort by pre
+            var prename = "";
             for (let i = 0; i < data.length; i++) {
-                if (i == 2 || data[i][2] === null) {
+                if (i == 2 || data[i][2] === null || data[i][2].getValue() === 0) {
                     break;
                 }
-                postname += data[i][0].getValue();
+                prename += data[i][0].getValue();
             }
 
             data.sort(compareNeuronRows1plus); // sort by total
-            var name = prename + "=>" + postname + ": " + tableBody[item].name + " id=(" + String(item) + ")";
+            var name = postname + "=>" + prename + " | " + tableBody[item].name + " id=(" + String(item) + ")";
             var table = {header: headerdata, body: data, name: name};
             tables.push(table);
         }
