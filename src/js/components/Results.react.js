@@ -32,6 +32,8 @@ const styles = () => ({
     }
 });
 
+var GLBINDEX = 0;
+
 class Results extends React.Component {
     // if only query string has updated, prevent re-render
     shouldComponentUpdate(nextProps, nextState) {
@@ -108,9 +110,10 @@ class Results extends React.Component {
                                                     compactType="horizontal"
                             >
                                 {this.props.allTables.map( (result, index) => {
+                                    GLBINDEX += 1;
                                     return (!this.props.clearIndices.has(index)) ? (
                                         <div 
-                                            key={index} 
+                                            key={GLBINDEX} 
                                             data-grid={{
                                                 x: (index*6)%12,
                                                 y: Math.floor(index/2)*18,
@@ -134,7 +137,7 @@ class Results extends React.Component {
                                                 />
                                             </div>
                                         </div>
-                                    ) : <div key={index} />;
+                                    ) : <div key={GLBINDEX} />;
                                 })}
                             </ResponsiveGridLayout>
                         ) : 
