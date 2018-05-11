@@ -23,8 +23,7 @@ export default class ROIConnectivity extends React.Component {
                     <Button
                         variant="raised"
                         onClick={() => {
-                            queryROIConnections(this.props.callback, 
-                                this.props.datasetstr, this.props.availableROIs);
+                            this.props.callback(queryROIConnections(this.props.datasetstr, this.props.availableROIs));
                         }}
                     >
                         Submit

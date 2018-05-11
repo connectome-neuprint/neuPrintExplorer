@@ -7,7 +7,10 @@
 import SimpleCellWrapper from '../helpers/SimpleCellWrapper';
 var neo4j = require('neo4j-driver').v1;
 import ROIConnCell from '../components/ROIConnCell.react';
+import ClickableQuery from '../components/ClickableQuery.react';
 import React from 'react';
+import neuronsInROIs from './neuronsInROIs';
+
 
 function convert64bit(value) {
     return neo4j.isInt(value) ?
@@ -132,12 +135,17 @@ var processResults = function(results, state) {
             }
             let typecolor = "rgba(" + WEIGHTCOLOR + scalefactor.toString() +  ")";
 
+            let query = neuronsInROIs([roiname], [roiname2], "", state.datasetstr, true);
+
             data2.push(new SimpleCellWrapper(index++, 
-                (<ROIConnCell 
-                    weight={val}
-                    count={count}
-                    color={typecolor}
-                />),
+                (<ClickableQuery neoQueryObj={query}>
+                    <ROIConnCell 
+                        weight={val}
+                        count={count}
+                        color={typecolor}
+                    />
+                </ClickableQuery>
+                ),
                 false, count));
         }
         data.push(data2);
@@ -171,7 +179,7 @@ var processResults = function(results, state) {
 const mainQuery = 'match (neuron :NeuronZZ)<-[:PartOf]-(roi :NeuronPart) where (neuron.pre + neuron.post) > 10 return neuron.bodyId as bodyid, roi.pre as pre, roi.post as post, labels(roi) as rois';
 
 // creates query object and sends to callback
-export default function(callback, datasetstr, rois) {
+export default function(datasetstr, rois) {
     let neoquery = mainQuery.replace(/ZZ/g, datasetstr);
     let query = {
         queryStr: neoquery,
@@ -181,5 +189,5 @@ export default function(callback, datasetstr, rois) {
             rois: rois,
         },
     }
-    callback(query);
+    return query;
 }

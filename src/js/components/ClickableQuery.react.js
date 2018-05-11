@@ -10,7 +10,7 @@ import { withStyles } from 'material-ui/styles';
 
 const styles = () => ({
   root: {
-      minHeight: "1px",
+      minHeight: "100%",
       '&:hover': {
           backgroundColor: "rgba(0, 0, 0, 0.12)"
       }
@@ -37,7 +37,7 @@ ClickableQuery.defaultProps = {
 };
 
 ClickableQuery.propTypes = {
-    children: PropTypes.element.isRequired,
+    children: PropTypes.any.isRequired,
     classes: PropTypes.object.isRequired,
     updateQuery: PropTypes.func.isRequired, 
     neoQueryObj: PropTypes.shape({
