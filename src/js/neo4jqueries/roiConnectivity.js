@@ -6,6 +6,8 @@
 
 import SimpleCellWrapper from '../helpers/SimpleCellWrapper';
 var neo4j = require('neo4j-driver').v1;
+import ROIConnCell from '../components/ROIConnCell.react';
+import React from 'react';
 
 function convert64bit(value) {
     return neo4j.isInt(value) ?
@@ -13,6 +15,9 @@ function convert64bit(value) {
             value.toNumber() : value.toString()) 
         : value;
 }
+
+// default color for max connection
+var WEIGHTCOLOR = "255,100,100,";
 
 
 // TODO: add clickable links in the ROI table
@@ -56,6 +61,8 @@ var processResults = function(results, state) {
     });
 
     let roiroires = {};
+    let roiroicounts = {};
+    let maxval = 1;
 
     // grab output and add table entry
     results.records.forEach(function (record) {
@@ -89,8 +96,14 @@ var processResults = function(results, state) {
                     let connname = roiin + "=>" + currroi;
                     if (connname in roiroires) {
                         roiroires[connname] += value;
+                        roiroicounts[connname] += 1;
                     } else {
                         roiroires[connname] = value;
+                        roiroicounts[connname] = 1;
+                    }
+                    let currval = roiroires[connname];
+                    if (currval > maxval) {
+                        maxval = currval;
                     }
                 }
             }
@@ -106,21 +119,36 @@ var processResults = function(results, state) {
         data2.push(new SimpleCellWrapper(index++, roiname));
         for (let roiname2 of allrois) {
             let val = 0;
+            let count = 0;
             let connname = roiname + "=>" + roiname2;
             if (connname in roiroires) {
-                val = roiroires[connname].toFixed();
+                val = parseInt(roiroires[connname].toFixed());
+                count = roiroicounts[connname];
             }
 
-            data2.push(new SimpleCellWrapper(index++, val));
+            let scalefactor = 0;
+            if (val > 0) {
+                scalefactor = Math.log(val)/Math.log(maxval);
+            }
+            let typecolor = "rgba(" + WEIGHTCOLOR + scalefactor.toString() +  ")";
+
+            data2.push(new SimpleCellWrapper(index++, 
+                (<ROIConnCell 
+                    weight={val}
+                    count={count}
+                    color={typecolor}
+                />),
+                false, count));
         }
         data.push(data2);
     }
 
     // return results
     let headerdata = [
-        new SimpleCellWrapper(index++, ""),
+        new SimpleCellWrapper(index++, "")
     ];
 
+    
     for (let roiname of allrois) {
         headerdata.push(new SimpleCellWrapper(index++, roiname));
     }

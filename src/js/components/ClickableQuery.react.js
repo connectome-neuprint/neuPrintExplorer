@@ -10,7 +10,7 @@ import { withStyles } from 'material-ui/styles';
 
 const styles = () => ({
   root: {
-      minHeight: "100%",
+      minHeight: "1px",
       '&:hover': {
           backgroundColor: "rgba(0, 0, 0, 0.12)"
       }

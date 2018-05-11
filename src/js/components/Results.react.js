@@ -151,7 +151,7 @@ Results.propTypes = {
         search: PropTypes.string.isRequired
     }),
     allTables: PropTypes.array,
-    clearIndices: PropTypes.set,
+    clearIndices: PropTypes.object,
     numClear: PropTypes.number,
     queryObj: PropTypes.object.isRequired, 
     neoError: PropTypes.object,
