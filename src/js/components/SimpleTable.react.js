@@ -35,6 +35,10 @@ const styles = theme => ({
   },
   cellpad: {
     padding: 0,
+  },
+  paper: {
+    width: '100%',
+    overflowX: "auto",
   }
 });
 
@@ -90,7 +94,7 @@ class SimpleTable extends React.Component {
                 ref="scrolldiv"
                 onScroll={this.scrollEvent}
         >
-            <Paper>
+            <Paper className={classes.paper}>
               <Table className={classes.table}>
                 <TableHead style={{transform: this.state.translateY}}>
                     <TableRow>
