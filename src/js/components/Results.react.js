@@ -18,6 +18,18 @@ import ResultsTopBar from './ResultsTopBar.react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
+var LightColors = [
+    "#d9d9d9",
+    "#8dd3c7",
+    "#ffffb3",
+    "#bebada",
+    "#fb8072",
+    "#80b1d3",
+    "#fdb462",
+    "#b3de69",
+    "#fccde5",
+];
+
 
 const styles = () => ({
     root: {
@@ -104,6 +116,7 @@ class Results extends React.Component {
                                         } 
                                         queryStr={result[0].queryStr}
                                         index={index}
+                                        color={LightColors[index%LightColors.length]}
                             />
                             <div className={classes.scroll}>
                                 <SimpleTables 

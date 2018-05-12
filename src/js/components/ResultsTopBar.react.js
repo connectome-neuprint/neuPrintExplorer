@@ -24,7 +24,6 @@ const styles = () => ({
     root: {
         width: "100%",
         flexGrow: true,
-        backgroundColor: "rgba(0, 0, 0, 0.24)",
     },
     flex: {
         flex: 1,
@@ -78,7 +77,10 @@ class ResultsTopBar extends React.Component {
         const { classes } = this.props;
 
         return (
-            <div className={classes.root + " " + "topresultbar"}>
+            <div 
+                    className={classes.root + " " + "topresultbar"}
+                    style={{backgroundColor: this.props.color}}
+            >
                 <Toolbar>
                     <Typography 
                                 variant="caption"
@@ -191,6 +193,7 @@ ResultsTopBar.propTypes = {
     classes: PropTypes.object.isRequired,
     reAuth: PropTypes.func.isRequired,
     clearResult: PropTypes.func.isRequired,
+    color: PropTypes.string.isRequired,
     downloadCallback: PropTypes.func.isRequired,
     queryStr: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
