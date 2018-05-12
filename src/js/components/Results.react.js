@@ -38,11 +38,9 @@ const styles = () => ({
         flex: 1,
     },
     tablesDiv: {
-        height: "90%",
+        height: "80%",
     },
 });
-
-var GLBINDEX = 0;
 
 class Results extends React.Component {
     // if only query string has updated, prevent re-render
@@ -94,11 +92,10 @@ class Results extends React.Component {
 
         if ((this.props.neoError === null) && (this.props.allTables !== null)) {
             this.props.allTables.map( (result, index) => {
-                GLBINDEX += 1;
                 if (!this.props.clearIndices.has(index)) {
                     resArray.push((
                         <div 
-                            key={GLBINDEX} 
+                            key={result[0].uniqueId} 
                             data-grid={{
                                 x: (currIndex*6)%12,
                                     y: Math.floor(currIndex/2)*18,
@@ -156,7 +153,7 @@ class Results extends React.Component {
                                                     breakpoints={{lg: 2000}}
                                                     cols={{lg: 12}}
                                                     draggableHandle=".topresultbar"
-                                                    compactType="horizontal"
+                                                    compactType="vertical"
                             >
                                 {resArray.map( (result) => {
                                     return result;

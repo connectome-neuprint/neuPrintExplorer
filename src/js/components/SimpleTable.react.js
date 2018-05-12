@@ -16,7 +16,6 @@ import Table, {
   TablePagination,
   TableRow,
 } from 'material-ui/Table';
-import Paper from 'material-ui/Paper';
 import TablePaginationActions from './TablePaginationActions.react';
 
 const styles = theme => ({
@@ -36,10 +35,6 @@ const styles = theme => ({
   cellpad: {
     padding: 0,
   },
-  paper: {
-    width: '100%',
-    overflowX: "auto",
-  }
 });
 
 class SimpleTable extends React.Component {
@@ -159,6 +154,7 @@ SimpleTable.propTypes = {
         body: PropTypes.array,
         header: PropTypes.array,
         paginate: PropTypes.bool,
+        uniqueId: PropTypes.number,
     })
 };
 

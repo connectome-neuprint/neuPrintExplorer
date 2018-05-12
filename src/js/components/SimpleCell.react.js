@@ -38,7 +38,8 @@ SimpleCell.defaultProps = {
 SimpleCell.propTypes = {
     children: PropTypes.any.isRequired,
     classes: PropTypes.object.isRequired,
-    isSimple: PropTypes.bool
+    isSimple: PropTypes.bool.isRequired,
+    lockVal: PropTypes.number.isRequired, 
 }
 
 export default withStyles(styles)(SimpleCell);
