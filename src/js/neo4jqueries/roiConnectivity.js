@@ -176,8 +176,9 @@ var processResults = function(results, state) {
 
 // TODO: update query
 //const mainQuery = 'match (neuron :NeuronZZ)<-[:PartOf]-(roi :Neuropart) where (neuron.size) > 10 return neuron.bodyId as bodyid, roi.pre as pre, roi.post as post, labels(roi) as rois';
-const mainQuery = 'match (neuron :NeuronZZ)<-[:PartOf]-(roi :NeuronPart) where (neuron.pre + neuron.post) > 10 return neuron.bodyId as bodyid, roi.pre as pre, roi.post as post, labels(roi) as rois';
+//const mainQuery = 'match (neuron :NeuronZZ)<-[:PartOf]-(roi :NeuronPart) where (neuron.pre + neuron.post) > 10 return neuron.bodyId as bodyid, roi.pre as pre, roi.post as post, labels(roi) as rois';
 //const mainQuery = 'match (neuron :NeuronZZ)<-[:PartOf]-(roi :NeuronPart) where neuron.status<>"Not Examined"  return neuron.bodyId as bodyid, roi.pre as pre, roi.post as post, labels(roi) as rois';
+const mainQuery = 'match (neuron :Big:NeuronZZ)<-[:PartOf]-(roi :NeuronPart) return neuron.bodyId as bodyid, roi.pre as pre, roi.post as post, labels(roi) as rois';
 
 // creates query object and sends to callback
 export default function(datasetstr, rois) {

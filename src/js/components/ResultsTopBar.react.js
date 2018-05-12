@@ -76,6 +76,7 @@ class ResultsTopBar extends React.Component {
 
     render() {
         const { classes } = this.props;
+
         return (
             <div className={classes.root + " " + "topresultbar"}>
                 <Toolbar>

@@ -25,7 +25,7 @@ const styles = () => ({
     },
     scroll: {
         overflowY: "auto",
-        height: "100%",
+        height: "90%",
     },
     flex: {
         flex: 1,
@@ -79,6 +79,43 @@ class Results extends React.Component {
     render() {
         // TODO: show query runtime results
         const { classes } = this.props; 
+        let resArray = [];
+        let currIndex = 0;
+
+        if ((this.props.neoError === null) && (this.props.allTables !== null)) {
+            this.props.allTables.map( (result, index) => {
+                GLBINDEX += 1;
+                if (!this.props.clearIndices.has(index)) {
+                    resArray.push((
+                        <div 
+                            key={GLBINDEX} 
+                            data-grid={{
+                                x: (currIndex*6)%12,
+                                    y: Math.floor(currIndex/2)*18,
+                                    w: ((this.props.allTables.length-this.props.clearIndices.size) > 1) ? 6 : 12,
+                                    h: 18
+                            }}
+                        >
+                            <ResultsTopBar
+                                        downloadCallback={this.downloadFile}
+                                        name={(result.length == 1) ? 
+                                            result[0].name :
+                                            String(result.length) + " tables"
+                                        } 
+                                        queryStr={result[0].queryStr}
+                                        index={index}
+                            />
+                            <div className={classes.scroll}>
+                                <SimpleTables 
+                                            allTables={result}
+                                />
+                            </div>
+                        </div>
+                    ));
+                    currIndex += 1;
+                }
+            });
+        }
 
         return (
             <div>
@@ -99,7 +136,7 @@ class Results extends React.Component {
                 </Fade>
                 { (this.props.neoError !== null) ? 
                     (<Typography>Error: {this.props.neoError.code}</Typography>) :
-                    (this.props.allTables !== null ?
+                    (resArray.length > 0 ?
                         (
                             <ResponsiveGridLayout 
                                                     className="layout" 
@@ -109,35 +146,8 @@ class Results extends React.Component {
                                                     draggableHandle=".topresultbar"
                                                     compactType="horizontal"
                             >
-                                {this.props.allTables.map( (result, index) => {
-                                    GLBINDEX += 1;
-                                    return (!this.props.clearIndices.has(index)) ? (
-                                        <div 
-                                            key={GLBINDEX} 
-                                            data-grid={{
-                                                x: (index*6)%12,
-                                                y: Math.floor(index/2)*18,
-                                                w: (this.props.allTables.length > 1) ? 6 : 12,
-                                                h: 18
-                                            }}
-                                        >
-                                            <div className={classes.scroll}>
-                                                <ResultsTopBar
-                                                                id="blah"
-                                                                downloadCallback={this.downloadFile}
-                                                                name={(result.length == 1) ? 
-                                                                        result[0].name :
-                                                                        String(result.length) + " tables"
-                                                                } 
-                                                                queryStr={result[0].queryStr}
-                                                                index={index}
-                                                />
-                                                <SimpleTables 
-                                                                allTables={result}
-                                                />
-                                            </div>
-                                        </div>
-                                    ) : <div key={GLBINDEX} />;
+                                {resArray.map( (result) => {
+                                    return result;
                                 })}
                             </ResponsiveGridLayout>
                         ) : 
