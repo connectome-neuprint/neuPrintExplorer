@@ -22,7 +22,7 @@ class SimpleCell extends React.Component {
         const { classes } = this.props;
         return (
             <TableCell
-                        className={this.props.isSimple ? classes.basic : classes.fcell}
+                        className={(this.props.isSimple ? classes.basic : classes.fcell) + ((this.props.lockVal > -1) ? " lockLeft-" + this.props.lockVal.toString() : "")}
                         padding={this.props.isSimple ? "default" : "none"} 
             > 
                 {this.props.children}

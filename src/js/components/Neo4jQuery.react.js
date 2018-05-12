@@ -9,6 +9,7 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 
 var neo4j = require('neo4j-driver').v1;
+var UNIQUE_ID = 0;
 
 class Neo4jQuery extends React.Component {
     componentWillReceiveProps(nextProps) {
@@ -33,6 +34,7 @@ class Neo4jQuery extends React.Component {
                 var processResults = nextProps.neoQueryObj.callback;
                 var state = nextProps.neoQueryObj.state;
                 let saveData = this.props.saveData;
+                let uniqueId = UNIQUE_ID++;
                 if (nextProps.neoQueryObj.isChild) {
                     saveData = this.props.appendData;
                 }
@@ -40,9 +42,12 @@ class Neo4jQuery extends React.Component {
                 session
                     .run(queryStr)
                     .then(function (result) {
-                        let data = processResults(result, state);
+                        let data = processResults(result, state, uniqueId);
                         if (data !== null && data.length > 0) {
                             data[0]["queryStr"] = queryStr;
+                            for (let i = 0; i < data.length; i++) {
+                                data[i]["uniqueId"] = uniqueId;
+                            }
                         }
                         saveData(data);
                         session.close();

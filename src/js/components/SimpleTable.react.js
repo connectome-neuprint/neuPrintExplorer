@@ -66,12 +66,17 @@ class SimpleTable extends React.Component {
     this.setState({ rowsPerPage: event.target.value });
   };
 
-    scrollEvent = () => {
-        let el = this.refs.scrolldiv;
-        let translateY = "translate(0,"+el.scrollTop+"px)";
-        //let translate2 = "translate("+el.scrollLeft+"px,0)";
-        this.setState({translateY: translateY});
-    }
+  scrollEvent = () => {
+      let el = this.refs.scrolldiv;
+      let translateY = "translate(0,"+el.scrollTop+"px)";
+      let translateX = "translate("+el.scrollLeft+"px,0)";
+      this.setState({translateY: translateY, translateX: translateX});
+  
+      let all = document.getElementsByClassName('lockLeft-' + this.props.data.uniqueId);
+        for (var i = 0; i < all.length; i++) {
+            all[i].style.transform = translateX;
+        }
+  }
 
   render() {
     const { classes } = this.props;
@@ -87,64 +92,62 @@ class SimpleTable extends React.Component {
     if (("paginate" in this.props.data) && (!this.props.data.paginate)) {
         paginate = false;
     }
-    
+  
     return (
         <div 
                 className={classes.root}
                 ref="scrolldiv"
                 onScroll={this.scrollEvent}
         >
-            <Paper className={classes.paper}>
-              <Table className={classes.table}>
-                <TableHead style={{transform: this.state.translateY}}>
-                    <TableRow>
-                    {this.props.data.header.map((header) => {
+          <Table className={classes.table}>
+            <TableHead style={{transform: this.state.translateY}}>
+                <TableRow>
+                {this.props.data.header.map((header) => {
+                    return (
+                        header.getComponent()
+                    );
+                })}
+                </TableRow>
+            </TableHead>
+            <TableBody>
+                {(
+                    this.props.data.body.slice(startRecord, page * rowsPerPage + rowsPerPage).map( (rec, index)  => {
+                    var cells = rec.map( (entry) => {
                         return (
-                            header.getComponent()
-                        );
-                    })}
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {(
-                        this.props.data.body.slice(startRecord, page * rowsPerPage + rowsPerPage).map( (rec, index)  => {
-                        var cells = rec.map( (entry) => {
-                            return (
-                                entry.getComponent()
-                            )
-                        });
-                        return (
-                            <TableRow 
-                                        hover
-                                        key={startRecord + index}
-                            >
-                                {cells}
-                            </TableRow>
-                        );
-                      })
-                    )}
-                </TableBody>
-                {   
-                    (paginate) ? 
-                    (
-                        <TableFooter>
-                        <TableRow>
-                        <TablePagination
-                          colSpan={numcols}
-                          count={this.props.data.body.length}
-                          rowsPerPage={rowsPerPage}
-                          page={page}
-                          onChangePage={this.handleChangePage}
-                          onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                          Actions={TablePaginationActions}
-                        />
+                            entry.getComponent()
+                        )
+                    });
+                    return (
+                        <TableRow 
+                                    hover
+                                    key={startRecord + index}
+                        >
+                            {cells}
                         </TableRow>
-                        </TableFooter>
-                    ) :
-                     (null)
-                }
-              </Table>
-          </Paper>
+                    );
+                  })
+                )}
+            </TableBody>
+            {   
+                (paginate) ? 
+                (
+                    <TableFooter>
+                    <TableRow>
+                    <TablePagination
+                      colSpan={numcols}
+                      count={this.props.data.body.length}
+                      rowsPerPage={rowsPerPage}
+                      page={page}
+                      onChangePage={this.handleChangePage}
+                      onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                      Actions={TablePaginationActions}
+                    />
+                    </TableRow>
+                    </TableFooter>
+                ) :
+                 (null)
+            }
+          </Table>
       </div>
     );
   }

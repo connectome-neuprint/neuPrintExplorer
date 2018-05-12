@@ -27,7 +27,7 @@ var WEIGHTCOLOR = "255,100,100,";
 // TODO: add pairwise distribution of inputs/outputs to roi table
 
 // create ROI tables
-var processResults = function(results, state) {
+var processResults = function(results, state, uniqueId) {
     let bodyin = {};
     let completerois = state.rois;
 
@@ -129,7 +129,7 @@ var processResults = function(results, state) {
     for (let i = 0; i < allrois2.length; i++) {
         let roiname = allrois2[i];
         let data2 = [];
-        data2.push(new SimpleCellWrapper(index++, roiname));
+        data2.push(new SimpleCellWrapper(index++, roiname, true, null, uniqueId));
         for (let j = 0; j < allrois2.length; j++) {
             let roiname2 = allrois2[j];
             let val = 0;
@@ -176,6 +176,7 @@ var processResults = function(results, state) {
     let tables = [];
     let table = {
         paginate: false,
+        lockLeft: true,
         header: headerdata,
         body: data,
         name: "ROI Connectivity (column: inputs, row: outputs)"

@@ -8,11 +8,12 @@ import SimpleCell from '../components/SimpleCell.react';
 import React from 'react';
 
 export default class SimpleCellWrapper {
-    constructor(key, child, isSimple=true, value=null) {
+    constructor(key, child, isSimple=true, value=null, lockVal=-1) {
         this.key = key;
         this.value = value;
         this.isSimple = isSimple;
         this.child = child;
+        this.lockVal=lockVal;
     }
 
     getValue = () => {
@@ -28,6 +29,7 @@ export default class SimpleCellWrapper {
                             key={this.key}
                             value={this.value}
                             isSimple={this.isSimple}
+                            lockVal={this.lockVal}
                 >
                     {this.child}
                 </SimpleCell>);
