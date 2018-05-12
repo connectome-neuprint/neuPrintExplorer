@@ -117,10 +117,21 @@ var processResults = function(results, state) {
     let index = 0;
     let data = [];
 
+    let allrois2 = [];
     for (let roiname of allrois) {
+        allrois2.push(roiname);
+    }
+
+    allrois2.sort(function (a, b) {
+        return a.toLowerCase().localeCompare(b.toLowerCase());
+    });
+
+    for (let i = 0; i < allrois2.length; i++) {
+        let roiname = allrois2[i];
         let data2 = [];
         data2.push(new SimpleCellWrapper(index++, roiname));
-        for (let roiname2 of allrois) {
+        for (let j = 0; j < allrois2.length; j++) {
+            let roiname2 = allrois2[j];
             let val = 0;
             let count = 0;
             let connname = roiname + "=>" + roiname2;
@@ -157,7 +168,8 @@ var processResults = function(results, state) {
     ];
 
     
-    for (let roiname of allrois) {
+    for (let i = 0; i < allrois2.length; i++) {
+        let roiname = allrois2[i];
         headerdata.push(new SimpleCellWrapper(index++, roiname));
     }
         

@@ -12,6 +12,9 @@ const styles = () => ({
   fcell: {
     height: "1px",
   },
+  basic: {
+    backgroundColor: "white",
+  },
 });
 
 class SimpleCell extends React.Component {
@@ -19,7 +22,7 @@ class SimpleCell extends React.Component {
         const { classes } = this.props;
         return (
             <TableCell
-                        className={this.props.isSimple ? "": classes.fcell}
+                        className={this.props.isSimple ? classes.basic : classes.fcell}
                         padding={this.props.isSimple ? "default" : "none"} 
             > 
                 {this.props.children}

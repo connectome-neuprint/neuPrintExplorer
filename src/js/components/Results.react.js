@@ -10,11 +10,11 @@ import Typography from 'material-ui/Typography';
 import Fade from 'material-ui/transitions/Fade';
 import { CircularProgress } from 'material-ui/Progress';
 import { connect } from 'react-redux';
-import SimpleTables from './SimpleTables.react';
 import { withStyles } from 'material-ui/styles';
 import _ from "underscore";
 import PropTypes from 'prop-types';
 import ResultsTopBar from './ResultsTopBar.react';
+import SimpleTables from './SimpleTables.react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -30,18 +30,16 @@ var LightColors = [
     "#fccde5",
 ];
 
-
 const styles = () => ({
     root: {
         flexGrow: 1,
     },
-    scroll: {
-        overflowY: "auto",
-        height: "90%",
-    },
     flex: {
         flex: 1,
-    }
+    },
+    tablesDiv: {
+        height: "90%",
+    },
 });
 
 var GLBINDEX = 0;
@@ -118,11 +116,12 @@ class Results extends React.Component {
                                         index={index}
                                         color={LightColors[index%LightColors.length]}
                             />
-                            <div className={classes.scroll}>
+                            <div className={classes.tablesDiv}>
                                 <SimpleTables 
-                                            allTables={result}
+                                                allTables={result}
                                 />
                             </div>
+                        
                         </div>
                     ));
                     currIndex += 1;

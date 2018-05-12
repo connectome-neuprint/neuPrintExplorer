@@ -23,7 +23,9 @@ const styles = theme => ({
   root: {
     width: '100%',
     marginTop: theme.spacing.unit * 1,
-    overflowX: 'auto',
+    overflowY: "auto",
+    overflowX: "auto",
+    height: '100%',
   },
   fcell: {
     height: "1px",
@@ -48,6 +50,7 @@ class SimpleTable extends React.Component {
     this.state = {
       page: 0,
       rowsPerPage: rows,
+      translateY: "translate(0,0)",
     };
   }
 
@@ -58,6 +61,13 @@ class SimpleTable extends React.Component {
   handleChangeRowsPerPage = event => {
     this.setState({ rowsPerPage: event.target.value });
   };
+
+    scrollEvent = () => {
+        let el = this.refs.scrolldiv;
+        let translateY = "translate(0,"+el.scrollTop+"px)";
+        //let translate2 = "translate("+el.scrollLeft+"px,0)";
+        this.setState({translateY: translateY});
+    }
 
   render() {
     const { classes } = this.props;
@@ -75,57 +85,63 @@ class SimpleTable extends React.Component {
     }
     
     return (
-      <Paper className={classes.root}>
-          <Table className={classes.table}>
-            <TableHead>
-                <TableRow>
-                {this.props.data.header.map((header) => {
-                    return (
-                        header.getComponent()
-                    );
-                })}
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                {(
-                    this.props.data.body.slice(startRecord, page * rowsPerPage + rowsPerPage).map( (rec, index)  => {
-                    var cells = rec.map( (entry) => {
-                        return (
-                            entry.getComponent()
-                        )
-                    });
-                    return (
-                        <TableRow 
-                                    hover
-                                    key={startRecord + index}
-                        >
-                            {cells}
-                        </TableRow>
-                    );
-                  })
-                )}
-            </TableBody>
-            {   
-                (paginate) ? 
-                (
-                    <TableFooter>
+        <div 
+                className={classes.root}
+                ref="scrolldiv"
+                onScroll={this.scrollEvent}
+        >
+            <Paper>
+              <Table className={classes.table}>
+                <TableHead style={{transform: this.state.translateY}}>
                     <TableRow>
-                    <TablePagination
-                      colSpan={numcols}
-                      count={this.props.data.body.length}
-                      rowsPerPage={rowsPerPage}
-                      page={page}
-                      onChangePage={this.handleChangePage}
-                      onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                      Actions={TablePaginationActions}
-                    />
+                    {this.props.data.header.map((header) => {
+                        return (
+                            header.getComponent()
+                        );
+                    })}
                     </TableRow>
-                    </TableFooter>
-                ) :
-                 (null)
-            }
-          </Table>
-      </Paper>
+                </TableHead>
+                <TableBody>
+                    {(
+                        this.props.data.body.slice(startRecord, page * rowsPerPage + rowsPerPage).map( (rec, index)  => {
+                        var cells = rec.map( (entry) => {
+                            return (
+                                entry.getComponent()
+                            )
+                        });
+                        return (
+                            <TableRow 
+                                        hover
+                                        key={startRecord + index}
+                            >
+                                {cells}
+                            </TableRow>
+                        );
+                      })
+                    )}
+                </TableBody>
+                {   
+                    (paginate) ? 
+                    (
+                        <TableFooter>
+                        <TableRow>
+                        <TablePagination
+                          colSpan={numcols}
+                          count={this.props.data.body.length}
+                          rowsPerPage={rowsPerPage}
+                          page={page}
+                          onChangePage={this.handleChangePage}
+                          onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                          Actions={TablePaginationActions}
+                        />
+                        </TableRow>
+                        </TableFooter>
+                    ) :
+                     (null)
+                }
+              </Table>
+          </Paper>
+      </div>
     );
   }
 }

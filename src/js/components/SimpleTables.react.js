@@ -28,13 +28,9 @@ const styles = theme => ({
   root: {
     width: '100%',
     marginTop: theme.spacing.unit * 1,
-    overflowX: 'auto',
   },
   table: {
     minWidth: 500,
-  },
-  tableWrapper: {
-    overflowX: 'auto',
   },
   cellborder: {
     borderBottom: 0,
