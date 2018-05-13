@@ -46,10 +46,29 @@ class SimpleTable extends React.Component {
         rows = this.props.data.body.length;
     }
 
+    let headerSortIndices = new Set();
+    if ("sortIndices" in this.props.data) {
+        headerSortIndices = this.props.data.sortIndices;
+    }
+
+    let data = [];
+    this.props.data.body.map( (rec, index)  => {
+        let tempdata = [];
+        rec.map( (entry) => {
+            tempdata.push(entry.getValue());
+        });
+        tempdata.push(index);
+        data.push(tempdata);
+    });
+
     this.state = {
       page: 0,
       rowsPerPage: rows,
       translateY: "translate(0,0)",
+      headerSortIndices: headerSortIndices,
+      order: "desc",
+      orderBy: -1,
+      orderedData: data,
     };
   }
 
@@ -73,6 +92,23 @@ class SimpleTable extends React.Component {
         }
   }
 
+  sortData = (sortIndex) => {
+    const orderBy = sortIndex;
+    let order = 'desc';
+
+    if ((this.state.orderBy === orderBy) && (this.state.order === 'desc')) {
+      order = 'asc';
+    }
+    
+    // sort data row pointers 
+    const orderedData =
+      order === 'desc'
+        ? this.state.orderedData.sort((a, b) => (b[orderBy] < a[orderBy] ? -1 : 1))
+        : this.state.orderedData.sort((a, b) => (a[orderBy] < b[orderBy] ? -1 : 1));
+
+    this.setState({ orderedData, order, orderBy }); 
+  }
+
   render() {
     const { classes } = this.props;
     const { rowsPerPage, page } = this.state;
@@ -87,7 +123,7 @@ class SimpleTable extends React.Component {
     if (("paginate" in this.props.data) && (!this.props.data.paginate)) {
         paginate = false;
     }
-  
+
     return (
         <div 
                 className={classes.root}
@@ -97,16 +133,25 @@ class SimpleTable extends React.Component {
           <Table className={classes.table}>
             <TableHead style={{transform: this.state.translateY}}>
                 <TableRow>
-                {this.props.data.header.map((header) => {
-                    return (
-                        header.getComponent()
-                    );
+                {this.props.data.header.map((header, index) => {
+                    if (this.state.headerSortIndices.has(index)) {
+                        return (
+                            header.getComponent(this.sortData, index, this.state.orderBy === index, this.state.order)
+                        );
+
+                    } else {
+                        return (
+                            header.getComponent()
+                        );
+                    }
                 })}
                 </TableRow>
             </TableHead>
             <TableBody>
                 {(
-                    this.props.data.body.slice(startRecord, page * rowsPerPage + rowsPerPage).map( (rec, index)  => {
+                    this.state.orderedData.slice(startRecord, page * rowsPerPage + rowsPerPage).map( (mapping, index)  => {
+                    let rec = this.props.data.body[mapping[mapping.length-1]];
+                    
                     var cells = rec.map( (entry) => {
                         return (
                             entry.getComponent()
@@ -154,6 +199,7 @@ SimpleTable.propTypes = {
         body: PropTypes.array,
         header: PropTypes.array,
         paginate: PropTypes.bool,
+        sortIndices: PropTypes.object,
         uniqueId: PropTypes.number,
     })
 };

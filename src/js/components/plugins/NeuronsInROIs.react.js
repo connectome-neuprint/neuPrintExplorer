@@ -65,17 +65,19 @@ var processConnections = function(results, state) {
         new SimpleCellWrapper(index++, "Neuron"),
         new SimpleCellWrapper(index++, "#connections"),
     ];
-    
+
+    let sortIndices = new Set([1,2]);
     let data = [];
     let table = {
         header: headerdata,
         body: data,
-        name: "Connections " + (state.isPre ? "from " : "to ") + state.sourceName + ":bodyID=" + String(state.sourceId), 
+        name: "Connections " + (state.isPre ? "from " : "to ") + state.sourceName + ":bodyID=" + String(state.sourceId),
+        sortIndices: sortIndices,
     }
     results.records.forEach(function (record) {
-        let bodyid = convert64bit(record.get("NeuronId"));
+        let bodyid = parseInt(convert64bit(record.get("NeuronId")));
         let bodyname = record.get("Neuron");
-        let weight = convert64bit(record.get("Weight"));
+        let weight = parseInt(convert64bit(record.get("Weight")));
         data.push([
             new SimpleCellWrapper(index++, bodyid),
             new SimpleCellWrapper(index++, bodyname),
@@ -201,25 +203,25 @@ var parseResults = function(neoResults, state) {
         let frowinfo = [];
 
         frowinfo.push(new SimpleCellWrapper(index++,
-                         JSON.stringify(parseInt(bodyid))));
+                         parseInt(bodyid)));
         
         frowinfo.push(new SimpleCellWrapper(index++,
                          JSON.stringify(neuronnames[bodyid].name)));
                     
         frowinfo.push(new SimpleCellWrapper(index++,
-                         JSON.stringify(neuronnames[bodyid].size)));
+                         parseInt(neuronnames[bodyid].size)));
         
         frowinfo.push(new SimpleCellWrapper(index++,
                          (<ClickableQuery neoQueryObj={neoPost}>
                             {JSON.stringify(neuronnames[bodyid].post)}
                         </ClickableQuery>),
-                        false, parseInt(neuronnames[bodyid].npost)));
+                        false, parseInt(neuronnames[bodyid].post)));
         
         frowinfo.push(new SimpleCellWrapper(index++,
                          (<ClickableQuery neoQueryObj={neoPre}>
                             {JSON.stringify(neuronnames[bodyid].pre)}
                         </ClickableQuery>),
-                        false, parseInt(neuronnames[bodyid].npre)));
+                        false, parseInt(neuronnames[bodyid].pre)));
                        
         var presizes = inputneuronROIs[bodyid];
         var postsizes = outputneuronROIs[bodyid];
@@ -237,10 +239,17 @@ var parseResults = function(neoResults, state) {
 
     formatinfo.sort(compareNeuronRows);
 
+
+    let sortIndices = new Set([1,2,3,4]);
+    for (let i = 5; i < headerdata.length; i++) {
+        sortIndices.add(i);
+    }
+
     tables.push({
         header: headerdata,
         body: formatinfo,
-        name: titlename
+        name: titlename,
+        sortIndices: sortIndices,
     });
 
     return tables;

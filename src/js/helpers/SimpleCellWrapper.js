@@ -6,6 +6,8 @@
 
 import SimpleCell from '../components/SimpleCell.react';
 import React from 'react';
+import { TableSortLabel } from 'material-ui/Table';
+import Tooltip from 'material-ui/Tooltip';
 
 export default class SimpleCellWrapper {
     constructor(key, child, isSimple=true, value=null, lockVal=-1) {
@@ -24,15 +26,38 @@ export default class SimpleCellWrapper {
         }
     }
 
-    getComponent = () => {
-        return (<SimpleCell
+    getComponent = (sortFunc=null, orderBy=-1, enableSort=false, order="desc") => {
+        if (sortFunc === null) {
+            return (<SimpleCell
                             key={this.key}
                             value={this.value}
                             isSimple={this.isSimple}
                             lockVal={this.lockVal}
-                >
-                    {this.child}
-                </SimpleCell>);
+                    >
+                        {this.child}
+                    </SimpleCell>);
+        } else {
+             return (<SimpleCell
+                            key={this.key}
+                            value={this.value}
+                            isSimple={this.isSimple}
+                            lockVal={this.lockVal}
+                    >
+                        <Tooltip
+                                    title="Sort"
+                                    placement={'bottom-end'}
+                                    enterDelay={300}
+                        >
+                            <TableSortLabel
+                                            active={enableSort}
+                                            direction={order}
+                                            onClick={() => sortFunc(orderBy)}
+                            >
+                                {this.child}
+                            </TableSortLabel>
+                        </Tooltip> 
+                    </SimpleCell>);
+        }
     }
 }
 
