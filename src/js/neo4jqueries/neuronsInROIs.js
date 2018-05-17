@@ -65,7 +65,7 @@ var processConnections = function(results, state) {
     return tables;
 }
 
-var parseResults = function(neoResults, state) {
+export var parseResults = function(neoResults, state) {
     var inputneuronROIs = {};
     var outputneuronROIs = {};
     var neuronnames = {}; 
