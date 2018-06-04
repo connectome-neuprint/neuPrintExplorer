@@ -71,13 +71,31 @@ Description:
 """
 @app.route('/neo4jconfig')
 def configinfo():
+    useremail = ""
+    try:
+        token = flaskrequest.headers.get('authorization')
+        res = requests.get("https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + str(token))
+        if res.status_code != 200:
+            abort(401)
+        useremail = res.json()["email"]
+    except:
+        pass
+            
+    databases = []
     neo4jdatabases = json.load(open(neo4j_databases_config))
-    return json.dumps(neo4jdatabases["public"])
+    if "public" in neo4jdatabases:
+        databases.extend(neo4jdatabases["public"])
+    if "private" in neo4jdatabases:
+        for db in neo4jdatabases["private"]:
+            if useremail in db["authorized-users"]:
+                databases.append(db)
+
+    return json.dumps(databases)
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def static_page(path):
-    if path.startswith("js/") or path.startswith("css/") or path.startswith("public/"):
+    if path.startswith("js/") or path.startswith("css/") or path.startswith("public/") or path.startswith("external/"):
         return app.send_static_file(path)
     return app.send_static_file('index.html')
 

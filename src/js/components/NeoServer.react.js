@@ -11,6 +11,7 @@ import Button from 'material-ui/Button';
 import Icon from 'material-ui/Icon';
 import Badge from 'material-ui/Badge';
 import PropTypes from 'prop-types';
+import _ from "underscore";
 
 import {withStyles} from 'material-ui/styles';
 import Dialog, {
@@ -53,7 +54,30 @@ class NeoServer extends React.Component {
             open: false
         };
 
-        fetch('/neo4jconfig')
+        this.updateDB(this.props.userInfo);
+    }
+   
+    componentWillReceiveProps(nextProps) {
+        if (!_.isEqual(nextProps.userInfo, this.props.userInfo)) {
+            this.updateDB(nextProps.userInfo);        
+        }
+    }
+
+    updateDB = (userInfo) => {
+        let header = {}
+        if (userInfo !== null) {
+            let googleToken = userInfo["Zi"]["id_token"];
+            header = {
+                headers: {
+                'Authorization': googleToken,
+                'content-type': 'application/json'
+                }
+            };
+        }
+
+        fetch('/neo4jconfig',
+                header            
+            )
             .then(result=>result.json())
             .then(items=> {
                 let servername = this.state.neoServer;
@@ -164,6 +188,7 @@ NeoServer.propTypes = {
     classes: PropTypes.object.isRequired,
     setNeoServer: PropTypes.func.isRequired,
     neoServer: PropTypes.string.isRequired,
+    userInfo: PropTypes.object,
 };
 
 
@@ -171,6 +196,7 @@ NeoServer.propTypes = {
 var NeoServerState = function(state) {
     return {
         neoServer: state.neo4jsettings.neoServer,
+        userInfo: state.user.userInfo
     }
 }
 
