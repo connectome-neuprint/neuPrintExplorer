@@ -24,9 +24,40 @@ const styles = theme => ({
 });
 
 class Skeleton extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+        this.state = {
+            skelObj: null,
+        };
+    }
+    
     // load skeleton after render takes place
     componentDidMount() {
+        this.reload();
+    }
+
+    shouldComponentUpdate(nextProps) {
+        if ((this.props.layout.x !== nextProps.layout.x) ||
+            (this.props.layout.y !== nextProps.layout.y) ||
+            (this.props.layout.h !== nextProps.layout.h) ||
+            (this.props.layout.w !== nextProps.layout.w))
+        {
+            this.reload();
+        }
+
+        return true;
+    }
+
+    reload = () => {
+        alert("reloading");
+
         if (Object.keys(this.props.swc).length !== 0) {
+            if (this.state.skelObj !== null) {
+                delete this.state.skelObj;
+                let pardiv = this.refs[this.props.uniqueId];
+                pardiv.removeChild(pardiv.childNodes[0]);
+            }
+
             let s = new SharkViewer({
                 swc: this.props.swc, 
                 dom_element: this.props.uniqueId, 
@@ -39,7 +70,7 @@ class Skeleton extends React.Component {
             s.animate();
 
             this.setState({
-                skelobj: s
+                skelObj: s
             });
         }
     }
@@ -59,6 +90,7 @@ class Skeleton extends React.Component {
 Skeleton.propTypes = {
     classes: PropTypes.object.isRequired,
     swc: PropTypes.object.isRequired,
+    layout: PropTypes.object.isRequired,
     uniqueId: PropTypes.number.isRequired
 };
 

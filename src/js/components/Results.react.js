@@ -44,12 +44,23 @@ const styles = () => ({
 });
 
 class Results extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+        this.state = {
+            currLayout: null,
+        };
+    }
+  
     // if only query string has updated, prevent re-render
     shouldComponentUpdate(nextProps, nextState) {
         nextProps.location["search"] = this.props.location["search"];
         return (!_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state));
     }
 
+    changeLayout = (layout) => {
+        this.setState({currLayout: layout});
+    }
+  
     downloadFile = (index) => {
         if (("isSkeleton" in this.props.allTables[index][0]) && 
                 (this.props.allTables[index][0].isSkeleton)) {
@@ -146,7 +157,14 @@ class Results extends React.Component {
                                     (
                                     <Skeleton 
                                                 swc={result[0].swc}
-                                                uniqueId={result[0].uniqueId}    
+                                                uniqueId={result[0].uniqueId}
+                                                layout={(this.state.currLayout !== null) ? this.state.currLayout[currIndex] : { 
+                                                                x: ((currIndex*6)%12),
+                                                                y: (Math.floor(currIndex/2)*18),
+                                                                w: (((this.props.allTables.length-this.props.clearIndices.size) > 1) ? 6 : 12), 
+                                                                h: 20
+                                                           }
+                                                }
                                     />
                                     ): 
                                     ( 
@@ -192,6 +210,7 @@ class Results extends React.Component {
                                                     cols={{lg: 12}}
                                                     draggableHandle=".topresultbar"
                                                     compactType="vertical"
+                                                    onResizeStop={this.changeLayout}
                             >
                                 {resArray.map( (result) => {
                                     return result;
