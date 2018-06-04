@@ -14,6 +14,8 @@ const mainQuery = 'match (neuron :NeuronZZYY)<-[:PartOf]-(roi :NeuronPart) XX re
 const preQuery = 'match (m:NeuronYY)-[e:ConnectsTo]->(n:NeuronYY) where m.bodyId=ZZ return n.name as Neuron, n.bodyId as NeuronId, e.weight as Weight order by e.weight desc';
 const postQuery = 'match (m:NeuronYY)<-[e:ConnectsTo]-(n:NeuronYY) where m.bodyId=ZZ return n.name as Neuron, n.bodyId as NeuronId, e.weight as Weight order by e.weight desc';
 
+const skeletonQuery = "match (:NeuronYY {bodyId:ZZ})-[:Contains]->(:Skeleton)-[:Contains]->(root :SkelNode) where not (root)<-[:LinksTo]-() return root.rowNumber as rowId, root.x as x, root.y as y, root.z as z, root.radius as radius, -1 as link order by root.rowNumber UNION match (:NeuronYY {bodyId:ZZ})-[:Contains]->(:Skeleton)-[:Contains]->(s :SkelNode)<-[:LinksTo]-(ss :SkelNode) return s.rowNumber as rowId, s.x as x, s.y as y, s.z as z, s.radius as radius, ss.rowNumber as link order by s.rowNumber"
+
 function convert64bit(value) {
     return neo4j.isInt(value) ?
         (neo4j.integer.inSafeRange(value) ? 
@@ -30,6 +32,35 @@ function compareNeuronRows(row1, row2) {
     }
 
     return total2 - total;
+}
+
+var processSkeleton = function(results, state) {
+    // state: sourceId, sourceName, isPre
+    let tables = [];
+    
+    // parse swc 
+    let data = {};
+    let colorid = parseInt(state.sourceId) % 8;
+        
+    results.records.forEach(function (record) {
+        let rowId = parseInt(convert64bit(record.get("rowId")));
+        data[rowId] = {
+            type: colorid,
+            x: convert64bit(record.get("x")),
+            y: convert64bit(record.get("y")),
+            z: convert64bit(record.get("z")),
+            parent: convert64bit(record.get("link")),
+            radius: record.get("radius"),
+        }
+    });
+
+    let table = {
+        isSkeleton: true,
+        swc: data,
+        name: "Skeleton of " + state.sourceId.toString(),
+    };
+    tables.push(table);
+    return tables;
 }
 
 var processConnections = function(results, state) {
@@ -127,6 +158,7 @@ export var parseResults = function(neoResults, state) {
     
     const basepreQ = preQuery.replace(/YY/g, state.datasetstr)
     const basepostQ = postQuery.replace(/YY/g, state.datasetstr)
+    const skeletonQ = skeletonQuery.replace(/YY/g, state.datasetstr)
 
     for (let bodyid in neuronnames) {
         if (Object.keys(inputneuronROIs[bodyid]).length !== state.inputROIs.length) {
@@ -137,6 +169,7 @@ export var parseResults = function(neoResults, state) {
         }
         let preq = basepreQ.replace("ZZ", bodyid);
         let postq = basepostQ.replace("ZZ", bodyid);
+        let skelq = skeletonQ.replace(/ZZ/g, bodyid);
         let statepre = {
             sourceId: bodyid,
             sourceName: neuronnames[bodyid].name,
@@ -158,13 +191,23 @@ export var parseResults = function(neoResults, state) {
             callback: processConnections,
             isChild: true,
             state: statepost,
-        }
+        };
+        let neoSkel = {
+            queryStr: skelq,
+            callback: processSkeleton,
+            isChild: true,
+            state: statepost
+        };
 
         let frowinfo = [];
 
         frowinfo.push(new SimpleCellWrapper(index++,
-                         parseInt(bodyid)));
-        
+                         (<ClickableQuery neoQueryObj={neoSkel}>
+                            {parseInt(bodyid)}
+                        </ClickableQuery>),
+                        false, parseInt(neuronnames[bodyid].pre)));
+ 
+
         frowinfo.push(new SimpleCellWrapper(index++,
                          JSON.stringify(neuronnames[bodyid].name)));
                     

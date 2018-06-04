@@ -4,7 +4,7 @@
             "server": "dolafit-ws.int.janelia.org",
             "user": "neo4j",
             "password": "n304j", 
-            "datasets": ["mb6v2"],
+            "datasets": ["mb6"],
             "default": true,
             "rois": ["alpha1", "alpha2", "alpha3"]
         }

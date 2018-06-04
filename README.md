@@ -19,6 +19,15 @@ The python server has the following dependencies:
 * Flask
 * tinydb
 
+Currently, the skeletonization visualization is a third-party
+library not built into the npm system.  For now,
+add a copy of the library into the build or distribution
+folder:
+
+    % mkdir BUILD_DIR/external
+    % cd BUILD_DIR/external
+    % git clone https://github.com/JaneliaSciComp/SharkViewer.git
+
 ## Running
 
 To launch a server (port 5000 by default):

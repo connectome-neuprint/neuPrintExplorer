@@ -15,6 +15,7 @@ import _ from "underscore";
 import PropTypes from 'prop-types';
 import ResultsTopBar from './ResultsTopBar.react';
 import SimpleTables from './SimpleTables.react';
+import Skeleton from './Skeleton.react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -95,12 +96,12 @@ class Results extends React.Component {
                 if (!this.props.clearIndices.has(index)) {
                     resArray.push((
                         <div 
-                            key={result[0].uniqueId} 
+                            key={((this.props.allTables.length-this.props.clearIndices.size) > 1) ? result[0].uniqueId*2 : (result[0].uniqueId*2+1)} 
                             data-grid={{
                                 x: (currIndex*6)%12,
                                     y: Math.floor(currIndex/2)*18,
                                     w: ((this.props.allTables.length-this.props.clearIndices.size) > 1) ? 6 : 12,
-                                    h: 18
+                                    h: 20
                             }}
                         >
                             <ResultsTopBar
@@ -114,9 +115,19 @@ class Results extends React.Component {
                                         color={LightColors[index%LightColors.length]}
                             />
                             <div className={classes.tablesDiv}>
-                                <SimpleTables 
-                                                allTables={result}
-                                />
+                                {(("isSkeleton" in result[0]) && (result[0].isSkeleton)) ?
+                                    (
+                                    <Skeleton 
+                                                swc={result[0].swc}
+                                                uniqueId={result[0].uniqueId}    
+                                    />
+                                    ): 
+                                    ( 
+                                    <SimpleTables 
+                                                    allTables={result}
+                                    />
+                                    )
+                                }
                             </div>
                         
                         </div>

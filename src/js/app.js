@@ -80,6 +80,19 @@ css2ref.setAttribute("type", "text/css");
 css2ref.setAttribute("href", css2);
 document.getElementsByTagName("head")[0].appendChild(css2ref);
 
+// load js hacks (TODO: make proper npm module for the sharkviewer)
+var jssref = document.createElement("script");
+jssref.setAttribute("src", "external/SharkViewer/js/threejs/three.js");
+document.getElementsByTagName("head")[0].appendChild(jssref);
+jssref.onload = function() {
+    var jssref2 = document.createElement("script");
+    jssref2.setAttribute("src", "external/SharkViewer/js/threejs/TrackballControls.js");
+    document.getElementsByTagName("head")[0].appendChild(jssref2);
+}
+var jssref3 = document.createElement("script");
+jssref3.setAttribute("src", "external/SharkViewer/js/shark_viewer.js");
+document.getElementsByTagName("head")[0].appendChild(jssref3);
+
 
 // load form plugins
 import loadPlugins from './helpers/initplugins';
