@@ -49,8 +49,6 @@ class Skeleton extends React.Component {
     }
 
     reload = () => {
-        alert("reloading");
-
         if (Object.keys(this.props.swc).length !== 0) {
             if (this.state.skelObj !== null) {
                 delete this.state.skelObj;
