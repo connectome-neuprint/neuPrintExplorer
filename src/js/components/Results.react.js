@@ -51,38 +51,65 @@ class Results extends React.Component {
     }
 
     downloadFile = (index) => {
-        var csvdata = "";
-        this.props.allTables[index].map( (tableinfo) => {
-            // load one table -- fixed width
-            
-            // load table name
-            var numelements = tableinfo.header.length;
-            csvdata = csvdata + tableinfo.name + ",";
-            for (var i = 1; i < numelements; i++) {
-                csvdata = csvdata + ",";
-            }
-            csvdata = csvdata + "\n";
-
-            // load headers
-            tableinfo.header.map( (headinfo) => {
-                csvdata = csvdata + headinfo.getValue() + ",";
+        if (("isSkeleton" in this.props.allTables[index][0]) && 
+                (this.props.allTables[index][0].isSkeleton)) {
+            let swcdata = "";
+            let swc = this.props.allTables[index][0].swc;
+            let ids = Object.keys(swc);
+            ids.sort(function(a, b) {
+                return parseInt(a) - parseInt(b);
             });
-            csvdata = csvdata + "\n";
+            for (let i = 0; i < ids.length; i++) {
+                let row = swc[ids[i]];
+                let currid = ids[i];
+                swcdata += (currid + " ");
+                swcdata += (row.type.toString() + " ");
+                swcdata += (row.x.toString() + " ");
+                swcdata += (row.y.toString() + " ");
+                swcdata += (row.z.toString() + " ");
+                swcdata += (row.radius.toString() + " ");
+                swcdata += (row.parent.toString() + "\n");
+            }
+            
+            let element = document.createElement("a");
+            let file = new Blob([swcdata], {type: 'text/plain'});
+            element.href = URL.createObjectURL(file);
+            element.download = this.props.allTables[index][0].name + ".swc";
+            element.click();
+        } else {
+            let csvdata = "";
+            this.props.allTables[index].map( (tableinfo) => {
+                // load one table -- fixed width
+                
+                // load table name
+                var numelements = tableinfo.header.length;
+                csvdata = csvdata + tableinfo.name + ",";
+                for (var i = 1; i < numelements; i++) {
+                    csvdata = csvdata + ",";
+                }
+                csvdata = csvdata + "\n";
 
-            // load data
-            tableinfo.body.map( (rowinfo) => {
-                rowinfo.map( (elinfo) => {
-                    csvdata = csvdata + elinfo.getValue() + ",";
+                // load headers
+                tableinfo.header.map( (headinfo) => {
+                    csvdata = csvdata + headinfo.getValue() + ",";
                 });
                 csvdata = csvdata + "\n";
-            });
-        });
 
-        var element = document.createElement("a");
-        var file = new Blob([csvdata], {type: 'text/csv'});
-        element.href = URL.createObjectURL(file);
-        element.download = "results.csv";
-        element.click();
+                // load data
+                tableinfo.body.map( (rowinfo) => {
+                    rowinfo.map( (elinfo) => {
+                        csvdata = csvdata + elinfo.getValue() + ",";
+                    });
+                    csvdata = csvdata + "\n";
+                });
+            });
+
+            let element = document.createElement("a");
+            let file = new Blob([csvdata], {type: 'text/csv'});
+            element.href = URL.createObjectURL(file);
+            element.download = "results.csv";
+            element.click();
+        }
     }
 
     render() {

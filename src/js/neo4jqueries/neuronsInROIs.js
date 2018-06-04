@@ -46,10 +46,10 @@ var processSkeleton = function(results, state) {
         let rowId = parseInt(convert64bit(record.get("rowId")));
         data[rowId] = {
             type: colorid,
-            x: convert64bit(record.get("x")),
-            y: convert64bit(record.get("y")),
-            z: convert64bit(record.get("z")),
-            parent: convert64bit(record.get("link")),
+            x: parseInt(convert64bit(record.get("x"))),
+            y: parseInt(convert64bit(record.get("y"))),
+            z: parseInt(convert64bit(record.get("z"))),
+            parent: parseInt(convert64bit(record.get("link"))),
             radius: record.get("radius"),
         }
     });
