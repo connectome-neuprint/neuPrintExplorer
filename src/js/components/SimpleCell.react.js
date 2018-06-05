@@ -13,7 +13,7 @@ const styles = () => ({
     height: "1px",
   },
   basic: {
-    backgroundColor: "white",
+    //backgroundColor: "white",
   },
 });
 

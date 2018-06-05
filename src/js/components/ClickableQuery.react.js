@@ -17,8 +17,6 @@ const styles = () => ({
   },
 });
 
-
-
 class ClickableQuery extends React.Component {
     render() {
         const { classes } = this.props;
