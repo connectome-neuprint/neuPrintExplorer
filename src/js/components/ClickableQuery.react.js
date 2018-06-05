@@ -10,7 +10,6 @@ import { withStyles } from 'material-ui/styles';
 
 const styles = () => ({
   root: {
-      minHeight: "100%",
       '&:hover': {
           cursor: "pointer"
       }
