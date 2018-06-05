@@ -12,7 +12,7 @@ const styles = () => ({
   root: {
       minHeight: "100%",
       '&:hover': {
-          backgroundColor: "rgba(0, 0, 0, 0.12)"
+          cursor: "pointer"
       }
   },
 });
