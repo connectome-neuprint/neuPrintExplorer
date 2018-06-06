@@ -54,7 +54,10 @@ const styles = theme => ({
         height: "4em",
         width: "4em",
         borderRadius: "500px"
-  }
+  },
+  img: {
+    width: 120
+  },
 });
 
 class TopBar extends React.Component {
@@ -93,14 +96,12 @@ class TopBar extends React.Component {
                         className={classes.appBar}
                 >
                     <Toolbar>
-                        <Typography 
-                                    variant="title"
-                                    color="inherit"
-                                    className={classes.flex}
-                                    noWrap
-                        >
-                            Connectome Analyzer    
-                        </Typography>
+                        <div className={classes.flex}>
+                            <img
+                                src="/public/neuprintexplorerw.png"
+                                className={classes.img}
+                            />
+                        </div>
                         <div className={classes.buttonWrap}>
                         {this.props.userInfo === null ?
                             (
