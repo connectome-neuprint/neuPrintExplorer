@@ -6,7 +6,6 @@
 import React from 'react';
 import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
-import Typography from 'material-ui/Typography';
 import { withStyles } from 'material-ui/styles';
 import NeoServer from './NeoServer.react';
 import Button from 'material-ui/Button';
