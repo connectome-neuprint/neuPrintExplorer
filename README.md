@@ -1,7 +1,7 @@
-# ConnectomeAnalyzer [![Picture](https://raw.github.com/janelia-flyem/janelia-flyem.github.com/master/images/HHMI_Janelia_Color_Alternate_180x40.png)](http://www.janelia.org)
+# neuPrintExplorer [![Picture](https://raw.github.com/janelia-flyem/janelia-flyem.github.com/master/images/HHMI_Janelia_Color_Alternate_180x40.png)](http://www.janelia.org)
 [![Build Status](https://travis-ci.org/janelia-flyem/ConnectomeAnalyzer.svg?branch=master)](https://travis-ci.org/janelia-flyem/ConnectomeAnalyzer)
 
-ConnectomeAnalyzer is a single page web application that provides simple interfaces to query an EM connectome stored in Neo4j.  It contains
+neuPrintExplorer is a single page web application that provides simple interfaces to query an EM connectome stored in [neuPrint](https://github.com/janelia-flyem/neuPrint), which uses the graph database Neo4j.  It contains
 a number of plugins to facilitate different types of queries.  It is bundled with
 a light-weight Flask server that handles authorization for storing some user information, such as a list of favorite queries.
 The application is written using REACT+Redux and Material-UI.
@@ -40,9 +40,3 @@ Within the application, there is currently authentication supported using Google
 This is only being
 used for authorizing access to query favorites.  These features will be extended to better support authorization for different Neo4j
 databases.
-
-## Neo4j data model.
-
-More information to come on the graph model.
-
-
