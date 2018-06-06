@@ -11,6 +11,8 @@ var neo4jsettingsState = {
     availableROIs: [],
     user: "neo4j",
     password: "neo4j",
+    lastmod: "",
+    version: "",
 }
 
 
@@ -20,7 +22,7 @@ export default function neo4jreducer(state = neo4jsettingsState, action) {
             return Object.assign({}, state, {neoDriver: action.neoDriver});
         }
         case 'SET_NEO_SERVER' : {
-            return Object.assign({}, state, {neoServer: action.neoServer, availableDatasets: action.availableDatasets, availableROIs: action.availableROIs, user: action.user, password: action.password});
+            return Object.assign({}, state, {neoServer: action.neoServer, availableDatasets: action.availableDatasets, availableROIs: action.availableROIs, user: action.user, password: action.password, lastmod: action.lastmod, version: action.version});
         }
         default: {
             return state;

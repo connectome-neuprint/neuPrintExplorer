@@ -9,6 +9,7 @@ import { Redirect } from 'react-router-dom';
 import _ from "underscore";
 import PropTypes from 'prop-types';
 import {withStyles} from 'material-ui/styles';
+import { connect } from 'react-redux';
 import Card from 'material-ui/Card';
 import { CardContent } from 'material-ui/Card';
 import Grid from 'material-ui/Grid';
@@ -90,10 +91,20 @@ class Home extends React.Component {
                                neuPrint Server Information 
                               </Typography>
                               <Typography component="p">
-                                available datasets: <br /> 
+                                server: {this.props.neoServer} <br />
                               </Typography>
                               <Typography component="p">
-                                last modified: <br /> 
+                                available datasets: 
+                                        {this.props.availableDatasets.map( (item) => {
+                                            return item + " "           
+                                        })}
+                                <br /> 
+                              </Typography>
+                              <Typography component="p">
+                                last modified: {this.props.lastmod} <br /> 
+                              </Typography>
+                              <Typography component="p">
+                                version: {this.props.version} <br /> 
                               </Typography>
                             </CardContent>
                         </Card>
@@ -127,11 +138,24 @@ class Home extends React.Component {
     }
 }
 
+var HomeState = function(state) {
+    return {
+        neoServer: state.neo4jsettings.neoServer,
+        availableDatasets: state.neo4jsettings.availableDatasets,
+        lastmod: state.neo4jsettings.lastmod,
+        version: state.neo4jsettings.version,
+    }
+}
+
 Home.propTypes = {
     location: PropTypes.shape({
         search: PropTypes.string.isRequired
     }),
     classes: PropTypes.object,
+    availableDatasets: PropTypes.array.isRequired,
+    neoServer: PropTypes.string.isRequired, 
+    lastmod: PropTypes.string.isRequired, 
+    version: PropTypes.string.isRequired, 
 }
 
-export default withStyles(styles)(Home);
+export default withStyles(styles)(connect(HomeState, null)(Home));

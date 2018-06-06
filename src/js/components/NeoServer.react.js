@@ -85,12 +85,20 @@ class NeoServer extends React.Component {
                 let user = this.state.user;
                 let password = this.state.password;
                 let rois = this.state.rois;
+                let lastmod = "";
+                let version = "";
                 for (var item in items) {
                     servername = items[item].server
                     datasets = items[item].datasets;
                     user = items[item].user;
                     password = items[item].password;
                     rois = items[item].rois;
+                    if ("last-modified" in items[item]) {
+                        lastmod = items[item]["last-modified"];
+                    }
+                    if ("version" in items[item]) {
+                        version = items[item]["version"];
+                    }
                     if ("default" in items[item] && items[item].default) {
                         break;
                     }
@@ -104,7 +112,7 @@ class NeoServer extends React.Component {
                     }
                 );
                 if (servername != "") {
-                    this.props.setNeoServer(servername, datasets, rois, user, password);
+                    this.props.setNeoServer(servername, datasets, rois, user, password, lastmod, version);
                 }
             });
     }
@@ -117,7 +125,7 @@ class NeoServer extends React.Component {
     // TODO: add custom user/password interface
     handleSave = () => {
         this.setState({ open: false, rois: [], datasets: [], user: "neo4j", password: "neo4j"});
-        this.props.setNeoServer(this.state.neoServer, [], [], "neo4j", "neo4j");
+        this.props.setNeoServer(this.state.neoServer, [], [], "neo4j", "neo4j", "", "");
     };
 
     render () {
@@ -202,7 +210,7 @@ var NeoServerState = function(state) {
 
 var NeoServerDispatch = function(dispatch) {
     return {
-        setNeoServer: function(servername, datasets, rois, user, password) {
+        setNeoServer: function(servername, datasets, rois, user, password, lastmod, version) {
             dispatch({
                 type: 'SET_NEO_SERVER',
                 neoServer: servername,
@@ -210,6 +218,8 @@ var NeoServerDispatch = function(dispatch) {
                 availableROIs: rois,
                 user: user,
                 password: password,
+                lastmod: lastmod,
+                version: version,
             });
         }
     }
