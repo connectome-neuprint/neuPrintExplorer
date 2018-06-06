@@ -17,8 +17,8 @@ const styles = () => ({
         display: 'flex',
     },
     roottext: {
-        maxWidth: 500,
-        flex: 1,
+        maxWidth: 560,
+        margin: "0 auto"
     },
 });
 
