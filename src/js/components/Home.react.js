@@ -13,6 +13,8 @@ import { connect } from 'react-redux';
 import Card from 'material-ui/Card';
 import { CardContent } from 'material-ui/Card';
 import Grid from 'material-ui/Grid';
+import { Link } from 'react-router-dom';
+
 
 const styles = () => ({
     root: {
@@ -123,12 +125,18 @@ class Home extends React.Component {
                                 Helpful Hints  
                               </Typography>
                               <Typography component="p">
-                                Use the search icon at the top left to query the database.  Click
-                                the help icon for detailed information on the graph model. <br />
+                                Use the search icon
+                                at the top left to query the database.  Click
+                                the <Link to="/help">help</Link> icon
+                                for detailed information on the graph model. <br />
                               </Typography>
-                              <Typography component="p">
-                                hint: <br /> 
-                              </Typography>
+                                <ul>
+                                    <li>Explore high-level region-to-region projectome-level
+                                    connectivity as an entry point to analysis with the <i>ROI Connectivity</i> query.
+                                    </li>
+                                    <li>Find neurons using region-based filters with the <i>Find Neurons</i> query.
+                                    </li>
+                                </ul>
                             </CardContent>
                         </Card>
                     </Grid>
