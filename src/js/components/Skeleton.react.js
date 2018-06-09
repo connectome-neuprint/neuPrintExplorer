@@ -37,9 +37,7 @@ class Skeleton extends React.Component {
     }
 
     shouldComponentUpdate(nextProps) {
-        if ((this.props.layout.x !== nextProps.layout.x) ||
-            (this.props.layout.y !== nextProps.layout.y) ||
-            (this.props.layout.h !== nextProps.layout.h) ||
+        if ((this.props.layout.h !== nextProps.layout.h) ||
             (this.props.layout.w !== nextProps.layout.w))
         {
             this.reload();

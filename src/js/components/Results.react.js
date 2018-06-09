@@ -58,7 +58,20 @@ class Results extends React.Component {
     }
 
     changeLayout = (layout) => {
-        this.setState({currLayout: layout});
+        let currIndex = 0;
+        let tempLayout = {}
+        this.props.allTables.map( (result, index) => {
+            if (!this.props.clearIndices.has(index)) {
+                if ((this.props.allTables.length-this.props.clearIndices.size) > 1) {
+                    tempLayout[(result[0].uniqueId)*2] = layout[currIndex];
+                } else {
+                    tempLayout[(result[0].uniqueId)*2+1] = layout[currIndex];
+                }
+                currIndex++;
+            }
+        });
+        
+        this.setState({currLayout: tempLayout});
     }
   
     downloadFile = (index) => {
@@ -132,9 +145,10 @@ class Results extends React.Component {
         if ((this.props.neoError === null) && (this.props.allTables !== null)) {
             this.props.allTables.map( (result, index) => {
                 if (!this.props.clearIndices.has(index)) {
+                    let unId = ((this.props.allTables.length-this.props.clearIndices.size) > 1) ? result[0].uniqueId*2 : (result[0].uniqueId*2+1);
                     resArray.push((
                         <div 
-                            key={((this.props.allTables.length-this.props.clearIndices.size) > 1) ? result[0].uniqueId*2 : (result[0].uniqueId*2+1)} 
+                            key={unId} 
                             data-grid={{
                                 x: (currIndex*6)%12,
                                     y: Math.floor(currIndex/2)*18,
@@ -158,7 +172,7 @@ class Results extends React.Component {
                                     <Skeleton 
                                                 swc={result[0].swc}
                                                 uniqueId={result[0].uniqueId}
-                                                layout={(this.state.currLayout !== null) ? this.state.currLayout[currIndex] : { 
+                                                layout={((this.state.currLayout !== null) && (unId in this.state.currLayout)) ? this.state.currLayout[unId] : { 
                                                                 x: ((currIndex*6)%12),
                                                                 y: (Math.floor(currIndex/2)*18),
                                                                 w: (((this.props.allTables.length-this.props.clearIndices.size) > 1) ? 6 : 12), 
