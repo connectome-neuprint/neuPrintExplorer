@@ -34,7 +34,8 @@ const styles = theme => ({
         top: "-4px",
     },
     padding: {
-        padding: `0 ${theme.spacing.unit * 2}px`,
+        padding: `0 ${theme.spacing.unit}px`,
+        minWidth: 1,
     },
     settingsIcon: {
         color: "white",
