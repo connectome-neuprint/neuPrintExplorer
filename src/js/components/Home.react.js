@@ -126,15 +126,15 @@ class Home extends React.Component {
                               </Typography>
                               <Typography component="p">
                                 Use the search icon
-                                at the top left to query the database.  Click
+                                at the <a href="/?openQuery=true">top left</a> to query the database.  Click
                                 the <Link to="/help">help</Link> icon
                                 for detailed information on the graph model. <br />
                               </Typography>
                                 <ul>
                                     <li>Explore high-level region-to-region projectome-level
-                                    connectivity as an entry point to analysis with the <i>ROI Connectivity</i> query.
+                                    connectivity as an entry point to analysis with the <a href="/?openQuery=true&Query%5BqueryType%5D=ROI%20Connectivity">ROI Connectivity</a> query.
                                     </li>
-                                    <li>Find neurons using region-based filters with the <i>Find Neurons</i> query.
+                                    <li>Find neurons using region-based filters with the <a href="/?openQuery=true&Query%5BqueryType%5D=Find%20Neurons">Find Neurons</a> query.
                                     </li>
                                 </ul>
                             </CardContent>
