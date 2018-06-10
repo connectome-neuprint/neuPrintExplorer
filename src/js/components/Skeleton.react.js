@@ -68,6 +68,30 @@ class Skeleton extends React.Component {
             this.setState({
                 skelObj: s
             });
+
+
+            /*
+            let swc = this.props.swc;
+            let unId = this.props.uniqueId;
+            let width = this.refs[this.props.uniqueId].clientWidth;
+            let height = this.refs[this.props.uniqueId].clientHeight;
+            const setState = this.setState.bind(this)
+
+            setTimeout(function(){
+                let s = new SharkViewer({
+                    swc: swc, 
+                    dom_element: unId, 
+                    center_node: -1,
+                    WIDTH: width,
+                    HEIGHT: height,
+                });
+
+                s.init();
+                s.animate();
+
+                setState({skelObj: s});
+                }, 500);
+            */
         }
     }
 

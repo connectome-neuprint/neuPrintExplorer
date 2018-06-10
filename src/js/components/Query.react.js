@@ -67,6 +67,10 @@ class Query extends React.Component {
             datasets: [],
         };
         var qsParams = LoadQueryString("Query", initqsParams, this.props.urlQueryString);
+        if ((qsParams.datasets.length === 0) && (this.props.availableDatasets.length > 0)) {
+            qsParams.datasets = [this.props.availableDatasets[0]];
+            this.props.setURLQs(SaveQueryString("Query", qsParams));
+        }
         this.state = {
             qsParams: qsParams
         };
@@ -94,7 +98,7 @@ class Query extends React.Component {
     };
 
     handleChange = (ev) => {
-        var newdatasets = ev.target.value;
+        var newdatasets = [ev.target.value];
         if (ev === undefined) {
             newdatasets = [];
         }
@@ -163,9 +167,8 @@ class Query extends React.Component {
                     </Select>
                 </FormControl>
                 <FormControl className={classes.formControl2}>
-                    <InputLabel htmlFor="select-multiple-chip">Select datasets (default all)</InputLabel>
+                    <InputLabel htmlFor="select-multiple-chip">Select dataset</InputLabel>
                     <Select
-                        multiple
                         value={this.state.qsParams.datasets}
                         onChange={this.handleChange}
                         input={<Input id="select-multiple-chip" />}
