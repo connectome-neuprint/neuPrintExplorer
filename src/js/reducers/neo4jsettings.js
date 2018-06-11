@@ -8,7 +8,7 @@ var neo4jsettingsState = {
     neoDriver: null,
     neoServer: "",
     availableDatasets: [],
-    availableROIs: [],
+    availableROIs: {},
     user: "neo4j",
     password: "neo4j",
     lastmod: "",

@@ -51,7 +51,7 @@ class NeoServer extends React.Component {
             user: "neo4j",
             password: "neo4j",
             datasets: [],
-            rois: [],
+            rois: {},
             open: false
         };
 

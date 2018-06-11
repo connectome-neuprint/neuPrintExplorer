@@ -202,7 +202,8 @@ class Query extends React.Component {
                 <Divider className={classes.divider} />
                 <QueryForm 
                             queryType={querytype}
-                            datasetstr={datasetstr} 
+                            datasetstr={datasetstr}
+                            dataset={this.state.qsParams.datasets[0]}
                 />
             </div>
         );

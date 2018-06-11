@@ -18,6 +18,7 @@ import TextField from 'material-ui/TextField';
 import Select from 'material-ui/Select';
 import NeuronHelp from '../NeuronHelp.react';
 import { parseResults } from '../../neo4jqueries/neuronsInROIs';
+//import _ from "underscore";
 
 const mainQuery = 'match (neuron :NeuronZZYY)<-[:PartOf]-(roi :NeuronPart) XX return neuron.bodyId as bodyid, neuron.name as bodyname, roi.pre as pre, roi.post as post, labels(roi) as rois, neuron.size as size, neuron.pre as npre, neuron.post as npost order by neuron.bodyId';
 
@@ -72,6 +73,17 @@ class NeuronsInROIs extends React.Component {
             qsParams: qsParams
         };
     }
+    
+    /*
+    componentDidUpdate(prevProps) {
+        if (!_.isEqual(prevProps.availableROIs, this.props.availableROIs)) {
+            var oldparams = this.state.qsParams;
+            oldparams.InputROIs = [];
+            oldparams.OutputROIs = [];
+            this.setState({qsParams: oldparams});
+            this.props.setURLQs(SaveQueryString("Query:" + this.constructor.queryName, oldparams));
+        }
+    }*/
 
     processRequest = () => {
         if ((this.state.qsParams.InputROIs.length > 0) ||
@@ -257,7 +269,6 @@ NeuronsInROIs.propTypes = {
 var NeuronsInROIsState = function(state){
     return {
         urlQueryString: state.app.urlQueryString,
-        availableROIs: state.neo4jsettings.availableROIs,
     }   
 };
 
