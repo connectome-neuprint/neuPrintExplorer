@@ -98,10 +98,12 @@ class TopBar extends React.Component {
                 >
                     <Toolbar>
                         <div className={classes.flex}>
+                            <a href="/">
                             <img
                                 src="/public/neuprintexplorerw.png"
                                 className={classes.img}
                             />
+                            </a>
                         </div>
                         <div className={classes.buttonWrap}>
                         {this.props.userInfo === null ?
