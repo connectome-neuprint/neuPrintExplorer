@@ -16,9 +16,18 @@ import Divider from 'material-ui/Divider';
 import Grid from 'material-ui/Grid';
 import { Link } from 'react-router-dom';
 import SvgIcon from 'material-ui/SvgIcon';
+import MobileStepper from 'material-ui/MobileStepper';
+import Button from 'material-ui/Button';
+import KeyboardArrowLeft from 'material-ui-icons/KeyboardArrowLeft';
+import KeyboardArrowRight from 'material-ui-icons/KeyboardArrowRight';
 
+const HintText = [
+    (<Typography>Explore high-level region-to-region projectome-level connectivity as an entry point to analysis with the <a href="/?openQuery=true&Query%5BqueryType%5D=ROI%20Connectivity">ROI Connectivity</a> query.</Typography>),
+    (<Typography>Find neurons using region-based filters with the <a href="/?openQuery=true&Query%5BqueryType%5D=Find%20Neurons">Find Neurons</a> query.</Typography>),
+    (<Typography>Click the <Link to="/help">help</Link> icon for detailed information on how the connectome data is stored in the graph database.</Typography>),
+];
 
-const styles = () => ({
+const styles = theme => ({
     root: {
         flexGrow: 1,
         flexWrap: "wrap",
@@ -41,11 +50,18 @@ const styles = () => ({
         marginBottom: 16,
         fontSize: 14,
     },
+    divider: {
+        margin: `${theme.spacing.unit}px 0` 
+    },
+    hint: {
+        margin: `${theme.spacing.unit*2}px 0` 
+    }
 });
 
 class Home extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {activeStep: 0};
     }
     
     // if only query string has updated, prevent re-render
@@ -53,9 +69,21 @@ class Home extends React.Component {
         nextProps.location["search"] = this.props.location["search"];
         return (!_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state));
     }
-   
+
+    handleNext = () => {
+        this.setState(prevState => ({
+            activeStep: prevState.activeStep + 1,
+        }));
+    }
+
+    handleBack = () => {
+        this.setState(prevState => ({
+            activeStep: prevState.activeStep - 1,
+        }));
+    }
+
     render() {
-        const {classes} = this.props;
+        const {classes, theme} = this.props;
         var redirectHome = false;
         if (window.location.pathname !== '/') {
             redirectHome = true;
@@ -133,18 +161,36 @@ class Home extends React.Component {
                                 Use the search icon
                                 at the <a href="/?openQuery=true">top left</a> to query the database.
                               </Typography>
-                                <Divider />
-                                <ul>
-                                    <li>Click
-                                the <Link to="/help">help</Link> icon
-                                for detailed information on the graph model.
-                                    </li>
-                                    <li>Explore high-level region-to-region projectome-level
-                                    connectivity as an entry point to analysis with the <a href="/?openQuery=true&Query%5BqueryType%5D=ROI%20Connectivity">ROI Connectivity</a> query.
-                                    </li>
-                                    <li>Find neurons using region-based filters with the <a href="/?openQuery=true&Query%5BqueryType%5D=Find%20Neurons">Find Neurons</a> query.
-                                    </li>
-                                </ul>
+                                <Divider className={classes.divider}/>
+            
+                                <div className={classes.hint}>
+                                {HintText[this.state.activeStep]}
+                                </div>
+                                <MobileStepper
+                                          steps={HintText.length}
+                                          position="static"
+                                          activeStep={this.state.activeStep}
+                                          nextButton={
+                                            <Button 
+                                                    size="small" 
+                                                    onClick={this.handleNext}
+                                                    disabled={this.state.activeStep === HintText.length - 1}
+                                            >
+                                              Next
+                                              {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+                                            </Button>
+                                          }
+                                          backButton={
+                                            <Button 
+                                                    size="small"
+                                                    onClick={this.handleBack}
+                                                    disabled={this.state.activeStep === 0}
+                                            >
+                                              {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+                                              Back
+                                            </Button>
+                                          }
+                            />
                             </CardContent>
                         </Card>
                     </Grid>
@@ -168,10 +214,11 @@ Home.propTypes = {
         search: PropTypes.string.isRequired
     }),
     classes: PropTypes.object,
+    theme: PropTypes.object,
     availableDatasets: PropTypes.array.isRequired,
     neoServer: PropTypes.string.isRequired, 
     lastmod: PropTypes.string.isRequired, 
     version: PropTypes.string.isRequired, 
 }
 
-export default withStyles(styles)(connect(HomeState, null)(Home));
+export default withStyles(styles, { withTheme: true })(connect(HomeState, null)(Home));
