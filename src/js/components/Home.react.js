@@ -122,6 +122,7 @@ class Home extends React.Component {
                               >
                                neuPrint Server Information 
                               </Typography>
+                            <Divider className={classes.divider}/>
                               <Typography component="p">
                                 server: {this.props.neoServer} <br />
                               </Typography>

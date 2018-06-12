@@ -11,8 +11,9 @@ import RankedTable from '../components/plugins/RankedTable.react';
 import NeuronsInROIs from '../components/plugins/NeuronsInROIs.react';
 import ROIsIntersectingNeurons from '../components/plugins/ROIsIntersectingNeurons.react';
 import ROIConnectivity from '../components/plugins/ROIConnectivity.react';
+import NeuronMeta from '../components/plugins/NeuronMeta.react';
 
-const pluginList = [NeuronsInROIs, SimpleConnections, ROIConnectivity, RankedTable, ROIsIntersectingNeurons, FreeForm];
+const pluginList = [NeuronsInROIs, NeuronMeta, ROIConnectivity, RankedTable, SimpleConnections, ROIsIntersectingNeurons, FreeForm];
 
 export default function loadPlugins(store) {
     store.dispatch({type: 'INIT_PLUGINS', pluginList: pluginList});
