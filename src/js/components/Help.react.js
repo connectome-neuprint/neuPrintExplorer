@@ -103,7 +103,7 @@ class Help extends React.Component {
                 <div className={classes.flex}>
                     <Button onClick={this.handleOpen}>
                     <img
-                        src="/public/overview.jpg"
+                        src="/public/overview.png"
                         className={classes.img}
                     />
                     </Button>
@@ -115,7 +115,7 @@ class Help extends React.Component {
                     >
                         <div className={classes.overflow}>
                         <Button onClick={this.handleClose}>
-                            <img src="/public/overview.jpg" />
+                            <img src="/public/overview.png" />
                         </Button>
                         </div>
                     </Modal>
