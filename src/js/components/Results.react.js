@@ -15,6 +15,7 @@ import _ from "underscore";
 import PropTypes from 'prop-types';
 import ResultsTopBar from './ResultsTopBar.react';
 import SimpleTables from './SimpleTables.react';
+import qs from 'qs';
 import Skeleton from './Skeleton.react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import Button from 'material-ui/Button';
@@ -106,7 +107,18 @@ class Results extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (prevState.showSkel != this.state.showSkel) {
+        let query = qs.parse(prevProps.urlQueryString);
+        let query2 = qs.parse(this.props.urlQueryString);
+        let openQuery = false;
+        let openQuery2 = false;
+        if ("openQuery" in query && query["openQuery"] === "true") {
+            openQuery = true;
+        } 
+        if ("openQuery" in query2 && query2["openQuery"] === "true") {
+            openQuery2 = true;
+        } 
+
+        if ((prevState.showSkel != this.state.showSkel) || (openQuery !== openQuery2)) {
             window.dispatchEvent(new Event('resize'));
         }
     }
@@ -329,6 +341,7 @@ Results.propTypes = {
     queryObj: PropTypes.object.isRequired, 
     neoError: PropTypes.object,
     isQuerying: PropTypes.bool.isRequired,
+    urlQueryString: PropTypes.string.isRequired,
     classes: PropTypes.object.isRequired,
     userInfo: PropTypes.object,
 };
@@ -342,6 +355,7 @@ var ResultsState = function(state){
         clearIndices: state.results.clearIndices,
         numClear: state.results.numClear,
         userInfo: state.user.userInfo,
+        urlQueryString: state.app.urlQueryString,
         queryObj: state.query.neoQueryObj,
     }   
 };
