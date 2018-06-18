@@ -17,6 +17,8 @@ import ResultsTopBar from './ResultsTopBar.react';
 import SimpleTables from './SimpleTables.react';
 import Skeleton from './Skeleton.react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
+import Button from 'material-ui/Button';
+import Grid from 'material-ui/Grid';
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 var LightColors = [
@@ -41,6 +43,26 @@ const styles = () => ({
     tablesDiv: {
         height: "80%",
     },
+    full: {
+        width: "100%",
+        height: "100%",
+        scroll: "auto",
+    },
+    halftable: {
+        width: "50%",
+        height: "100%",
+        float: "left",
+        scroll: "auto",
+    },
+    halfskel: {
+        width: "50%",
+        height: "100%",
+        float: "right"
+    },
+    empty: {
+        width: "0%",
+        float: "right"
+    },
 });
 
 class Results extends React.Component {
@@ -48,13 +70,45 @@ class Results extends React.Component {
         super(props, context);
         this.state = {
             currLayout: null,
+            showSkel: false,
         };
     }
   
     // if only query string has updated, prevent re-render
     shouldComponentUpdate(nextProps, nextState) {
         nextProps.location["search"] = this.props.location["search"];
+        let numSkels = 0;
+        if (this.props.allTables !== null) { 
+            this.props.allTables.map( (result, index) => {
+                if (!this.props.clearIndices.has(index) && (("isSkeleton" in result[0]) && (result[0].isSkeleton))) {
+                    numSkels += 1;
+                }
+            });
+        }
+        let numSkels2 = 0;
+        if (nextProps.allTables !== null) { 
+            nextProps.allTables.map( (result, index) => {
+                if (!nextProps.clearIndices.has(index) && (("isSkeleton" in result[0]) && (result[0].isSkeleton))) {
+                    numSkels2 += 1;
+                }
+            });
+        }
+
+        if (numSkels2 != numSkels) {
+            if ((numSkels2 > 0) && !nextState.showSkel) {
+                this.setState({showSkel: true});
+            } else if (numSkels2 == 0) {
+                this.setState({showSkel: false});
+            }
+        }
+
         return (!_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state));
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.showSkel != this.state.showSkel) {
+            window.dispatchEvent(new Event('resize'));
+        }
     }
 
     changeLayout = (layout) => {
@@ -73,7 +127,11 @@ class Results extends React.Component {
         
         this.setState({currLayout: tempLayout});
     }
-  
+ 
+    toggleSkel = () => {
+        this.setState({showSkel: !this.state.showSkel});
+    }
+
     downloadFile = (index) => {
         if (("isSkeleton" in this.props.allTables[index][0]) && 
                 (this.props.allTables[index][0].isSkeleton)) {
@@ -141,11 +199,23 @@ class Results extends React.Component {
         const { classes } = this.props; 
         let resArray = [];
         let currIndex = 0;
+        let numTables = 0;
+        let hasSkel = false;
+
+        if (this.props.allTables !== null) { 
+            this.props.allTables.map( (result, index) => {
+                if (!this.props.clearIndices.has(index) && (!("isSkeleton" in result[0]) || !(result[0].isSkeleton))) {
+                    numTables += 1;
+                } else if (!this.props.clearIndices.has(index) && (("isSkeleton" in result[0]) && (result[0].isSkeleton))) {
+                    hasSkel = true;
+                }
+            });
+        }
 
         if ((this.props.neoError === null) && (this.props.allTables !== null)) {
             this.props.allTables.map( (result, index) => {
-                if (!this.props.clearIndices.has(index)) {
-                    let unId = ((this.props.allTables.length-this.props.clearIndices.size) > 1) ? result[0].uniqueId*2 : (result[0].uniqueId*2+1);
+                if (!this.props.clearIndices.has(index) && (!("isSkeleton" in result[0]) || !(result[0].isSkeleton))) {
+                    let unId = (numTables > 1) ? result[0].uniqueId*2 : (result[0].uniqueId*2+1);
                     resArray.push((
                         <div 
                             key={unId} 
@@ -167,28 +237,10 @@ class Results extends React.Component {
                                         color={LightColors[index%LightColors.length]}
                             />
                             <div className={classes.tablesDiv}>
-                                {(("isSkeleton" in result[0]) && (result[0].isSkeleton)) ?
-                                    (
-                                    <Skeleton 
-                                                swc={result[0].swc}
-                                                uniqueId={result[0].uniqueId}
-                                                layout={((this.state.currLayout !== null) && (unId in this.state.currLayout)) ? this.state.currLayout[unId] : { 
-                                                                x: ((currIndex*6)%12),
-                                                                y: (Math.floor(currIndex/2)*18),
-                                                                w: (((this.props.allTables.length-this.props.clearIndices.size) > 1) ? 6 : 12), 
-                                                                h: 20
-                                                           }
-                                                }
-                                    />
-                                    ): 
-                                    ( 
                                     <SimpleTables 
                                                     allTables={result}
                                     />
-                                    )
-                                }
                             </div>
-                        
                         </div>
                     ));
                     currIndex += 1;
@@ -217,19 +269,47 @@ class Results extends React.Component {
                     (<Typography>Error: {this.props.neoError.code}</Typography>) :
                     (resArray.length > 0 ?
                         (
-                            <ResponsiveGridLayout 
-                                                    className="layout" 
-                                                    rowHeight={30} 
-                                                    breakpoints={{lg: 2000}}
-                                                    cols={{lg: 12}}
-                                                    draggableHandle=".topresultbar"
-                                                    compactType="vertical"
-                                                    onResizeStop={this.changeLayout}
-                            >
-                                {resArray.map( (result) => {
-                                    return result;
-                                })}
-                            </ResponsiveGridLayout>
+                            <div>
+                                {hasSkel ? (<Button
+                                    variant="raised"
+                                    onClick={this.toggleSkel}
+                                >
+                                    {((this.state.showSkel) ? "Hide Skeletons" : "Show Skeletons")}
+                                </Button>) : <div />}
+                                <Grid 
+                                        container 
+                                        spacing={0}
+                                >
+                                    <Grid 
+                                            item 
+                                            xs={12}
+                                            sm={(this.state.showSkel) ? 6 : 12}
+                                    >
+                                        <ResponsiveGridLayout 
+                                                                    className="layout" 
+                                                                    rowHeight={30} 
+                                                                    breakpoints={{lg: 2000}}
+                                                                    cols={{lg: (this.state.showSkel) ? 6 : 12}}
+                                                                    draggableHandle=".topresultbar"
+                                                                    compactType="horizontal"
+                                                                    onResizeStop={this.changeLayout}
+                                            >
+                                                {resArray.map( (result) => {
+                                                    return result;
+                                                })}
+                                        </ResponsiveGridLayout>
+                                    </Grid>
+                                    { this.state.showSkel ? (
+                                        <Grid 
+                                                item 
+                                                xs={12}
+                                                sm={6}
+                                        >
+                                            <Skeleton disable={!this.state.showSkel} />
+                                        </Grid>) : (<div />)
+                                    }
+                                </Grid>
+                            </div>
                         ) : 
                         (<div />)
                     )

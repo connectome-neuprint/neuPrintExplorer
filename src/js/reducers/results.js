@@ -17,8 +17,7 @@ export default function resultsReducer(state = resultsState, action) {
         }
         case 'APPEND_RESULTS' : {
             if (state.allTables !== null) {
-                state.allTables.push(action.allTables);
-                return state;
+                return Object.assign({}, state, {allTables: [...state.allTables.slice(0, state.allTables.size), action.allTables]});
             } else {
                 return Object.assign({}, state, {allTables: [action.allTables]});
             }

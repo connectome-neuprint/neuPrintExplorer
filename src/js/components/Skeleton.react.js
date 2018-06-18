@@ -7,6 +7,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
+import _ from "underscore";
+import { connect } from 'react-redux';
 
 /*
 require('SharkViewer/js/threejs/three.js');
@@ -15,93 +17,88 @@ require('SharkViewer/js/shark_viewer.js');
 */
 /* global SharkViewer */
 
+var GlbShark = null;
+
 const styles = theme => ({
   root: {
     width: '100%',
     height: '100%',
     marginTop: theme.spacing.unit * 1,
+    backgroundColor: "white"
   },
 });
 
 class Skeleton extends React.Component {
-    constructor(props, context) {
-        super(props, context);
-        this.state = {
-            skelObj: null,
-        };
-    }
-    
     // load skeleton after render takes place
     componentDidMount() {
-        this.reload();
+        let swc = this.fetchSWC(this.props.results); 
+        this.createShark(swc); 
     }
 
     shouldComponentUpdate(nextProps) {
-        if ((this.props.layout.h !== nextProps.layout.h) ||
-            (this.props.layout.w !== nextProps.layout.w))
-        {
-            this.reload();
+        if (nextProps.disable && GlbShark !== null) {
+            GlbShark = null;
+            let pardiv = this.refs["skeletonviewer"];
+            pardiv.removeChild(pardiv.childNodes[0]);
         }
-
+        
+        let swc = this.fetchSWC(nextProps.results); 
+        if (this.props.disable && !nextProps.disable) {
+            this.createShark(swc);
+        } else {
+            // update swc if current one is different from previous
+            let oldswc = this.fetchSWC(this.props.results); 
+            if (!_.isEqual(swc, oldswc)) {
+                this.createShark(swc);
+            }
+        }
+        
         return true;
     }
 
-    reload = () => {
-        if (Object.keys(this.props.swc).length !== 0) {
-            if (this.state.skelObj !== null) {
-                delete this.state.skelObj;
-                let pardiv = this.refs[this.props.uniqueId];
+    // grab latest swc added
+    fetchSWC = (results) => {
+        let swc = {};
+        results.map( (result) => {
+            if ("isSkeleton" in result[0] && result[0].isSkeleton) {
+                swc = result[0].swc;
+            }
+        });
+
+        return swc;
+    }
+
+    createShark = (swc) => {
+        if (GlbShark !== null) {
+            GlbShark = null;
+            let pardiv = this.refs["skeletonviewer"];
+            if (pardiv.childNodes.length > 0) {
                 pardiv.removeChild(pardiv.childNodes[0]);
             }
-
-            let s = new SharkViewer({
-                swc: this.props.swc, 
-                dom_element: this.props.uniqueId, 
+        }
+        
+        if (Object.keys(swc).length !== 0) {
+            GlbShark = new SharkViewer({
+                swc: swc, 
+                dom_element: "skeletonviewer", 
                 center_node: -1,
-                WIDTH: this.refs[this.props.uniqueId].clientWidth,
-                HEIGHT: this.refs[this.props.uniqueId].clientHeight,
+                WIDTH: this.refs["skeletonviewer"].clientWidth,
+                HEIGHT: this.refs["skeletonviewer"].clientHeight,
             });
 
-            s.init();
-            s.animate();
-
-            this.setState({
-                skelObj: s
-            });
-
-
-            /*
-            let swc = this.props.swc;
-            let unId = this.props.uniqueId;
-            let width = this.refs[this.props.uniqueId].clientWidth;
-            let height = this.refs[this.props.uniqueId].clientHeight;
-            const setState = this.setState.bind(this)
-
-            setTimeout(function(){
-                let s = new SharkViewer({
-                    swc: swc, 
-                    dom_element: unId, 
-                    center_node: -1,
-                    WIDTH: width,
-                    HEIGHT: height,
-                });
-
-                s.init();
-                s.animate();
-
-                setState({skelObj: s});
-                }, 500);
-            */
+            GlbShark.init();
+            GlbShark.animate();
         }
     }
 
     render() {
         const { classes } = this.props;
+        
         return (
             <div 
                     className={classes.root}
-                    ref={this.props.uniqueId}
-                    id={this.props.uniqueId}
+                    ref={"skeletonviewer"}
+                    id={"skeletonviewer"}
             />
         );
     }
@@ -109,12 +106,16 @@ class Skeleton extends React.Component {
 
 Skeleton.propTypes = {
     classes: PropTypes.object.isRequired,
-    swc: PropTypes.object.isRequired,
-    layout: PropTypes.object.isRequired,
-    uniqueId: PropTypes.number.isRequired
+    results: PropTypes.array.isRequired,
+    disable: PropTypes.bool.isRequired,
 };
 
+var SkeletonState = function(state){
+    return {
+        results: state.results.allTables,
+    }   
+};
 
-export default withStyles(styles)(Skeleton);
+export default withStyles(styles)(connect(SkeletonState, null)(Skeleton));
 
 
