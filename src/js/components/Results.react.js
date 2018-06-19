@@ -247,9 +247,9 @@ class Results extends React.Component {
                         <div 
                             key={unId} 
                             data-grid={{
-                                x: (currIndex*6)%12,
+                                    x: (currIndex*6)%12,
                                     y: Math.floor(currIndex/2)*18,
-                                    w: ((this.props.allTables.length-this.props.clearIndices.size) > 1) ? 6 : 12,
+                                    w: ((numTables) > 1) ? 6 : 12,
                                     h: 20
                             }}
                         >
@@ -311,7 +311,7 @@ class Results extends React.Component {
                                                                 breakpoints={{lg: 2000}}
                                                                 cols={{lg: (this.state.showSkel) ? 6 : 12}}
                                                                 draggableHandle=".topresultbar"
-                                                                compactType="horizontal"
+                                                                compactType="vertical"
                                                                 onResizeStop={this.changeLayout}
                                         >
                                             {resArray.map( (result) => {
