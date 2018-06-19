@@ -32,6 +32,7 @@ const styles = theme => ({
         flexGrow: 1,
         flexWrap: "wrap",
         display: 'flex',
+        padding: theme.spacing.unit * 3,
     },
     roottext: {
         maxWidth: 560,

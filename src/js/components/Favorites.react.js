@@ -21,9 +21,10 @@ import _ from "underscore";
 import TablePaginationActions from './TablePaginationActions.react';
 
 
-const styles = () => ({
+const styles = theme => ({
   root: {
     width: '80%',
+    padding: theme.spacing.unit * 3,
   },
   table: {
     minWidth: 500,

@@ -14,12 +14,13 @@ import {
   Deck, Slide, Image 
 } from 'spectacle';
 
-const styles = () => ({
+const styles = theme => ({
     root: {
         overflow: "scroll",
         position: "relative",
         width: "100%",
         height: "100%",
+        padding: theme.spacing.unit * 3,
     },
     roottext: {
         flex: 1

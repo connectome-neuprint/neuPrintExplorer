@@ -33,9 +33,9 @@ var LightColors = [
     "#fccde5",
 ];
 
-const styles = () => ({
+const styles = theme => ({
     root: {
-        flexGrow: 1,
+        padding: theme.spacing.unit * 3,
     },
     flex: {
         flex: 1,
@@ -63,6 +63,10 @@ const styles = () => ({
         width: "0%",
         float: "right"
     },
+    scroll: {
+        overflow: "auto",
+        height: "100%"
+    }
 });
 
 class Results extends React.Component {
@@ -276,12 +280,12 @@ class Results extends React.Component {
         }
 
         return (
-            <div>
+            <div className={this.props.userInfo === null || this.props.allTables === null ? classes.root : ""}>
                 { (this.props.userInfo !== null && this.props.allTables !== null) ? (
                     <div />    
-                ) : (
-                    <Typography variant="title">No Query Results</Typography>
-                  )
+                ) : (this.props.isQuerying) ?  
+                    (<Typography variant="title">Querying...</Typography>) :
+                    (<Typography variant="title">No Results</Typography>)
                 }
                 <Fade
                     in={this.props.isQuerying}
@@ -305,19 +309,21 @@ class Results extends React.Component {
                                         xs={12}
                                         sm={(this.state.showSkel) ? 6 : 12}
                                 >
-                                    <ResponsiveGridLayout 
-                                                                className="layout" 
-                                                                rowHeight={30} 
-                                                                breakpoints={{lg: 2000}}
-                                                                cols={{lg: (this.state.showSkel) ? 6 : 12}}
-                                                                draggableHandle=".topresultbar"
-                                                                compactType="vertical"
-                                                                onResizeStop={this.changeLayout}
-                                        >
-                                            {resArray.map( (result) => {
-                                                return result;
-                                            })}
-                                    </ResponsiveGridLayout>
+                                    <div className={classes.scroll}>
+                                        <ResponsiveGridLayout 
+                                                                    className="layout" 
+                                                                    rowHeight={30} 
+                                                                    breakpoints={{lg: 2000}}
+                                                                    cols={{lg: (this.state.showSkel) ? 6 : 12}}
+                                                                    draggableHandle=".topresultbar"
+                                                                    compactType="vertical"
+                                                                    onResizeStop={this.changeLayout}
+                                            >
+                                                {resArray.map( (result) => {
+                                                    return result;
+                                                })}
+                                        </ResponsiveGridLayout>
+                                    </div>
                                 </Grid>
                                 { this.state.showSkel ? (
                                     <Grid 
