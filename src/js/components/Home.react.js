@@ -106,7 +106,7 @@ class Home extends React.Component {
                             </Typography>
                             <br />
                             <Typography variant="body1">
-                                neuPrintExplorer provides tools to query and visualize connectomic data stored in  <a href="https://github.com/janelia-flyem/neuPrint">neuPrint</a>, which uses a neo4j graph database.
+                                neuPrintExplorer provides tools to query and visualize connectomic data stored in  <a href="https://github.com/janelia-flyem/neuPrint">neuPrint</a>, which uses a neo4j graph database. Use the search icon at the <a href="/?openQuery=true">top left</a> to query the database.
                             </Typography>
                         </div>
                     </Grid>
@@ -129,8 +129,12 @@ class Home extends React.Component {
                               </Typography>
                               <Typography component="p">
                                 available datasets: 
-                                        {this.props.availableDatasets.map( (item) => {
-                                            return item + " "           
+                                        {this.props.availableDatasets.map( (item, index) => {
+                                            if (index === 0) {
+                                                return " " + item;
+                                            } else {
+                                                return " \u25cf " + item; 
+                                            }
                                         })}
                                 <br /> 
                               </Typography>
@@ -158,10 +162,6 @@ class Home extends React.Component {
                               <SvgIcon nativeColor={"orange"}>
                                     <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/>
                               </SvgIcon>
-                              </Typography>
-                              <Typography component="p">
-                                Use the search icon
-                                at the <a href="/?openQuery=true">top left</a> to query the database.
                               </Typography>
                                 <Divider className={classes.divider}/>
             
