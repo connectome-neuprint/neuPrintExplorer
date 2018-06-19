@@ -18,7 +18,6 @@ import SimpleTables from './SimpleTables.react';
 import qs from 'qs';
 import Skeleton from './Skeleton.react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
-import Button from 'material-ui/Button';
 import Grid from 'material-ui/Grid';
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -73,8 +72,10 @@ class Results extends React.Component {
             currLayout: null,
             showSkel: false,
         };
+
+        document.addEventListener("keydown", this.triggerKeyboard); 
     }
-  
+
     // if only query string has updated, prevent re-render
     shouldComponentUpdate(nextProps, nextState) {
         nextProps.location["search"] = this.props.location["search"];
@@ -123,6 +124,27 @@ class Results extends React.Component {
         }
     }
 
+    componentWillUnmount() {
+        document.removeEventListener("keydown", this.triggerKeyboard); 
+    }
+
+    triggerKeyboard = (event) => {
+        if (event.keyCode === 32) {
+            event.preventDefault();
+            let numSkels = 0;
+            if (this.props.allTables !== null) { 
+                this.props.allTables.map( (result, index) => {
+                    if (!this.props.clearIndices.has(index) && (("isSkeleton" in result[0]) && (result[0].isSkeleton))) {
+                        numSkels += 1;
+                    }
+                });
+            }
+            if (numSkels > 0) {
+                this.setState({showSkel: !this.state.showSkel});
+            }
+        }
+    }
+
     changeLayout = (layout) => {
         let currIndex = 0;
         let tempLayout = {}
@@ -140,10 +162,6 @@ class Results extends React.Component {
         this.setState({currLayout: tempLayout});
     }
  
-    toggleSkel = () => {
-        this.setState({showSkel: !this.state.showSkel});
-    }
-
     downloadFile = (index) => {
         if (("isSkeleton" in this.props.allTables[index][0]) && 
                 (this.props.allTables[index][0].isSkeleton)) {
@@ -212,14 +230,11 @@ class Results extends React.Component {
         let resArray = [];
         let currIndex = 0;
         let numTables = 0;
-        let hasSkel = false;
 
         if (this.props.allTables !== null) { 
             this.props.allTables.map( (result, index) => {
                 if (!this.props.clearIndices.has(index) && (!("isSkeleton" in result[0]) || !(result[0].isSkeleton))) {
                     numTables += 1;
-                } else if (!this.props.clearIndices.has(index) && (("isSkeleton" in result[0]) && (result[0].isSkeleton))) {
-                    hasSkel = true;
                 }
             });
         }
@@ -281,47 +296,39 @@ class Results extends React.Component {
                     (<Typography>Error: {this.props.neoError.code}</Typography>) :
                     (resArray.length > 0 ?
                         (
-                            <div>
-                                {hasSkel ? (<Button
-                                    variant="raised"
-                                    onClick={this.toggleSkel}
-                                >
-                                    {((this.state.showSkel) ? "Hide Skeletons" : "Show Skeletons")}
-                                </Button>) : <div />}
+                            <Grid 
+                                    container 
+                                    spacing={0}
+                            >
                                 <Grid 
-                                        container 
-                                        spacing={0}
+                                        item 
+                                        xs={12}
+                                        sm={(this.state.showSkel) ? 6 : 12}
                                 >
+                                    <ResponsiveGridLayout 
+                                                                className="layout" 
+                                                                rowHeight={30} 
+                                                                breakpoints={{lg: 2000}}
+                                                                cols={{lg: (this.state.showSkel) ? 6 : 12}}
+                                                                draggableHandle=".topresultbar"
+                                                                compactType="horizontal"
+                                                                onResizeStop={this.changeLayout}
+                                        >
+                                            {resArray.map( (result) => {
+                                                return result;
+                                            })}
+                                    </ResponsiveGridLayout>
+                                </Grid>
+                                { this.state.showSkel ? (
                                     <Grid 
                                             item 
                                             xs={12}
-                                            sm={(this.state.showSkel) ? 6 : 12}
+                                            sm={6}
                                     >
-                                        <ResponsiveGridLayout 
-                                                                    className="layout" 
-                                                                    rowHeight={30} 
-                                                                    breakpoints={{lg: 2000}}
-                                                                    cols={{lg: (this.state.showSkel) ? 6 : 12}}
-                                                                    draggableHandle=".topresultbar"
-                                                                    compactType="horizontal"
-                                                                    onResizeStop={this.changeLayout}
-                                            >
-                                                {resArray.map( (result) => {
-                                                    return result;
-                                                })}
-                                        </ResponsiveGridLayout>
-                                    </Grid>
-                                    { this.state.showSkel ? (
-                                        <Grid 
-                                                item 
-                                                xs={12}
-                                                sm={6}
-                                        >
-                                            <Skeleton disable={!this.state.showSkel} />
-                                        </Grid>) : (<div />)
-                                    }
-                                </Grid>
-                            </div>
+                                        <Skeleton disable={!this.state.showSkel} />
+                                    </Grid>) : (<div />)
+                                }
+                            </Grid>
                         ) : 
                         (<div />)
                     )
