@@ -10,12 +10,13 @@ import { TableSortLabel } from 'material-ui/Table';
 import Tooltip from 'material-ui/Tooltip';
 
 export default class SimpleCellWrapper {
-    constructor(key, child, isSimple=true, value=null, lockVal=-1) {
+    constructor(key, child, isSimple=true, value=null, lockVal=-1, bgColor="") {
         this.key = key;
         this.value = value;
         this.isSimple = isSimple;
         this.child = child;
         this.lockVal=lockVal;
+        this.bgColor = bgColor;
     }
 
     getValue = () => {
@@ -33,6 +34,7 @@ export default class SimpleCellWrapper {
                             value={this.value}
                             isSimple={this.isSimple}
                             lockVal={this.lockVal}
+                            bgColor={this.bgColor}
                     >
                         {this.child}
                     </SimpleCell>);
@@ -42,6 +44,7 @@ export default class SimpleCellWrapper {
                             value={this.value}
                             isSimple={this.isSimple}
                             lockVal={this.lockVal}
+                            bgColor={this.bgColor}
                     >
                         <Tooltip
                                     title="Sort"

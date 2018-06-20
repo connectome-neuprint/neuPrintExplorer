@@ -20,10 +20,13 @@ const styles = () => ({
 class SimpleCell extends React.Component {
     render() {
         const { classes } = this.props;
+
         return (
             <TableCell
                         className={(this.props.isSimple ? classes.basic : classes.fcell) + ((this.props.lockVal > -1) ? " lockLeft-" + this.props.lockVal.toString() : "")}
                         padding={this.props.isSimple ? "default" : "none"} 
+
+                        style={(this.props.bgColor !== "") ? {'background': this.props.bgColor} : {}}
             > 
                 {this.props.children}
             </TableCell>
@@ -40,6 +43,7 @@ SimpleCell.propTypes = {
     classes: PropTypes.object.isRequired,
     isSimple: PropTypes.bool.isRequired,
     lockVal: PropTypes.number.isRequired, 
+    bgColor: PropTypes.string.isRequired, 
 }
 
 export default withStyles(styles)(SimpleCell);

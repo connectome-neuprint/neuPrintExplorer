@@ -129,7 +129,7 @@ var processResults = function(results, state, uniqueId) {
     for (let i = 0; i < allrois2.length; i++) {
         let roiname = allrois2[i];
         let data2 = [];
-        data2.push(new SimpleCellWrapper(index++, roiname, true, null, uniqueId));
+        data2.push(new SimpleCellWrapper(index++, roiname, true, null, uniqueId, "white"));
         for (let j = 0; j < allrois2.length; j++) {
             let roiname2 = allrois2[j];
             let val = 0;
@@ -170,7 +170,7 @@ var processResults = function(results, state, uniqueId) {
     
     for (let i = 0; i < allrois2.length; i++) {
         let roiname = allrois2[i];
-        headerdata.push(new SimpleCellWrapper(index++, roiname));
+        headerdata.push(new SimpleCellWrapper(index++, roiname, true, null, -1, "white"));
     }
         
     let tables = [];
