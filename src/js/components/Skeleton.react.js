@@ -31,6 +31,20 @@ var COLORS = [
     0x999999,
 ];
 
+var COLORSHTML = [
+    "#e41a1c",
+    "#377eb8",
+    "#4daf4a",
+    "#984ea3",
+    "#ff7f00",
+    "#ffff33",
+    "#a65628",
+    "#f781bf",
+    "#999999",
+];
+
+
+
 var GlbShark = null;
 
 const styles = theme => ({
@@ -149,7 +163,7 @@ class Skeleton extends React.Component {
 
     render() {
         const { classes } = this.props;
-       
+      
         let chipsArr = [];
         this.props.results.map( (result, index) => {
             if ((!this.props.clearIndices.has(index)) && ("isSkeleton" in result[0]) && (result[0].isSkeleton)) {
@@ -169,6 +183,7 @@ class Skeleton extends React.Component {
                                 label={data[1]}
                                 onDelete={this.handleDelete(data)}
                                 className={classes.chip}
+                                style={{'background': COLORSHTML[parseInt(data[1])%COLORS.length] }}
                         />
                     );
                 })}
