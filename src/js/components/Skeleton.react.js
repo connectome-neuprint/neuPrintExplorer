@@ -43,6 +43,7 @@ class Skeleton extends React.Component {
         }
         
         let swc = this.fetchSWC(nextProps.results); 
+    
         if (this.props.disable && !nextProps.disable) {
             this.createShark(swc);
         } else {
@@ -59,13 +60,35 @@ class Skeleton extends React.Component {
     // grab latest swc added
     fetchSWC = (results) => {
         let swc = {};
+        let offset = 0;
         results.map( (result) => {
             if ("isSkeleton" in result[0] && result[0].isSkeleton) {
-                swc = result[0].swc;
+                offset = this.concatSkel(swc, result[0].swc, offset);
             }
         });
 
         return swc;
+    }
+
+    concatSkel = (newswc, origswc, offset) => {
+        let maxRowId = 0;
+        for (let rowId in origswc) {
+            let newId = parseInt(rowId) + offset;
+            let val = origswc[rowId];
+            if (newId > maxRowId) {
+                maxRowId = newId;
+            }
+            newswc[newId] = {
+                type: val.type,
+                x: val.x,
+                y: val.y,
+                z: val.z,
+                parent: (val.parent === -1) ? -1 : (val.parent + offset),
+                radius: val.radius
+            }
+        }
+
+        return maxRowId + 1;
     }
 
     createShark = (swc) => {
