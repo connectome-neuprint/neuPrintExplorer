@@ -71,26 +71,33 @@ const styles = theme => ({
 });
 
 class Skeleton extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            hideIndices: new Set()
+        }
+    }
+    
     // load skeleton after render takes place
     componentDidMount() {
-        let swc = this.fetchSWC(this.props.results, this.props.clearIndices); 
+        let swc = this.fetchSWC(this.props.results, this.props.clearIndices, this.state.hideIndices); 
         this.createShark(swc); 
     }
 
-    shouldComponentUpdate(nextProps) {
+    shouldComponentUpdate(nextProps, nextState) {
         if (nextProps.disable && GlbShark !== null) {
             GlbShark = null;
             let pardiv = this.refs["skeletonviewer"];
             pardiv.removeChild(pardiv.childNodes[0]);
         }
-        
-        let swc = this.fetchSWC(nextProps.results, nextProps.clearIndices); 
+
+        let swc = this.fetchSWC(nextProps.results, nextProps.clearIndices, nextState.hideIndices); 
   
         if (this.props.disable && !nextProps.disable) {
             this.createShark(swc);
         } else {
             // update swc if current one is different from previous
-            let oldswc = this.fetchSWC(this.props.results, this.props.clearIndices); 
+            let oldswc = this.fetchSWC(this.props.results, this.props.clearIndices, this.state.hideIndices); 
             if (!_.isEqual(swc, oldswc)) {
                 this.createShark(swc);
             }
@@ -102,13 +109,23 @@ class Skeleton extends React.Component {
     handleDelete = data => () => {
         this.props.clearResult(data[0]);
     }
+    
+    handleClick = data => () => {
+        let hideIds = new Set(this.state.hideIndices);
+        if (hideIds.has(data[0])) {
+            hideIds.delete(data[0]);
+        } else {
+            hideIds.add(data[0]);
+        }
+        this.setState({hideIndices: hideIds});
+    }
 
     // grab latest swc added
-    fetchSWC = (results, clearIndices) => {
+    fetchSWC = (results, clearIndices, hideIndices) => {
         let swc = {};
         let offset = 0;
         results.map( (result, index) => {
-            if ((!clearIndices.has(index)) && ("isSkeleton" in result[0]) && (result[0].isSkeleton)) {
+            if ((!hideIndices.has(index)) && (!clearIndices.has(index)) && ("isSkeleton" in result[0]) && (result[0].isSkeleton)) {
                 offset = this.concatSkel(swc, result[0].swc, offset);
             }
         });
@@ -177,13 +194,19 @@ class Skeleton extends React.Component {
             >
                 <div className={classes.floater}>
                 {chipsArr.map(data => {
+                    let currcolor = COLORSHTML[parseInt(data[1])%COLORS.length];
+                    if (this.state.hideIndices.has(data[0])) {
+                        currcolor = "gray";
+                    }
+
                     return (
                         <Chip
                                 key={data[0]}
                                 label={data[1]}
                                 onDelete={this.handleDelete(data)}
+                                onClick={this.handleClick(data)}
                                 className={classes.chip}
-                                style={{'background': COLORSHTML[parseInt(data[1])%COLORS.length] }}
+                                style={{'background': currcolor }}
                         />
                     );
                 })}
