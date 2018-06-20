@@ -40,7 +40,7 @@ var processSkeleton = function(results, state) {
     
     // parse swc 
     let data = {};
-    let colorid = parseInt(state.sourceId) % 8;
+    let colorid = parseInt(state.sourceId); // % 8;
         
     results.records.forEach(function (record) {
         let rowId = parseInt(convert64bit(record.get("rowId")));

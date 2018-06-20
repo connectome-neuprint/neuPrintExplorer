@@ -17,6 +17,18 @@ require('SharkViewer/js/shark_viewer.js');
 */
 /* global SharkViewer */
 
+var COLORS = [
+    0xe41a1c,
+    0x377eb8,
+    0x4daf4a,
+    0x984ea3,
+    0xff7f00,
+    0xffff33,
+    0xa65628,
+    0xf781bf,
+    0x999999,
+];
+
 var GlbShark = null;
 
 const styles = theme => ({
@@ -79,7 +91,7 @@ class Skeleton extends React.Component {
                 maxRowId = newId;
             }
             newswc[newId] = {
-                type: val.type,
+                type: (val.type % COLORS.length),
                 x: val.x,
                 y: val.y,
                 z: val.z,
@@ -107,6 +119,7 @@ class Skeleton extends React.Component {
                 center_node: -1,
                 WIDTH: this.refs["skeletonviewer"].clientWidth,
                 HEIGHT: this.refs["skeletonviewer"].clientHeight,
+                colors: COLORS,
             });
 
             GlbShark.init();
