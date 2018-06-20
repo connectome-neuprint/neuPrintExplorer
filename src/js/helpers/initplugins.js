@@ -12,8 +12,9 @@ import NeuronsInROIs from '../components/plugins/NeuronsInROIs.react';
 import ROIsIntersectingNeurons from '../components/plugins/ROIsIntersectingNeurons.react';
 import ROIConnectivity from '../components/plugins/ROIConnectivity.react';
 import NeuronMeta from '../components/plugins/NeuronMeta.react';
+import Autapses from '../components/plugins/Autapses.react';
 
-const pluginList = [NeuronsInROIs, NeuronMeta, ROIConnectivity, RankedTable, SimpleConnections, ROIsIntersectingNeurons, FreeForm];
+const pluginList = [NeuronsInROIs, NeuronMeta, ROIConnectivity, RankedTable, SimpleConnections, ROIsIntersectingNeurons, Autapses, FreeForm];
 
 export default function loadPlugins(store) {
     store.dispatch({type: 'INIT_PLUGINS', pluginList: pluginList});
