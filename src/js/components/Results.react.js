@@ -246,7 +246,7 @@ class Results extends React.Component {
         if ((this.props.neoError === null) && (this.props.allTables !== null)) {
             this.props.allTables.map( (result, index) => {
                 if (!this.props.clearIndices.has(index) && (!("isSkeleton" in result[0]) || !(result[0].isSkeleton))) {
-                    let unId = (numTables > 1) ? result[0].uniqueId*2 : (result[0].uniqueId*2+1);
+                    let unId = this.state.showSkel ? (result[0].uniqueId*3+2) : ((numTables > 1) ? result[0].uniqueId*3 : (result[0].uniqueId*3+1));
                     resArray.push((
                         <div 
                             key={unId} 
