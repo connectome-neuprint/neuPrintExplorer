@@ -57,7 +57,7 @@ var processSkeleton = function(results, state) {
     let table = {
         isSkeleton: true,
         swc: data,
-        name: "Skeleton of " + state.sourceId.toString(),
+        name: state.sourceId.toString(),
     };
     tables.push(table);
     return tables;

@@ -9,6 +9,8 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import _ from "underscore";
 import { connect } from 'react-redux';
+import Chip from 'material-ui/Chip';
+
 
 /*
 require('SharkViewer/js/threejs/three.js');
@@ -38,12 +40,26 @@ const styles = theme => ({
     marginTop: theme.spacing.unit * 1,
     backgroundColor: "white"
   },
+  floater: {
+    zIndex: 2,
+    padding: theme.spacing.unit,
+    position: "absolute"
+  },
+  skel: {
+    width: '100%',
+    height: '100%',
+    zIndex: 1,
+    position: "relative"
+  },
+  chip: {
+    margin: theme.spacing.unit / 2,
+  },
 });
 
 class Skeleton extends React.Component {
     // load skeleton after render takes place
     componentDidMount() {
-        let swc = this.fetchSWC(this.props.results); 
+        let swc = this.fetchSWC(this.props.results, this.props.clearIndices); 
         this.createShark(swc); 
     }
 
@@ -54,13 +70,13 @@ class Skeleton extends React.Component {
             pardiv.removeChild(pardiv.childNodes[0]);
         }
         
-        let swc = this.fetchSWC(nextProps.results); 
-    
+        let swc = this.fetchSWC(nextProps.results, nextProps.clearIndices); 
+  
         if (this.props.disable && !nextProps.disable) {
             this.createShark(swc);
         } else {
             // update swc if current one is different from previous
-            let oldswc = this.fetchSWC(this.props.results); 
+            let oldswc = this.fetchSWC(this.props.results, this.props.clearIndices); 
             if (!_.isEqual(swc, oldswc)) {
                 this.createShark(swc);
             }
@@ -69,12 +85,16 @@ class Skeleton extends React.Component {
         return true;
     }
 
+    handleDelete = data => () => {
+        this.props.clearResult(data[0]);
+    }
+
     // grab latest swc added
-    fetchSWC = (results) => {
+    fetchSWC = (results, clearIndices) => {
         let swc = {};
         let offset = 0;
-        results.map( (result) => {
-            if ("isSkeleton" in result[0] && result[0].isSkeleton) {
+        results.map( (result, index) => {
+            if ((!clearIndices.has(index)) && ("isSkeleton" in result[0]) && (result[0].isSkeleton)) {
                 offset = this.concatSkel(swc, result[0].swc, offset);
             }
         });
@@ -129,13 +149,37 @@ class Skeleton extends React.Component {
 
     render() {
         const { classes } = this.props;
-        
+       
+        let chipsArr = [];
+        this.props.results.map( (result, index) => {
+            if ((!this.props.clearIndices.has(index)) && ("isSkeleton" in result[0]) && (result[0].isSkeleton)) {
+                chipsArr.push([index, result[0].name]);
+            }
+        });
+
         return (
             <div 
                     className={classes.root}
+            >
+                <div className={classes.floater}>
+                {chipsArr.map(data => {
+                    return (
+                        <Chip
+                                key={data[0]}
+                                label={data[1]}
+                                onDelete={this.handleDelete(data)}
+                                className={classes.chip}
+                        />
+                    );
+                })}
+            
+                </div>
+                <div
+                    className={classes.skel}
                     ref={"skeletonviewer"}
                     id={"skeletonviewer"}
-            />
+                />
+            </div>
         );
     }
 }
@@ -144,14 +188,30 @@ Skeleton.propTypes = {
     classes: PropTypes.object.isRequired,
     results: PropTypes.array.isRequired,
     disable: PropTypes.bool.isRequired,
+    clearResult: PropTypes.func.isRequired,
+    clearIndices: PropTypes.object.isRequired,
+    numClear: PropTypes.number.isRequired,
 };
 
 var SkeletonState = function(state){
     return {
         results: state.results.allTables,
+        clearIndices: state.results.clearIndices,
+        numClear: state.results.numClear,
     }   
 };
 
-export default withStyles(styles)(connect(SkeletonState, null)(Skeleton));
+var SkeletonDispatch = function(dispatch) {
+   return {
+        clearResult: function(index) {
+            dispatch({
+                type: 'CLEAR_RESULT',
+                index: index
+            });
+        }
+   }
+}
+
+export default withStyles(styles)(connect(SkeletonState, SkeletonDispatch)(Skeleton));
 
 
