@@ -156,6 +156,11 @@ class Skeleton extends React.Component {
 
     createShark = (swc) => {
         if (GlbShark !== null) {
+            GlbShark.scene.remove(GlbShark.neuron);
+            GlbShark.scene.remove(GlbShark.camera);
+            GlbShark.material.dispose();
+            GlbShark.geometry.dispose();
+            
             GlbShark = null;
             let pardiv = this.refs["skeletonviewer"];
             if (pardiv.childNodes.length > 0) {
