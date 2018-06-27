@@ -149,13 +149,27 @@ class Query extends React.Component {
                     <Select
                         value={queryname}
                         onChange={this.setQuery}
-                        inputProps={{
-                            name: 'query',
-                            id: 'controlled-open-select',
-                        }}
+                        input={<Input name="query" 
+                                      id="controlled-open-select" />}            
                     >
                         {initmenuitem}
-                        {this.props.pluginList.map(function (val) {
+                        {this.props.pluginList.slice(0, this.props.reconIndex).map(function (val) {
+                            return (<MenuItem
+                                        key={val.queryName}
+                                        value={val.queryName}
+                                    >
+                                        {val.queryName}
+                                    </MenuItem>
+                            );
+                        })}
+                        <MenuItem
+                                            key={"recon"}
+                                            value={"recon"}
+                                            disabled
+                        >
+                            <i>Reconstruction Related</i>
+                        </MenuItem>
+                        {this.props.pluginList.slice(this.props.reconIndex, this.props.pluginList.length).map(function (val) {
                             return (<MenuItem
                                         key={val.queryName}
                                         value={val.queryName}
@@ -218,6 +232,7 @@ Query.defaultProps = {
 
 Query.propTypes = {
     pluginList: PropTypes.array.isRequired,
+    reconIndex: PropTypes.number.isRequired,
     classes: PropTypes.object.isRequired,
     theme: PropTypes.object.isRequired,
     setURLQs: PropTypes.func.isRequired,
@@ -229,6 +244,7 @@ Query.propTypes = {
 var QueryState = function(state){
     return {
         pluginList: state.app.pluginList,
+        reconIndex: state.app.reconIndex,
         availableDatasets: state.neo4jsettings.availableDatasets,
         urlQueryString: state.app.urlQueryString,
     }   
