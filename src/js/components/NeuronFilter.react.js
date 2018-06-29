@@ -66,23 +66,23 @@ class NeuronFilter extends React.Component {
         };
         this.props.callback(qsParams);
 
-        this.queryStatuses(this.props.neoDriver);
+        this.queryStatuses(this.props.neoDriver, this.props.datasetstr);
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.neoServer !== this.props.neoServer) {
-            this.queryStatuses(nextProps.neoDriver);
+        if (nextProps.neoServer !== this.props.neoServer || (nextProps.datasetstr !== this.props.datasetstr)) {
+            this.queryStatuses(nextProps.neoDriver, nextProps.datasetstr);
         }
     }
 
-    queryStatuses = (driver) => {
+    queryStatuses = (driver, datasetstr) => {
         if (driver === null) {
             return;
         }
         
         let session = driver.session();
         const setState = this.setState.bind(this)
-        let neoQuery = mainQuery.replace(/ZZ/g, this.props.datasetstr);
+        let neoQuery = mainQuery.replace(/ZZ/g, datasetstr);
 
         session
             .run(neoQuery)
