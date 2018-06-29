@@ -21,7 +21,7 @@ import NeuronFilter from '../NeuronFilter.react';
 import { parseResults } from '../../neo4jqueries/neuronsInROIs';
 //import _ from "underscore";
 
-const mainQuery = 'match (neuron :NeuronZZYY)<-[:PartOf]-(roi :NeuronPart) XX return neuron.bodyId as bodyid, neuron.name as bodyname, roi.pre as pre, roi.post as post, labels(roi) as rois, neuron.size as size, neuron.pre as npre, neuron.post as npost order by neuron.bodyId';
+const mainQuery = 'match (neuron :NeuronZZYY)<-[:PartOf]-(roi :NeuronPart) XX FF return neuron.bodyId as bodyid, neuron.name as bodyname, roi.pre as pre, roi.post as post, labels(roi) as rois, neuron.size as size, neuron.pre as npre, neuron.post as npost order by neuron.bodyId';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -73,6 +73,7 @@ class NeuronsInROIs extends React.Component {
         this.state = {
             qsParams: qsParams,
             limitBig: true,
+            statusFilters: [],
         };
     }
     
@@ -112,6 +113,25 @@ class NeuronsInROIs extends React.Component {
         if (this.state.limitBig === "true") {
             neoquery = neoquery.replace(/:Neuron:/g, ":Neuron:Big:");
         }
+        if (this.state.statusFilters.length > 0) {
+            let FF = "and (";
+            if (this.state.qsParams.neuronsrc === "") {
+                FF = "where (";
+            }
+
+            for (let i = 0; i < this.state.statusFilters.length; i++) {
+                if (i > 0) {
+                    FF = FF + " or ";
+                }
+                FF = FF + 'neuron.status = "' + this.state.statusFilters[i] + '"';
+            }
+            FF = FF + ")";
+
+            neoquery = neoquery.replace("FF", FF);
+        } else {
+            neoquery = neoquery.replace("FF", "");
+        }
+
 
         let query = {
             queryStr: neoquery,
@@ -158,7 +178,7 @@ class NeuronsInROIs extends React.Component {
     }
 
     loadNeuronFilters = (params) => {
-        this.setState({limitBig: params.limitBig});
+        this.setState({limitBig: params.limitBig, statusFilters: params.statusFilters});
     }
 
     render() {

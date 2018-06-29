@@ -123,6 +123,7 @@ class NeuronFilter extends React.Component {
        
         // save back status selections
         this.props.setURLQs(SaveQueryString("Query:NeuronFilter", newparams));
+        this.props.callback(newparams);
         this.setState({qsParams: newparams});
     }
 
