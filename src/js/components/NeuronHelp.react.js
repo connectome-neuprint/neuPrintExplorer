@@ -25,7 +25,7 @@ class NeuronHelp extends React.Component {
 
         var tooltip = (
             <Tooltip id="tooltip-icon"
-                    title="Enter body ID, neuron name, or wildcard names using period+star (e.g., MBON.*)"
+                    title={this.props.text}
                     placement="top"
             >
                 <Typography color="error"
@@ -47,7 +47,12 @@ class NeuronHelp extends React.Component {
 NeuronHelp.propTypes = {
     children: PropTypes.element.isRequired,
     classes: PropTypes.object.isRequired,
-
+    text: PropTypes.string.isRequired,
 }
+
+NeuronHelp.defaultProps = {
+    text: "Enter body ID, neuron name, or wildcard names using period+star (e.g., MBON.*)"
+};
+
 
 export default withStyles(styles)(NeuronHelp);

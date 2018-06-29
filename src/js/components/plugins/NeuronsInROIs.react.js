@@ -17,6 +17,7 @@ import { MenuItem } from 'material-ui/Menu';
 import TextField from 'material-ui/TextField';
 import Select from 'material-ui/Select';
 import NeuronHelp from '../NeuronHelp.react';
+import NeuronFilter from '../NeuronFilter.react';
 import { parseResults } from '../../neo4jqueries/neuronsInROIs';
 //import _ from "underscore";
 
@@ -70,7 +71,8 @@ class NeuronsInROIs extends React.Component {
         }
         var qsParams = LoadQueryString("Query:" + this.constructor.queryName, initqsParams, this.props.urlQueryString);
         this.state = {
-            qsParams: qsParams
+            qsParams: qsParams,
+            limitBig: true,
         };
     }
     
@@ -110,6 +112,9 @@ class NeuronsInROIs extends React.Component {
             } else {
                 neoquery = neoquery.replace("XX", 'where neuron.bodyId =' + this.state.qsParams.neuronsrc);
             }
+            if (this.state.limitBig === "true") {
+                neoquery = neoquery.replace(/:Neuron:/g, ":Neuron:Big:");
+            }
 
             let query = {
                 queryStr: neoquery,
@@ -118,7 +123,7 @@ class NeuronsInROIs extends React.Component {
                     neuronSrc: this.state.qsParams.neuronsrc,
                     outputROIs: this.state.qsParams.OutputROIs,
                     inputROIs: this.state.qsParams.InputROIs,
-                    datasetstr: this.props.datasetstr, 
+                    datasetstr: this.props.datasetstr,
                 },
             }
             this.props.callback(query);
@@ -154,6 +159,10 @@ class NeuronsInROIs extends React.Component {
         oldparams.neuronsrc = event.target.value;
         this.props.setURLQs(SaveQueryString("Query:" + this.constructor.queryName, oldparams));
         this.setState({qsParams: oldparams});
+    }
+
+    loadNeuronFilters = (params) => {
+        this.setState({limitBig: params.limitBig});
     }
 
     render() {
@@ -241,6 +250,10 @@ class NeuronsInROIs extends React.Component {
                         onChange={this.addNeuron}
                     />
                     </NeuronHelp>
+                <NeuronFilter
+                                callback={this.loadNeuronFilters}
+                                datasetstr={this.props.datasetstr}
+                />
                 </FormControl>
 
                     <Button

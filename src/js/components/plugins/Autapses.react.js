@@ -1,5 +1,5 @@
 /*
- * Supports simple, custom neo4j query.
+ * Query to find autapses in the volume.
 */
 
 "use strict"
