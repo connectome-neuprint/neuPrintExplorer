@@ -88,46 +88,42 @@ class NeuronsInROIs extends React.Component {
     }*/
 
     processRequest = () => {
-        if ((this.state.qsParams.InputROIs.length > 0) ||
-            (this.state.qsParams.OutputROIs.length > 0)) {
-   
-            // parse ROIs
-            var roisstr = "";
-            for (let item in this.state.qsParams.InputROIs) {
-                roisstr = roisstr + ":`" + this.state.qsParams.InputROIs[item] + "`";
-            }
-            for (let item in this.state.qsParams.OutputROIs) {
-                roisstr = roisstr + ":`" + this.state.qsParams.OutputROIs[item] + "`";
-            }
-
-            var neoquery = mainQuery.replace(/ZZ/g, roisstr);
-            neoquery = neoquery.replace(/YY/g, this.props.datasetstr);
-
-            // filter neuron information
-            if (this.state.qsParams.neuronsrc === "") {
-                neoquery = neoquery.replace("XX", "");
-
-            } else if (isNaN(this.state.qsParams.neuronsrc)) {
-                neoquery = neoquery.replace("XX", 'where neuron.name =~"' + this.state.qsParams.neuronsrc + '"');
-            } else {
-                neoquery = neoquery.replace("XX", 'where neuron.bodyId =' + this.state.qsParams.neuronsrc);
-            }
-            if (this.state.limitBig === "true") {
-                neoquery = neoquery.replace(/:Neuron:/g, ":Neuron:Big:");
-            }
-
-            let query = {
-                queryStr: neoquery,
-                callback: parseResults,    
-                state: {
-                    neuronSrc: this.state.qsParams.neuronsrc,
-                    outputROIs: this.state.qsParams.OutputROIs,
-                    inputROIs: this.state.qsParams.InputROIs,
-                    datasetstr: this.props.datasetstr,
-                },
-            }
-            this.props.callback(query);
+        // parse ROIs
+        var roisstr = "";
+        for (let item in this.state.qsParams.InputROIs) {
+            roisstr = roisstr + ":`" + this.state.qsParams.InputROIs[item] + "`";
         }
+        for (let item in this.state.qsParams.OutputROIs) {
+            roisstr = roisstr + ":`" + this.state.qsParams.OutputROIs[item] + "`";
+        }
+
+        var neoquery = mainQuery.replace(/ZZ/g, roisstr);
+        neoquery = neoquery.replace(/YY/g, this.props.datasetstr);
+
+        // filter neuron information
+        if (this.state.qsParams.neuronsrc === "") {
+            neoquery = neoquery.replace("XX", "");
+
+        } else if (isNaN(this.state.qsParams.neuronsrc)) {
+            neoquery = neoquery.replace("XX", 'where neuron.name =~"' + this.state.qsParams.neuronsrc + '"');
+        } else {
+            neoquery = neoquery.replace("XX", 'where neuron.bodyId =' + this.state.qsParams.neuronsrc);
+        }
+        if (this.state.limitBig === "true") {
+            neoquery = neoquery.replace(/:Neuron:/g, ":Neuron:Big:");
+        }
+
+        let query = {
+            queryStr: neoquery,
+            callback: parseResults,    
+            state: {
+                neuronSrc: this.state.qsParams.neuronsrc,
+                outputROIs: this.state.qsParams.OutputROIs,
+                inputROIs: this.state.qsParams.InputROIs,
+                datasetstr: this.props.datasetstr,
+            },
+        }
+        this.props.callback(query);
     }
 
     handleChangeROIsIn = (event) => {
