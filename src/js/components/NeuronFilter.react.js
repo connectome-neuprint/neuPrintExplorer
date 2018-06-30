@@ -11,7 +11,6 @@ import { LoadQueryString, SaveQueryString } from '../helpers/qsparser';
 import {connect} from 'react-redux';
 import { FormControl, FormControlLabel } from 'material-ui/Form';
 import Checkbox from 'material-ui/Checkbox';
-import NeuronHelp from './NeuronHelp.react';
 import ExpansionPanel, {
   ExpansionPanelSummary,
   ExpansionPanelDetails,
@@ -22,6 +21,7 @@ import Select from 'material-ui/Select';
 import Input, { InputLabel } from 'material-ui/Input';
 import Chip from 'material-ui/Chip';
 import { MenuItem } from 'material-ui/Menu';
+import Tooltip from 'material-ui/Tooltip';
 
 
 const mainQuery = 'match (n :Neuron:BigZZ) return distinct n.status as val'
@@ -140,7 +140,11 @@ class NeuronFilter extends React.Component {
                     <ExpansionPanelDetails className={classes.nopad}>
                         <FormControl className={classes.formControl}>
                         <FormControl className={classes.formControl}>
-                            <NeuronHelp text={"Limit search to big neurons with >10 pre or post synapses (speeds-up querying)"}>
+                            <Tooltip 
+                                        id="tooltip-big" 
+                                        title="Limit to big neurons (>10 pre or post synapses)" 
+                                        placement="bottom-start"
+                            >
                                 <FormControlLabel
                                                     control={
                                                             <Checkbox
@@ -151,7 +155,7 @@ class NeuronFilter extends React.Component {
                                                             }
                                                     label="Limit to big segments"
                                 />
-                            </NeuronHelp>
+                            </Tooltip>
                         </FormControl>
                         <FormControl className={classes.formControl}>
                         <InputLabel htmlFor="select-multiple-chip-status">Neuron status</InputLabel>
