@@ -280,12 +280,13 @@ class Results extends React.Component {
         }
 
         return (
-            <div className={this.props.userInfo === null || this.props.allTables === null ? classes.root : ""}>
+            <div className={this.props.allTables === null ? classes.root : ""}>
                 { (this.props.userInfo !== null && this.props.allTables !== null) ? (
                     <div />    
                 ) : (this.props.isQuerying) ?  
                     (<Typography variant="title">Querying...</Typography>) :
-                    (<Typography variant="title">No Results</Typography>)
+                    (this.props.allTables !== null) ? <div /> : 
+                        (<Typography variant="title">No Results</Typography>)
                 }
                 <Fade
                     in={this.props.isQuerying}
