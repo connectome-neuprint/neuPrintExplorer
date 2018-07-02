@@ -14,8 +14,9 @@ import ROIConnectivity from '../components/plugins/ROIConnectivity.react';
 import NeuronMeta from '../components/plugins/NeuronMeta.react';
 import Autapses from '../components/plugins/Autapses.react';
 import Distribution from '../components/plugins/Distribution.react';
+import Completeness from '../components/plugins/Completeness.react';
 
-const pluginList = [NeuronsInROIs, NeuronMeta, ROIConnectivity, RankedTable, SimpleConnections, ROIsIntersectingNeurons, FreeForm, Autapses, Distribution];
+const pluginList = [NeuronsInROIs, NeuronMeta, ROIConnectivity, RankedTable, SimpleConnections, ROIsIntersectingNeurons, FreeForm, Autapses, Distribution, Completeness];
 
 export default function loadPlugins(store) {
     store.dispatch({type: 'INIT_PLUGINS', pluginList: pluginList, reconIndex: 7});
