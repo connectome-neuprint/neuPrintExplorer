@@ -32,6 +32,7 @@ var processResults = function(results, state) {
         header: headerdata,
         body: data,
         name: "Coverage percentage of filtered neurons in " + state.datasetstr, 
+        sortIndices: new Set([0,1,2,3,4]),
     }
     
     let roiset = new Set(state.rois);
@@ -49,9 +50,9 @@ var processResults = function(results, state) {
             data.push([
                 new SimpleCellWrapper(index++, roiname),
                 new SimpleCellWrapper(index++, ((roipre/totalpre)*100).toFixed(2)),
-                new SimpleCellWrapper(index++, JSON.stringify(totalpre)),
+                new SimpleCellWrapper(index++, totalpre),
                 new SimpleCellWrapper(index++, ((roipost/totalpost)*100).toFixed(2)),
-                new SimpleCellWrapper(index++, JSON.stringify(totalpost)),
+                new SimpleCellWrapper(index++, totalpost),
             ]);
         }
     });
@@ -60,7 +61,7 @@ var processResults = function(results, state) {
     return tables;
 }
 
-const mainQuery = 'match (n:NeuronZZ)<-[:PartOf]-(part:NeuronPart) FF with labels(part) as labelnames, part as part unwind labelnames as unlabels with unlabels as unlabelres, sum(part.pre) as roipre, sum(part.post) as roipost match (meta:Meta) return unlabelres, roipre, roipost, meta[unlabelres + "PreCount"] as totalpre, meta[unlabelres + "PostCount"] as totalpost order by unlabelres'
+const mainQuery = 'match (n:NeuronZZ)<-[:PartOf]-(part:NeuronPart) FF with labels(part) as labelnames, part as part unwind labelnames as unlabels with unlabels as unlabelres, sum(part.pre) as roipre, sum(part.post) as roipost match (meta:MetaZZ) return unlabelres, roipre, roipost, meta[replace(unlabelres,"\'","_") + "PreCount"] as totalpre, meta[replace(unlabelres,"\'","_") + "PostCount"] as totalpost order by unlabelres'
 
 
 // creates query object and sends to callback
