@@ -137,7 +137,6 @@ export var parseResults = function(neoResults, state) {
     let headerdata = [
         new SimpleCellWrapper(index++, "id"),
         new SimpleCellWrapper(index++, "neuron"),
-        new SimpleCellWrapper(index++, "#voxels"),
         new SimpleCellWrapper(index++, "#post (inputs)"),
         new SimpleCellWrapper(index++, "#pre (outputs)"),
     ];
@@ -152,6 +151,8 @@ export var parseResults = function(neoResults, state) {
         headerdata.push(new SimpleCellWrapper(index++,
                                              "Out:" + state.outputROIs[item]));
     }
+
+    headerdata.push(new SimpleCellWrapper(index++, "#voxels"))
 
     // load table body
     var formatinfo = [];
@@ -209,10 +210,8 @@ export var parseResults = function(neoResults, state) {
  
 
         frowinfo.push(new SimpleCellWrapper(index++,
-                         JSON.stringify(neuronnames[bodyid].name)));
+                         neuronnames[bodyid].name));
                     
-        frowinfo.push(new SimpleCellWrapper(index++,
-                         parseInt(neuronnames[bodyid].size)));
         
         frowinfo.push(new SimpleCellWrapper(index++,
                          (<ClickableQuery neoQueryObj={neoPost}>
@@ -237,6 +236,8 @@ export var parseResults = function(neoResults, state) {
             frowinfo.push(new SimpleCellWrapper(index++,
                                 parseInt(postsizes[state.outputROIs[index2]])));
         }
+        frowinfo.push(new SimpleCellWrapper(index++,
+                         parseInt(neuronnames[bodyid].size)));
         formatinfo.push(frowinfo);
     }
 
