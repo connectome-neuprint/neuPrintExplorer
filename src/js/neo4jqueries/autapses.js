@@ -40,7 +40,7 @@ var processResults = function(results) {
         let name = record.get("name");
         data.push([
             new SimpleCellWrapper(index++, JSON.stringify(bodyid)),
-            new SimpleCellWrapper(index++, JSON.stringify(name)),
+            new SimpleCellWrapper(index++, name),
             new SimpleCellWrapper(index++, JSON.stringify(weight)),
         ]);
     });
