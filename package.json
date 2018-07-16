@@ -30,7 +30,8 @@
     "babel-plugin-transform-class-properties": "^6.24.1",
     "grunt-react": "^0.12.3",
     "grunt-env": "^0.4.4",
-    "jit-grunt": "^0.10.0"
+    "jit-grunt": "^0.10.0",
+    "grunt-exec": "^3.0.0"
   },
   "dependencies": {
     "qs": "^5.1.0",
@@ -43,6 +44,7 @@
     "react-dom": "^16.2.0",
     "material-ui": "^1.0.0-beta.37",
     "material-ui-icons": "^1.0.0-beta.36",
+    "neuroglancer": "git+https://github.com/janelia-flyem/neuroglancer.git#f93e7d36e1c2",
     "react-redux": "^5.0.7",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
