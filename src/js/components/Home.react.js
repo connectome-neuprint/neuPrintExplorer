@@ -102,7 +102,7 @@ class Home extends React.Component {
                     >
                         <div className={classes.roottext}>
                             <Typography variant="title">
-                                Analysis tools for conenctomics
+                                Analysis tools for connectomics
                             </Typography>
                             <br />
                             <Typography variant="body1">
