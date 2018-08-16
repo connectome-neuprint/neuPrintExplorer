@@ -19,7 +19,7 @@ module.exports = function(grunt) {
                     [
                         'babelify', 
                          {
-                             presets: ['es2015', 'react'], 
+                             presets: ['env', 'react'], 
                              plugins: ["transform-class-properties"]
                          }
                     ]
