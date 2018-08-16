@@ -35,8 +35,7 @@ class Distribution extends React.Component {
 
     constructor(props) {
         super(props);
-
-        let roi = "";
+        let roi = "NO ROI"; // leaving empty causes issues
         if (this.props.availableROIs.length > 0) {
             roi = this.props.availableROIs[0];
         }
@@ -47,7 +46,7 @@ class Distribution extends React.Component {
         }
         let qsParams = LoadQueryString("Query:" + this.constructor.queryName, initqsParams, this.props.urlQueryString);
         this.state = {
-            qsParams: qsParams
+            qsParams: qsParams 
         };
     }
 
@@ -78,11 +77,7 @@ class Distribution extends React.Component {
                     <Select
                         value={this.state.qsParams.roi}
                         onChange={this.setROI}
-                        inputProps={{
-                            name: 'ROI',
-                            id: 'controlled-open-select',
-                        }}
-                    >
+                        >
                         {this.props.availableROIs.map((val) => {
                             return (<MenuItem
                                         key={val}

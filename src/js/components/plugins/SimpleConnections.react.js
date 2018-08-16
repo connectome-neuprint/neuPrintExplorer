@@ -17,7 +17,7 @@ import {connect} from 'react-redux';
 import NeuronHelp from '../NeuronHelp.react';
 import SimpleCellWrapper from '../../helpers/SimpleCellWrapper';
 
-const mainQuery = 'match (m:NeuronYY)XX(n:NeuronYY) where ZZ return m.name as Neuron1, n.name as Neuron2, n.bodyId as Neuron2Id, e.weight as Weight, m.bodyId as Neuron1Id order by m.name, m.bodyId, e.weight desc';
+const mainQuery = 'match (m:`YY-Neuron`)XX(n :`YY-Neuron`) where ZZ return m.name as Neuron1, n.name as Neuron2, n.bodyId as Neuron2Id, e.weight as Weight, m.bodyId as Neuron1Id order by m.name, m.bodyId, e.weight desc';
 
 function convert64bit(value) {
     return neo4j.isInt(value) ?

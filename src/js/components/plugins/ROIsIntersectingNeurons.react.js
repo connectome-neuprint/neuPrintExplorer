@@ -16,7 +16,7 @@ import {connect} from 'react-redux';
 import NeuronHelp from '../NeuronHelp.react';
 import SimpleCellWrapper from '../../helpers/SimpleCellWrapper';
 
-const mainQuery = 'match (neuron :NeuronYY)<-[:PartOf]-(roi :NeuronPart) where ZZ return neuron.bodyId as bodyid, neuron.name as bodyname, roi.pre as pre, roi.post as post, labels(roi) as rois order by neuron.bodyId';
+const mainQuery = 'MATCH (neuron :`YY-Neuron`) WHERE ZZ RETURN neuron.bodyId AS bodyid, neuron.name AS bodyname, neuron.synapseCountPerRoi AS roiInfo ORDER BY neuron.bodyId';
 
 function convert64bit(value) {
     return neo4j.isInt(value) ?
@@ -71,27 +71,18 @@ class ROIsIntersectingNeurons extends React.Component {
         ];
 
         neoResults.records.forEach(function (record) {
-            var bodyid = convert64bit(record.get("bodyid"));
-            if (!(bodyid in tableBody)) {
-                tableBody[bodyid] = {};
-                tableBody[bodyid]["body"] = [];
-                tableBody[bodyid]["name"] = record.get("bodyname");
-            }
-          
-            var rois = record.get("rois");
-            for (let item in rois) {
-                if (state.availableROIs.indexOf(rois[item]) !== -1) {
+            let bodyid = convert64bit(record.get("bodyid"));
+            tableBody[bodyid] = {};
+            tableBody[bodyid]["body"] = [];
+            tableBody[bodyid]["name"] = record.get("bodyname");
+            let rois = JSON.parse(record.get("roiInfo"));
+            for (let roi in rois) {
+                if (state.availableROIs.indexOf(roi) !== -1) {
 
-                    let numpre = convert64bit(record.get("pre"));
-                    if (numpre === null) {
-                        numpre = 0;
-                    }
-                    let numpost = convert64bit(record.get("post"));
-                    if (numpost === null) {
-                        numpost = 0;
-                    }
+                    let numpre = rois[roi].pre;
+                    let numpost = rois[roi].post;
                     tableBody[bodyid]["body"].push([
-                        new SimpleCellWrapper(index++, rois[item]),
+                        new SimpleCellWrapper(index++, roi),
                         new SimpleCellWrapper(index++, numpost),
                         new SimpleCellWrapper(index++, numpre),
                     ]);
@@ -124,6 +115,14 @@ class ROIsIntersectingNeurons extends React.Component {
             var name = postname + "=>" + prename + " | " + tableBody[item].name + " id=(" + String(item) + ")";
             var table = {header: headerdata, body: data, name: name};
             tables.push(table);
+        }
+        
+        if (tables.length == 0) {
+            tables.push({
+            header: headerdata,
+            body: [],
+            name: "ROIs in Body"
+            });
         }
 
         return tables;
@@ -206,7 +205,6 @@ ROIsIntersectingNeurons.propTypes = {
 var ROIsIntersectingNeuronsState = function(state){
     return {
         urlQueryString: state.app.urlQueryString,
-        availableROIs: state.neo4jsettings.availableROIs,
     }   
 };
 

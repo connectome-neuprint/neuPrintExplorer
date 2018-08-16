@@ -21,7 +21,7 @@ import NeuronFilter from '../NeuronFilter.react';
 import { parseResults } from '../../neo4jqueries/neuronsInROIs';
 //import _ from "underscore";
 
-const mainQuery = 'match (neuron :NeuronZZYY)<-[:PartOf]-(roi :NeuronPart) XX FF return neuron.bodyId as bodyid, neuron.name as bodyname, roi.pre as pre, roi.post as post, labels(roi) as rois, neuron.size as size, neuron.pre as npre, neuron.post as npost order by neuron.bodyId';
+const mainQuery = 'MATCH (neuron :`YY-Neuron`ZZ) XX FF GG RETURN neuron.bodyId AS bodyid, neuron.name AS bodyname, neuron.synapseCountPerRoi AS roiInfo, neuron.size AS size, neuron.pre AS npre, neuron.post AS npost ORDER BY neuron.bodyId';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -106,22 +106,20 @@ class NeuronsInROIs extends React.Component {
             neoquery = neoquery.replace("XX", "");
 
         } else if (isNaN(this.state.qsParams.neuronsrc)) {
-            neoquery = neoquery.replace("XX", 'where neuron.name =~"' + this.state.qsParams.neuronsrc + '"');
+            neoquery = neoquery.replace("XX", 'WHERE neuron.name =~"' + this.state.qsParams.neuronsrc + '"');
         } else {
-            neoquery = neoquery.replace("XX", 'where neuron.bodyId =' + this.state.qsParams.neuronsrc);
+            neoquery = neoquery.replace("XX", 'WHERE neuron.bodyId =' + this.state.qsParams.neuronsrc);
         }
-        if (this.state.limitBig === "true") {
-            neoquery = neoquery.replace(/:Neuron:/g, ":Neuron:Big:");
-        }
+        
         if (this.state.statusFilters.length > 0) {
-            let FF = "and (";
+            let FF = "AND (";
             if (this.state.qsParams.neuronsrc === "") {
-                FF = "where (";
+                FF = "WHERE (";
             }
 
             for (let i = 0; i < this.state.statusFilters.length; i++) {
                 if (i > 0) {
-                    FF = FF + " or ";
+                    FF = FF + " OR ";
                 }
                 FF = FF + 'neuron.status = "' + this.state.statusFilters[i] + '"';
             }
@@ -132,6 +130,13 @@ class NeuronsInROIs extends React.Component {
             neoquery = neoquery.replace("FF", "");
         }
 
+        if (this.state.limitBig === "true") {
+            let GG = "WHERE ((neuron.pre > 1) OR (neuron.post >= 10))"
+            if ((this.state.qsParams.neuronsrc !== "") || (this.state.statusFilters.length > 0)) {
+                GG = "AND ((neuron.pre > 1) OR (neuron.post >= 10))"
+            } 
+            neoquery = neoquery.replace("GG", GG);
+        }
 
         let query = {
             queryStr: neoquery,

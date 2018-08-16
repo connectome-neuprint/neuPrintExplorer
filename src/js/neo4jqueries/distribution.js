@@ -70,25 +70,22 @@ var processResults = function(results, state) {
     return tables;
 }
 
-const mainQuery = 'match (n:NeuronZZYY)<-[:PartOf]-(m:NeuronPartYY) XX with collect({body: n, part: m}) as bodyinfoarr, sum(m.FF) as tot unwind bodyinfoarr as bodyinfo return bodyinfo.body.bodyId as id, bodyinfo.part.FF as size, tot as total order by bodyinfo.part.FF desc'
-
-//match (n:Neuron:Big:fib25)<-[:PartOf]-(m:NeuronPart:distal) where m.pre > 0 with collect({body: n, part: m}) as bodyinfo, sum(m.pre) as tot unwind bodyinfo as bodyinfo return bodyinfo.body.bodyId as id, bodyinfo.part.pre as size, tot as total order by bodyinfo.part.pre desc
-
-//const mainQuery = 'match (n:NeuronZZYY) XX with collect(n) as bodies, sum(n.FF) as tot unwind bodies as body return body.bodyId as id, body.FF as size, tot as total order by body.FF desc'
+const mainQuery = 'MATCH (n:`ZZ-Neuron`YY) XX WITH n.bodyId as bodyId, apoc.convert.fromJsonMap(n.synapseCountPerRoi)[GG].FF AS FFsize WHERE FFsize > 0 WITH collect({id: bodyId, FF: FFsize}) as bodyinfoarr, sum(FFsize) AS tot UNWIND bodyinfoarr AS bodyinfo RETURN bodyinfo.id AS id, bodyinfo.FF AS size, tot AS total ORDER BY bodyinfo.FF DESC'
 
 // creates query object and sends to callback
 export default function(datasetstr, roi, typename) {
     let neoquery = mainQuery.replace(/ZZ/g, datasetstr);
-    neoquery = neoquery.replace(/YY/g, (":`" + roi + "`"));
+    neoquery = neoquery.replace(/YY/g, (":`" + datasetstr + "-" + roi + "`"));
 
-    let XX = "where m.pre > 0";
+    let XX = "WHERE n.pre > 0";
     let FF = "pre";
     if (typename === "postsyn") {
-        XX = "where m.post > 0";
+        XX = "WHERE n.post > 0";
         FF = "post";
     }
     neoquery = neoquery.replace(/XX/g, XX);
     neoquery = neoquery.replace(/FF/g, FF);
+    neoquery = neoquery.replace(/GG/g, '"' + roi + '"');
 
     let query = {
         queryStr: neoquery,

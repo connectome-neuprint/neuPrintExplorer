@@ -48,7 +48,7 @@ var processResults = function(results) {
     return tables;
 }
 
-const mainQuery = 'match (n:Neuron:BigZZ)-[x:ConnectsTo]->(n) return n.bodyId as id, x.weight as weight, n.name as name order by x.weight desc'
+const mainQuery = 'MATCH (n:`ZZ-Neuron`)-[x:ConnectsTo]->(n)  WHERE n.pre > 1 OR n.post >= 10 RETURN n.bodyId AS id, x.weight AS weight, n.name AS name ORDER BY x.weight DESC'
 
 // creates query object and sends to callback
 export default function(datasetstr) {

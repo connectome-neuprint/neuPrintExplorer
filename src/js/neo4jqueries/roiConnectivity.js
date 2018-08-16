@@ -39,26 +39,20 @@ var processResults = function(results, state, uniqueId) {
     // grab inputs for a body id
     results.records.forEach(function (record) {
         let bodyid = convert64bit(record.get("bodyid"));
-        let numpost = record.get("post");
-        let rois = record.get("rois");
-        let currroi = ""; // default to no roi
+        let rois = JSON.parse(record.get("roiInfo"));
 
-        // should only be one roi label (other label will be dataset)
-        for (let i = 0; i < rois.length; i++) {
-            if (completerois.includes(rois[i])) {
-                allrois.add(rois[i]);
-                currroi = rois[i];
-                break;
-            }
-        }
-
-        // add numost to provide size distribution
-        if (!isNaN(numpost) && (parseInt(numpost) > 0)) {
-            numpost = parseInt(numpost);
-            if (!(bodyid in bodyin)) {
-                bodyin[bodyid] = [[currroi, numpost]];
-            } else {
-                bodyin[bodyid].push([currroi, numpost]);
+        for (let roi in rois) {
+            if (completerois.includes(roi)) {
+                allrois.add(roi);
+                
+                // add numpost to provide size distribution
+                if (rois[roi].post > 0) {
+                    if (!(bodyid in bodyin)) {
+                        bodyin[bodyid] = [[roi, rois[roi].post]];
+                    } else {
+                        bodyin[bodyid].push([roi, rois[roi].post]);
+                    }
+                }
             }
         }
     });
@@ -70,43 +64,35 @@ var processResults = function(results, state, uniqueId) {
     // grab output and add table entry
     results.records.forEach(function (record) {
         let bodyid = convert64bit(record.get("bodyid"));
-        let numpre = record.get("pre");
-        let rois = record.get("rois");
+        let rois = JSON.parse(record.get("roiInfo"));
 
-        let currroi = ""; // default to no roi
-
-        if (!isNaN(numpre) && (numpre > 0)) {
-            // should only be one roi label (other label will be dataset)
-            for (let i = 0; i < rois.length; i++) {
-                if (allrois.has(rois[i])) {
-                    currroi = rois[i];
-                    break;
-                }
-            }
-
-            // create roi2roi based on input distribution
-            if (currroi !== "" && (bodyid in bodyin)) {
-                let totalvalue = 0;
-                for (let i = 0; i < bodyin[bodyid].length; i++) {
-                    totalvalue += bodyin[bodyid][i][1];
-                }
-                for (let i = 0; i < bodyin[bodyid].length; i++) {
-                    let roiin = bodyin[bodyid][i][0];
-                    if ((roiin === "") || (totalvalue === 0)) {
-                        continue;
+        for (let currroi in rois) {
+            if (completerois.includes(currroi)) {
+                // create roi2roi based on input distribution
+                let numpre = rois[currroi].pre;
+                if (numpre > 0 && (bodyid in bodyin)) {
+                    let totalvalue = 0;
+                    for (let i = 0; i < bodyin[bodyid].length; i++) {
+                        totalvalue += bodyin[bodyid][i][1];
                     }
-                    let value = numpre * bodyin[bodyid][i][1] * 1.0 / totalvalue;
-                    let connname = roiin + "=>" + currroi;
-                    if (connname in roiroires) {
-                        roiroires[connname] += value;
-                        roiroicounts[connname] += 1;
-                    } else {
-                        roiroires[connname] = value;
-                        roiroicounts[connname] = 1;
-                    }
-                    let currval = roiroires[connname];
-                    if (currval > maxval) {
-                        maxval = currval;
+                    for (let i = 0; i < bodyin[bodyid].length; i++) {
+                        let roiin = bodyin[bodyid][i][0];
+                        if ((roiin === "") || (totalvalue === 0)) {
+                            continue;
+                        }
+                        let value = numpre * bodyin[bodyid][i][1] * 1.0 / totalvalue;
+                        let connname = roiin + "=>" + currroi;
+                        if (connname in roiroires) {
+                            roiroires[connname] += value;
+                            roiroicounts[connname] += 1;
+                        } else {
+                            roiroires[connname] = value;
+                            roiroicounts[connname] = 1;
+                        }
+                        let currval = roiroires[connname];
+                        if (currval > maxval) {
+                            maxval = currval;
+                        }
                     }
                 }
             }
@@ -183,15 +169,10 @@ var processResults = function(results, state, uniqueId) {
     };
     tables.push(table);
     return tables;
-
-
 }
 
 // TODO: update query
-//const mainQuery = 'match (neuron :NeuronZZ)<-[:PartOf]-(roi :Neuropart) where (neuron.size) > 10 return neuron.bodyId as bodyid, roi.pre as pre, roi.post as post, labels(roi) as rois';
-//const mainQuery = 'match (neuron :NeuronZZ)<-[:PartOf]-(roi :NeuronPart) where (neuron.pre + neuron.post) > 10 return neuron.bodyId as bodyid, roi.pre as pre, roi.post as post, labels(roi) as rois';
-//const mainQuery = 'match (neuron :NeuronZZ)<-[:PartOf]-(roi :NeuronPart) where neuron.status<>"Not Examined"  return neuron.bodyId as bodyid, roi.pre as pre, roi.post as post, labels(roi) as rois';
-const mainQuery = 'match (neuron :Big:NeuronZZ)<-[:PartOf]-(roi :NeuronPart) return neuron.bodyId as bodyid, roi.pre as pre, roi.post as post, labels(roi) as rois';
+const mainQuery = 'MATCH (neuron :`ZZ-Neuron`) WHERE (neuron.pre > 1) OR (neuron.post >= 10) RETURN neuron.bodyId AS bodyid, neuron.synapseCountPerRoi AS roiInfo';
 
 // creates query object and sends to callback
 export default function(datasetstr, rois) {

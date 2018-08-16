@@ -84,8 +84,8 @@ var processResults = function(results, state) {
     return tables;
 }
 
-const mainQuery = 'match (n :Neuron:BigZZ) unwind keys(n) as x return distinct x as pname'
-const propQuery = 'match (n :Neuron:BigZZ) return distinct n.YY as val'
+const mainQuery = 'MATCH (n :`ZZ-Neuron`) UNWIND KEYS(n) AS x RETURN DISTINCT x AS pname'
+const propQuery = 'MATCH (n :`ZZ-Neuron`) RETURN DISTINCT n.YY AS val'
 
 // creates query object and sends to callback
 export default function(datasetstr) {

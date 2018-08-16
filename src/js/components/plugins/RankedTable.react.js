@@ -22,7 +22,7 @@ import RankCell from '../RankCell.react';
 import SimpleCellWrapper from '../../helpers/SimpleCellWrapper';
 
 
-const mainQuery = 'match (m:NeuronYY)-[e:ConnectsTo]-(n:NeuronYY) where ZZ return m.name as Neuron1, n.name as Neuron2, e.weight as Weight, n.bodyId as Body2, m.neuronType as Neuron1Type, n.type as Neuron2Type, id(m) as m_id, id(n) as n_id, id(startNode(e)) as pre_id, m.bodyId as Body1 order by m.bodyId, e.weight desc';
+const mainQuery = 'MATCH (m:`YY-Neuron`)-[e:ConnectsTo]-(n) WHERE ZZ RETURN m.name AS Neuron1, n.name AS Neuron2, e.weight AS Weight, n.bodyId AS Body2, m.neuronType AS Neuron1Type, n.type AS Neuron2Type, id(m) AS m_id, id(n) AS n_id, id(startNode(e)) AS pre_id, m.bodyId AS Body1 ORDER BY m.bodyId, e.weight DESC';
 
 function convert64bit(value) {
     return neo4j.isInt(value) ?

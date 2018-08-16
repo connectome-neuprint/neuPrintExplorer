@@ -61,19 +61,25 @@ var processResults = function(results, state) {
     return tables;
 }
 
-const mainQuery = 'match (n:NeuronZZ)<-[:PartOf]-(part:NeuronPart) FF with labels(part) as labelnames, part as part unwind labelnames as unlabels with unlabels as unlabelres, sum(part.pre) as roipre, sum(part.post) as roipost match (meta:MetaZZ) return unlabelres, roipre, roipost, meta[replace(unlabelres,"\'","_") + "PreCount"] as totalpre, meta[replace(unlabelres,"\'","_") + "PostCount"] as totalpost order by unlabelres'
+const mainQuery = "MATCH (n:`ZZ-Neuron`) FF WITH apoc.convert.fromJsonMap(n.synapseCountPerRoi) AS roiInfo WITH roiInfo AS roiInfo, keys(roiInfo) AS roiList UNWIND roiList AS roiName WITH roiName AS roiName, sum(roiInfo[roiName].pre) AS pre, sum(roiInfo[roiName].post) AS post MATCH (meta:Meta:ZZ) WITH apoc.convert.fromJsonMap(meta.synapseCountPerRoi) AS globInfo, roiName AS roiName, pre AS pre, post AS post RETURN roiName AS unlabelres, pre AS roipre, post AS roipost, globInfo[roiName].pre AS totalpre, globInfo[roiName].post AS totalpost ORDER BY roiName"
 
 
 // creates query object and sends to callback
 export default function(datasetstr, rois, limitBig, statusFilters) {
     let neoquery = mainQuery.replace(/ZZ/g, datasetstr);
 
+    let FF = ""
     if (limitBig === "true") {
-        neoquery = neoquery.replace(/:Neuron:/g, ":Neuron:Big:");
+        FF = "WHERE ((n.pre > 1) OR (n.post >= 10))"
+    
     }
     if (statusFilters.length > 0) {
-        let FF = "where (";
-
+        if (FF === "") {
+            FF = "WHERE (" 
+            
+        } else {
+            FF = FF + " AND (";
+        }
         for (let i = 0; i < statusFilters.length; i++) {
             if (i > 0) {
                 FF = FF + " or ";
@@ -81,11 +87,8 @@ export default function(datasetstr, rois, limitBig, statusFilters) {
             FF = FF + 'n.status = "' + statusFilters[i] + '"';
         }
         FF = FF + ")";
-
-        neoquery = neoquery.replace("FF", FF);
-    } else {
-        neoquery = neoquery.replace("FF", "");
     }
+    neoquery = neoquery.replace("FF", FF);
 
     let query = {
         queryStr: neoquery,
