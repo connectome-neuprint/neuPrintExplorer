@@ -137,7 +137,7 @@ class Query extends React.Component {
         }
 
         var datasetstr = "";
-        console.assert(this.state.qsParams.datasets.length <= 1);
+        //console.assert(this.state.qsParams.datasets.length <= 1);
         for (var item in this.state.qsParams.datasets) {
             datasetstr = this.state.qsParams.datasets[item];
         }
