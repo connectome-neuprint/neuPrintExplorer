@@ -43,10 +43,12 @@ var processResults = function(results, state) {
     });
     
     let data = [];
+    const sortableIndicesArray = _.range(1,bodyIdWeightHeadings.length+2);
     let table = {
         header: headerdata,
         body: data,
         name: "Common " + queryKey + "s for " + state.bodyIds + " in " + state.datasetstr, 
+        sortIndices: new Set(sortableIndicesArray),
     }
     
     Object.keys(groupedByOutputId).forEach(function(output) {
