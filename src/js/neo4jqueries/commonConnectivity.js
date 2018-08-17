@@ -23,8 +23,10 @@ var processResults = function(results, state) {
 
     const groupBy = function(inputJson, key) {
         return inputJson.reduce(function(accumulator, currentValue) {
-            let weights = Object.keys(currentValue).slice(1);
+            let name = currentValue["name"];
+            let weights = Object.keys(currentValue).slice(2);
             (accumulator[currentValue[key]] = accumulator[currentValue[key]] || {})[weights] = currentValue[weights];
+            accumulator[currentValue[key]]["name"]=name;
             return accumulator;
         }, {});
     };
@@ -32,6 +34,7 @@ var processResults = function(results, state) {
     
     let headerdata = [
         new SimpleCellWrapper(index++, queryKey[0].toUpperCase() + queryKey.substring(1) + " BodyId"),
+        new SimpleCellWrapper(index++, queryKey[0].toUpperCase() + queryKey.substring(1) + " Name"),
     ];
     const bodyIds = state.bodyIds.split(",");
     const bodyIdWeightHeadings = bodyIds.map(bodyId => bodyId + "_weight");
@@ -49,6 +52,7 @@ var processResults = function(results, state) {
     Object.keys(groupedByOutputId).forEach(function(output) {
         let singleRow = [
             new SimpleCellWrapper(index++, parseInt(convert64bit(output))),
+            new SimpleCellWrapper(index++, groupedByOutputId[output]["name"]),
         ];
         bodyIdWeightHeadings.forEach( function(bodyIdWeightHeading) {
             const bodyIdWeightValue = groupedByOutputId[output][bodyIdWeightHeading] || 0;
@@ -61,8 +65,8 @@ var processResults = function(results, state) {
     return tables;
 }
 
-const mainQueryOutput = 'WITH [XX] AS bodyIds MATCH (k:`ZZ-Neuron`)-[r:ConnectsTo]->(c) WHERE (k.bodyId IN bodyIds FF) WITH k, c, r, toString(k.bodyId)+"_weight" AS dynamicWeight RETURN collect(apoc.map.fromValues(["output", c.bodyId, dynamicWeight, r.weight])) AS map';
-const mainQueryInput =  'WITH [XX] AS bodyIds MATCH (k:`ZZ-Neuron`)<-[r:ConnectsTo]-(c) WHERE (k.bodyId IN bodyIds FF) WITH k, c, r, toString(k.bodyId)+"_weight" AS dynamicWeight RETURN collect(apoc.map.fromValues(["input", c.bodyId, dynamicWeight, r.weight])) AS map';
+const mainQueryOutput = 'WITH [XX] AS bodyIds MATCH (k:`ZZ-Neuron`)-[r:ConnectsTo]->(c) WHERE (k.bodyId IN bodyIds FF) WITH k, c, r, toString(k.bodyId)+"_weight" AS dynamicWeight RETURN collect(apoc.map.fromValues(["output", c.bodyId, "name", c.name, dynamicWeight, r.weight])) AS map';
+const mainQueryInput =  'WITH [XX] AS bodyIds MATCH (k:`ZZ-Neuron`)<-[r:ConnectsTo]-(c) WHERE (k.bodyId IN bodyIds FF) WITH k, c, r, toString(k.bodyId)+"_weight" AS dynamicWeight RETURN collect(apoc.map.fromValues(["input", c.bodyId, "name", c.name, dynamicWeight, r.weight])) AS map';
 
 // TODO: find outputs or inputs based on user preference
 export default function(datasetstr, bodyIds, limitBig, statusFilters, typeValue) {
