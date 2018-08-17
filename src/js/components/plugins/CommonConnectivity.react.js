@@ -6,10 +6,9 @@
 
 import React from 'react';
 import Button from 'material-ui/Button';
-import { FormControl, FormLabel, FormControlLabel } from 'material-ui/Form';
+import { FormControl, FormControlLabel } from 'material-ui/Form';
 import { Radio, RadioGroup } from 'material-ui/'
 import TextField from 'material-ui/TextField';
-import NeuronHelp from '../NeuronHelp.react';
 import PropTypes from 'prop-types';
 import NeuronFilter from '../NeuronFilter.react';
 import queryCommonConnectivity from '../../neo4jqueries/commonConnectivity';
