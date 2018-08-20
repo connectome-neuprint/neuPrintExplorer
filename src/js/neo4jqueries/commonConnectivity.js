@@ -39,11 +39,11 @@ var processResults = function(results, state) {
     const bodyIds = state.bodyIds.split(",");
     const bodyIdWeightHeadings = bodyIds.map(bodyId => bodyId + "_weight");
     bodyIdWeightHeadings.forEach( function(bodyIdWeightHeading) {
-        headerdata.push(new SimpleCellWrapper(index++, bodyIdWeightHeading))
+        headerdata.push(new SimpleCellWrapper(index++, bodyIdWeightHeading));
     });
     
     let data = [];
-    const sortableIndicesArray = _.range(1,bodyIdWeightHeadings.length+2);
+    const sortableIndicesArray = Array.from({length: bodyIdWeightHeadings.length+2}, (_, i) => i + 1);
     let table = {
         header: headerdata,
         body: data,

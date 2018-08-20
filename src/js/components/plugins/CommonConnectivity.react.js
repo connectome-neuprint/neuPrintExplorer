@@ -67,8 +67,14 @@ export default class CommonConnectivity extends React.Component {
                         value={this.state.typeValue}
                         onChange={this.setInputOrOutput}
                     >
-                        <FormControlLabel value="input" control={<Radio />} label="Inputs" />
-                        <FormControlLabel value="output" control={<Radio />} label="Outputs" />
+                        <FormControlLabel 
+                        value="input" 
+                        control={<Radio />} 
+                        label="Inputs" />
+                        <FormControlLabel 
+                        value="output" 
+                        control={<Radio />} 
+                        label="Outputs" />
                     </RadioGroup>
 
                 </FormControl>
