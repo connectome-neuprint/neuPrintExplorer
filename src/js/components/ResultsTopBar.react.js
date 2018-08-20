@@ -19,6 +19,7 @@ import Dialog, {
   DialogTitle,
 } from 'material-ui/Dialog';
 import PropTypes from 'prop-types';
+import C from "../reducers/constants"
 
 const styles = () => ({
     root: {
@@ -177,12 +178,12 @@ var ResultsTopBarDispatch = function(dispatch) {
    return {
         reAuth: function() {
             dispatch({
-                type: 'LOGOUT_USER'
+                type: C.LOGOUT_USER
             });
         },
         clearResult: function(index) {
             dispatch({
-                type: 'CLEAR_RESULT',
+                type: C.CLEAR_RESULT,
                 index: index
             });
         }

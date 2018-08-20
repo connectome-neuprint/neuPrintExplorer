@@ -15,6 +15,7 @@ import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 import {connect} from 'react-redux';
 import NeuronHelp from '../NeuronHelp.react';
 import SimpleCellWrapper from '../../helpers/SimpleCellWrapper';
+import C from "../../reducers/constants"
 
 const mainQuery = 'MATCH (neuron :`YY-Neuron`) WHERE ZZ RETURN neuron.bodyId AS bodyid, neuron.name AS bodyname, neuron.synapseCountPerRoi AS roiInfo ORDER BY neuron.bodyId';
 
@@ -212,7 +213,7 @@ var ROIsIntersectingNeuronsDispatch = function(dispatch) {
     return {
         setURLQs: function(querystring) {
             dispatch({
-                type: 'SET_URL_QS',
+                type: C.SET_URL_QS,
                 urlQueryString: querystring
             });
         }

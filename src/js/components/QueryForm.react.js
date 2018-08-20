@@ -13,6 +13,7 @@ import Typography from 'material-ui/Typography';
 import Divider from 'material-ui/Divider';
 import { withStyles } from 'material-ui/styles';
 import qs from 'qs';
+import C from "../reducers/constants"
 
 const styles = theme => ({
     divider: {
@@ -145,13 +146,13 @@ var QueryFormDispatch = function(dispatch) {
     return {
         updateQuery: function(query) {
             dispatch({
-                type: 'UPDATE_QUERY',
+                type: C.UPDATE_QUERY,
                 neoQueryObj: query
             });
         },
         setURLQs: function(querystring) {
             dispatch({
-                type: 'SET_URL_QS',
+                type: C.SET_URL_QS,
                 urlQueryString: querystring
             });
         }

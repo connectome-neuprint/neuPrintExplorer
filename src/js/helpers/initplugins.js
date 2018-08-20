@@ -4,6 +4,8 @@
 
 "use strict";
 
+import C from "../reducers/constants"
+
 // import plugins (could probably write a pre-processing script)
 import CommonConnectivity from '../components/plugins/CommonConnectivity.react';
 import FreeForm from '../components/plugins/FreeForm.react';
@@ -20,6 +22,6 @@ import Completeness from '../components/plugins/Completeness.react';
 const pluginList = [NeuronsInROIs, NeuronMeta, ROIConnectivity, RankedTable, SimpleConnections, ROIsIntersectingNeurons, CommonConnectivity, FreeForm, Autapses, Distribution, Completeness];
 
 export default function loadPlugins(store) {
-    store.dispatch({type: 'INIT_PLUGINS', pluginList: pluginList, reconIndex: 7});
+    store.dispatch({type: C.INIT_PLUGINS, pluginList: pluginList, reconIndex: 7});
 }
 

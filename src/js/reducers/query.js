@@ -4,10 +4,12 @@
 
 "use strict";
 
+import C from "./constants"
+
 var queryState = {
     neoQueryObj: {
         queryStr: "",
-        callback: function(){},
+        callback: function () { },
         state: null,
     },
     isQuerying: false,
@@ -16,18 +18,18 @@ var queryState = {
 }
 
 export default function queryReducer(state = queryState, action) {
-    switch(action.type) {
-        case 'UPDATE_QUERY' : {
-            return Object.assign({}, state, {neoQueryObj: action.neoQueryObj, isQuerying: true});
+    switch (action.type) {
+        case C.UPDATE_QUERY: {
+            return Object.assign({}, state, { neoQueryObj: action.neoQueryObj, isQuerying: true });
         }
-        case 'SET_QUERY_STATUS' : {
-            return Object.assign({}, state, {isQuerying: action.isQuerying});
+        case C.SET_QUERY_STATUS: {
+            return Object.assign({}, state, { isQuerying: action.isQuerying });
         }
-        case 'SET_NEO_ERROR' : {
-            return Object.assign({}, state, {neoError: action.neoError, isQuerying: false, neoResults: null});
+        case C.SET_NEO_ERROR: {
+            return Object.assign({}, state, { neoError: action.neoError, isQuerying: false, neoResults: null });
         }
-        case 'FINISH_QUERY' : {
-            return Object.assign({}, state, {isQuerying: false, neoError: null});
+        case C.FINISH_QUERY: {
+            return Object.assign({}, state, { isQuerying: false, neoError: null });
         }
         default: {
             return state;

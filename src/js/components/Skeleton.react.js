@@ -10,6 +10,7 @@ import { withStyles } from 'material-ui/styles';
 import _ from "underscore";
 import { connect } from 'react-redux';
 import Chip from 'material-ui/Chip';
+import C from "../reducers/constants"
 
 
 /*
@@ -248,7 +249,7 @@ var SkeletonDispatch = function(dispatch) {
    return {
         clearResult: function(index) {
             dispatch({
-                type: 'CLEAR_RESULT',
+                type: C.CLEAR_RESULT,
                 index: index
             });
         }

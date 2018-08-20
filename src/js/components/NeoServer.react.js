@@ -12,6 +12,7 @@ import Icon from 'material-ui/Icon';
 import Badge from 'material-ui/Badge';
 import PropTypes from 'prop-types';
 import _ from "underscore";
+import C from "../reducers/constants"
 
 import {withStyles} from 'material-ui/styles';
 import Dialog, {
@@ -213,7 +214,7 @@ var NeoServerDispatch = function(dispatch) {
     return {
         setNeoServer: function(servername, datasets, rois, user, password, lastmod, version) {
             dispatch({
-                type: 'SET_NEO_SERVER',
+                type: C.SET_NEO_SERVER,
                 neoServer: servername,
                 availableDatasets: datasets,
                 availableROIs: rois,

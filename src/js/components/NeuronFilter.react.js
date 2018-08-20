@@ -22,6 +22,7 @@ import Input, { InputLabel } from 'material-ui/Input';
 import Chip from 'material-ui/Chip';
 import { MenuItem } from 'material-ui/Menu';
 import Tooltip from 'material-ui/Tooltip';
+import C from "../reducers/constants"
 
 
 const mainQuery = 'MATCH (n :`ZZ-Neuron`) WHERE n.pre > 1 RETURN DISTINCT n.status AS val'
@@ -222,7 +223,7 @@ var NeuronFilterDispatch = function(dispatch) {
     return {
         setURLQs: function(querystring) {
             dispatch({
-                type: 'SET_URL_QS',
+                type: C.SET_URL_QS,
                 urlQueryString: querystring
             });
         }
