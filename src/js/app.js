@@ -93,9 +93,9 @@ jssref.onload = function() {
     document.getElementsByTagName("head")[0].appendChild(jssref3);
 }
 
-var jssref4 = document.createElement("script");
-jssref4.setAttribute("src", "/external/neuroglancer/main.bundle.js");
-document.getElementsByTagName("head")[0].appendChild(jssref4);
+//var jssref4 = document.createElement("script");
+//jssref4.setAttribute("src", "/external/neuroglancer/main.bundle.js");
+//document.getElementsByTagName("head")[0].appendChild(jssref4);
 
 // load form plugins
 import loadPlugins from './helpers/initplugins';

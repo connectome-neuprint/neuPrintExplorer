@@ -24,7 +24,7 @@ import { MenuItem } from 'material-ui/Menu';
 import Tooltip from 'material-ui/Tooltip';
 
 
-const mainQuery = 'MATCH (n :`ZZ-Neuron`) WHERE n.pre > 1 OR n.post >= 10 RETURN DISTINCT n.status AS val'
+const mainQuery = 'MATCH (n :`ZZ-Neuron`) WHERE n.pre > 1 RETURN DISTINCT n.status AS val'
 
 const styles = theme => ({
     formControl: {

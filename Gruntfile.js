@@ -5,13 +5,6 @@ module.exports = function(grunt) {
     // Project configuration.
     grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    exec: {
-      options: {},
-      build_neuroglancer: {
-        cwd: './node_modules/neuroglancer/',
-        command: 'npm install && npm run build-min',
-      }
-    },
     browserify: {
         app: {
             options: {
@@ -61,12 +54,6 @@ module.exports = function(grunt) {
                         expand: "true",
                         src: 'public/**/*',
                         dest: 'build/'
-                    },
-                    {
-                        expand: true,
-                        cwd: 'node_modules/neuroglancer/dist/min',
-                        src: '*',
-                        dest: 'build/external/neuroglancer'
                     }
                 ]
         },
@@ -88,12 +75,6 @@ module.exports = function(grunt) {
                     {
                         src: 'node_modules/react-resizable/css/styles.css',
                         dest: 'dist/css/resize.min.css'
-                    },
-                    {
-                        expand: true,
-                        cwd: 'node_modules/neuroglancer/dist/min',
-                        src: '*',
-                        dest: 'dist/external/neuroglancer'
                     }
                 ]
         },
@@ -131,8 +112,8 @@ module.exports = function(grunt) {
 
     // Default task(s).
     grunt.registerTask('serve')
-    grunt.registerTask('default', ['exec:build_neuroglancer', 'browserify:app', 'copy:build', 'watch']);
-    grunt.registerTask('dist', ['env:dist', 'exec:build_neuroglancer', 'browserify:app', 'uglify', 'copy:dist']);
+    grunt.registerTask('default', ['browserify:app', 'copy:build', 'watch']);
+    grunt.registerTask('dist', ['env:dist', 'browserify:app', 'uglify', 'copy:dist']);
     grunt.registerTask('jlint', 'Running lint', ['jslint']);
     grunt.registerTask('lint', 'Running eslint', ['eslint']);
 };

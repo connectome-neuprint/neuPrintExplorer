@@ -131,11 +131,13 @@ class NeuronsInROIs extends React.Component {
         }
 
         if (this.state.limitBig === "true") {
-            let GG = "WHERE ((neuron.pre > 1) OR (neuron.post >= 10))"
+            let GG = "WHERE ((neuron.pre > 1))"
             if ((this.state.qsParams.neuronsrc !== "") || (this.state.statusFilters.length > 0)) {
-                GG = "AND ((neuron.pre > 1) OR (neuron.post >= 10))"
+                GG = "AND ((neuron.pre > 1))"
             } 
             neoquery = neoquery.replace("GG", GG);
+        } else {
+            neoquery = neoquery.replace("GG", "");
         }
 
         let query = {

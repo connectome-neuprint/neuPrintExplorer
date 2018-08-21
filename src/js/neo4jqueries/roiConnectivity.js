@@ -172,7 +172,7 @@ var processResults = function(results, state, uniqueId) {
 }
 
 // TODO: update query
-const mainQuery = 'MATCH (neuron :`ZZ-Neuron`) WHERE (neuron.pre > 1) OR (neuron.post >= 10) RETURN neuron.bodyId AS bodyid, neuron.synapseCountPerRoi AS roiInfo';
+const mainQuery = 'MATCH (neuron :`ZZ-Neuron`) WHERE (neuron.pre > 1) RETURN neuron.bodyId AS bodyid, neuron.synapseCountPerRoi AS roiInfo';
 
 // creates query object and sends to callback
 export default function(datasetstr, rois) {

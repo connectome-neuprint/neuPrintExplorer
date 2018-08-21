@@ -49,9 +49,9 @@ var processResults = function(results, state) {
 
             data.push([
                 new SimpleCellWrapper(index++, roiname),
-                new SimpleCellWrapper(index++, ((roipre/totalpre)*100).toFixed(2)),
+                new SimpleCellWrapper(index++, ((roipre/totalpre)*100)),
                 new SimpleCellWrapper(index++, totalpre),
-                new SimpleCellWrapper(index++, ((roipost/totalpost)*100).toFixed(2)),
+                new SimpleCellWrapper(index++, ((roipost/totalpost)*100)),
                 new SimpleCellWrapper(index++, totalpost),
             ]);
         }
@@ -70,7 +70,7 @@ export default function(datasetstr, rois, limitBig, statusFilters) {
 
     let FF = ""
     if (limitBig === "true") {
-        FF = "WHERE ((n.pre > 1) OR (n.post >= 10))"
+        FF = "WHERE ((n.pre > 1))"
     
     }
     if (statusFilters.length > 0) {
