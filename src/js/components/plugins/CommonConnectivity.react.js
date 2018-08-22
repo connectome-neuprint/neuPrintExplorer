@@ -14,11 +14,13 @@ import NeuronFilter from '../NeuronFilter.react';
 import queryCommonConnectivity from '../../neo4jqueries/commonConnectivity';
 import { withStyles } from 'material-ui/styles';
 import C from "../../reducers/constants"
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 
 const styles = theme => ({
     textField: {
+        minWidth: 250,
+        maxWidth: 300,
     },
     formControl: {
         margin: theme.spacing.unit,
@@ -28,9 +30,6 @@ const styles = theme => ({
     chips: {
         display: 'flex',
         flexWrap: 'wrap',
-    },
-    chip: {
-        margin: theme.spacing.unit / 4,
     },
 });
 class CommonConnectivity extends React.Component {
@@ -70,10 +69,10 @@ class CommonConnectivity extends React.Component {
         const oldParams = this.state.qsParams;
         oldParams.bodyIds = event.target.value;
         this.props.setURLQs(SaveQueryString("Query:" + this.constructor.queryName, oldParams));
-        this.setState({ 
+        this.setState({
             bodyIds: event.target.value,
             qsParams: oldParams,
-         });
+        });
     }
 
     setInputOrOutput = (event) => {
@@ -81,23 +80,26 @@ class CommonConnectivity extends React.Component {
         const oldParams = this.state.qsParams;
         oldParams.typeValue = typeValue;
         this.props.setURLQs(SaveQueryString("Query:" + this.constructor.queryName, oldParams));
-        this.setState({ 
+        this.setState({
             typeValue: typeValue,
             qsParams: oldParams,
-         });
+        });
     }
 
     render() {
+        const { classes } = this.props;
         return (
             <div>
-                <FormControl>
+                <FormControl className={classes.formControl}>
                     <TextField
-                        label="Neuron bodyIds (separated by commas)"
+                        label="Neuron bodyIds"
                         multiline
                         fullWidth
-                        rows={2}
+                        rows={1}
                         value={this.state.qsParams.bodyIds}
                         rowsMax={4}
+                        className={classes.textField}
+                        helperText="Separate ids with commas."
                         onChange={this.addNeuronBodyIds}
                     />
                     <RadioGroup
@@ -106,14 +108,14 @@ class CommonConnectivity extends React.Component {
                         value={this.state.qsParams.typeValue}
                         onChange={this.setInputOrOutput}
                     >
-                        <FormControlLabel 
-                        value="input" 
-                        control={<Radio />} 
-                        label="Inputs" />
-                        <FormControlLabel 
-                        value="output" 
-                        control={<Radio />} 
-                        label="Outputs" />
+                        <FormControlLabel
+                            value="input"
+                            control={<Radio />}
+                            label="Inputs" />
+                        <FormControlLabel
+                            value="output"
+                            control={<Radio />}
+                            label="Outputs" />
                     </RadioGroup>
 
                 </FormControl>
@@ -139,17 +141,18 @@ CommonConnectivity.propTypes = {
     datasetstr: PropTypes.string.isRequired,
     setURLQs: PropTypes.func.isRequired,
     urlQueryString: PropTypes.string.isRequired,
+    classes: PropTypes.object.isRequired,
 };
 
-const CommonConnectivityState = function(state){
+const CommonConnectivityState = function (state) {
     return {
         urlQueryString: state.app.urlQueryString,
-    }   
+    }
 };
 
-const CommonConnectivityDispatch = function(dispatch) {
+const CommonConnectivityDispatch = function (dispatch) {
     return {
-        setURLQs: function(querystring) {
+        setURLQs: function (querystring) {
             dispatch({
                 type: C.SET_URL_QS,
                 urlQueryString: querystring

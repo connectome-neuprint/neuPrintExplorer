@@ -33,6 +33,9 @@ const styles = theme => ({
         minWidth: 250,
         maxWidth: 300,
     },
+    expandablePanel: {
+        margin: theme.spacing.unit,
+    },
     nopad: {
         padding: 0,
     },
@@ -132,7 +135,7 @@ class NeuronFilter extends React.Component {
         const { classes, theme } = this.props;
         let checkbox = this.state.qsParams.limitBig === "true" ? true : false;
         return (
-                <ExpansionPanel>
+                <ExpansionPanel className={classes.expandablePanel}>
                     <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                         <Typography>
                             Optional neuron/segment filters
