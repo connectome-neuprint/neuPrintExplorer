@@ -12,8 +12,28 @@ import TextField from 'material-ui/TextField';
 import PropTypes from 'prop-types';
 import NeuronFilter from '../NeuronFilter.react';
 import queryCommonConnectivity from '../../neo4jqueries/commonConnectivity';
+import { withStyles } from 'material-ui/styles';
+import C from "../../reducers/constants"
+import {connect} from 'react-redux';
+import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 
-export default class CommonConnectivity extends React.Component {
+const styles = theme => ({
+    textField: {
+    },
+    formControl: {
+        margin: theme.spacing.unit,
+        minWidth: 250,
+        maxWidth: 300,
+    },
+    chips: {
+        display: 'flex',
+        flexWrap: 'wrap',
+    },
+    chip: {
+        margin: theme.spacing.unit / 4,
+    },
+});
+class CommonConnectivity extends React.Component {
 
     static get queryName() {
         return "CommonConnectivity";
@@ -25,8 +45,14 @@ export default class CommonConnectivity extends React.Component {
 
     constructor(props) {
         super(props);
+        const initqsParams = {
+            typeValue: "input",
+            bodyIds: "",
+        }
+        const qsParams = LoadQueryString("Query:" + this.constructor.queryName, initqsParams, this.props.urlQueryString);
 
         this.state = {
+            qsParams: qsParams,
             limitBig: true,
             bodyIds: "",
             typeValue: "input",
@@ -41,11 +67,24 @@ export default class CommonConnectivity extends React.Component {
     }
 
     addNeuronBodyIds = (event) => {
-        this.setState({ bodyIds: event.target.value });
+        const oldParams = this.state.qsParams;
+        oldParams.bodyIds = event.target.value;
+        this.props.setURLQs(SaveQueryString("Query:" + this.constructor.queryName, oldParams));
+        this.setState({ 
+            bodyIds: event.target.value,
+            qsParams: oldParams,
+         });
     }
 
     setInputOrOutput = (event) => {
-        this.setState({ typeValue: event.target.value });
+        const typeValue = event.target.value;
+        const oldParams = this.state.qsParams;
+        oldParams.typeValue = typeValue;
+        this.props.setURLQs(SaveQueryString("Query:" + this.constructor.queryName, oldParams));
+        this.setState({ 
+            typeValue: typeValue,
+            qsParams: oldParams,
+         });
     }
 
     render() {
@@ -57,14 +96,14 @@ export default class CommonConnectivity extends React.Component {
                         multiline
                         fullWidth
                         rows={2}
-                        defaultValue=""
+                        value={this.state.qsParams.bodyIds}
                         rowsMax={4}
                         onChange={this.addNeuronBodyIds}
                     />
                     <RadioGroup
                         aria-label="Type Of Connections"
                         name="type"
-                        value={this.state.typeValue}
+                        value={this.state.qsParams.typeValue}
                         onChange={this.setInputOrOutput}
                     >
                         <FormControlLabel 
@@ -98,5 +137,27 @@ export default class CommonConnectivity extends React.Component {
 CommonConnectivity.propTypes = {
     callback: PropTypes.func.isRequired,
     datasetstr: PropTypes.string.isRequired,
+    setURLQs: PropTypes.func.isRequired,
+    urlQueryString: PropTypes.string.isRequired,
 };
+
+const CommonConnectivityState = function(state){
+    return {
+        urlQueryString: state.app.urlQueryString,
+    }   
+};
+
+const CommonConnectivityDispatch = function(dispatch) {
+    return {
+        setURLQs: function(querystring) {
+            dispatch({
+                type: C.SET_URL_QS,
+                urlQueryString: querystring
+            });
+        }
+    }
+}
+
+
+export default withStyles(styles, { withTheme: true })(connect(CommonConnectivityState, CommonConnectivityDispatch)(CommonConnectivity));
 
