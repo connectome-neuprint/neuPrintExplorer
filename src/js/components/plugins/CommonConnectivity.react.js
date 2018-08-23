@@ -47,14 +47,13 @@ class CommonConnectivity extends React.Component {
         const initqsParams = {
             typeValue: "input",
             bodyIds: "",
+            names: "",
         }
         const qsParams = LoadQueryString("Query:" + this.constructor.queryName, initqsParams, this.props.urlQueryString);
 
         this.state = {
             qsParams: qsParams,
             limitBig: true,
-            bodyIds: "",
-            typeValue: "input",
         }
     }
 
@@ -70,18 +69,24 @@ class CommonConnectivity extends React.Component {
         oldParams.bodyIds = event.target.value;
         this.props.setURLQs(SaveQueryString("Query:" + this.constructor.queryName, oldParams));
         this.setState({
-            bodyIds: event.target.value,
+            qsParams: oldParams,
+        });
+    }
+
+    addNeuronNames = (event) => {
+        const oldParams = this.state.qsParams;
+        oldParams.names = event.target.value;
+        this.props.setURLQs(SaveQueryString("Query:" + this.constructor.queryName, oldParams));
+        this.setState({
             qsParams: oldParams,
         });
     }
 
     setInputOrOutput = (event) => {
-        const typeValue = event.target.value;
         const oldParams = this.state.qsParams;
-        oldParams.typeValue = typeValue;
+        oldParams.typeValue = event.target.value;
         this.props.setURLQs(SaveQueryString("Query:" + this.constructor.queryName, oldParams));
         this.setState({
-            typeValue: typeValue,
             qsParams: oldParams,
         });
     }
@@ -97,10 +102,23 @@ class CommonConnectivity extends React.Component {
                         fullWidth
                         rows={1}
                         value={this.state.qsParams.bodyIds}
+                        disabled={this.state.qsParams.names.length > 0}
                         rowsMax={4}
                         className={classes.textField}
                         helperText="Separate ids with commas."
                         onChange={this.addNeuronBodyIds}
+                    />
+                    <TextField
+                        label="Neuron names"
+                        multiline
+                        fullWidth
+                        rows={1}
+                        value={this.state.qsParams.names}
+                        disabled={this.state.qsParams.bodyIds.length > 0}
+                        rowsMax={4}
+                        className={classes.textField}
+                        helperText="Separate names with commas."
+                        onChange={this.addNeuronNames}
                     />
                     <RadioGroup
                         aria-label="Type Of Connections"
@@ -126,7 +144,7 @@ class CommonConnectivity extends React.Component {
                 <Button
                     variant="raised"
                     onClick={() => {
-                        this.props.callback(queryCommonConnectivity(this.props.datasetstr, this.state.bodyIds, this.state.limitBig, this.state.statusFilters, this.state.typeValue));
+                        this.props.callback(queryCommonConnectivity(this.props.datasetstr, this.state.qsParams.bodyIds, this.state.qsParams.names, this.state.limitBig, this.state.statusFilters, this.state.qsParams.typeValue));
                     }}
                 >
                     Submit
