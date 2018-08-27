@@ -10,7 +10,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 
-var neo4j = require('neo4j-driver').v1;
+import neo4j from "neo4j-driver/lib/browser/neo4j-web";
 var UNIQUE_ID = 0;
 
 class Neo4jQuery extends React.Component {

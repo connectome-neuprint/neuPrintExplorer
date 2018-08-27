@@ -5,7 +5,7 @@
 "use strict";
 
 import SimpleCellWrapper from '../helpers/SimpleCellWrapper';
-var neo4j = require('neo4j-driver').v1;
+import neo4j from "neo4j-driver/lib/browser/neo4j-web";
 import ROIConnCell from '../components/ROIConnCell.react';
 import ClickableQuery from '../components/ClickableQuery.react';
 import React from 'react';

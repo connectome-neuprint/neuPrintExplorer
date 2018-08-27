@@ -8,7 +8,7 @@ import React from 'react';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
 import PropTypes from 'prop-types';
-var neo4j = require('neo4j-driver').v1;
+import neo4j from "neo4j-driver/lib/browser/neo4j-web";
 import Radio, { RadioGroup } from 'material-ui/Radio';
 import { FormLabel, FormControl, FormControlLabel } from 'material-ui/Form';
 import { withStyles } from 'material-ui/styles';

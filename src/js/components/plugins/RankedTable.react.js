@@ -10,7 +10,7 @@ import React from 'react';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
 import PropTypes from 'prop-types';
-var neo4j = require('neo4j-driver').v1;
+import neo4j from "neo4j-driver/lib/browser/neo4j-web";
 import { withStyles } from 'material-ui/styles';
 import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 import Radio, { RadioGroup } from 'material-ui/Radio';

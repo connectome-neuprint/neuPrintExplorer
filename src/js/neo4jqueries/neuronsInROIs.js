@@ -6,7 +6,7 @@
 
 import ClickableQuery from '../components/ClickableQuery.react';
 import SimpleCellWrapper from '../helpers/SimpleCellWrapper';
-var neo4j = require('neo4j-driver').v1;
+import neo4j from "neo4j-driver/lib/browser/neo4j-web";
 import React from 'react';
 
 const mainQuery = 'MATCH (neuron :`YY-Neuron`ZZ) XX WITH neuron AS neuron, apoc.convert.fromJsonMap(neuron.synapseCountPerRoi) AS roiInfo RETURN neuron.bodyId AS bodyid, neuron.name AS bodyname, neuron.synapseCountPerRoi AS roiInfo, neuron.size AS size, neuron.pre AS npre, neuron.post AS npost ORDER BY neuron.bodyId';

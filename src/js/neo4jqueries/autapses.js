@@ -5,7 +5,7 @@
 "use strict";
 
 import SimpleCellWrapper from '../helpers/SimpleCellWrapper';
-var neo4j = require('neo4j-driver').v1;
+import neo4j from "neo4j-driver/lib/browser/neo4j-web";
 
 function convert64bit(value) {
     return neo4j.isInt(value) ?
