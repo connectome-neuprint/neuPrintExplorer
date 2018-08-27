@@ -17,6 +17,7 @@ import Divider from 'material-ui/Divider';
 import { withStyles } from 'material-ui/styles';
 import { LoadQueryString, SaveQueryString, RemoveQueryString } from '../helpers/qsparser';
 import Chip from 'material-ui/Chip';
+import C from "../reducers/constants"
 
 const styles = theme => ({
     root: {
@@ -255,7 +256,7 @@ var QueryDispatch = function(dispatch) {
     return {
         setURLQs: function(querystring) {
             dispatch({
-                type: 'SET_URL_QS',
+                type: C.SET_URL_QS,
                 urlQueryString: querystring
             });
         }

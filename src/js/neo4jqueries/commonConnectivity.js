@@ -5,83 +5,98 @@
 "use strict";
 
 import SimpleCellWrapper from '../helpers/SimpleCellWrapper';
-var neo4j = require('neo4j-driver').v1;
+import neo4j from "neo4j-driver/lib/browser/neo4j-web";
 
 function convert64bit(value) {
     return neo4j.isInt(value) ?
-        (neo4j.integer.inSafeRange(value) ? 
-            value.toNumber() : value.toString()) 
+        (neo4j.integer.inSafeRange(value) ?
+            value.toNumber() : value.toString())
         : value;
 }
 
 // create ROI tables
-var processResults = function(results, state) {
+var processResults = function (results, state) {
 
     let index = 0;
     let tables = [];
     const queryKey = state.typeValue;
 
-    const groupBy = function(inputJson, key) {
-        return inputJson.reduce(function(accumulator, currentValue) {
+    const groupBy = function (inputJson, key) {
+        return inputJson.reduce(function (accumulator, currentValue) {
             let name = currentValue["name"];
             let weights = Object.keys(currentValue).slice(2);
             (accumulator[currentValue[key]] = accumulator[currentValue[key]] || {})[weights] = currentValue[weights];
-            accumulator[currentValue[key]]["name"]=name;
+            accumulator[currentValue[key]]["name"] = name;
             return accumulator;
         }, {});
     };
-    let groupedByOutputId = groupBy(results.records[0].get("map"), queryKey);
-    
+    let groupedByInputOrOutputId = groupBy(results.records[0].get("map"), queryKey);
+
     let headerdata = [
         new SimpleCellWrapper(index++, queryKey[0].toUpperCase() + queryKey.substring(1) + " BodyId"),
         new SimpleCellWrapper(index++, queryKey[0].toUpperCase() + queryKey.substring(1) + " Name"),
     ];
-    const bodyIds = state.bodyIds.split(",");
-    const bodyIdWeightHeadings = bodyIds.map(bodyId => bodyId + "_weight");
-    bodyIdWeightHeadings.forEach( function(bodyIdWeightHeading) {
-        headerdata.push(new SimpleCellWrapper(index++, bodyIdWeightHeading));
+
+    let selectedNeurons = [];
+    if (state.bodyIds.length > 0) {
+        selectedNeurons = state.bodyIds.split(",");
+    } else {
+        selectedNeurons = state.names.split(",");
+    }
+
+    const selectedWeightHeadings = selectedNeurons.map(neuron => neuron + "_weight");
+    selectedWeightHeadings.forEach(function (neuronWeightHeading) {
+        headerdata.push(new SimpleCellWrapper(index++, neuronWeightHeading));
     });
-    
+
     let data = [];
-    const sortableIndicesArray = Array.from({length: bodyIdWeightHeadings.length+2}, (_, i) => i + 1);
+    const sortableIndicesArray = Array.from({ length: selectedWeightHeadings.length + 2 }, (_, i) => i + 1);
     let table = {
         header: headerdata,
         body: data,
-        name: "Common " + queryKey + "s for " + state.bodyIds + " in " + state.datasetstr, 
+        name: "Common " + queryKey + "s for " + selectedNeurons + " in " + state.datasetstr,
         sortIndices: new Set(sortableIndicesArray),
     }
-    
-    Object.keys(groupedByOutputId).forEach(function(output) {
+
+    Object.keys(groupedByInputOrOutputId).forEach(function (inputOrOutput) {
         let singleRow = [
-            new SimpleCellWrapper(index++, parseInt(convert64bit(output))),
-            new SimpleCellWrapper(index++, groupedByOutputId[output]["name"]),
+            new SimpleCellWrapper(index++, parseInt(convert64bit(inputOrOutput))),
+            new SimpleCellWrapper(index++, groupedByInputOrOutputId[inputOrOutput]["name"]),
         ];
-        bodyIdWeightHeadings.forEach( function(bodyIdWeightHeading) {
-            const bodyIdWeightValue = groupedByOutputId[output][bodyIdWeightHeading] || 0;
-            singleRow.push(new SimpleCellWrapper(index++, parseInt(convert64bit(bodyIdWeightValue))));
+        selectedWeightHeadings.forEach(function (selectedWeightHeading) {
+            const selectedWeightValue = groupedByInputOrOutputId[inputOrOutput][selectedWeightHeading] || 0;
+            singleRow.push(new SimpleCellWrapper(index++, parseInt(convert64bit(selectedWeightValue))));
         });
         data.push(singleRow);
     });
-    
+
     tables.push(table);
     return tables;
 }
 
-const mainQueryOutput = 'WITH [XX] AS bodyIds MATCH (k:`ZZ-Neuron`)-[r:ConnectsTo]->(c) WHERE (k.bodyId IN bodyIds FF) WITH k, c, r, toString(k.bodyId)+"_weight" AS dynamicWeight RETURN collect(apoc.map.fromValues(["output", c.bodyId, "name", c.name, dynamicWeight, r.weight])) AS map';
-const mainQueryInput =  'WITH [XX] AS bodyIds MATCH (k:`ZZ-Neuron`)<-[r:ConnectsTo]-(c) WHERE (k.bodyId IN bodyIds FF) WITH k, c, r, toString(k.bodyId)+"_weight" AS dynamicWeight RETURN collect(apoc.map.fromValues(["input", c.bodyId, "name", c.name, dynamicWeight, r.weight])) AS map';
+const mainQueryOutput = 'WITH [XX] AS inputs MATCH (k:`ZZ-Neuron`)-[r:ConnectsTo]->(c) WHERE (k.YY IN inputs FF) WITH k, c, r, toString(k.YY)+"_weight" AS dynamicWeight RETURN collect(apoc.map.fromValues(["output", c.bodyId, "name", c.name, dynamicWeight, r.weight])) AS map';
+const mainQueryInput = 'WITH [XX] AS inputs MATCH (k:`ZZ-Neuron`)<-[r:ConnectsTo]-(c) WHERE (k.YY IN inputs FF) WITH k, c, r, toString(k.YY)+"_weight" AS dynamicWeight RETURN collect(apoc.map.fromValues(["input", c.bodyId, "name", c.name, dynamicWeight, r.weight])) AS map';
 
 // TODO: find outputs or inputs based on user preference
-export default function(datasetstr, bodyIds, limitBig, statusFilters, typeValue) {
-    const mainQuery = typeValue=="output" ? mainQueryOutput : mainQueryInput;
-    let neoquery = mainQuery.replace(/ZZ/g, datasetstr.replace(":",""));
-    neoquery = neoquery.replace(/XX/g, bodyIds);
+export default function (datasetstr, bodyIds, names, limitBig, statusFilters, typeValue) {
+    const mainQuery = typeValue == "output" ? mainQueryOutput : mainQueryInput;
+    let neoQuery = mainQuery.replace(/ZZ/g, datasetstr.replace(":", ""));
+
+    if (bodyIds.length > 0) {
+        neoQuery = neoQuery.replace(/YY/g, "bodyId");
+        neoQuery = neoQuery.replace(/XX/g, bodyIds);
+    } else {
+        neoQuery = neoQuery.replace(/YY/g, "name");
+        neoQuery = neoQuery.replace(/XX/g, names.split(",").map(n => "\"" + n + "\""));
+    }
+
     let FF = "";
     if (limitBig === "true") {
         FF = "AND ((c.pre > 1) OR (c.post >= 10))";
     }
     if (statusFilters.length > 0) {
         if (FF === "") {
-            FF = "AND (" ;
+            FF = "AND (";
         } else {
             FF = FF + " AND (";
         }
@@ -93,14 +108,15 @@ export default function(datasetstr, bodyIds, limitBig, statusFilters, typeValue)
         }
         FF = FF + ")";
     }
-    neoquery = neoquery.replace("FF", FF);
+    neoQuery = neoQuery.replace("FF", FF);
 
     let query = {
-        queryStr: neoquery,
-        callback: processResults, 
+        queryStr: neoQuery,
+        callback: processResults,
         state: {
             datasetstr: datasetstr,
             bodyIds: bodyIds,
+            names: names,
             typeValue: typeValue,
         },
     }

@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 import Popover from 'material-ui/Popover';
 import PropTypes from 'prop-types';
 import SvgIcon from 'material-ui/SvgIcon';
+import C from "../reducers/constants"
 
 // adapted from material ui example
 const styles = theme => ({
@@ -178,13 +179,13 @@ var TopBarDispatch = function(dispatch) {
     return {
         loginUser: function(info) {
             dispatch({
-                type: 'LOGIN_USER',
+                type: C.LOGIN_USER,
                 userInfo: info,
             });
         },
         logoutUser: function() {
             dispatch({
-                type: 'LOGOUT_USER',
+                type: C.LOGOUT_USER,
             });
         },
     }

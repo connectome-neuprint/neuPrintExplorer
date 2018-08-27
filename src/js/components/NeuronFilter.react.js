@@ -22,6 +22,7 @@ import Input, { InputLabel } from 'material-ui/Input';
 import Chip from 'material-ui/Chip';
 import { MenuItem } from 'material-ui/Menu';
 import Tooltip from 'material-ui/Tooltip';
+import C from "../reducers/constants"
 
 
 const mainQuery = 'MATCH (n :`ZZ-Neuron`) WHERE n.pre > 1 RETURN DISTINCT n.status AS val'
@@ -31,6 +32,9 @@ const styles = theme => ({
         margin: theme.spacing.unit,
         minWidth: 250,
         maxWidth: 300,
+    },
+    expandablePanel: {
+        margin: theme.spacing.unit,
     },
     nopad: {
         padding: 0,
@@ -131,7 +135,7 @@ class NeuronFilter extends React.Component {
         const { classes, theme } = this.props;
         let checkbox = this.state.qsParams.limitBig === "true" ? true : false;
         return (
-                <ExpansionPanel>
+                <ExpansionPanel className={classes.expandablePanel}>
                     <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                         <Typography>
                             Optional neuron/segment filters
@@ -222,7 +226,7 @@ var NeuronFilterDispatch = function(dispatch) {
     return {
         setURLQs: function(querystring) {
             dispatch({
-                type: 'SET_URL_QS',
+                type: C.SET_URL_QS,
                 urlQueryString: querystring
             });
         }

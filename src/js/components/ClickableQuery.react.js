@@ -7,6 +7,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import { withStyles } from 'material-ui/styles';
+import C from "../reducers/constants"
 
 const styles = () => ({
   root: {
@@ -48,7 +49,7 @@ var ClickableQueryDispatch = function(dispatch) {
     return {
         updateQuery: function(query) {
             dispatch({
-                type: 'UPDATE_QUERY',
+                type: C.UPDATE_QUERY,
                 neoQueryObj: query
             });
         }

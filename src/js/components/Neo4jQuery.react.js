@@ -4,11 +4,13 @@
 
 "use strict"
 
+import C from "../reducers/constants"
+
 import React from 'react';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 
-var neo4j = require('neo4j-driver').v1;
+import neo4j from "neo4j-driver/lib/browser/neo4j-web";
 var UNIQUE_ID = 0;
 
 class Neo4jQuery extends React.Component {
@@ -80,32 +82,32 @@ var Neo4jQueryDispatch = function(dispatch) {
     return {
         setDriver: function(driver) {
             dispatch({
-                type: 'SET_NEO_DRIVER',
+                type: C.SET_NEO_DRIVER,
                 neoDriver: driver
             });
         },
         setQueryError: function(error) {
             dispatch({
-                type: 'SET_NEO_ERROR',
+                type: C.SET_NEO_ERROR,
                 neoError: error
             });
         },
         appendData: function(results) {
             dispatch({
-                type: 'APPEND_RESULTS',
+                type: C.APPEND_RESULTS,
                 allTables: results
             });
             dispatch({
-                type: 'FINISH_QUERY',
+                type: C.FINISH_QUERY,
             });
         },
         saveData: function(results) {
             dispatch({
-                type: 'UPDATE_RESULTS',
+                type: C.UPDATE_RESULTS,
                 allTables: results
             });
             dispatch({
-                type: 'FINISH_QUERY',
+                type: C.FINISH_QUERY,
             });
         }
     }
