@@ -8,11 +8,15 @@ The application is written using REACT+Redux and Material-UI.
 
 ## Installation
 
-There is a pre-build distribution in the 'dist' directory that can be served by the included Python Flask server.  To build
-the package for development:
+To build the package for development:
 
     % npm install
-    % grunt #(or grunt dist to build the distribution)
+    % npm run dev
+
+To build for production:
+
+    % npm install
+    % npm run build
 
 The python server has the following dependencies:
 
