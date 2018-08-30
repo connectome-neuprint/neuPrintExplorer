@@ -65,7 +65,9 @@
     "redux": "^3.7.2"
   },
   "scripts": {
-    "test": "grunt eslint",
+    "pretest": "eslint **/*.js",
+    "test": "jest",
+    "test-watch": "jest --watch",
     "dev": "webpack --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js"
   }
