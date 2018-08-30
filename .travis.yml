@@ -1,5 +1,5 @@
 language: node_js
 node_js:
-  - "5.7.1"
-before_install: npm install -g grunt-cli
+  - "node"
+before_install: npm install -g jest
 install: npm install
