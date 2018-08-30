@@ -13,6 +13,7 @@
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.2.2",
+    "babel-jest": "^23.4.2",
     "babel-loader": "^7.1.5",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-preset-env": "^1.7.0",
@@ -64,7 +65,9 @@
     "redux": "^3.7.2"
   },
   "scripts": {
-    "test": "grunt eslint",
+    "pretest": "eslint **/*.js",
+    "test": "jest",
+    "test-watch": "jest --watch",
     "dev": "webpack --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js"
   }
