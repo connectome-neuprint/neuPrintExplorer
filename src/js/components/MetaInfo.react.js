@@ -14,7 +14,7 @@ import PropTypes from 'prop-types';
 import _ from "underscore";
 import C from "../reducers/constants"
 
-class NeoServer extends React.Component {
+class MetaInfo extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -67,19 +67,19 @@ class NeoServer extends React.Component {
     }
 }
 
-NeoServer.propTypes = {
+MetaInfo.propTypes = {
     setNeoDatasets: PropTypes.func.isRequired,
     userInfo: PropTypes.object,
 };
 
 
-var NeoServerState = function(state) {
+var MetaInfoState = function(state) {
     return {
         userInfo: state.user.userInfo
     }
 }
 
-var NeoServerDispatch = function(dispatch) {
+var MetaInfoDispatch = function(dispatch) {
     return {
         setNeoDatasets: function(datasets, rois, datasetInfo) {
             dispatch({
@@ -92,5 +92,5 @@ var NeoServerDispatch = function(dispatch) {
     }
 }
 
-export default connect(NeoServerState, NeoServerDispatch)(NeoServer);
+export default connect(MetaInfoState, MetaInfoDispatch)(MetaInfo);
 
