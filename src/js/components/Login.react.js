@@ -55,10 +55,7 @@ class Login extends React.Component {
     }
 
     login = () => {
-        window.open('/login')
-        /*fetch('/login')
-            .then(this.fetchProfile())
-        ;*/
+        window.open('/login?redirect=/', "_self");
     }
     
     logout = () => {
