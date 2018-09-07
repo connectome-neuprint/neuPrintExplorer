@@ -15,18 +15,6 @@ var UNIQUE_ID = 0;
 
 class Neo4jQuery extends React.Component {
     componentWillReceiveProps(nextProps) {
-        // update session if necessary
-        var driver = this.props.neoDriver;
-        if (nextProps.neoServer !== this.props.neoServer) {
-            if (this.props.neoDriver !== null) {
-                this.props.neoDriver.close(); 
-            }
-            if (nextProps.neoServer !== "") {
-                driver = neo4j.driver("bolt://" + nextProps.neoServer, neo4j.auth.basic(nextProps.neoUser, nextProps.neoPassword));
-                this.props.setDriver(driver)
-            }
-        }
-
         // start query if query state changed
         if (nextProps.isQuerying) {
             if (nextProps.neoQueryObj.queryStr !== "" && nextProps.neoServer !== "") {
@@ -71,21 +59,11 @@ var Neo4jQueryState = function(state){
     return {
         neoQueryObj: state.query.neoQueryObj,
         isQuerying: state.query.isQuerying,
-        neoServer: state.neo4jsettings.neoServer,
-        neoDriver: state.neo4jsettings.neoDriver,
-        neoUser: state.neo4jsettings.user,
-        neoPassword: state.neo4jsettings.password,
     }   
 };
 
 var Neo4jQueryDispatch = function(dispatch) {
     return {
-        setDriver: function(driver) {
-            dispatch({
-                type: C.SET_NEO_DRIVER,
-                neoDriver: driver
-            });
-        },
         setQueryError: function(error) {
             dispatch({
                 type: C.SET_NEO_ERROR,
@@ -114,10 +92,6 @@ var Neo4jQueryDispatch = function(dispatch) {
 }
 
 Neo4jQuery.propTypes = {
-    neoDriver: PropTypes.object,
-    neoServer: PropTypes.string.isRequired,
-    neoUser: PropTypes.string.isRequired,
-    neoPassword: PropTypes.string.isRequired,
     neoQueryObj: PropTypes.shape({
         queryStr: PropTypes.string.isRequired,
         callback: PropTypes.func.isRequired,
@@ -127,7 +101,6 @@ Neo4jQuery.propTypes = {
     appendData: PropTypes.func.isRequired, 
     saveData: PropTypes.func.isRequired, 
     isQuerying: PropTypes.bool.isRequired,
-    setDriver: PropTypes.func.isRequired,
     setQueryError: PropTypes.func.isRequired,
 };
 
