@@ -56,12 +56,12 @@ class NeoServer extends React.Component {
             open: false
         };
 
-        this.updateDB(this.props.userInfo);
+        //this.updateDB(this.props.userInfo);
     }
    
     componentWillReceiveProps(nextProps) {
         if (!_.isEqual(nextProps.userInfo, this.props.userInfo)) {
-            this.updateDB(nextProps.userInfo);        
+            //this.updateDB(nextProps.userInfo);        
         }
     }
 
