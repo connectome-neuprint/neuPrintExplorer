@@ -58,6 +58,12 @@ class MetaInfo extends React.Component {
                 
                 this.props.setNeoDatasets(datasets, rois, datasetInfo);
             });
+        fetch('/api/dbmeta/database')
+            .then(result=>result.json())
+            .then(data=> {
+                this.props.setNeoServer(data.Location);
+            });
+
     }
     
     render () {
@@ -69,6 +75,7 @@ class MetaInfo extends React.Component {
 
 MetaInfo.propTypes = {
     setNeoDatasets: PropTypes.func.isRequired,
+    setNeoServer: PropTypes.func.isRequired,
     userInfo: PropTypes.object,
 };
 
@@ -87,6 +94,12 @@ var MetaInfoDispatch = function(dispatch) {
                 availableDatasets: datasets,
                 availableROIs: rois,
                 datasetInfo: datasetInfo,
+            });
+        },
+        setNeoServer: function(server) {
+            dispatch({
+                type: C.SET_NEO_SERVER,
+                neoServer: server,
             });
         }
     }

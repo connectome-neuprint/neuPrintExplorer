@@ -19,6 +19,9 @@ export default function neo4jreducer(state = neo4jsettingsState, action) {
         case C.SET_NEO_DATASETS: {
             return Object.assign({}, state, { availableDatasets: action.availableDatasets, availableROIs: action.availableROIs, datasetInfo: action.datasetInfo });
         }
+        case C.SET_NEO_SERVER: {
+            return Object.assign({}, state, { neoServer: action.neoServer });
+        }
         default: {
             return state;
         }
