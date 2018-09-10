@@ -134,7 +134,7 @@ class Home extends React.Component {
                                 available datasets: 
                               </Typography>
                               <div className={classes.padLeft}> 
-                                        {this.props.availableDatasets.map( (item, index) => {
+                                        {this.props.availableDatasets.map( (item) => {
                                             return (
                                                 <div key={item}>
                                                     <Typography>

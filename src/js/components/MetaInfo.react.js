@@ -6,10 +6,6 @@
 
 import React from 'React';
 import { connect } from 'react-redux';
-import TextField from 'material-ui/TextField';
-import Button from 'material-ui/Button';
-import Icon from 'material-ui/Icon';
-import Badge from 'material-ui/Badge';
 import PropTypes from 'prop-types';
 import _ from "underscore";
 import C from "../reducers/constants"
@@ -33,7 +29,7 @@ class MetaInfo extends React.Component {
         }
     }
 
-    updateDB = (userInfo) => {
+    updateDB = () => {
         fetch('/api/dbmeta/datasets')
             .then(result=>result.json())
             .then(items=> {

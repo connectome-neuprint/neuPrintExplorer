@@ -11,7 +11,6 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import NeuPrintResult from '../helpers/NeuPrintResult';
 
-
 var UNIQUE_ID = 0;
 
 class Neo4jQuery extends React.Component {
@@ -75,6 +74,7 @@ var Neo4jQueryState = function(state){
     return {
         neoQueryObj: state.query.neoQueryObj,
         isQuerying: state.query.isQuerying,
+        neoServer: state.neo4jsettings.neoServer,
     }   
 };
 
@@ -114,6 +114,7 @@ Neo4jQuery.propTypes = {
         state: PropTypes.object.isRequred,
         isChild: PropTypes.bool
     }),
+    neoServer: PropTypes.string.isRequired,
     appendData: PropTypes.func.isRequired, 
     saveData: PropTypes.func.isRequired, 
     isQuerying: PropTypes.bool.isRequired,

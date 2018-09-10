@@ -13,7 +13,6 @@ import Button from 'material-ui/Button';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import SvgIcon from 'material-ui/SvgIcon';
-import C from "../reducers/constants"
 
 // adapted from material ui example
 const styles = theme => ({
