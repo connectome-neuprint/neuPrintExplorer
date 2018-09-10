@@ -5,14 +5,6 @@
 "use strict";
 
 import SimpleCellWrapper from '../helpers/SimpleCellWrapper';
-import neo4j from "neo4j-driver/lib/browser/neo4j-web";
-
-function convert64bit(value) {
-    return neo4j.isInt(value) ?
-        (neo4j.integer.inSafeRange(value) ? 
-            value.toNumber() : value.toString()) 
-        : value;
-}
 
 // create ROI tables
 var processResults = function(results, state) {
@@ -47,9 +39,9 @@ var processResults = function(results, state) {
     let numSeg = 0;
 
     results.records.forEach(function (record) {
-        //let bodyid = parseInt(convert64bit(record.get("id")));
-        let size = parseInt(convert64bit(record.get("size")));
-        let total = parseInt(convert64bit(record.get("total")));
+        //let bodyid = parseInt(record.get("id"));
+        let size = parseInt(record.get("size"));
+        let total = parseInt(record.get("total"));
         currSize += size;
         numSeg++;
 

@@ -9,43 +9,55 @@ import C from "../reducers/constants"
 import React from 'react';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
+import NeuPrintResult from '../helpers/NeuPrintResult';
 
-import neo4j from "neo4j-driver/lib/browser/neo4j-web";
+
 var UNIQUE_ID = 0;
 
 class Neo4jQuery extends React.Component {
     componentWillReceiveProps(nextProps) {
         // start query if query state changed
         if (nextProps.isQuerying) {
+            // only authorized users could get server information
             if (nextProps.neoQueryObj.queryStr !== "" && nextProps.neoServer !== "") {
                 // run query (TODO: handle blocking query??) 
-                var session = driver.session();
-                var setError = this.props.setQueryError;
-                var processResults = nextProps.neoQueryObj.callback;
-                var state = nextProps.neoQueryObj.state;
+                
+                
+                
+                let setError = this.props.setQueryError;
+                let processResults = nextProps.neoQueryObj.callback;
+                let state = nextProps.neoQueryObj.state;
                 let saveData = this.props.saveData;
                 let uniqueId = UNIQUE_ID++;
                 if (nextProps.neoQueryObj.isChild) {
                     saveData = this.props.appendData;
                 }
                 let queryStr = nextProps.neoQueryObj.queryStr;
-                session
-                    .run(queryStr)
-                    .then(function (result) {
-                        let data = processResults(result, state, uniqueId);
-                        if (data !== null && data.length > 0) {
-                            data[0]["queryStr"] = queryStr;
-                            for (let i = 0; i < data.length; i++) {
-                                data[i]["uniqueId"] = uniqueId;
-                            }
+
+                fetch('/api/custom/custom', {
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify({"cypher": queryStr}),
+                    method: 'POST',
+                })
+                .then(result=>result.json())
+                .then(resp => {
+                    // make new result object
+                    let result = new NeuPrintResult(resp);
+                    let data = processResults(result, state, uniqueId);
+                    if (data !== null && data.length > 0) {
+                        data[0]["queryStr"] = queryStr;
+                        for (let i = 0; i < data.length; i++) {
+                            data[i]["uniqueId"] = uniqueId;
                         }
-                        saveData(data);
-                        session.close();
-                    })
-                    .catch(function (error) {
-                        alert(error);
-                        setError(error);
-                    });
+                    }
+                    saveData(data);
+                })
+                .catch(function (error) {
+                    alert(error);
+                    setError(error);
+                });
             }
         }
     }

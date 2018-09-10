@@ -8,7 +8,6 @@ import React from 'react';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
 import PropTypes from 'prop-types';
-import neo4j from "neo4j-driver/lib/browser/neo4j-web";
 import Radio, { RadioGroup } from 'material-ui/Radio';
 import { FormLabel, FormControl, FormControlLabel } from 'material-ui/Form';
 import { withStyles } from 'material-ui/styles';
@@ -19,13 +18,6 @@ import SimpleCellWrapper from '../../helpers/SimpleCellWrapper';
 import C from "../../reducers/constants"
 
 const mainQuery = 'match (m:`YY-Neuron`)XX(n :`YY-Neuron`) where ZZ return m.name as Neuron1, n.name as Neuron2, n.bodyId as Neuron2Id, e.weight as Weight, m.bodyId as Neuron1Id order by m.name, m.bodyId, e.weight desc';
-
-function convert64bit(value) {
-    return neo4j.isInt(value) ?
-        (neo4j.integer.inSafeRange(value) ? 
-            value.toNumber() : value.toString()) 
-        : value;
-}
 
 const styles = () => ({
     textField: {
@@ -64,7 +56,7 @@ class SimpleConnections extends React.Component {
         var lastname = "";
         // retrieve records
         neoResults.records.forEach(function (record) {
-            var newval = convert64bit(record.get("Neuron1Id"));  
+            var newval = record.get("Neuron1Id");  
             if ((lastbody !== -1) && (newval !== lastbody)) {
                 var tabname = lastname + " id=(" + String(lastbody) + ")";
                 if (state.preOrPost === "pre") {
@@ -88,9 +80,9 @@ class SimpleConnections extends React.Component {
                 neuronname = "";
             }
             currtable.push([
-                new SimpleCellWrapper(index++, convert64bit(record.get("Neuron2Id"))),
+                new SimpleCellWrapper(index++, record.get("Neuron2Id")),
                 new SimpleCellWrapper(index++, neuronname),
-                new SimpleCellWrapper(index++, convert64bit(record.get("Weight"))),
+                new SimpleCellWrapper(index++, record.get("Weight")),
             ]);
         });
 

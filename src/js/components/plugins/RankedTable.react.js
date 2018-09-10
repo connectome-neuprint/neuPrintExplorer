@@ -10,7 +10,6 @@ import React from 'react';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
 import PropTypes from 'prop-types';
-import neo4j from "neo4j-driver/lib/browser/neo4j-web";
 import { withStyles } from 'material-ui/styles';
 import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 import Radio, { RadioGroup } from 'material-ui/Radio';
@@ -24,13 +23,6 @@ import C from "../../reducers/constants"
 
 
 const mainQuery = 'MATCH (m:`YY-Neuron`)-[e:ConnectsTo]-(n) WHERE ZZ RETURN m.name AS Neuron1, n.name AS Neuron2, e.weight AS Weight, n.bodyId AS Body2, m.neuronType AS Neuron1Type, n.type AS Neuron2Type, id(m) AS m_id, id(n) AS n_id, id(startNode(e)) AS pre_id, m.bodyId AS Body1 ORDER BY m.bodyId, e.weight DESC';
-
-function convert64bit(value) {
-    return neo4j.isInt(value) ?
-        (neo4j.integer.inSafeRange(value) ? 
-            value.toNumber() : value.toString()) 
-        : value;
-}
 
 const styles = () => ({
   textField: {
@@ -103,14 +95,14 @@ class RankedTable extends React.Component {
                 type2color[typeinfo] = 1;
             }
         
-            var preid = convert64bit(record.get("pre_id"));
-            var node1id = convert64bit(record.get("m_id"));
+            var preid = record.get("pre_id");
+            var node1id = record.get("m_id");
             if (((state.preOrPost === "pre") && (preid !== node1id)) ||
                 (state.preOrPost === "post") && (preid === node1id)) { 
             
-                var body1 = convert64bit(record.get("Body1"));
-                var body2 = convert64bit(record.get("Body2"));
-                var weight = convert64bit(record.get("Weight"));
+                var body1 = record.get("Body1");
+                var body2 = record.get("Body2");
+                var weight = record.get("Weight");
 
                 if (body2 in reversecounts) {
                     reversecounts[String(body2)][String(body1)] = weight; 
@@ -134,11 +126,11 @@ class RankedTable extends React.Component {
         var maxcols = 0;
         let index = 0;
         neoResults.records.forEach(function (record) {
-            var body1 = convert64bit(record.get("Body1"));
+            var body1 = record.get("Body1");
 
             // do not add reverse edges
-            var preid = convert64bit(record.get("pre_id"));
-            var node1id = convert64bit(record.get("m_id"));
+            var preid = record.get("pre_id");
+            var node1id = record.get("m_id");
             if (((state.preOrPost === "pre") && (preid === node1id))
                 || ((state.preOrPost === "post") && (preid !== node1id))) { 
                 if (lastbody != body1) {
@@ -170,18 +162,18 @@ class RankedTable extends React.Component {
 
                 var neuronmatch2 = record.get("Neuron2");
                 if (neuronmatch2 === null) {
-                    neuronmatch2 = convert64bit(record.get("Body2"));
+                    neuronmatch2 = record.get("Body2");
                 }
 
                 // add custom cell element 
-                var weight = convert64bit(record.get("Weight"));
+                var weight = record.get("Weight");
                 var typeinfo = record.get("Neuron2Type");
                 
                 var typecolor = "#ffffff";
                 if (typeinfo !== null) {
                     typecolor = colorArray[type2color[typeinfo]];
                 }
-                var body2 = convert64bit(record.get("Body2"));
+                var body2 = record.get("Body2");
                 var weight2 = 0;
                 if ((body2 in reversecounts) && (body1 in reversecounts[body2])) {
                     weight2 = reversecounts[body2][body1];

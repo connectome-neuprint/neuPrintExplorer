@@ -5,16 +5,8 @@
 "use strict";
 
 import SimpleCellWrapper from '../helpers/SimpleCellWrapper';
-import neo4j from "neo4j-driver/lib/browser/neo4j-web";
 import ClickableQuery from '../components/ClickableQuery.react';
 import React from 'react';
-
-function convert64bit(value) {
-    return neo4j.isInt(value) ?
-        (neo4j.integer.inSafeRange(value) ? 
-            value.toNumber() : value.toString()) 
-        : value;
-}
 
 var processProp = function(results, state) {
     // state: property
@@ -34,7 +26,7 @@ var processProp = function(results, state) {
     }
 
     results.records.forEach(function (record) {
-        let val = convert64bit(record.get("val"));
+        let val = record.get("val");
         data.push([
             new SimpleCellWrapper(index++, JSON.stringify(val))
         ]);

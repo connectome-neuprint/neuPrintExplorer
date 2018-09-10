@@ -9,7 +9,6 @@ import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
 import { FormControl } from 'material-ui/Form';
 import PropTypes from 'prop-types';
-import neo4j from "neo4j-driver/lib/browser/neo4j-web";
 import { withStyles } from 'material-ui/styles';
 import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 import {connect} from 'react-redux';
@@ -41,12 +40,8 @@ class FreeForm extends React.Component {
 
         neoResults.records.forEach(function (record) {
             var recorddata = [];
-            record.forEach( function (value) {
-                var newval = neo4j.isInt(value) ?
-                        (neo4j.integer.inSafeRange(value) ? 
-                            value.toNumber() : value.toString()) 
-                        : value;
-
+            record.toArr().forEach( function (value) {
+                var newval = value;
                 recorddata.push(
                     new SimpleCellWrapper(recorddata.length, JSON.stringify(newval))
                 );
@@ -54,10 +49,10 @@ class FreeForm extends React.Component {
             maindata.push(recorddata);
         });
             
-        if (neoResults.records.length > 0) {
-            for(var i = 0; i< neoResults.records[0].length; i++) { 
+        if (neoResults.columns.length > 0) {
+            for(var i = 0; i< neoResults.columns.length; i++) { 
                  headerdata.push(
-                    new SimpleCellWrapper(i, neoResults.records[0].keys[i])
+                    new SimpleCellWrapper(i, neoResults.columns[i])
                  );
             }
         }
