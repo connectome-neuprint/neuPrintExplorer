@@ -2,8 +2,7 @@
 [![Build Status](https://travis-ci.org/janelia-flyem/neuPrintExplorer.svg?branch=master)](https://travis-ci.org/janelia-flyem/neuPrintExplorer)
 
 neuPrintExplorer is a single page web application that provides simple interfaces to query an EM connectome stored in [neuPrint](https://github.com/janelia-flyem/neuPrint), which uses the graph database Neo4j.  It contains
-a number of plugins to facilitate different types of queries.  It is bundled with
-a light-weight Flask server that handles authorization for storing some user information, such as a list of favorite queries.
+a number of plugins to facilitate different types of queries.
 The application is written using REACT+Redux and Material-UI.
 
 ## Installation
@@ -18,11 +17,6 @@ To build for production:
     % npm install
     % npm run build
 
-The python server has the following dependencies:
-
-* Flask
-* tinydb
-
 Currently, the skeletonization visualization is a third-party
 library not built into the npm system.  For now,
 add a copy of the library into the build or distribution
@@ -34,13 +28,10 @@ folder:
 
 ## Running
 
-To launch a server (port 5000 by default):
+This app is dependent on [neuPrintHTTP](https://github.com/janelia-flyem/neuPrintHTTP), which is an http REST
+API for connectomics that connects to neuPrint and also serves this static application.  To launch neuPrintHTTP and
+the web application:
 
-    % python connectomeAnalyzer.py config.json neo4jconfig.json
+    % neuPrintHTTP -port 11000 config.json
 
-config.json points to a json file that stores user data and other application information logs (TBD).  neo4jconfig.json provides
-a path to the neo4jconfiguration.  At this point, the password information for the Neo4j server is embedded in this file.
-Within the application, there is currently authentication supported using Google oauth and authorization in the python server.
-This is only being
-used for authorizing access to query favorites.  These features will be extended to better support authorization for different Neo4j
-databases.
+config.json is a configuration file for accessing the backend and pointing to the 'build' created by this distribution.  For examples, please see neuPrintHTTP documentation.
