@@ -9,55 +9,58 @@ import C from "../reducers/constants"
 import React from 'react';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
+import NeuPrintResult from '../helpers/NeuPrintResult';
 
-import neo4j from "neo4j-driver/lib/browser/neo4j-web";
 var UNIQUE_ID = 0;
 
 class Neo4jQuery extends React.Component {
     componentWillReceiveProps(nextProps) {
-        // update session if necessary
-        var driver = this.props.neoDriver;
-        if (nextProps.neoServer !== this.props.neoServer) {
-            if (this.props.neoDriver !== null) {
-                this.props.neoDriver.close(); 
-            }
-            if (nextProps.neoServer !== "") {
-                driver = neo4j.driver("bolt://" + nextProps.neoServer, neo4j.auth.basic(nextProps.neoUser, nextProps.neoPassword));
-                this.props.setDriver(driver)
-            }
-        }
-
         // start query if query state changed
         if (nextProps.isQuerying) {
+            // only authorized users could get server information
             if (nextProps.neoQueryObj.queryStr !== "" && nextProps.neoServer !== "") {
                 // run query (TODO: handle blocking query??) 
-                var session = driver.session();
-                var setError = this.props.setQueryError;
-                var processResults = nextProps.neoQueryObj.callback;
-                var state = nextProps.neoQueryObj.state;
+                
+                
+                
+                let setError = this.props.setQueryError;
+                let processResults = nextProps.neoQueryObj.callback;
+                let state = nextProps.neoQueryObj.state;
                 let saveData = this.props.saveData;
                 let uniqueId = UNIQUE_ID++;
                 if (nextProps.neoQueryObj.isChild) {
                     saveData = this.props.appendData;
                 }
                 let queryStr = nextProps.neoQueryObj.queryStr;
-                session
-                    .run(queryStr)
-                    .then(function (result) {
-                        let data = processResults(result, state, uniqueId);
-                        if (data !== null && data.length > 0) {
-                            data[0]["queryStr"] = queryStr;
-                            for (let i = 0; i < data.length; i++) {
-                                data[i]["uniqueId"] = uniqueId;
-                            }
+
+                fetch('/api/custom/custom', {
+                    headers: {
+                        'content-type': 'application/json',
+                        Accept: 'application/json',
+                    },
+                    body: JSON.stringify({"cypher": queryStr}),
+                    method: 'POST',
+                })
+                .then(result=>result.json())
+                .then(resp => {
+                    if ("error" in resp) {
+                        throw resp.error;
+                    }
+                    // make new result object
+                    let result = new NeuPrintResult(resp);
+                    let data = processResults(result, state, uniqueId);
+                    if (data !== null && data.length > 0) {
+                        data[0]["queryStr"] = queryStr;
+                        for (let i = 0; i < data.length; i++) {
+                            data[i]["uniqueId"] = uniqueId;
                         }
-                        saveData(data);
-                        session.close();
-                    })
-                    .catch(function (error) {
-                        alert(error);
-                        setError(error);
-                    });
+                    }
+                    saveData(data);
+                })
+                .catch(function (error) {
+                    alert(error);
+                    setError(error);
+                });
             }
         }
     }
@@ -72,20 +75,11 @@ var Neo4jQueryState = function(state){
         neoQueryObj: state.query.neoQueryObj,
         isQuerying: state.query.isQuerying,
         neoServer: state.neo4jsettings.neoServer,
-        neoDriver: state.neo4jsettings.neoDriver,
-        neoUser: state.neo4jsettings.user,
-        neoPassword: state.neo4jsettings.password,
     }   
 };
 
 var Neo4jQueryDispatch = function(dispatch) {
     return {
-        setDriver: function(driver) {
-            dispatch({
-                type: C.SET_NEO_DRIVER,
-                neoDriver: driver
-            });
-        },
         setQueryError: function(error) {
             dispatch({
                 type: C.SET_NEO_ERROR,
@@ -114,20 +108,16 @@ var Neo4jQueryDispatch = function(dispatch) {
 }
 
 Neo4jQuery.propTypes = {
-    neoDriver: PropTypes.object,
-    neoServer: PropTypes.string.isRequired,
-    neoUser: PropTypes.string.isRequired,
-    neoPassword: PropTypes.string.isRequired,
     neoQueryObj: PropTypes.shape({
         queryStr: PropTypes.string.isRequired,
         callback: PropTypes.func.isRequired,
         state: PropTypes.object.isRequred,
         isChild: PropTypes.bool
     }),
+    neoServer: PropTypes.string.isRequired,
     appendData: PropTypes.func.isRequired, 
     saveData: PropTypes.func.isRequired, 
     isQuerying: PropTypes.bool.isRequired,
-    setDriver: PropTypes.func.isRequired,
     setQueryError: PropTypes.func.isRequired,
 };
 

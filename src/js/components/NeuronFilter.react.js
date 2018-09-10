@@ -23,6 +23,7 @@ import Chip from 'material-ui/Chip';
 import { MenuItem } from 'material-ui/Menu';
 import Tooltip from 'material-ui/Tooltip';
 import C from "../reducers/constants"
+import NeuPrintResult from '../helpers/NeuPrintResult';
 
 
 const mainQuery = 'MATCH (n :`ZZ-Neuron`) WHERE n.pre > 1 RETURN DISTINCT n.status AS val'
@@ -70,42 +71,45 @@ class NeuronFilter extends React.Component {
         };
         this.props.callback(qsParams);
 
-        this.queryStatuses(this.props.neoDriver, this.props.datasetstr);
+        this.queryStatuses(this.props.neoServer, this.props.datasetstr);
     }
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.neoServer !== this.props.neoServer || (nextProps.datasetstr !== this.props.datasetstr)) {
-            this.queryStatuses(nextProps.neoDriver, nextProps.datasetstr);
+            this.queryStatuses(nextProps.neoServer, nextProps.datasetstr);
         }
     }
 
-    queryStatuses = (driver, datasetstr) => {
-        if (driver === null) {
+    queryStatuses = (neoServer, datasetstr) => {
+        if (neoServer === "") {
             return;
         }
         
-        let session = driver.session();
         const setState = this.setState.bind(this)
         let neoQuery = mainQuery.replace(/ZZ/g, datasetstr);
-
-        session
-            .run(neoQuery)
-            .then(function (result) {
-                let statuslist = [];
-                // parse query
-                result.records.forEach(function (record) {
-                    let val = record.get("val");
-                    if (val !== null) {
-                        statuslist.push(val);
-                    }
-                });
-
-                session.close();
-                setState({"statuses": statuslist});
-            })
-            .catch(function (error) {
-                alert(error);
+        fetch('/api/custom/custom', {
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({"cypher": neoQuery}),
+            method: 'POST',
+        })
+        .then(result=>result.json())
+        .then(resp => {
+            let statuslist = [];
+            // parse query
+            let result = new NeuPrintResult(resp); 
+            result.records.forEach(function (record) {
+                let val = record.get("val");
+                if (val !== null) {
+                    statuslist.push(val);
+                }
             });
+            setState({"statuses": statuslist});
+        })
+        .catch(function (error) {
+            alert(error);
+        });
     }
 
     toggleBig = () => {
@@ -210,14 +214,12 @@ NeuronFilter.propTypes = {
     theme: PropTypes.object.isRequired,
     urlQueryString: PropTypes.string.isRequired,
     datasetstr: PropTypes.string.isRequired,
-    neoDriver: PropTypes.object,
     neoServer: PropTypes.string.isRequired,
 };
 
 var NeuronFilterState = function(state){
     return {
         urlQueryString: state.app.urlQueryString,
-        neoDriver: state.neo4jsettings.neoDriver,
         neoServer: state.neo4jsettings.neoServer,
     }   
 };

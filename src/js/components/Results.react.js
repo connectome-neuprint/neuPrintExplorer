@@ -298,7 +298,7 @@ class Results extends React.Component {
                     <CircularProgress />
                 </Fade>
                 { (this.props.neoError !== null) ? 
-                    (<Typography>Error: {this.props.neoError.code}</Typography>) :
+                    (<Typography>Error: {this.props.neoError}</Typography>) :
                     (resArray.length > 0 ?
                         (
                             <Grid 
@@ -353,7 +353,7 @@ Results.propTypes = {
     clearIndices: PropTypes.object,
     numClear: PropTypes.number,
     queryObj: PropTypes.object.isRequired, 
-    neoError: PropTypes.object,
+    neoError: PropTypes.string,
     isQuerying: PropTypes.bool.isRequired,
     urlQueryString: PropTypes.string.isRequired,
     classes: PropTypes.object.isRequired,

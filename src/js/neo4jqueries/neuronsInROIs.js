@@ -6,7 +6,6 @@
 
 import ClickableQuery from '../components/ClickableQuery.react';
 import SimpleCellWrapper from '../helpers/SimpleCellWrapper';
-import neo4j from "neo4j-driver/lib/browser/neo4j-web";
 import React from 'react';
 
 const mainQuery = 'MATCH (neuron :`YY-Neuron`ZZ) XX WITH neuron AS neuron, apoc.convert.fromJsonMap(neuron.synapseCountPerRoi) AS roiInfo RETURN neuron.bodyId AS bodyid, neuron.name AS bodyname, neuron.synapseCountPerRoi AS roiInfo, neuron.size AS size, neuron.pre AS npre, neuron.post AS npost ORDER BY neuron.bodyId';
@@ -15,13 +14,6 @@ const preQuery = 'MATCH (m:`YY-Neuron`)-[e:ConnectsTo]->(n) WHERE m.bodyId=ZZ RE
 const postQuery = 'MATCH (m:`YY-Neuron`)<-[e:ConnectsTo]-(n) WHERE m.bodyId=ZZ RETURN n.name AS Neuron, n.bodyId AS NeuronId, e.weight AS Weight ORDER BY e.weight DESC';
 
 const skeletonQuery = "MATCH (:`YY-Neuron` {bodyId:ZZ})-[:Contains]->(:Skeleton)-[:Contains]->(root :SkelNode) WHERE NOT (root)<-[:LinksTo]-() RETURN root.rowNumber AS rowId, root.location.x AS x, root.location.y AS y, root.location.z AS z, root.radius AS radius, -1 AS link ORDER BY root.rowNumber UNION match (:`YY-Neuron` {bodyId:ZZ})-[:Contains]->(:Skeleton)-[:Contains]->(s :SkelNode)<-[:LinksTo]-(ss :SkelNode) RETURN s.rowNumber AS rowId, s.location.x AS x, s.location.y AS y, s.location.z AS z, s.radius AS radius, ss.rowNumber AS link ORDER BY s.rowNumber"
-
-function convert64bit(value) {
-    return neo4j.isInt(value) ?
-        (neo4j.integer.inSafeRange(value) ? 
-            value.toNumber() : value.toString()) 
-        : value;
-}
 
 function compareNeuronRows(row1, row2) {
     var total = 0;
@@ -43,13 +35,13 @@ var processSkeleton = function(results, state) {
     let colorid = parseInt(state.sourceId); // % 8;
         
     results.records.forEach(function (record) {
-        let rowId = parseInt(convert64bit(record.get("rowId")));
+        let rowId = parseInt(record.get("rowId"));
         data[rowId] = {
             type: colorid,
-            x: parseInt(convert64bit(record.get("x"))),
-            y: parseInt(convert64bit(record.get("y"))),
-            z: parseInt(convert64bit(record.get("z"))),
-            parent: parseInt(convert64bit(record.get("link"))),
+            x: parseInt(record.get("x")),
+            y: parseInt(record.get("y")),
+            z: parseInt(record.get("z")),
+            parent: parseInt(record.get("link")),
             radius: record.get("radius"),
         }
     });
@@ -83,9 +75,9 @@ var processConnections = function(results, state) {
         sortIndices: sortIndices,
     }
     results.records.forEach(function (record) {
-        let bodyid = parseInt(convert64bit(record.get("NeuronId")));
+        let bodyid = parseInt(record.get("NeuronId"));
         let bodyname = record.get("Neuron");
-        let weight = parseInt(convert64bit(record.get("Weight")));
+        let weight = parseInt(record.get("Weight"));
         data.push([
             new SimpleCellWrapper(index++, bodyid),
             new SimpleCellWrapper(index++, bodyname),
@@ -102,14 +94,14 @@ export var parseResults = function(neoResults, state) {
     var neuronnames = {}; 
 
     neoResults.records.forEach(function (record) {
-        var bodyid = convert64bit(record.get("bodyid"));
+        var bodyid = record.get("bodyid");
         inputneuronROIs[bodyid] = {};
         outputneuronROIs[bodyid] = {};
         neuronnames[bodyid] = {};
         neuronnames[bodyid]["name"] = record.get("bodyname");
-        neuronnames[bodyid]["size"] = convert64bit(record.get("size"));
-        neuronnames[bodyid]["pre"] = convert64bit(record.get("npre"));
-        neuronnames[bodyid]["post"] = convert64bit(record.get("npost"));
+        neuronnames[bodyid]["size"] = record.get("size");
+        neuronnames[bodyid]["pre"] = record.get("npre");
+        neuronnames[bodyid]["post"] = record.get("npost");
         var rois = JSON.parse(record.get("roiInfo"));
         for (let item in rois) {
             if (state.inputROIs.indexOf(item) !== -1) {

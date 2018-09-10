@@ -56,6 +56,9 @@ const styles = theme => ({
     },
     hint: {
         margin: `${theme.spacing.unit*2}px 0` 
+    },
+    padLeft: {
+        paddingLeft: "1em"
     }
 });
 
@@ -129,21 +132,24 @@ class Home extends React.Component {
                               </Typography>
                               <Typography component="p">
                                 available datasets: 
-                                        {this.props.availableDatasets.map( (item, index) => {
-                                            if (index === 0) {
-                                                return " " + item;
-                                            } else {
-                                                return " \u25cf " + item; 
-                                            }
+                              </Typography>
+                              <div className={classes.padLeft}> 
+                                        {this.props.availableDatasets.map( (item) => {
+                                            return (
+                                                <div key={item}>
+                                                    <Typography>
+                                                    <b>{item}</b>
+                                                    </Typography>
+                                                    <div className={classes.padLeft}> 
+                                                        <Typography>
+                                                            modified: {this.props.datasetInfo[item].lastmod} <br />
+                                                            version: {this.props.datasetInfo[item].uuid}
+                                                        </Typography>
+                                                    </div>
+                                                </div>
+                                            );
                                         })}
-                                <br /> 
-                              </Typography>
-                              <Typography component="p">
-                                last modified: {this.props.lastmod} <br /> 
-                              </Typography>
-                              <Typography component="p">
-                                version: {this.props.version} <br /> 
-                              </Typography>
+                              </div>
                             </CardContent>
                         </Card>
                     </Grid>
@@ -206,8 +212,7 @@ var HomeState = function(state) {
     return {
         neoServer: state.neo4jsettings.neoServer,
         availableDatasets: state.neo4jsettings.availableDatasets,
-        lastmod: state.neo4jsettings.lastmod,
-        version: state.neo4jsettings.version,
+        datasetInfo: state.neo4jsettings.datasetInfo,
     }
 }
 
@@ -218,9 +223,8 @@ Home.propTypes = {
     classes: PropTypes.object,
     theme: PropTypes.object,
     availableDatasets: PropTypes.array.isRequired,
+    datasetInfo: PropTypes.object.isRequired,
     neoServer: PropTypes.string.isRequired, 
-    lastmod: PropTypes.string.isRequired, 
-    version: PropTypes.string.isRequired, 
 }
 
 export default withStyles(styles, { withTheme: true })(connect(HomeState, null)(Home));

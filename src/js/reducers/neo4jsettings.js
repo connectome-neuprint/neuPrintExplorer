@@ -7,24 +7,20 @@
 import C from "./constants"
 
 var neo4jsettingsState = {
-    neoDriver: null,
-    neoServer: "",
     availableDatasets: [],
     availableROIs: {},
-    user: "neo4j",
-    password: "neo4j",
-    lastmod: "",
-    version: "",
+    datasetInfo: {},
+    neoServer: "",
 }
 
 
 export default function neo4jreducer(state = neo4jsettingsState, action) {
     switch (action.type) {
-        case C.SET_NEO_DRIVER: {
-            return Object.assign({}, state, { neoDriver: action.neoDriver });
+        case C.SET_NEO_DATASETS: {
+            return Object.assign({}, state, { availableDatasets: action.availableDatasets, availableROIs: action.availableROIs, datasetInfo: action.datasetInfo });
         }
         case C.SET_NEO_SERVER: {
-            return Object.assign({}, state, { neoServer: action.neoServer, availableDatasets: action.availableDatasets, availableROIs: action.availableROIs, user: action.user, password: action.password, lastmod: action.lastmod, version: action.version });
+            return Object.assign({}, state, { neoServer: action.neoServer });
         }
         default: {
             return state;

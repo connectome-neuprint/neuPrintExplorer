@@ -9,7 +9,6 @@ import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
 import { FormControl } from 'material-ui/Form';
 import PropTypes from 'prop-types';
-import neo4j from "neo4j-driver/lib/browser/neo4j-web";
 import { withStyles } from 'material-ui/styles';
 import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 import {connect} from 'react-redux';
@@ -18,13 +17,6 @@ import SimpleCellWrapper from '../../helpers/SimpleCellWrapper';
 import C from "../../reducers/constants"
 
 const mainQuery = 'MATCH (neuron :`YY-Neuron`) WHERE ZZ RETURN neuron.bodyId AS bodyid, neuron.name AS bodyname, neuron.synapseCountPerRoi AS roiInfo ORDER BY neuron.bodyId';
-
-function convert64bit(value) {
-    return neo4j.isInt(value) ?
-        (neo4j.integer.inSafeRange(value) ? 
-            value.toNumber() : value.toString()) 
-        : value;
-}
 
 const styles = () => ({
   textField: {
@@ -72,7 +64,7 @@ class ROIsIntersectingNeurons extends React.Component {
         ];
 
         neoResults.records.forEach(function (record) {
-            let bodyid = convert64bit(record.get("bodyid"));
+            let bodyid = record.get("bodyid");
             tableBody[bodyid] = {};
             tableBody[bodyid]["body"] = [];
             tableBody[bodyid]["name"] = record.get("bodyname");

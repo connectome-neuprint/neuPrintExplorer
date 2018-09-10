@@ -5,14 +5,6 @@
 "use strict";
 
 import SimpleCellWrapper from '../helpers/SimpleCellWrapper';
-import neo4j from "neo4j-driver/lib/browser/neo4j-web";
-
-function convert64bit(value) {
-    return neo4j.isInt(value) ?
-        (neo4j.integer.inSafeRange(value) ?
-            value.toNumber() : value.toString())
-        : value;
-}
 
 // create ROI tables
 var processResults = function (results, state) {
@@ -30,7 +22,7 @@ var processResults = function (results, state) {
             return accumulator;
         }, {});
     };
-    let groupedByInputOrOutputId = groupBy(results.records[0].get("map"), queryKey);
+    let groupedByInputOrOutputId = groupBy(results.records.pos(0).get("map"), queryKey);
 
     let headerdata = [
         new SimpleCellWrapper(index++, queryKey[0].toUpperCase() + queryKey.substring(1) + " BodyId"),
@@ -60,12 +52,12 @@ var processResults = function (results, state) {
 
     Object.keys(groupedByInputOrOutputId).forEach(function (inputOrOutput) {
         let singleRow = [
-            new SimpleCellWrapper(index++, parseInt(convert64bit(inputOrOutput))),
+            new SimpleCellWrapper(index++, parseInt(inputOrOutput)),
             new SimpleCellWrapper(index++, groupedByInputOrOutputId[inputOrOutput]["name"]),
         ];
         selectedWeightHeadings.forEach(function (selectedWeightHeading) {
             const selectedWeightValue = groupedByInputOrOutputId[inputOrOutput][selectedWeightHeading] || 0;
-            singleRow.push(new SimpleCellWrapper(index++, parseInt(convert64bit(selectedWeightValue))));
+            singleRow.push(new SimpleCellWrapper(index++, parseInt(selectedWeightValue)));
         });
         data.push(singleRow);
     });

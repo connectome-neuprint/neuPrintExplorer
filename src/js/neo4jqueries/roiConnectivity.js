@@ -5,19 +5,10 @@
 "use strict";
 
 import SimpleCellWrapper from '../helpers/SimpleCellWrapper';
-import neo4j from "neo4j-driver/lib/browser/neo4j-web";
 import ROIConnCell from '../components/ROIConnCell.react';
 import ClickableQuery from '../components/ClickableQuery.react';
 import React from 'react';
 import neuronsInROIs from './neuronsInROIs';
-
-
-function convert64bit(value) {
-    return neo4j.isInt(value) ?
-        (neo4j.integer.inSafeRange(value) ? 
-            value.toNumber() : value.toString()) 
-        : value;
-}
 
 // default color for max connection
 var WEIGHTCOLOR = "255,100,100,";
@@ -38,7 +29,7 @@ var processResults = function(results, state, uniqueId) {
 
     // grab inputs for a body id
     results.records.forEach(function (record) {
-        let bodyid = convert64bit(record.get("bodyid"));
+        let bodyid = record.get("bodyid");
         let rois = JSON.parse(record.get("roiInfo"));
 
         for (let roi in rois) {
@@ -63,7 +54,7 @@ var processResults = function(results, state, uniqueId) {
 
     // grab output and add table entry
     results.records.forEach(function (record) {
-        let bodyid = convert64bit(record.get("bodyid"));
+        let bodyid = record.get("bodyid");
         let rois = JSON.parse(record.get("roiInfo"));
 
         for (let currroi in rois) {
