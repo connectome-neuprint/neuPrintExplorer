@@ -36,13 +36,17 @@ class Neo4jQuery extends React.Component {
 
                 fetch('/api/custom/custom', {
                     headers: {
-                        'content-type': 'application/json'
+                        'content-type': 'application/json',
+                        Accept: 'application/json',
                     },
                     body: JSON.stringify({"cypher": queryStr}),
                     method: 'POST',
                 })
                 .then(result=>result.json())
                 .then(resp => {
+                    if ("error" in resp) {
+                        throw resp.error;
+                    }
                     // make new result object
                     let result = new NeuPrintResult(resp);
                     let data = processResults(result, state, uniqueId);
