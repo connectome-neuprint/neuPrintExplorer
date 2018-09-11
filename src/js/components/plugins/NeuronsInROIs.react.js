@@ -93,10 +93,10 @@ class NeuronsInROIs extends React.Component {
         // parse ROIs
         var roisstr = "";
         for (let item in this.state.qsParams.InputROIs) {
-            roisstr = roisstr + ":`" + this.state.qsParams.InputROIs[item] + "`";
+            roisstr = roisstr + ":`" + this.props.datasetstr + "-" + this.state.qsParams.InputROIs[item] + "`";
         }
         for (let item in this.state.qsParams.OutputROIs) {
-            roisstr = roisstr + ":`" + this.state.qsParams.OutputROIs[item] + "`";
+            roisstr = roisstr + ":`" + this.props.datasetstr + "-" + this.state.qsParams.OutputROIs[item] + "`";
         }
 
         var neoquery = mainQuery.replace(/ZZ/g, roisstr);
