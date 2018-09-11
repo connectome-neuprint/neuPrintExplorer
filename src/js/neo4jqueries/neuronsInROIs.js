@@ -251,10 +251,10 @@ export default function(inputROIs, outputROIs, neuronsrc, datasetstr, isChild) {
     // parse ROIs
     var roisstr = "";
     for (let item in inputROIs) {
-        roisstr = roisstr + ":`" + inputROIs[item] + "`";
+        roisstr = roisstr + ":`" + datasetstr + "-" + inputROIs[item] + "`";
     }
     for (let item in outputROIs) {
-        roisstr = roisstr + ":`" + outputROIs[item] + "`";
+        roisstr = roisstr + ":`" + datasetstr + "-" + outputROIs[item] + "`";
     }
 
     var neoquery = mainQuery.replace(/ZZ/g, roisstr);

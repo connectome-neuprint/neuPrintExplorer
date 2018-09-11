@@ -32,7 +32,7 @@ class QueryForm extends React.Component {
     }
 
     submitQuery = (query) => {
-        if (this.props.neoServer === "") {
+        if (this.props.userInfo === null || this.props.userInfo.AuthLevel === "noauth") {
             this.setState({openSnack: true});
             return;
         }
@@ -93,7 +93,7 @@ class QueryForm extends React.Component {
                     SnackbarContentProps={{
                         'aria-describedby': 'message-id',
                     }}
-                    message={<span id="message-id">Must initialize settings</span>}
+                    message={<span id="message-id">{this.props.userInfo === null ? "User must log in" : "User not authorized for this server (please contact admin)"}</span>}
                 /> 
                 <Typography variant="body1">{CurrentQuery.queryDescription}</Typography>
                 <Divider className={classes.divider} />
@@ -115,7 +115,7 @@ QueryForm.defaultProps = {
 
 QueryForm.propTypes = {
     queryType: PropTypes.string.isRequired, 
-    neoServer: PropTypes.string.isRequired, 
+    userInfo: PropTypes.object, 
     updateQuery: PropTypes.func.isRequired, 
     pluginList: PropTypes.array.isRequired,
     datasetstr: PropTypes.string.isRequired,
@@ -136,7 +136,7 @@ var QueryFormState = function(state){
         isQuerying: state.query.isQuerying,
         neoResults: state.query.neoResults,
         neoError: state.query.neoError,
-        neoServer: state.neo4jsettings.neoServer,
+        userInfo: state.user.userInfo,
         urlQueryString: state.app.urlQueryString,
         availableROIs: state.neo4jsettings.availableROIs,
     }   
