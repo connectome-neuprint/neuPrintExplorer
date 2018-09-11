@@ -31,7 +31,7 @@ class MetaInfo extends React.Component {
         fetch('/api/dbmeta/datasets')
             .then(result=>result.json())
             .then(items=> {
-                if (!("error" in items)) {
+                if (!("message" in items)) {
                     let datasets = [];
                     let rois = {}
                     let datasetInfo = {}
@@ -49,7 +49,7 @@ class MetaInfo extends React.Component {
         fetch('/api/dbmeta/database')
             .then(result=>result.json())
             .then(data=> {
-                if (!("error" in data)) {
+                if (!("message" in data)) {
                     this.props.setNeoServer(data.Location);
                 }
             });
