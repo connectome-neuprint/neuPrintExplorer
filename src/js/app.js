@@ -9,8 +9,8 @@ var ReactDOM = require('react-dom');
 import {Provider} from 'react-redux';
 import React from 'react';
 import Master from "./components/Master.react";
-import styles1 from '../css/grid.min.css';
-import styles2 from '../css/resize.min.css';
+import '../../node_modules/react-resizable/css/styles.css';
+import '../../node_modules/react-grid-layout/css/styles.css';
 import CssBaseline from 'material-ui/CssBaseline';
 
 // set theme colors
@@ -65,21 +65,6 @@ var fileref2 = document.createElement("link");
 fileref2.setAttribute("rel", "stylesheet");
 fileref2.setAttribute("href", filename2);
 document.getElementsByTagName("head")[0].appendChild(fileref2);
-
-// load css files
-//var css1 = "css/grid.min.css";
-var css1ref = document.createElement("link");
-css1ref.setAttribute("rel", "stylesheet");
-css1ref.setAttribute("type", "text/css");
-css1ref.setAttribute("href", styles1);
-document.getElementsByTagName("head")[0].appendChild(css1ref);
-
-//var css2 = "css/resize.min.css";
-var css2ref = document.createElement("link");
-css2ref.setAttribute("rel", "stylesheet");
-css2ref.setAttribute("type", "text/css");
-css2ref.setAttribute("href", styles2);
-document.getElementsByTagName("head")[0].appendChild(css2ref);
 
 // load js hacks (TODO: make proper npm module for the sharkviewer)
 var jssref = document.createElement("script");
