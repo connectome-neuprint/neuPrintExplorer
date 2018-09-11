@@ -5,6 +5,7 @@
 "use strict";
 import React from 'react';
 import AppBar from 'material-ui/AppBar';
+import Typography from 'material-ui/Typography';
 import Toolbar from 'material-ui/Toolbar';
 import { withStyles } from 'material-ui/styles';
 import MetaInfo from './MetaInfo.react';
@@ -35,6 +36,11 @@ const styles = theme => ({
     img: {
     width: 120
   },
+  textBox: {
+    backgroundColor: theme.palette.common.white,
+    padding: theme.spacing.unit,
+    color: "red",
+  },
 });
 
 class TopBar extends React.Component {
@@ -55,6 +61,9 @@ class TopBar extends React.Component {
                             />
                             </a>
                         </div>
+                        { (this.props.userInfo !== null && this.props.userInfo.AuthLevel === "noauth") ? 
+                            ( <Typography className={classes.textBox}>Not Authorized</Typography> ) : <div />
+                        }
                         <Login />
                         { (this.props.userInfo !== null && this.props.userInfo.AuthLevel !== "noauth") ? 
                         (<Button 
