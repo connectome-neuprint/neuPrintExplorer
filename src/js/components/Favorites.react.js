@@ -59,18 +59,20 @@ class Favorites extends React.Component {
     }
 
     fetchBookmarks = (props) => {
-        if (props.userInfo !== null) {
+        if (props.userInfo !== null && props.token != "") {
             // fetch favorites and add to state
-            var googleToken = props.userInfo["Zi"]["id_token"];
-            fetch('/favoritesdb', {
+            fetch(this.props.appDB + "/user/favorites", {
                 headers: {
-                'Authorization': googleToken,
-                'content-type': 'application/json'
+                'Authorization': 'Bearer ' + props.token,
                 },
+                method: 'GET',
             })
             .then(result=>result.json())
             .then(items=> {
-                var temparray = [];
+                let temparray = [];
+                if (!(items instanceof Array)) {
+                    items = [items];
+                }
                 for (var item in items) {
                     temparray.push({
                         name: items[item].name,
@@ -79,6 +81,9 @@ class Favorites extends React.Component {
                     });
                 }
                 this.setState({favoritesArr: temparray});
+            })
+            .catch(function (error) {
+                alert(error);
             });
         }
     }
@@ -90,7 +95,6 @@ class Favorites extends React.Component {
     handleChangeRowsPerPage = event => {
         this.setState({ rowsPerPage: event.target.value });
     };
-
 
     // TODO: add favorites deletion
     render() {
@@ -136,7 +140,9 @@ class Favorites extends React.Component {
 
 var FavoritesState = function(state) {
     return {
-        userInfo: state.user.userInfo
+        userInfo: state.user.userInfo,
+        token: state.user.token,
+        appDB: state.app.appDB,
     }
 };
 
@@ -146,6 +152,8 @@ Favorites.propTypes = {
         search: PropTypes.string.isRequired
     }),
     userInfo: PropTypes.object,
+    token: PropTypes.string,
+    appDB: PropTypes.string,
 };
 
 

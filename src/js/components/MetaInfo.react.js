@@ -53,7 +53,6 @@ class MetaInfo extends React.Component {
                     this.props.setNeoServer(data.Location);
                 }
             });
-
     }
     
     render () {

@@ -12,6 +12,7 @@ import Master from "./components/Master.react";
 import styles1 from '../css/grid.min.css';
 import styles2 from '../css/resize.min.css';
 import CssBaseline from 'material-ui/CssBaseline';
+import C from "./reducers/constants";
 
 // set theme colors
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
@@ -101,6 +102,10 @@ jssref.onload = function() {
 // load form plugins
 import loadPlugins from './helpers/initplugins';
 loadPlugins(store);
+
+// access global google datastore through the specified cloud function
+var appDB = document.getElementById("analyzer").getAttribute("appdb");
+store.dispatch({type: C.SET_APP_DB, appDB: appDB});
 
 /*
  * Load interface into a DIV anchored by analyzer.

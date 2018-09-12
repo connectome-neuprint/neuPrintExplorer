@@ -51,15 +51,14 @@ class ResultsTopBar extends React.Component {
     }
 
     addFavorite = () => {
-        if (this.props.userInfo !== null) {
-            var googleToken = this.props.userInfo["Zi"]["id_token"];
+        if (this.props.token !== "") {
             var loc = window.location.pathname + window.location.search;
             this.setState({open: false});
 
-            return fetch("/favoritesdb", {
+            return fetch(this.props.appDB + "/user/favorites", {
                 body: JSON.stringify({"name": this.state.bookmarkname, "url": loc, "cypher": this.props.queryStr}),
                 headers: {
-                    'Authorization': googleToken,
+                    'Authorization': 'Bearer ' + this.props.token,
                     'content-type': 'application/json'
                 },
                 method: 'POST',
@@ -170,7 +169,8 @@ class ResultsTopBar extends React.Component {
 
 var ResultsTopBarState = function(state) {
     return {
-        userInfo: state.user.userInfo,
+        token: state.user.token,
+        appDB: state.app.appDB,
     }
 }
 
@@ -199,11 +199,8 @@ ResultsTopBar.propTypes = {
     queryStr: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     index: PropTypes.number.isRequired,
-    userInfo: PropTypes.shape({
-        Zi: PropTypes.shape({
-            id_token: PropTypes.string
-        })
-    }),
+    token: PropTypes.string,
+    appDB: PropTypes.string,
 };
 
 export default withStyles(styles)(connect(ResultsTopBarState, ResultsTopBarDispatch)(ResultsTopBar));

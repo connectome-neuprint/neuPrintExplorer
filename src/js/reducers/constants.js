@@ -6,6 +6,7 @@
 
 const constants = {
     INIT_PLUGINS : 'INIT_PLUGINS',
+    SET_APP_DB : 'SET_APP_DB',
     SET_URL_QS: 'SET_URL_QS',
     SET_NEO_DATASETS: 'SET_NEO_DATASETS',
     SET_NEO_SERVER: 'SET_NEO_SERVER',
@@ -17,6 +18,7 @@ const constants = {
     APPEND_RESULTS: 'APPEND_RESULTS',
     CLEAR_RESULT: 'CLEAR_RESULT',
     LOGIN_USER: 'LOGIN_USER',
+    SET_USER_TOKEN: 'SET_USER_TOKEN',
     LOGOUT_USER: 'LOGOUT_USER',
 }
 export default constants

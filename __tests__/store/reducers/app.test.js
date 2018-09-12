@@ -5,6 +5,7 @@ const state = {
     pluginList: ["existingplugin"],
     reconIndex: 2,
     urlQueryString: "existingstring",
+    appDB: "existingDB"
 }
 
 describe("app Reducer", () => {
@@ -19,13 +20,15 @@ describe("app Reducer", () => {
             .toEqual({
                 pluginList: ["test"],
                 reconIndex: 7,
-                urlQueryString: window.location.search.substring(1)
+                urlQueryString: window.location.search.substring(1),
+                appDB: ""
             });
         expect(reducer(state, action))
             .toEqual({
                 pluginList: ["test"],
                 reconIndex: 7,
-                urlQueryString: "existingstring"
+                urlQueryString: "existingstring",
+                appDB: "existingDB"
             });
     })
 
@@ -38,13 +41,15 @@ describe("app Reducer", () => {
             .toEqual({
                 pluginList: [],
                 reconIndex: 9999999,
-                urlQueryString: "teststring"
+                urlQueryString: "teststring",
+                appDB: ""
             });
         expect(reducer(state, action))
             .toEqual({
                 pluginList: ["existingplugin"],
                 reconIndex: 2,
-                urlQueryString: "teststring"
+                urlQueryString: "teststring",
+                appDB: "existingDB"
             });
     })
 

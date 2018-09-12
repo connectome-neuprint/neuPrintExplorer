@@ -8,6 +8,7 @@ import C from "./constants"
 
 var userState = {
     userInfo: null,
+    token: "",
 }
 
 export default function userReducer(state = userState, action) {
@@ -16,7 +17,10 @@ export default function userReducer(state = userState, action) {
             return Object.assign({}, state, { userInfo: action.userInfo });
         }
         case C.LOGOUT_USER: {
-            return Object.assign({}, state, { userInfo: null });
+            return Object.assign({}, state, { userInfo: null, token: "" });
+        }
+        case C.SET_USER_TOKEN: {
+            return Object.assign({}, state, { token: action.token });
         }
         default: {
             return state;

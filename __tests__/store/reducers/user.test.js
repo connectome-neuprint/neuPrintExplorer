@@ -2,7 +2,8 @@ import C from "../../../src/js/reducers/constants"
 import reducer from "../../../src/js/reducers/user"
 
 const state = {
-    userInfo: "existinguserinfo"
+    userInfo: "existinguserinfo",
+    token: "existingxyz"
 }
 
 describe("user Reducer", () => {
@@ -14,11 +15,13 @@ describe("user Reducer", () => {
         };
         expect(reducer(undefined,action))
         .toEqual({
-            userInfo: "newuserinfo"
+            userInfo: "newuserinfo",
+            token: ""
         });
         expect(reducer(state,action))
         .toEqual({
-            userInfo: "newuserinfo"
+            userInfo: "newuserinfo",
+            token: "existingxyz"
         });
     })
 
@@ -28,11 +31,13 @@ describe("user Reducer", () => {
         };
         expect(reducer(undefined,action))
         .toEqual({
-            userInfo: null
+            userInfo: null,
+            token: ""
         });
         expect(reducer(state,action))
         .toEqual({
-            userInfo: null
+            userInfo: null,
+            token: ""
         });
     })
 

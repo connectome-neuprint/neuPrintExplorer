@@ -43,6 +43,7 @@ class Login extends React.Component {
         };
 
         this.fetchProfile();
+        this.fetchToken();
     }
 
     fetchProfile = () => {
@@ -54,7 +55,18 @@ class Login extends React.Component {
             });
     }
 
+    fetchToken = () => {
+        fetch('/token')
+            .then(result=>result.json())
+            .then(data=> {
+                if (!("message" in data)) {
+                    this.props.setUserToken(data.token);
+                }
+            });
+    }
+
     login = () => {
+        // TODO: redirect to current path
         window.open('/login?redirect=/', "_self");
     }
     
@@ -141,6 +153,12 @@ var LoginDispatch = function(dispatch) {
                 type: C.LOGOUT_USER,
             });
         },
+        setUserToken: function(token) {
+            dispatch({
+                type: C.SET_USER_TOKEN,
+                token: token,
+            });
+        }
     }
 }
 
@@ -148,6 +166,7 @@ Login.propTypes = {
     classes: PropTypes.object.isRequired,
     logoutUser: PropTypes.func.isRequired,
     loginUser: PropTypes.func.isRequired,
+    setUserToken: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(connect(null, LoginDispatch)(Login));
