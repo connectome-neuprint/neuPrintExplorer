@@ -15,7 +15,7 @@ import qs from 'qs';
 import { connect } from 'react-redux';
 import Divider from 'material-ui/Divider';
 import PropTypes from 'prop-types';
-import C from "../reducers/constants"
+import { setUrlQS } from '../actions/app';
 
 const drawerWidth = 400;
 
@@ -140,10 +140,7 @@ var SideBarState = function(state) {
 var SideBarDispatch = function(dispatch) {
     return {
         setURLQs: function(querystring) {
-            dispatch({
-                type: C.SET_URL_QS,
-                urlQueryString: querystring
-            });
+            dispatch(setUrlQS(querystring));
         }
     }
 }

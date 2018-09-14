@@ -14,6 +14,7 @@ import Divider from 'material-ui/Divider';
 import { withStyles } from 'material-ui/styles';
 import qs from 'qs';
 import C from "../reducers/constants"
+import { setUrlQS } from '../actions/app';
 
 const styles = theme => ({
     divider: {
@@ -151,10 +152,7 @@ var QueryFormDispatch = function(dispatch) {
             });
         },
         setURLQs: function(querystring) {
-            dispatch({
-                type: C.SET_URL_QS,
-                urlQueryString: querystring
-            });
+            dispatch(setUrlQS(querystring));
         }
     }
 }
