@@ -245,10 +245,10 @@ Query.propTypes = {
 
 var QueryState = function(state){
     return {
-        pluginList: state.app.pluginList,
-        reconIndex: state.app.reconIndex,
+        pluginList: state.app.get("pluginList"),
+        reconIndex: state.app.get("reconIndex"),
         availableDatasets: state.neo4jsettings.availableDatasets,
-        urlQueryString: state.app.urlQueryString,
+        urlQueryString: state.app.get("urlQueryString"),
     }   
 };
 

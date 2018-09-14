@@ -132,12 +132,12 @@ QueryForm.propTypes = {
 
 var QueryFormState = function(state){
     return {
-        pluginList: state.app.pluginList,
+        pluginList: state.app.get("pluginList"),
         isQuerying: state.query.isQuerying,
         neoResults: state.query.neoResults,
         neoError: state.query.neoError,
         userInfo: state.user.userInfo,
-        urlQueryString: state.app.urlQueryString,
+        urlQueryString: state.app.get("urlQueryString"),
         availableROIs: state.neo4jsettings.availableROIs,
     }   
 };

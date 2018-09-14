@@ -133,7 +133,7 @@ class SideBar extends React.Component {
 var SideBarState = function(state) {
     return {
         userInfo: state.user.userInfo,
-        urlQueryString: state.app.urlQueryString,
+        urlQueryString: state.app.get("urlQueryString"),
     }
 }
 

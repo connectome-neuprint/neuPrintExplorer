@@ -305,7 +305,7 @@ NeuronsInROIs.propTypes = {
 
 var NeuronsInROIsState = function(state){
     return {
-        urlQueryString: state.app.urlQueryString,
+        urlQueryString: state.app.get("urlQueryString"),
     }   
 };
 

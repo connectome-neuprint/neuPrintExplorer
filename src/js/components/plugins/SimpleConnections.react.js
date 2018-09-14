@@ -219,7 +219,7 @@ SimpleConnections.propTypes = {
 
 var SimpleConnectionsState = function(state){
     return {
-        urlQueryString: state.app.urlQueryString,
+        urlQueryString: state.app.get("urlQueryString"),
     }   
 };
 

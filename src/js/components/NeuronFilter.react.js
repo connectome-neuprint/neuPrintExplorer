@@ -219,7 +219,7 @@ NeuronFilter.propTypes = {
 
 var NeuronFilterState = function(state){
     return {
-        urlQueryString: state.app.urlQueryString,
+        urlQueryString: state.app.get("urlQueryString"),
         neoServer: state.neo4jsettings.neoServer,
     }   
 };

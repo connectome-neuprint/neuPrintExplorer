@@ -369,7 +369,7 @@ var ResultsState = function(state){
         clearIndices: state.results.clearIndices,
         numClear: state.results.numClear,
         userInfo: state.user.userInfo,
-        urlQueryString: state.app.urlQueryString,
+        urlQueryString: state.app.get("urlQueryString"),
         queryObj: state.query.neoQueryObj,
     }   
 };

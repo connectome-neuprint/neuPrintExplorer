@@ -164,7 +164,7 @@ CommonConnectivity.propTypes = {
 
 const CommonConnectivityState = function (state) {
     return {
-        urlQueryString: state.app.urlQueryString,
+        urlQueryString: state.app.get("urlQueryString"),
     }
 };
 

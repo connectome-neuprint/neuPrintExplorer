@@ -318,7 +318,7 @@ RankedTable.propTypes = {
 
 var RankedTableState = function(state){
     return {
-        urlQueryString: state.app.urlQueryString,
+        urlQueryString: state.app.get("urlQueryString"),
     }   
 };
 

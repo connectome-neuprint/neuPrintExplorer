@@ -55,7 +55,7 @@ class QueryDrawer extends React.Component {
 
 var QueryDrawerState = function(state) {
     return {
-        urlQueryString: state.app.urlQueryString,
+        urlQueryString: state.app.get("urlQueryString"),
     }
 }
 

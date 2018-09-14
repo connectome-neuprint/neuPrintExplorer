@@ -135,7 +135,7 @@ Distribution.propTypes = {
 
 var DistributionState = function(state){
     return {
-        urlQueryString: state.app.urlQueryString,
+        urlQueryString: state.app.get("urlQueryString"),
     }   
 };
 
