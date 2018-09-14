@@ -19,8 +19,7 @@ import {connect} from 'react-redux';
 import NeuronHelp from '../NeuronHelp.react';
 import RankCell from '../RankCell.react';
 import SimpleCellWrapper from '../../helpers/SimpleCellWrapper';
-import C from "../../reducers/constants"
-
+import { setUrlQS } from '../../actions/app';
 
 const mainQuery = 'MATCH (m:`YY-Neuron`)-[e:ConnectsTo]-(n) WHERE ZZ RETURN m.name AS Neuron1, n.name AS Neuron2, e.weight AS Weight, n.bodyId AS Body2, m.neuronType AS Neuron1Type, n.type AS Neuron2Type, id(m) AS m_id, id(n) AS n_id, id(startNode(e)) AS pre_id, m.bodyId AS Body1 ORDER BY m.bodyId, e.weight DESC';
 
@@ -325,10 +324,7 @@ var RankedTableState = function(state){
 var RankedTableDispatch = function(dispatch) {
     return {
         setURLQs: function(querystring) {
-            dispatch({
-                type: C.SET_URL_QS,
-                urlQueryString: querystring
-            });
+            dispatch(setUrlQS(querystring));
         }
     }
 }

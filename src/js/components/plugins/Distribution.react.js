@@ -14,7 +14,7 @@ import { withStyles } from 'material-ui/styles';
 import Select from 'material-ui/Select';
 import { MenuItem } from 'material-ui/Menu';
 import { FormControl } from 'material-ui/Form';
-import C from "../../reducers/constants"
+import { setUrlQS } from '../../actions/app';
 
 const styles = theme => ({
     formControl: {
@@ -142,10 +142,7 @@ var DistributionState = function(state){
 var DistributionDispatch = function(dispatch) {
     return {
         setURLQs: function(querystring) {
-            dispatch({
-                type: C.SET_URL_QS,
-                urlQueryString: querystring
-            });
+            dispatch(setUrlQS(querystring));
         }
     }
 }

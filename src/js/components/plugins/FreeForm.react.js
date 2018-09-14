@@ -13,7 +13,7 @@ import { withStyles } from 'material-ui/styles';
 import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 import {connect} from 'react-redux';
 import SimpleCellWrapper from '../../helpers/SimpleCellWrapper';
-import C from "../../reducers/constants"
+import { setUrlQS } from '../../actions/app';
 
 const styles = () => ({
   textField: {
@@ -146,10 +146,7 @@ var FreeFormState = function(state){
 var FreeFormDispatch = function(dispatch) {
     return {
         setURLQs: function(querystring) {
-            dispatch({
-                type: C.SET_URL_QS,
-                urlQueryString: querystring
-            });
+            dispatch(setUrlQS(querystring));
         }
     }
 }
