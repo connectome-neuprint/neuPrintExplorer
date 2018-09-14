@@ -20,7 +20,7 @@ import NeuronHelp from '../NeuronHelp.react';
 import NeuronFilter from '../NeuronFilter.react';
 import { parseResults } from '../../neo4jqueries/neuronsInROIs';
 //import _ from "underscore";
-import C from "../../reducers/constants"
+import { setUrlQS } from '../../actions/app';
 
 const mainQuery = 'MATCH (neuron :`YY-Neuron`ZZ) XX FF GG RETURN neuron.bodyId AS bodyid, neuron.name AS bodyname, neuron.synapseCountPerRoi AS roiInfo, neuron.size AS size, neuron.pre AS npre, neuron.post AS npost ORDER BY neuron.bodyId';
 
@@ -305,17 +305,14 @@ NeuronsInROIs.propTypes = {
 
 var NeuronsInROIsState = function(state){
     return {
-        urlQueryString: state.app.urlQueryString,
+        urlQueryString: state.app.get("urlQueryString"),
     }   
 };
 
 var NeuronsInROIsDispatch = function(dispatch) {
     return {
         setURLQs: function(querystring) {
-            dispatch({
-                type: C.SET_URL_QS,
-                urlQueryString: querystring
-            });
+            dispatch(setUrlQS(querystring));
         }
     }
 }

@@ -12,7 +12,7 @@ import Master from "./components/Master.react";
 import '../../node_modules/react-resizable/css/styles.css';
 import '../../node_modules/react-grid-layout/css/styles.css';
 import CssBaseline from 'material-ui/CssBaseline';
-import C from "./reducers/constants";
+import { setAppDb } from "./actions/app";
 
 // set theme colors
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
@@ -90,7 +90,7 @@ loadPlugins(store);
 
 // access global google datastore through the specified cloud function
 var appDB = document.getElementById("analyzer").getAttribute("appdb");
-store.dispatch({type: C.SET_APP_DB, appDB: appDB});
+store.dispatch(setAppDb(appDB));
 
 /*
  * Load interface into a DIV anchored by analyzer.

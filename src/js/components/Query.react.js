@@ -17,7 +17,7 @@ import Divider from 'material-ui/Divider';
 import { withStyles } from 'material-ui/styles';
 import { LoadQueryString, SaveQueryString, RemoveQueryString } from '../helpers/qsparser';
 import Chip from 'material-ui/Chip';
-import C from "../reducers/constants"
+import { setUrlQS } from "../actions/app";
 
 const styles = theme => ({
     root: {
@@ -245,20 +245,17 @@ Query.propTypes = {
 
 var QueryState = function(state){
     return {
-        pluginList: state.app.pluginList,
-        reconIndex: state.app.reconIndex,
+        pluginList: state.app.get("pluginList"),
+        reconIndex: state.app.get("reconIndex"),
         availableDatasets: state.neo4jsettings.availableDatasets,
-        urlQueryString: state.app.urlQueryString,
+        urlQueryString: state.app.get("urlQueryString"),
     }   
 };
 
 var QueryDispatch = function(dispatch) {
     return {
         setURLQs: function(querystring) {
-            dispatch({
-                type: C.SET_URL_QS,
-                urlQueryString: querystring
-            });
+            dispatch(setUrlQS(querystring));
         }
     }
 }

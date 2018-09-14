@@ -142,7 +142,7 @@ var FavoritesState = function(state) {
     return {
         userInfo: state.user.userInfo,
         token: state.user.token,
-        appDB: state.app.appDB,
+        appDB: state.app.get("appDB"),
     }
 };
 

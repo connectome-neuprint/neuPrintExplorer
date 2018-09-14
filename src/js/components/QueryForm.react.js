@@ -14,6 +14,7 @@ import Divider from 'material-ui/Divider';
 import { withStyles } from 'material-ui/styles';
 import qs from 'qs';
 import C from "../reducers/constants"
+import { setUrlQS } from '../actions/app';
 
 const styles = theme => ({
     divider: {
@@ -132,12 +133,12 @@ QueryForm.propTypes = {
 
 var QueryFormState = function(state){
     return {
-        pluginList: state.app.pluginList,
+        pluginList: state.app.get("pluginList"),
         isQuerying: state.query.isQuerying,
         neoResults: state.query.neoResults,
         neoError: state.query.neoError,
         userInfo: state.user.userInfo,
-        urlQueryString: state.app.urlQueryString,
+        urlQueryString: state.app.get("urlQueryString"),
         availableROIs: state.neo4jsettings.availableROIs,
     }   
 };
@@ -151,10 +152,7 @@ var QueryFormDispatch = function(dispatch) {
             });
         },
         setURLQs: function(querystring) {
-            dispatch({
-                type: C.SET_URL_QS,
-                urlQueryString: querystring
-            });
+            dispatch(setUrlQS(querystring));
         }
     }
 }
