@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
 import NeuronFilter from '../NeuronFilter.react';
 import queryCommonConnectivity from '../../neo4jqueries/commonConnectivity';
 import { withStyles } from 'material-ui/styles';
-import C from "../../reducers/constants"
+import { setUrlQS } from '../../actions/app';
 import { connect } from 'react-redux';
 import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 
@@ -164,17 +164,14 @@ CommonConnectivity.propTypes = {
 
 const CommonConnectivityState = function (state) {
     return {
-        urlQueryString: state.app.urlQueryString,
+        urlQueryString: state.app.get("urlQueryString"),
     }
 };
 
 const CommonConnectivityDispatch = function (dispatch) {
     return {
         setURLQs: function (querystring) {
-            dispatch({
-                type: C.SET_URL_QS,
-                urlQueryString: querystring
-            });
+            dispatch(setUrlQS(querystring));
         }
     }
 }

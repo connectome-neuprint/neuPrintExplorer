@@ -170,7 +170,7 @@ class ResultsTopBar extends React.Component {
 var ResultsTopBarState = function(state) {
     return {
         token: state.user.token,
-        appDB: state.app.appDB,
+        appDB: state.app.get("appDB"),
     }
 }
 

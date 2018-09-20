@@ -22,8 +22,9 @@ import Input, { InputLabel } from 'material-ui/Input';
 import Chip from 'material-ui/Chip';
 import { MenuItem } from 'material-ui/Menu';
 import Tooltip from 'material-ui/Tooltip';
-import C from "../reducers/constants"
+import { setUrlQS } from '../actions/app';
 import NeuPrintResult from '../helpers/NeuPrintResult';
+
 
 
 const mainQuery = 'MATCH (n :`ZZ-Neuron`) WHERE n.pre > 1 RETURN DISTINCT n.status AS val'
@@ -220,7 +221,7 @@ NeuronFilter.propTypes = {
 
 var NeuronFilterState = function(state){
     return {
-        urlQueryString: state.app.urlQueryString,
+        urlQueryString: state.app.get("urlQueryString"),
         neoServer: state.neo4jsettings.neoServer,
     }   
 };
@@ -228,10 +229,7 @@ var NeuronFilterState = function(state){
 var NeuronFilterDispatch = function(dispatch) {
     return {
         setURLQs: function(querystring) {
-            dispatch({
-                type: C.SET_URL_QS,
-                urlQueryString: querystring
-            });
+            dispatch(setUrlQS(querystring));
         }
     }
 }
