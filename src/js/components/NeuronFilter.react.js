@@ -93,6 +93,7 @@ class NeuronFilter extends React.Component {
             },
             body: JSON.stringify({"cypher": neoQuery}),
             method: 'POST',
+            credentials: 'include'
         })
         .then(result=>result.json())
         .then(resp => {

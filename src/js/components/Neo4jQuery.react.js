@@ -40,6 +40,7 @@ class Neo4jQuery extends React.Component {
                     },
                     body: JSON.stringify({"cypher": queryStr}),
                     method: 'POST',
+                    credentials: 'include'
                 })
                 .then(result=>result.json())
                 .then(resp => {

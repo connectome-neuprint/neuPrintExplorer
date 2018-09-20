@@ -47,7 +47,9 @@ class Login extends React.Component {
     }
 
     fetchProfile = () => {
-        fetch('/profile')
+        fetch('/profile', {
+            credentials: 'include'
+        })
             .then(result=>result.json())
             .then(userInfo => {
                 this.props.loginUser(userInfo);
@@ -56,7 +58,9 @@ class Login extends React.Component {
     }
 
     fetchToken = () => {
-        fetch('/token')
+        fetch('/token',  {
+            credentials: 'include'
+        })
             .then(result=>result.json())
             .then(data=> {
                 if (!("message" in data)) {
@@ -75,6 +79,7 @@ class Login extends React.Component {
         this.props.logoutUser();
         fetch('/logout', {
             method: 'POST',
+            credentials: 'include'
         })
         ;
     }

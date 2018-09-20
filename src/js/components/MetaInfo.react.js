@@ -28,7 +28,9 @@ class MetaInfo extends React.Component {
     }
 
     updateDB = () => {
-        fetch('/api/dbmeta/datasets')
+        fetch('/api/dbmeta/datasets', {
+            credentials: 'include'
+        })
             .then(result=>result.json())
             .then(items=> {
                 if (!("message" in items)) {
@@ -46,7 +48,9 @@ class MetaInfo extends React.Component {
                     this.props.setNeoDatasets(datasets, rois, datasetInfo);
                 }
             });
-        fetch('/api/dbmeta/database')
+        fetch('/api/dbmeta/database', {
+            credentials: 'include'
+        })            
             .then(result=>result.json())
             .then(data=> {
                 if (!("message" in data)) {
