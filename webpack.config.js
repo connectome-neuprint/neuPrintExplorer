@@ -32,6 +32,11 @@ module.exports = {
         path: path.resolve(__dirname, 'build'),
         filename: 'js/[name].[contenthash].bundle.js'
     },
+    mode: 'development',
+    devtool: 'inline-source-map',
+    devServer: {
+        contentBase: './build',
+    },
     module: {
         rules: [
             {
