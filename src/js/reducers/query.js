@@ -11,6 +11,7 @@ var queryState = {
         queryStr: "",
         callback: function () { },
         state: null,
+        params: undefined,
     },
     isQuerying: false,
     neoResults: null,

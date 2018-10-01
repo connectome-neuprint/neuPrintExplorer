@@ -162,14 +162,11 @@ var processResults = function(results, state, uniqueId) {
     return tables;
 }
 
-// TODO: update query
-const mainQuery = 'MATCH (neuron :`ZZ-Neuron`) WHERE (neuron.pre > 1) RETURN neuron.bodyId AS bodyid, neuron.synapseCountPerRoi AS roiInfo';
-
 // creates query object and sends to callback
 export default function(datasetstr, rois) {
-    let neoquery = mainQuery.replace(/ZZ/g, datasetstr);
     let query = {
-        queryStr: neoquery,
+        queryStr: "/npexplorer/roiconnectivity",
+        params: { dataset: datasetstr },
         callback: processResults, 
         state: {
             datasetstr: datasetstr,

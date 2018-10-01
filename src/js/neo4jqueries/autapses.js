@@ -40,13 +40,11 @@ var processResults = function(results) {
     return tables;
 }
 
-const mainQuery = 'MATCH (n:`ZZ-Neuron`)-[x:ConnectsTo]->(n)  WHERE n.pre > 1 RETURN n.bodyId AS id, x.weight AS weight, n.name AS name ORDER BY x.weight DESC'
-
 // creates query object and sends to callback
 export default function(datasetstr) {
-    let neoquery = mainQuery.replace(/ZZ/g, datasetstr);
     let query = {
-        queryStr: neoquery,
+        queryStr: "/npexplorer/autapses",
+        params: { dataset: datasetstr },
         callback: processResults, 
         state: {
             datasetstr: datasetstr,

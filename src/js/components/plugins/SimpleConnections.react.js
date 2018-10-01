@@ -17,8 +17,6 @@ import NeuronHelp from '../NeuronHelp.react';
 import SimpleCellWrapper from '../../helpers/SimpleCellWrapper';
 import { setUrlQS } from '../../actions/app';
 
-const mainQuery = 'match (m:`YY-Neuron`)XX(n :`YY-Neuron`) where ZZ return m.name as Neuron1, n.name as Neuron2, n.bodyId as Neuron2Id, e.weight as Weight, m.bodyId as Neuron1Id order by m.name, m.bodyId, e.weight desc';
-
 const styles = () => ({
     textField: {
     },
@@ -118,28 +116,26 @@ class SimpleConnections extends React.Component {
  
     processRequest = () => {
         if (this.state.qsParams.neuronpre !== "") {
-            var neoquery = ""; 
+            let params = { dataset: this.props.datasetstr };
             if (isNaN(this.state.qsParams.neuronpre)) {
-                neoquery = mainQuery.replace("ZZ", 'm.name =~"' + this.state.qsParams.neuronpre + '"');
+                params["neuron_name"] = this.state.qsParams.neuronpre;
             } else {
-                neoquery = mainQuery.replace("ZZ", 'm.bodyId =' + this.state.qsParams.neuronpre);
+                params["neuron_id"] = parseInt(this.state.qsParams.neuronpre);
             }
-            
-            neoquery = neoquery.replace(/YY/g, this.props.datasetstr)
             if (this.state.qsParams.preorpost === "pre") {
-                neoquery = neoquery.replace("XX", '-[e:ConnectsTo]->');
+                params["find_inputs"] = false;
             } else {
-                neoquery = neoquery.replace("XX", '<-[e:ConnectsTo]-');
+                params["find_inputs"] = true;
             }
-            
             let query = {
-                queryStr: neoquery,
+                queryStr: "/npexplorer/simpleconnections",
+                params: params,
                 callback: SimpleConnections.parseResults,    
                 state: {
                     preOrPost: this.state.qsParams.preorpost,
                 },
             }
-            
+           
             this.props.callback(query);
         }
     }

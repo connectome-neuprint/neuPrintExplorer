@@ -16,8 +16,6 @@ import NeuronHelp from '../NeuronHelp.react';
 import SimpleCellWrapper from '../../helpers/SimpleCellWrapper';
 import { setUrlQS } from '../../actions/app';
 
-const mainQuery = 'MATCH (neuron :`YY-Neuron`) WHERE ZZ RETURN neuron.bodyId AS bodyid, neuron.name AS bodyname, neuron.synapseCountPerRoi AS roiInfo ORDER BY neuron.bodyId';
-
 const styles = () => ({
   textField: {
   },
@@ -134,16 +132,15 @@ class ROIsIntersectingNeurons extends React.Component {
 
     processRequest = () => {
         if (this.state.qsParams.neuronsrc !== "") {
-            var neoquery = "";
-            
+            let params = { dataset: this.props.datasetstr };
             if (isNaN(this.state.qsParams.neuronsrc)) {
-                neoquery = mainQuery.replace("ZZ", 'neuron.name =~"' + this.state.qsParams.neuronsrc + '"');
+                params["neuron_name"] = this.state.qsParams.neuronsrc;
             } else {
-                neoquery = mainQuery.replace("ZZ", 'neuron.bodyId =' + this.state.qsParams.neuronsrc);
+                params["neuron_id"] = parseInt(this.state.qsParams.neuronsrc);
             }
-            neoquery = neoquery.replace(/YY/g, this.props.datasetstr)
             let query = {
-                queryStr: neoquery,
+                queryStr: "/npexplorer/roisinneuron",
+                params: params,
                 callback: ROIsIntersectingNeurons.parseResults,    
                 state: {
                     availableROIs: this.props.availableROIs

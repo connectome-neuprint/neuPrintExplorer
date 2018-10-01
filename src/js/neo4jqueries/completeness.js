@@ -52,42 +52,24 @@ var processResults = function(results, state) {
     return tables;
 }
 
-const mainQuery = "MATCH (n:`ZZ-Neuron`) FF WITH apoc.convert.fromJsonMap(n.synapseCountPerRoi) AS roiInfo WITH roiInfo AS roiInfo, keys(roiInfo) AS roiList UNWIND roiList AS roiName WITH roiName AS roiName, sum(roiInfo[roiName].pre) AS pre, sum(roiInfo[roiName].post) AS post MATCH (meta:Meta:ZZ) WITH apoc.convert.fromJsonMap(meta.synapseCountPerRoi) AS globInfo, roiName AS roiName, pre AS pre, post AS post RETURN roiName AS unlabelres, pre AS roipre, post AS roipost, globInfo[roiName].pre AS totalpre, globInfo[roiName].post AS totalpost ORDER BY roiName"
-
-
 // creates query object and sends to callback
 export default function(datasetstr, rois, limitBig, statusFilters) {
-    let neoquery = mainQuery.replace(/ZZ/g, datasetstr);
-
-    let FF = ""
-    if (limitBig === "true") {
-        FF = "WHERE ((n.pre > 1))"
-    
+    let params = { dataset: datasetstr, statuses: statusFilters };
+    if (limitBig == "true") {
+        params["pre_threshold"] = 2; 
     }
-    if (statusFilters.length > 0) {
-        if (FF === "") {
-            FF = "WHERE (" 
-            
-        } else {
-            FF = FF + " AND (";
-        }
-        for (let i = 0; i < statusFilters.length; i++) {
-            if (i > 0) {
-                FF = FF + " or ";
-            }
-            FF = FF + 'n.status = "' + statusFilters[i] + '"';
-        }
-        FF = FF + ")";
-    }
-    neoquery = neoquery.replace("FF", FF);
 
     let query = {
-        queryStr: neoquery,
+        queryStr: "/npexplorer/completeness",
+        params: params,
         callback: processResults, 
         state: {
             datasetstr: datasetstr,
             rois: rois,
         },
     }
+ 
+
+
     return query;
 }

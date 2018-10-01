@@ -53,13 +53,11 @@ var processResults = function(results, state) {
         sortIndices: new Set([0]),
     }
 
-    const basepropQ = propQuery.replace(/ZZ/g, state.datasetstr);
-
     results.records.forEach(function (record) {
         let pname = record.get("pname");
-        let propQ = basepropQ.replace(/YY/g, pname);
         let neoProp = {
-            queryStr: propQ,
+            queryStr: "/npexplorer/neuronmetavals",
+            params: { dataset: state.datasetstr, "key_name": pname },
             callback: processProp,
             isChild: true,
             state: {property: pname},
@@ -76,14 +74,11 @@ var processResults = function(results, state) {
     return tables;
 }
 
-const mainQuery = 'MATCH (n :`ZZ-Neuron`) WHERE n.pre > 1 UNWIND KEYS(n) AS x RETURN DISTINCT x AS pname'
-const propQuery = 'MATCH (n :`ZZ-Neuron`) WHERE n.pre > 1 RETURN DISTINCT n.YY AS val'
-
 // creates query object and sends to callback
 export default function(datasetstr) {
-    let neoquery = mainQuery.replace(/ZZ/g, datasetstr);
     let query = {
-        queryStr: neoquery,
+        queryStr: "/npexplorer/neuronmeta",
+        params: { dataset: datasetstr },
         callback: processResults, 
         state: {
             datasetstr: datasetstr,

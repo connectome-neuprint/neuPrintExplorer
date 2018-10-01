@@ -62,25 +62,13 @@ var processResults = function(results, state) {
     return tables;
 }
 
-const mainQuery = 'MATCH (n:`ZZ-Neuron`YY) XX WITH n.bodyId as bodyId, apoc.convert.fromJsonMap(n.synapseCountPerRoi)[GG].FF AS FFsize WHERE FFsize > 0 WITH collect({id: bodyId, FF: FFsize}) as bodyinfoarr, sum(FFsize) AS tot UNWIND bodyinfoarr AS bodyinfo RETURN bodyinfo.id AS id, bodyinfo.FF AS size, tot AS total ORDER BY bodyinfo.FF DESC'
-
 // creates query object and sends to callback
 export default function(datasetstr, roi, typename) {
-    let neoquery = mainQuery.replace(/ZZ/g, datasetstr);
-    neoquery = neoquery.replace(/YY/g, (":`" + datasetstr + "-" + roi + "`"));
-
-    let XX = "WHERE n.pre > 0";
-    let FF = "pre";
-    if (typename === "postsyn") {
-        XX = "WHERE n.post > 0";
-        FF = "post";
-    }
-    neoquery = neoquery.replace(/XX/g, XX);
-    neoquery = neoquery.replace(/FF/g, FF);
-    neoquery = neoquery.replace(/GG/g, '"' + roi + '"');
+    let params = { dataset: datasetstr, ROI: roi, "is_pre": typename !== "postsyn" };
 
     let query = {
-        queryStr: neoquery,
+        queryStr: "/npexplorer/distribution",
+        params: params,
         callback: processResults, 
         state: {
             datasetstr: datasetstr,
@@ -88,5 +76,6 @@ export default function(datasetstr, roi, typename) {
             roi: roi,
         },
     }
+    
     return query;
 }

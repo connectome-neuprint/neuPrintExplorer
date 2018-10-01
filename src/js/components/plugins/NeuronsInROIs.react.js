@@ -22,8 +22,6 @@ import { parseResults } from '../../neo4jqueries/neuronsInROIs';
 //import _ from "underscore";
 import { setUrlQS } from '../../actions/app';
 
-const mainQuery = 'MATCH (neuron :`YY-Neuron`ZZ) XX FF GG RETURN neuron.bodyId AS bodyid, neuron.name AS bodyname, neuron.synapseCountPerRoi AS roiInfo, neuron.size AS size, neuron.pre AS npre, neuron.post AS npost ORDER BY neuron.bodyId';
-
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -78,79 +76,36 @@ class NeuronsInROIs extends React.Component {
         };
     }
     
-    /*
-    componentDidUpdate(prevProps) {
-        if (!_.isEqual(prevProps.availableROIs, this.props.availableROIs)) {
-            var oldparams = this.state.qsParams;
-            oldparams.InputROIs = [];
-            oldparams.OutputROIs = [];
-            this.setState({qsParams: oldparams});
-            this.props.setURLQs(SaveQueryString("Query:" + this.constructor.queryName, oldparams));
-        }
-    }*/
-
     processRequest = () => {
-        // parse ROIs
-        var roisstr = "";
-        for (let item in this.state.qsParams.InputROIs) {
-            roisstr = roisstr + ":`" + this.props.datasetstr + "-" + this.state.qsParams.InputROIs[item] + "`";
-        }
-        for (let item in this.state.qsParams.OutputROIs) {
-            roisstr = roisstr + ":`" + this.props.datasetstr + "-" + this.state.qsParams.OutputROIs[item] + "`";
-        }
-
-        var neoquery = mainQuery.replace(/ZZ/g, roisstr);
-        neoquery = neoquery.replace(/YY/g, this.props.datasetstr);
-
-        // filter neuron information
-        if (this.state.qsParams.neuronsrc === "") {
-            neoquery = neoquery.replace("XX", "");
-
-        } else if (isNaN(this.state.qsParams.neuronsrc)) {
-            neoquery = neoquery.replace("XX", 'WHERE neuron.name =~"' + this.state.qsParams.neuronsrc + '"');
-        } else {
-            neoquery = neoquery.replace("XX", 'WHERE neuron.bodyId =' + this.state.qsParams.neuronsrc);
-        }
-        
-        if (this.state.statusFilters.length > 0) {
-            let FF = "AND (";
-            if (this.state.qsParams.neuronsrc === "") {
-                FF = "WHERE (";
+        let params = { 
+                        dataset: this.props.datasetstr, 
+                        input_ROIs: this.state.qsParams.InputROIs,
+                        output_ROIs: this.state.qsParams.OutputROI,
+                        statuses: this.state.statusFilters,
+        };
+        if (this.state.qsParams.neuronsrc !== "") {
+            if (isNaN(this.state.qsParams.neuronsrc)) {
+                params["neuron_name"] = this.state.qsParams.neuronsrc;
+            } else {
+                params["neuron_id"] = parseInt(this.state.qsParams.neuronsrc);
             }
-
-            for (let i = 0; i < this.state.statusFilters.length; i++) {
-                if (i > 0) {
-                    FF = FF + " OR ";
-                }
-                FF = FF + 'neuron.status = "' + this.state.statusFilters[i] + '"';
-            }
-            FF = FF + ")";
-
-            neoquery = neoquery.replace("FF", FF);
-        } else {
-            neoquery = neoquery.replace("FF", "");
         }
-
         if (this.state.limitBig === "true") {
-            let GG = "WHERE ((neuron.pre > 1))"
-            if ((this.state.qsParams.neuronsrc !== "") || (this.state.statusFilters.length > 0)) {
-                GG = "AND ((neuron.pre > 1))"
-            } 
-            neoquery = neoquery.replace("GG", GG);
-        } else {
-            neoquery = neoquery.replace("GG", "");
-        }
+            params["pre_threshold"] = 2; 
+        }   
 
         let query = {
-            queryStr: neoquery,
+            queryStr: "/npexplorer/findneurons",
+            params: params,
             callback: parseResults,    
             state: {
                 neuronSrc: this.state.qsParams.neuronsrc,
                 outputROIs: this.state.qsParams.OutputROIs,
                 inputROIs: this.state.qsParams.InputROIs,
-                datasetstr: this.props.datasetstr,
+                datasetstr: this.props.datasetstr, 
             },
         }
+ 
         this.props.callback(query);
     }
 

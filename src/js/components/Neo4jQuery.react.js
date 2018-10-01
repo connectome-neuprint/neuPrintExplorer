@@ -32,13 +32,21 @@ class Neo4jQuery extends React.Component {
                     saveData = this.props.appendData;
                 }
                 let queryStr = nextProps.neoQueryObj.queryStr;
+                let endpoint = "/api";
+                let params = nextProps.neoQueryObj.params;
+                if (params !== undefined) {
+                    endpoint += queryStr;
+                } else {
+                    endpoint += "/custom/custom";
+                    params = {"cypher": queryStr};
+                }
 
-                fetch('/api/custom/custom', {
+                fetch(endpoint, {
                     headers: {
                         'content-type': 'application/json',
                         Accept: 'application/json',
                     },
-                    body: JSON.stringify({"cypher": queryStr}),
+                    body: JSON.stringify(params),
                     method: 'POST',
                     credentials: 'include'
                 })
@@ -113,7 +121,8 @@ Neo4jQuery.propTypes = {
         queryStr: PropTypes.string.isRequired,
         callback: PropTypes.func.isRequired,
         state: PropTypes.object.isRequred,
-        isChild: PropTypes.bool
+        isChild: PropTypes.bool,
+        params: PropTypes.object,
     }),
     neoServer: PropTypes.string.isRequired,
     appendData: PropTypes.func.isRequired, 

@@ -66,44 +66,28 @@ var processResults = function (results, state) {
     return tables;
 }
 
-const mainQueryOutput = 'WITH [XX] AS inputs MATCH (k:`ZZ-Neuron`)-[r:ConnectsTo]->(c) WHERE (k.YY IN inputs FF) WITH k, c, r, toString(k.YY)+"_weight" AS dynamicWeight RETURN collect(apoc.map.fromValues(["output", c.bodyId, "name", c.name, dynamicWeight, r.weight])) AS map';
-const mainQueryInput = 'WITH [XX] AS inputs MATCH (k:`ZZ-Neuron`)<-[r:ConnectsTo]-(c) WHERE (k.YY IN inputs FF) WITH k, c, r, toString(k.YY)+"_weight" AS dynamicWeight RETURN collect(apoc.map.fromValues(["input", c.bodyId, "name", c.name, dynamicWeight, r.weight])) AS map';
-
 // TODO: find outputs or inputs based on user preference
 export default function (datasetstr, bodyIds, names, limitBig, statusFilters, typeValue) {
-    const mainQuery = typeValue == "output" ? mainQueryOutput : mainQueryInput;
-    let neoQuery = mainQuery.replace(/ZZ/g, datasetstr.replace(":", ""));
-
-    if (bodyIds.length > 0) {
-        neoQuery = neoQuery.replace(/YY/g, "bodyId");
-        neoQuery = neoQuery.replace(/XX/g, bodyIds);
-    } else {
-        neoQuery = neoQuery.replace(/YY/g, "name");
-        neoQuery = neoQuery.replace(/XX/g, names.split(",").map(n => "\"" + n + "\""));
+    let idlist = (bodyIds === "") ? []: bodyIds.split(",");
+    for (let index in idlist) {
+        idlist[index] = parseInt(idlist[index])
     }
-
-    let FF = "";
+    
+    let params = { 
+                    dataset: datasetstr,
+                    statuses: statusFilters,
+                    "neuron_names": (names === "") ? []: names.split(","), 
+                    "neuron_ids": idlist, 
+                    find_inputs: typeValue !== "output" 
+    };
     if (limitBig === "true") {
-        FF = "AND ((c.pre > 1) OR (c.post >= 10))";
+        params["pre_threshold"] = 2; 
     }
-    if (statusFilters.length > 0) {
-        if (FF === "") {
-            FF = "AND (";
-        } else {
-            FF = FF + " AND (";
-        }
-        for (let i = 0; i < statusFilters.length; i++) {
-            if (i > 0) {
-                FF = FF + " OR ";
-            }
-            FF = FF + 'c.status = "' + statusFilters[i] + '"';
-        }
-        FF = FF + ")";
-    }
-    neoQuery = neoQuery.replace("FF", FF);
 
+    alert(JSON.stringify(params));
     let query = {
-        queryStr: neoQuery,
+        queryStr: "/npexplorer/commonconnectivity",
+        params: params,
         callback: processResults,
         state: {
             datasetstr: datasetstr,

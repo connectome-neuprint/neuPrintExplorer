@@ -25,10 +25,6 @@ import Tooltip from 'material-ui/Tooltip';
 import { setUrlQS } from '../actions/app';
 import NeuPrintResult from '../helpers/NeuPrintResult';
 
-
-
-const mainQuery = 'MATCH (n :`ZZ-Neuron`) WHERE n.pre > 1 RETURN DISTINCT n.status AS val'
-
 const styles = theme => ({
     formControl: {
         margin: theme.spacing.unit,
@@ -87,12 +83,11 @@ class NeuronFilter extends React.Component {
         }
         
         const setState = this.setState.bind(this)
-        let neoQuery = mainQuery.replace(/ZZ/g, datasetstr);
-        fetch('/api/custom/custom', {
+        fetch('/api/npexplorer/neuronmetavals', {
             headers: {
                 'content-type': 'application/json'
             },
-            body: JSON.stringify({"cypher": neoQuery}),
+            body: JSON.stringify({"dataset": datasetstr, "key_name": "status" }),
             method: 'POST',
             credentials: 'include'
         })

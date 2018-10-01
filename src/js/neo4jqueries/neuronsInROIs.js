@@ -8,11 +8,6 @@ import ClickableQuery from '../components/ClickableQuery.react';
 import SimpleCellWrapper from '../helpers/SimpleCellWrapper';
 import React from 'react';
 
-const mainQuery = 'MATCH (neuron :`YY-Neuron`ZZ) XX WITH neuron AS neuron, apoc.convert.fromJsonMap(neuron.synapseCountPerRoi) AS roiInfo RETURN neuron.bodyId AS bodyid, neuron.name AS bodyname, neuron.synapseCountPerRoi AS roiInfo, neuron.size AS size, neuron.pre AS npre, neuron.post AS npost ORDER BY neuron.bodyId';
-
-const preQuery = 'MATCH (m:`YY-Neuron`)-[e:ConnectsTo]->(n) WHERE m.bodyId=ZZ RETURN n.name AS Neuron, n.bodyId AS NeuronId, e.weight AS Weight ORDER BY e.weight DESC';
-const postQuery = 'MATCH (m:`YY-Neuron`)<-[e:ConnectsTo]-(n) WHERE m.bodyId=ZZ RETURN n.name AS Neuron, n.bodyId AS NeuronId, e.weight AS Weight ORDER BY e.weight DESC';
-
 const skeletonQuery = "MATCH (:`YY-Neuron` {bodyId:ZZ})-[:Contains]->(:Skeleton)-[:Contains]->(root :SkelNode) WHERE NOT (root)<-[:LinksTo]-() RETURN root.rowNumber AS rowId, root.location.x AS x, root.location.y AS y, root.location.z AS z, root.radius AS radius, -1 AS link ORDER BY root.rowNumber UNION match (:`YY-Neuron` {bodyId:ZZ})-[:Contains]->(:Skeleton)-[:Contains]->(s :SkelNode)<-[:LinksTo]-(ss :SkelNode) RETURN s.rowNumber AS rowId, s.location.x AS x, s.location.y AS y, s.location.z AS z, s.radius AS radius, ss.rowNumber AS link ORDER BY s.rowNumber"
 
 function compareNeuronRows(row1, row2) {
@@ -75,8 +70,8 @@ var processConnections = function(results, state) {
         sortIndices: sortIndices,
     }
     results.records.forEach(function (record) {
-        let bodyid = parseInt(record.get("NeuronId"));
-        let bodyname = record.get("Neuron");
+        let bodyid = parseInt(record.get("Neuron2Id"));
+        let bodyname = record.get("Neuron2");
         let weight = parseInt(record.get("Weight"));
         data.push([
             new SimpleCellWrapper(index++, bodyid),
@@ -145,9 +140,6 @@ export var parseResults = function(neoResults, state) {
 
     // load table body
     var formatinfo = [];
-    
-    const basepreQ = preQuery.replace(/YY/g, state.datasetstr)
-    const basepostQ = postQuery.replace(/YY/g, state.datasetstr)
     const skeletonQ = skeletonQuery.replace(/YY/g, state.datasetstr)
 
     for (let bodyid in neuronnames) {
@@ -157,8 +149,8 @@ export var parseResults = function(neoResults, state) {
         if (Object.keys(outputneuronROIs[bodyid]).length !== state.outputROIs.length) {
             continue;
         }
-        let preq = basepreQ.replace("ZZ", bodyid);
-        let postq = basepostQ.replace("ZZ", bodyid);
+        let preq = { dataset: state.datasetstr, "neuron_id": parseInt(bodyid), "find_inputs": false };
+        let postq = { dataset: state.datasetstr, "neuron_id": parseInt(bodyid), "find_inputs": true };
         let skelq = skeletonQ.replace(/ZZ/g, bodyid);
         let statepre = {
             sourceId: bodyid,
@@ -171,13 +163,15 @@ export var parseResults = function(neoResults, state) {
             isPre: false,
         };
         let neoPre = {
-            queryStr: preq,
+            queryStr: "/npexplorer/simpleconnections",
+            params: preq,
             callback: processConnections,
             isChild: true,
             state: statepre,
         };
         let neoPost = {
-            queryStr: postq,
+            queryStr: "/npexplorer/simpleconnections",
+            params: postq,
             callback: processConnections,
             isChild: true,
             state: statepost,
@@ -248,31 +242,19 @@ export var parseResults = function(neoResults, state) {
 }
 
 export default function(inputROIs, outputROIs, neuronsrc, datasetstr, isChild) { 
-    // parse ROIs
-    var roisstr = "";
-    for (let item in inputROIs) {
-        roisstr = roisstr + ":`" + datasetstr + "-" + inputROIs[item] + "`";
-    }
-    for (let item in outputROIs) {
-        roisstr = roisstr + ":`" + datasetstr + "-" + outputROIs[item] + "`";
-    }
-
-    var neoquery = mainQuery.replace(/ZZ/g, roisstr);
-    neoquery = neoquery.replace(/YY/g, datasetstr);
-
-    // filter neuron information
-    if (neuronsrc === "") {
-        neoquery = neoquery.replace("XX", "");
-
-    } else if (isNaN(neuronsrc)) {
-        neoquery = neoquery.replace("XX", 'where neuron.name =~"' + neuronsrc + '"');
-    } else {
-        neoquery = neoquery.replace("XX", 'where neuron.bodyId =' + neuronsrc);
+    let params = { dataset: datasetstr, input_ROIs: inputROIs, output_ROIs: outputROIs };
+    if (neuronsrc !== "") {
+        if (isNaN(neuronsrc)) {
+            params["neuron_name"] = neuronsrc;
+        } else {
+            params["neuron_id"] = parseInt(neuronsrc);
+        }
     }
 
     let query = {
-        queryStr: neoquery,
-        callback: parseResults,    
+        queryStr: "/npexplorer/findneurons",
+        params: params,
+        callback: parseResults,
         isChild: isChild,
         state: {
             neuronSrc: neuronsrc,
@@ -281,7 +263,10 @@ export default function(inputROIs, outputROIs, neuronsrc, datasetstr, isChild) {
             datasetstr: datasetstr, 
         },
     }
-    
+ 
+
+
+
     return query;
 }
 
