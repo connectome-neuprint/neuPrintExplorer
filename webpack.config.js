@@ -33,6 +33,7 @@ module.exports = {
         filename: 'js/[name].[contenthash].bundle.js'
     },
     mode: 'development',
+    watch: true,
     devtool: 'inline-source-map',
     devServer: {
         contentBase: './build',

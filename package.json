@@ -61,7 +61,8 @@
     "pretest": "eslint \"src/**\"",
     "test": "jest",
     "test-watch": "jest --watch",
-    "dev": "webpack-dev-server --open",
+    "dev-server": "webpack-dev-server --open",
+    "dev": "webpack",
     "build": "webpack --config webpack.prod.js"
   }
 }
