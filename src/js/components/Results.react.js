@@ -82,7 +82,7 @@ class Results extends React.Component {
     shouldComponentUpdate(nextProps, nextState) {
         nextProps.location["search"] = this.props.location["search"];
         let numSkels = 0;
-        if (this.props.allTables !== null) { 
+        if (this.props.allTables !== null) {
             this.props.allTables.map( (result, index) => {
                 if (!this.props.clearIndices.has(index) && (("isSkeleton" in result[0]) && (result[0].isSkeleton))) {
                     numSkels += 1;
@@ -90,7 +90,7 @@ class Results extends React.Component {
             });
         }
         let numSkels2 = 0;
-        if (nextProps.allTables !== null) { 
+        if (nextProps.allTables !== null) {
             nextProps.allTables.map( (result, index) => {
                 if (!nextProps.clearIndices.has(index) && (("isSkeleton" in result[0]) && (result[0].isSkeleton))) {
                     numSkels2 += 1;
@@ -116,10 +116,10 @@ class Results extends React.Component {
         let openQuery2 = false;
         if ("openQuery" in query && query["openQuery"] === "true") {
             openQuery = true;
-        } 
+        }
         if ("openQuery" in query2 && query2["openQuery"] === "true") {
             openQuery2 = true;
-        } 
+        }
 
         if ((prevState.showSkel != this.state.showSkel) || (openQuery !== openQuery2)) {
             window.dispatchEvent(new Event('resize'));
@@ -156,12 +156,12 @@ class Results extends React.Component {
                 currIndex++;
             }
         });
-        
+
         this.setState({currLayout: tempLayout});
     }
- 
+
     downloadFile = (index) => {
-        if (("isSkeleton" in this.props.allTables[index][0]) && 
+        if (("isSkeleton" in this.props.allTables[index][0]) &&
                 (this.props.allTables[index][0].isSkeleton)) {
             let swcdata = "";
             let swc = this.props.allTables[index][0].swc;
@@ -180,7 +180,7 @@ class Results extends React.Component {
                 swcdata += (row.radius.toString() + " ");
                 swcdata += (row.parent.toString() + "\n");
             }
-            
+
             let element = document.createElement("a");
             let file = new Blob([swcdata], {type: 'text/plain'});
             element.href = URL.createObjectURL(file);
@@ -190,7 +190,7 @@ class Results extends React.Component {
             let csvdata = "";
             this.props.allTables[index].map( (tableinfo) => {
                 // load one table -- fixed width
-                
+
                 // load table name
                 var numelements = tableinfo.header.length;
                 csvdata = csvdata + tableinfo.name + ",";
@@ -224,12 +224,12 @@ class Results extends React.Component {
 
     render() {
         // TODO: show query runtime results
-        const { classes } = this.props; 
+        const { classes } = this.props;
         let resArray = [];
         let currIndex = 0;
         let numTables = 0;
 
-        if (this.props.allTables !== null) { 
+        if (this.props.allTables !== null) {
             this.props.allTables.map( (result, index) => {
                 if (!this.props.clearIndices.has(index) && (!("isSkeleton" in result[0]) || !(result[0].isSkeleton))) {
                     numTables += 1;
@@ -242,8 +242,8 @@ class Results extends React.Component {
                 if (!this.props.clearIndices.has(index) && (!("isSkeleton" in result[0]) || !(result[0].isSkeleton))) {
                     let unId = this.state.showSkel ? (result[0].uniqueId*3+2) : ((numTables > 1) ? result[0].uniqueId*3 : (result[0].uniqueId*3+1));
                     resArray.push((
-                        <div 
-                            key={unId} 
+                        <div
+                            key={unId}
                             data-grid={{
                                     x: (currIndex*6)%12,
                                     y: Math.floor(currIndex/2)*18,
@@ -253,16 +253,16 @@ class Results extends React.Component {
                         >
                             <ResultsTopBar
                                         downloadCallback={this.downloadFile}
-                                        name={(result.length == 1) ? 
+                                        name={(result.length == 1) ?
                                             result[0].name :
                                             String(result.length) + " tables"
-                                        } 
+                                        }
                                         queryStr={result[0].queryStr}
                                         index={index}
                                         color={LightColors[index%LightColors.length]}
                             />
                             <div className={classes.tablesDiv}>
-                                    <SimpleTables 
+                                    <SimpleTables
                                                     allTables={result}
                                     />
                             </div>
@@ -279,10 +279,10 @@ class Results extends React.Component {
               onKeyPress={this.triggerKeyboard}
               className={this.props.allTables === null ? classes.root : ""}>
                 { (this.props.userInfo !== null && this.props.allTables !== null) ? (
-                    <div />    
-                ) : (this.props.isQuerying) ?  
+                    <div />
+                ) : (this.props.isQuerying) ?
                     (<Typography variant="title">Querying...</Typography>) :
-                    (this.props.allTables !== null) ? <div /> : 
+                    (this.props.allTables !== null) ? <div /> :
                         (<Typography variant="title">No Results</Typography>)
                 }
                 <Fade
@@ -294,23 +294,23 @@ class Results extends React.Component {
                 >
                     <CircularProgress />
                 </Fade>
-                { (this.props.neoError !== null) ? 
+                { (this.props.neoError !== null) ?
                     (<Typography>Error: {this.props.neoError}</Typography>) :
                     (resArray.length > 0 ?
                         (
-                            <Grid 
-                                    container 
+                            <Grid
+                                    container
                                     spacing={0}
                             >
-                                <Grid 
-                                        item 
+                                <Grid
+                                        item
                                         xs={12}
                                         sm={(this.state.showSkel) ? 6 : 12}
                                 >
                                     <div className={classes.scroll}>
-                                        <ResponsiveGridLayout 
-                                                                    className="layout" 
-                                                                    rowHeight={30} 
+                                        <ResponsiveGridLayout
+                                                                    className="layout"
+                                                                    rowHeight={30}
                                                                     breakpoints={{lg: 2000}}
                                                                     cols={{lg: (this.state.showSkel) ? 6 : 12}}
                                                                     draggableHandle=".topresultbar"
@@ -324,8 +324,8 @@ class Results extends React.Component {
                                     </div>
                                 </Grid>
                                 { this.state.showSkel ? (
-                                    <Grid 
-                                            item 
+                                    <Grid
+                                            item
                                             xs={12}
                                             sm={6}
                                     >
@@ -333,7 +333,7 @@ class Results extends React.Component {
                                     </Grid>) : (<div />)
                                 }
                             </Grid>
-                        ) : 
+                        ) :
                         (<div />)
                     )
                 }
@@ -349,7 +349,7 @@ Results.propTypes = {
     allTables: PropTypes.array,
     clearIndices: PropTypes.object,
     numClear: PropTypes.number,
-    queryObj: PropTypes.object.isRequired, 
+    queryObj: PropTypes.object.isRequired,
     neoError: PropTypes.string,
     isQuerying: PropTypes.bool.isRequired,
     urlQueryString: PropTypes.string.isRequired,
@@ -368,7 +368,7 @@ var ResultsState = function(state){
         userInfo: state.user.userInfo,
         urlQueryString: state.app.get("urlQueryString"),
         queryObj: state.query.neoQueryObj,
-    }   
+    }
 };
 
 export default withStyles(styles)(connect(ResultsState, null)(Results));
