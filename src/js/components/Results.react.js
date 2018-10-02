@@ -76,8 +76,6 @@ class Results extends React.Component {
             currLayout: null,
             showSkel: false,
         };
-
-        document.addEventListener("keydown", this.triggerKeyboard); 
     }
 
     // if only query string has updated, prevent re-render
@@ -128,25 +126,21 @@ class Results extends React.Component {
         }
     }
 
-    componentWillUnmount() {
-        document.removeEventListener("keydown", this.triggerKeyboard); 
-    }
-
     triggerKeyboard = (event) => {
-        if (event.keyCode === 32) {
-            event.preventDefault();
-            let numSkels = 0;
-            if (this.props.allTables !== null) { 
-                this.props.allTables.map( (result, index) => {
-                    if (!this.props.clearIndices.has(index) && (("isSkeleton" in result[0]) && (result[0].isSkeleton))) {
-                        numSkels += 1;
-                    }
-                });
+        if (event.which === 32) {
+          // check the mouse is over the skeleton div
+          let numSkels = 0;
+          if (this.props.allTables !== null) {
+            this.props.allTables.map( (result, index) => {
+              if (!this.props.clearIndices.has(index) && (("isSkeleton" in result[0]) && (result[0].isSkeleton))) {
+              numSkels += 1;
             }
-            if (numSkels > 0) {
-                this.setState({showSkel: !this.state.showSkel});
-            }
+          });
         }
+        if (numSkels > 0) {
+          this.setState({showSkel: !this.state.showSkel});
+        }
+      }
     }
 
     changeLayout = (layout) => {
@@ -280,7 +274,10 @@ class Results extends React.Component {
         }
 
         return (
-            <div className={this.props.allTables === null ? classes.root : ""}>
+            <div
+              tabIndex="0"
+              onKeyPress={this.triggerKeyboard}
+              className={this.props.allTables === null ? classes.root : ""}>
                 { (this.props.userInfo !== null && this.props.allTables !== null) ? (
                     <div />    
                 ) : (this.props.isQuerying) ?  
