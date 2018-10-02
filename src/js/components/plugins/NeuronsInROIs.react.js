@@ -80,7 +80,7 @@ class NeuronsInROIs extends React.Component {
         let params = { 
                         dataset: this.props.datasetstr, 
                         input_ROIs: this.state.qsParams.InputROIs,
-                        output_ROIs: this.state.qsParams.OutputROI,
+                        output_ROIs: this.state.qsParams.OutputROIs,
                         statuses: this.state.statusFilters,
         };
         if (this.state.qsParams.neuronsrc !== "") {
