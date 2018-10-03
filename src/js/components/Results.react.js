@@ -13,12 +13,14 @@ import { connect } from 'react-redux';
 import { withStyles } from 'material-ui/styles';
 import _ from "underscore";
 import PropTypes from 'prop-types';
-import ResultsTopBar from './ResultsTopBar.react';
-import SimpleTables from './SimpleTables.react';
 import qs from 'qs';
-import Skeleton from './Skeleton.react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import Grid from 'material-ui/Grid';
+import ResultsTopBar from './ResultsTopBar';
+import SimpleTables from './SimpleTables';
+import Skeleton from './Skeleton';
+import NeuroGlancer from './NeuroGlancer';
+
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 var LightColors = [
@@ -329,6 +331,7 @@ class Results extends React.Component {
                                             xs={12}
                                             sm={6}
                                     >
+                                        <NeuroGlancer />
                                         <Skeleton disable={!this.state.showSkel} />
                                     </Grid>) : (<div />)
                                 }
