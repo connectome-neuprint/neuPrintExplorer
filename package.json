@@ -39,11 +39,15 @@
     "webpack-merge": "^4.1.4"
   },
   "dependencies": {
+    "eslint-config-react-app": "^3.0.3",
+    "eslint-plugin-flowtype": "^2.50.3",
+    "eslint-plugin-jsx-a11y": "^6.1.1",
     "fsevents": "^1.2.4",
     "immutable": "^3.8.2",
     "jquery": "^3.3.1",
     "material-ui": "^1.0.0-beta.37",
     "material-ui-icons": "^1.0.0-beta.36",
+    "neuroglancer-react": "file:../react-neuroglancer",
     "qs": "^5.1.0",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",

@@ -19,7 +19,9 @@ import Grid from 'material-ui/Grid';
 import ResultsTopBar from './ResultsTopBar';
 import SimpleTables from './SimpleTables';
 import Skeleton from './Skeleton';
-import NeuroGlancer from './NeuroGlancer';
+import NeuroGlancer from 'neuroglancer-react';
+
+import './Results.css';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -331,7 +333,7 @@ class Results extends React.Component {
                                             xs={12}
                                             sm={6}
                                     >
-                                        <NeuroGlancer />
+                                        <NeuroGlancer perspectiveZoom={80} />
                                         <Skeleton disable={!this.state.showSkel} />
                                     </Grid>) : (<div />)
                                 }

@@ -1,9 +1,15 @@
 import React from 'react';
+import Neuroglancer from 'neuroglancer-react';
+import Grid from 'material-ui/Grid';
 
 class NeuroGlancer extends React.Component {
   render() {
     return (
-      <p>Neuroglancer component here.</p>
+      <Grid container>
+        <Grid item xs={12}>
+          <Neuroglancer />
+        </Grid>
+      </Grid>
     );
   }
 }
