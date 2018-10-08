@@ -15,6 +15,7 @@ import PropTypes from 'prop-types';
 import TopBar from './TopBar.react';
 import SideBar from './SideBar.react';
 import QueryDrawer from './QueryDrawer.react';
+import NeuroGlancer from './NeuroGlancer';
 
 
 // adapted from material ui example
@@ -41,7 +42,8 @@ class Master extends React.Component {
     render() {
         const { classes } = this.props;
         return (
-            <div className={classes.root}>    
+            <div className={classes.root}>
+                <NeuroGlancer />
                 <Neo4jQuery />
                 <TopBar />
                 <BrowserRouter history={browserHistory}>
