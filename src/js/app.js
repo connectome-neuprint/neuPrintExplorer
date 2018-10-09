@@ -1,11 +1,6 @@
-"use strict";
-
 //var AppReducers = require('./reducers');
 
 import AppReducers from './reducers';
-var Redux = require('redux');
-var ReactDOM = require('react-dom');
-
 import {Provider} from 'react-redux';
 import React from 'react';
 import Master from "./components/Master.react";
@@ -13,9 +8,13 @@ import '../../node_modules/react-resizable/css/styles.css';
 import '../../node_modules/react-grid-layout/css/styles.css';
 import CssBaseline from 'material-ui/CssBaseline';
 import { setAppDb } from "./actions/app";
+import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
+import loadPlugins from './helpers/initplugins';
+
+var Redux = require('redux');
+var ReactDOM = require('react-dom');
 
 // set theme colors
-import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
 const theme = createMuiTheme({
   palette: {
     primary: {
@@ -34,25 +33,7 @@ const theme = createMuiTheme({
 });
 
 // create redux store to handle app state
-var store = Redux.createStore(AppReducers);
-
-/* Bootstrap specific (disabled)
-// load css that contains bootstrap
-var filename = "css/main.min.css";
-var fileref = document.createElement("link");
-fileref.setAttribute("rel", "stylesheet");
-fileref.setAttribute("type", "text/css");
-fileref.setAttribute("href", filename);
-document.getElementsByTagName("head")[0].appendChild(fileref);
-
-// load jquery
-window.$ = window.jQuery = require('jquery');
-
-// this bundle version includes the correct version of Popper
-import '../../node_modules/bootstrap/dist/js/bootstrap.bundle.js'
-*/
-
-//<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+var store = Redux.createStore(AppReducers, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
 // include material UI font
 var filename = "https://fonts.googleapis.com/css?family=Roboto:300,400,50";
@@ -81,7 +62,6 @@ jssref.onload = function() {
 }
 
 // load form plugins
-import loadPlugins from './helpers/initplugins';
 loadPlugins(store);
 
 // access global google datastore through the specified cloud function
