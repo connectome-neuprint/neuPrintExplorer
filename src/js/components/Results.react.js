@@ -82,9 +82,10 @@ class Results extends React.Component {
   // if only query string has updated, prevent re-render
   shouldComponentUpdate(nextProps, nextState) {
     nextProps.location['search'] = this.props.location['search'];
+
     let numSkels = 0;
     if (this.props.allTables !== null) {
-      this.props.allTables.map((result, index) => {
+      this.props.allTables.forEach((result, index) => {
         if (
           !this.props.clearIndices.has(index) &&
           ('isSkeleton' in result[0] && result[0].isSkeleton)
@@ -93,9 +94,10 @@ class Results extends React.Component {
         }
       });
     }
+
     let numSkels2 = 0;
     if (nextProps.allTables !== null) {
-      nextProps.allTables.map((result, index) => {
+      nextProps.allTables.forEach((result, index) => {
         if (
           !nextProps.clearIndices.has(index) &&
           ('isSkeleton' in result[0] && result[0].isSkeleton)
@@ -105,6 +107,9 @@ class Results extends React.Component {
       });
     }
 
+    // if the number of skeletons in the results tables has changed
+    // then check to see if we are adding one and set showSkel in the
+    // state to make sure we show it.
     if (numSkels2 !== numSkels) {
       if (numSkels2 > 0 && !nextState.showSkel) {
         this.setState({ showSkel: true });
@@ -138,7 +143,7 @@ class Results extends React.Component {
       // check the mouse is over the skeleton div
       let numSkels = 0;
       if (this.props.allTables !== null) {
-        this.props.allTables.map((result, index) => {
+        this.props.allTables.forEach((result, index) => {
           if (
             !this.props.clearIndices.has(index) &&
             ('isSkeleton' in result[0] && result[0].isSkeleton)
@@ -156,7 +161,7 @@ class Results extends React.Component {
   changeLayout = layout => {
     let currIndex = 0;
     let tempLayout = {};
-    this.props.allTables.map((result, index) => {
+    this.props.allTables.forEach((result, index) => {
       if (!this.props.clearIndices.has(index)) {
         if (this.props.allTables.length - this.props.clearIndices.size > 1) {
           tempLayout[result[0].uniqueId * 2] = layout[currIndex];
@@ -200,7 +205,7 @@ class Results extends React.Component {
       element.click();
     } else {
       let csvdata = '';
-      this.props.allTables[index].map(tableinfo => {
+      this.props.allTables[index].forEach(tableinfo => {
         // load one table -- fixed width
 
         // load table name
@@ -212,14 +217,14 @@ class Results extends React.Component {
         csvdata = csvdata + '\n';
 
         // load headers
-        tableinfo.header.map(headinfo => {
+        tableinfo.header.forEach(headinfo => {
           csvdata = csvdata + headinfo.getValue() + ',';
         });
         csvdata = csvdata + '\n';
 
         // load data
-        tableinfo.body.map(rowinfo => {
-          rowinfo.map(elinfo => {
+        tableinfo.body.forEach(rowinfo => {
+          rowinfo.forEach(elinfo => {
             csvdata = csvdata + elinfo.getValue() + ',';
           });
           csvdata = csvdata + '\n';
@@ -253,7 +258,7 @@ class Results extends React.Component {
     }
 
     if (this.props.neoError === null && this.props.allTables !== null) {
-      this.props.allTables.map((result, index) => {
+      this.props.allTables.forEach((result, index) => {
         if (
           !this.props.clearIndices.has(index) &&
           (!('isSkeleton' in result[0]) || !result[0].isSkeleton)
