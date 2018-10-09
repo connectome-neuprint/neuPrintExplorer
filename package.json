@@ -59,7 +59,7 @@
     "react-router-dom": "^4.2.2",
     "redux": "^3.7.2",
     "spectacle": "latest",
-    "swagger-ui": "latest",
+    "swagger-ui": "^3.19.3",
     "underscore": "^1.8.3",
     "uuid": "^3.3.2"
   },
