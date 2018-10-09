@@ -259,6 +259,11 @@ class Results extends React.Component {
 
     if (this.props.neoError === null && this.props.allTables !== null) {
       this.props.allTables.forEach((result, index) => {
+        //  TODO: rather than skip over the skeleton and place it in a
+        //  different container system, why not add it to the grid layout
+        //  and fix the dimensions / location. Search for
+        //  'set layout properties directly on the children' @
+        //  https://www.npmjs.com/package/react-grid-layout for an example.
         if (
           !this.props.clearIndices.has(index) &&
           (!('isSkeleton' in result[0]) || !result[0].isSkeleton)
