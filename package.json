@@ -48,6 +48,7 @@
     "material-ui": "^1.0.0-beta.37",
     "material-ui-icons": "^1.0.0-beta.36",
     "neuroglancer-react": "file:../react-neuroglancer",
+    "prettier": "^1.14.3",
     "qs": "^5.1.0",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
@@ -69,5 +70,10 @@
     "dev-server": "webpack-dev-server --open",
     "dev": "webpack",
     "build": "webpack --config webpack.prod.js"
+  },
+  "prettier": {
+    "printWidth": 120,
+    "tabWidth": 2,
+    "singleQuote": true
   }
 }
