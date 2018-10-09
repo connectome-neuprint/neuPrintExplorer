@@ -2,8 +2,6 @@
  * Wrapper to render simple cell and access table value.
 */
 
-'use strict';
-
 import SimpleCell from '../components/SimpleCell.react';
 import React from 'react';
 import { TableSortLabel } from 'material-ui/Table';
@@ -28,6 +26,9 @@ export default class SimpleCellWrapper {
   };
 
   getComponent = (sortFunc = null, orderBy = -1, enableSort = false, order = 'desc') => {
+    if (this.child === null) {
+      this.child = '';
+    }
     if (sortFunc === null) {
       return (
         <SimpleCell
