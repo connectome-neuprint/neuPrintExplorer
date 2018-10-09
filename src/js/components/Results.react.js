@@ -313,17 +313,17 @@ class Results extends React.Component {
                                 >
                                     <div className={classes.scroll}>
                                         <ResponsiveGridLayout
-                                                                    className="layout"
-                                                                    rowHeight={30}
-                                                                    breakpoints={{lg: 2000}}
-                                                                    cols={{lg: (this.state.showSkel) ? 6 : 12}}
-                                                                    draggableHandle=".topresultbar"
-                                                                    compactType="vertical"
-                                                                    onResizeStop={this.changeLayout}
-                                            >
-                                                {resArray.map( (result) => {
-                                                    return result;
-                                                })}
+                                          className="layout"
+                                          rowHeight={30}
+                                          breakpoints={{lg: 2000}}
+                                          cols={{lg: (this.state.showSkel) ? 6 : 12}}
+                                          draggableHandle=".topresultbar"
+                                          compactType="vertical"
+                                          onResizeStop={this.changeLayout}
+                                        >
+                                          {resArray.map( (result) => {
+                                            return result;
+                                          })}
                                         </ResponsiveGridLayout>
                                     </div>
                                 </Grid>
