@@ -73,15 +73,14 @@ class Login extends React.Component {
         // TODO: redirect to current path
         window.open('/login?redirect=/', "_self");
     }
-    
+
     logout = () => {
-        this.setState({isLoggedIn: false, imageURL: ""})
-        this.props.logoutUser();
-        fetch('/logout', {
-            method: 'POST',
-            credentials: 'include'
-        })
-        ;
+      this.setState({isLoggedIn: false, imageURL: ""})
+      this.props.logoutUser();
+      fetch('/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
     }
 
     launchUserPopup = (event) => {
