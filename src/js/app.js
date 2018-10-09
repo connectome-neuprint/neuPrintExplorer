@@ -80,10 +80,6 @@ jssref.onload = function() {
     document.getElementsByTagName("head")[0].appendChild(jssref3);
 }
 
-//var jssref4 = document.createElement("script");
-//jssref4.setAttribute("src", "/external/neuroglancer/main.bundle.js");
-//document.getElementsByTagName("head")[0].appendChild(jssref4);
-
 // load form plugins
 import loadPlugins from './helpers/initplugins';
 loadPlugins(store);
@@ -96,17 +92,17 @@ store.dispatch(setAppDb(appDB));
  * Load interface into a DIV anchored by analyzer.
 */
 function loadInterface() {
-    ReactDOM.render(
-        <div>   
-            <CssBaseline />
-            <MuiThemeProvider theme={theme}>
-            <Provider store={store}>
-                <Master />
-            </Provider>
-            </MuiThemeProvider>
-        </div>,
-        document.getElementById("analyzer")
-    );
+  ReactDOM.render(
+    <div>
+      <CssBaseline />
+      <MuiThemeProvider theme={theme}>
+        <Provider store={store}>
+          <Master />
+        </Provider>
+      </MuiThemeProvider>
+    </div>,
+    document.getElementById("analyzer")
+  );
 }
 
 // render interface with dom loaded
