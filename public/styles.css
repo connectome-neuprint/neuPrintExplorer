@@ -98,7 +98,7 @@
 }
 
 #statusContainer li {
-  width: 100vw;
+  width: 100%;
   max-height: 25vh;
   overflow-y: auto;
 }
@@ -1146,7 +1146,7 @@ span.CodeMirror-selectedtext { background: none; }
  */
 
 #neuroglancer-container {
-  width: 100vw;
+  width: 100%;
   flex: 1;
 }
 /**
