@@ -6,7 +6,6 @@
 
 import SimpleCellWrapper from '../helpers/SimpleCellWrapper';
 
-// create ROI tables
 var processResults = function (results, state) {
 
     let index = 0;
@@ -15,14 +14,25 @@ var processResults = function (results, state) {
 
     const groupBy = function (inputJson, key) {
         return inputJson.reduce(function (accumulator, currentValue) {
-            let name = currentValue["name"];
-            let weights = Object.keys(currentValue).slice(2);
-            (accumulator[currentValue[key]] = accumulator[currentValue[key]] || {})[weights] = currentValue[weights];
-            accumulator[currentValue[key]]["name"] = name;
+            //name of the common input/output
+            const name = currentValue["name"]
+            //first element of the keys array is X_weight where X is the body id of a queried neuron
+            let weights = Object.keys(currentValue)[0];
+            // in case order of keys changes check that this is true and if not find the correct key
+            if (!weights.endsWith("weight")) {
+                for (let i = 1; i < Object.keys(currentValue).length ; i++) {
+                    if (Object.keys(currentValue)[i].endsWith("weight")) {
+                        weights = Object.keys(currentValue)[i]
+                        break
+                    }
+                }
+            }
+            (accumulator[currentValue[key]] = accumulator[currentValue[key]] || {})[weights] = currentValue[weights]
+            accumulator[currentValue[key]]["name"] = name
             return accumulator;
         }, {});
     };
-    let groupedByInputOrOutputId = groupBy(results.records.pos(0).get("map"), queryKey);
+    let groupedByInputOrOutputId = groupBy(results.records.data[0][0], queryKey);
 
     let headerdata = [
         new SimpleCellWrapper(index++, queryKey[0].toUpperCase() + queryKey.substring(1) + " BodyId"),
@@ -66,7 +76,6 @@ var processResults = function (results, state) {
     return tables;
 }
 
-// TODO: find outputs or inputs based on user preference
 export default function (datasetstr, bodyIds, names, limitBig, statusFilters, typeValue) {
     let idlist = (bodyIds === "") ? []: bodyIds.split(",");
     for (let index in idlist) {
@@ -84,7 +93,6 @@ export default function (datasetstr, bodyIds, names, limitBig, statusFilters, ty
         params["pre_threshold"] = 2; 
     }
 
-    alert(JSON.stringify(params));
     let query = {
         queryStr: "/npexplorer/commonconnectivity",
         params: params,
