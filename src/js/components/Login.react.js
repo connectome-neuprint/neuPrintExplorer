@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { withStyles } from 'material-ui/styles';
 import Button from 'material-ui/Button';
 import Popover from 'material-ui/Popover';
+import { withRouter } from 'react-router-dom';
 
 import C from "../reducers/constants"
 
@@ -75,12 +76,14 @@ class Login extends React.Component {
     }
 
     logout = () => {
+      const { history } = this.props;
       this.setState({isLoggedIn: false, imageURL: ""})
       this.props.logoutUser();
       fetch('/logout', {
         method: 'POST',
         credentials: 'include'
       });
+      history.push('/');
     }
 
     launchUserPopup = (event) => {
@@ -171,8 +174,9 @@ Login.propTypes = {
     logoutUser: PropTypes.func.isRequired,
     loginUser: PropTypes.func.isRequired,
     setUserToken: PropTypes.func.isRequired,
+    history: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(connect(null, LoginDispatch)(Login));
+export default withRouter(withStyles(styles)(connect(null, LoginDispatch)(Login)));
 
 
