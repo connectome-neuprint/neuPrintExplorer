@@ -2,9 +2,6 @@
  * Main page to hold results from query.  This could be
  * a simple table or a table of tables.
 */
-
-'use strict';
-
 import React from 'react';
 import Typography from 'material-ui/Typography';
 import Fade from 'material-ui/transitions/Fade';
@@ -108,10 +105,10 @@ class Results extends React.Component {
       });
     }
 
-    if (numSkels2 != numSkels) {
+    if (numSkels2 !== numSkels) {
       if (numSkels2 > 0 && !nextState.showSkel) {
         this.setState({ showSkel: true });
-      } else if (numSkels2 == 0) {
+      } else if (numSkels2 === 0) {
         this.setState({ showSkel: false });
       }
     }
@@ -131,7 +128,7 @@ class Results extends React.Component {
       openQuery2 = true;
     }
 
-    if (prevState.showSkel != this.state.showSkel || openQuery !== openQuery2) {
+    if (prevState.showSkel !== this.state.showSkel || openQuery !== openQuery2) {
       window.dispatchEvent(new Event('resize'));
     }
   }
@@ -245,7 +242,7 @@ class Results extends React.Component {
     let numTables = 0;
 
     if (this.props.allTables !== null) {
-      this.props.allTables.map((result, index) => {
+      this.props.allTables.forEach((result, index) => {
         if (
           !this.props.clearIndices.has(index) &&
           (!('isSkeleton' in result[0]) || !result[0].isSkeleton)
@@ -278,7 +275,7 @@ class Results extends React.Component {
             >
               <ResultsTopBar
                 downloadCallback={this.downloadFile}
-                name={result.length == 1 ? result[0].name : String(result.length) + ' tables'}
+                name={result.length === 1 ? result[0].name : String(result.length) + ' tables'}
                 queryStr={result[0].queryStr}
                 index={index}
                 color={LightColors[index % LightColors.length]}
