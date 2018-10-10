@@ -16,9 +16,9 @@ var ReactDOM = require('react-dom');
 const theme = createMuiTheme({
   palette: {
     primary: {
-      light: '#4ca8b1',
-      main: '#017982',
-      dark: '#004d55',
+      light: '#6595c8',
+      main: '#396a9f',
+      dark: '#1e3854',
       contrastText: '#ffffff'
     },
     secondary: {
