@@ -39,7 +39,7 @@ class MetaInfo extends React.Component {
                     let datasetInfo = {}
                     for (let dataset in items) {
                         datasets.push(dataset)
-                        rois[dataset] = items[dataset].ROIs;
+                        rois[dataset] = items[dataset].ROIs.sort();
                         datasetInfo[dataset] = {
                             uuid:   items[dataset].uuid,
                             lastmod: items[dataset]["last-mod"]
