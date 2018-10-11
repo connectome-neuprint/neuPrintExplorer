@@ -189,7 +189,7 @@ export var parseResults = function(neoResults, state) {
                          (<ClickableQuery neoQueryObj={neoSkel}>
                             {parseInt(bodyid)}
                         </ClickableQuery>),
-                        false, parseInt(neuronnames[bodyid].pre)));
+                        false, parseInt(bodyid)));
  
 
         frowinfo.push(new SimpleCellWrapper(index++,
