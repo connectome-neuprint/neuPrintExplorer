@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 import AppBar from '@material-ui/core/AppBar';
 import Typography from 'material-ui/Typography';
@@ -52,9 +53,9 @@ class TopBar extends React.Component {
       <AppBar position="absolute" className={classes.appBar}>
         <Toolbar>
           <div className={classes.flex}>
-            <a href="/">
+            <Link to="/">
               <img src="/public/neuprintexplorerw.png" className={classes.img} />
-            </a>
+            </Link>
           </div>
           {this.props.userInfo !== null && this.props.userInfo.AuthLevel === 'noauth' ? (
             <Typography className={classes.textBox}>Not Authorized</Typography>
