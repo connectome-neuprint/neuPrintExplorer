@@ -5,8 +5,8 @@
 'use strict';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TableCell } from 'material-ui/Table';
-import { withStyles } from 'material-ui/styles';
+import { TableCell } from '@material-ui/core/Table';
+import { withStyles } from '@material-ui/core/styles';
 
 const styles = () => ({
   fcell: {

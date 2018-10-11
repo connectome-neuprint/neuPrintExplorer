@@ -1,18 +1,18 @@
 /*
  * Shows results for table.  Parent component might allow
  * for multiple tables and will contain a label name for
- * the table.  This code was adapted from a material-ui example.
+ * the table.  This code was adapted from a @material-ui/core example.
 */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import Table, {
   TableBody,
   TableFooter,
   TableHead,
   TablePagination,
   TableRow
-} from 'material-ui/Table';
+} from '@material-ui/core/Table';
 import TablePaginationActions from './TablePaginationActions.react';
 
 const styles = theme => ({

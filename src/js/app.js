@@ -4,9 +4,9 @@ import React from 'react';
 import Master from './components/Master.react';
 import '../../node_modules/react-resizable/css/styles.css';
 import '../../node_modules/react-grid-layout/css/styles.css';
-import CssBaseline from 'material-ui/CssBaseline';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import { setAppDb } from './actions/app';
-import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
+import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import loadPlugins from './helpers/initplugins';
 
 var Redux = require('redux');

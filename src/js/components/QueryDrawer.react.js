@@ -5,8 +5,8 @@
 "use strict";
 import React from 'react';
 import Query from './Query.react';
-import Drawer from 'material-ui/Drawer';
-import { withStyles } from 'material-ui/styles';
+import Drawer from '@material-ui/core/Drawer';
+import { withStyles } from '@material-ui/core/styles';
 import qs from 'qs';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';

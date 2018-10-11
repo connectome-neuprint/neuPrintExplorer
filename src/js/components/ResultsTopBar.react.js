@@ -4,20 +4,20 @@
 
 "use strict";
 import React from 'react';
-import Typography from 'material-ui/Typography';
+import Typography from '@material-ui/core/Typography';
 import { connect } from 'react-redux';
-import Icon from 'material-ui/Icon';
-import IconButton from 'material-ui/IconButton';
-import Button from 'material-ui/Button';
-import TextField from 'material-ui/TextField';
-import Toolbar from 'material-ui/Toolbar';
-import { withStyles } from 'material-ui/styles';
+import Icon from '@material-ui/core/Icon';
+import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Toolbar from '@material-ui/core/Toolbar';
+import { withStyles } from '@material-ui/core/styles';
 import Dialog, {
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
-} from 'material-ui/Dialog';
+} from '@material-ui/core/Dialog';
 import PropTypes from 'prop-types';
 import C from "../reducers/constants"
 

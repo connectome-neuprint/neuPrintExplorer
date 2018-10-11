@@ -4,22 +4,22 @@
 */
 
 import React from 'react';
-import Typography from 'material-ui/Typography';
+import Typography from '@material-ui/core/Typography';
 import SimpleTable from './SimpleTable.react';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import ExpansionPanel, {
   ExpansionPanelSummary,
   ExpansionPanelDetails
-} from 'material-ui/ExpansionPanel';
-import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
+} from '@material-ui/core/ExpansionPanel';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Table, {
   TableBody,
   TableCell,
   TableFooter,
   TablePagination,
   TableRow
-} from 'material-ui/Table';
+} from '@material-ui/core/Table';
 import TablePaginationActions from './TablePaginationActions.react';
 
 const styles = theme => ({

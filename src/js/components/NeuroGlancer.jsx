@@ -1,6 +1,6 @@
 import React from 'react';
 import Neuroglancer from 'neuroglancer-react';
-import Grid from 'material-ui/Grid';
+import Grid from '@material-ui/core/Grid';
 
 class NeuroGlancer extends React.Component {
   render() {

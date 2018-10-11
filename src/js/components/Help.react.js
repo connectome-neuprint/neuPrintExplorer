@@ -1,24 +1,23 @@
 /*
  * Help page provides documentation.
 */
-
-"use strict";
 import React from 'react';
-import Typography from 'material-ui/Typography';
+import Typography from '@material-ui/core/Typography';
 import _ from "underscore";
 import PropTypes from 'prop-types';
-import {withStyles} from 'material-ui/styles';
-import Button from 'material-ui/Button';
-import Modal from 'material-ui/Modal';
+import {withStyles} from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import Modal from '@material-ui/core/Modal';
 import {
-  Deck, Slide, Image 
+  Deck, Slide, Image
 } from 'spectacle';
 //import {SwaggerUI} from 'react-swagger-ui'
 //import 'react-swagger-ui/dist/swagger-ui.css'
 import SwaggerUi, {presets} from 'swagger-ui';
 import 'swagger-ui/dist/swagger-ui.css';
-import Tabs, {Tab} from 'material-ui/Tabs';
-import AppBar from 'material-ui/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import AppBar from '@material-ui/core/AppBar';
 
 function TabContainer(props) {
   return (

@@ -3,16 +3,16 @@
  * a simple table or a table of tables.
 */
 import React from 'react';
-import Typography from 'material-ui/Typography';
-import Fade from 'material-ui/transitions/Fade';
-import { CircularProgress } from 'material-ui/Progress';
+import Typography from '@material-ui/core/Typography';
+import Fade from '@material-ui/core/Fade';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { connect } from 'react-redux';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import _ from 'underscore';
 import PropTypes from 'prop-types';
 import qs from 'qs';
 import { Responsive, WidthProvider } from 'react-grid-layout';
-import Grid from 'material-ui/Grid';
+import Grid from '@material-ui/core/Grid';
 import ResultsTopBar from './ResultsTopBar';
 import SimpleTables from './SimpleTables';
 import Skeleton from './Skeleton';

@@ -7,9 +7,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { withStyles } from 'material-ui/styles';
-import Button from 'material-ui/Button';
-import Popover from 'material-ui/Popover';
+import { withStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import Popover from '@material-ui/core/Popover';
 import { withRouter } from 'react-router-dom';
 
 import C from "../reducers/constants"

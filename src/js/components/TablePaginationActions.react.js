@@ -3,13 +3,13 @@
 */
 
 import React from 'react';
-import LastPageIcon from 'material-ui-icons/LastPage';
+import LastPageIcon from '@material-ui/icons/LastPage';
 import PropTypes from 'prop-types';
-import FirstPageIcon from 'material-ui-icons/FirstPage';
-import KeyboardArrowLeft from 'material-ui-icons/KeyboardArrowLeft';
-import KeyboardArrowRight from 'material-ui-icons/KeyboardArrowRight';
-import IconButton from 'material-ui/IconButton';
-import { withStyles } from 'material-ui/styles';
+import FirstPageIcon from '@material-ui/icons/FirstPage';
+import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
+import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
+import IconButton from '@material-ui/core/IconButton';
+import { withStyles } from '@material-ui/core/styles';
 
 const actionsStyles = theme => ({
   root: {

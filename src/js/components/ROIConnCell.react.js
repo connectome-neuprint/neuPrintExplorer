@@ -3,7 +3,7 @@
 */
 
 import PropTypes from 'prop-types';
-import Typography from 'material-ui/Typography';
+import Typography from '@material-ui/core/Typography';
 import React from 'react';
 
 export default class ROIConnCell extends React.Component {

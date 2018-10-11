@@ -4,14 +4,16 @@
 
 "use strict";
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Router, Route, Switch } from 'react-router-dom';
+
+import { withStyles } from '@material-ui/core/styles';
+
 import Results from './Results.react';
-import { withStyles } from 'material-ui/styles';
 import Home from './Home.react';
 import Help from './Help.react';
 import Favorites from './Favorites.react';
 import Neo4jQuery from './Neo4jQuery.react';
-import PropTypes from 'prop-types';
 import TopBar from './TopBar.react';
 import SideBar from './SideBar.react';
 import QueryDrawer from './QueryDrawer.react';

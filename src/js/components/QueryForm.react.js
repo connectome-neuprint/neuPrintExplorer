@@ -2,16 +2,14 @@
  * Query form that calls specific plugins for form input an doutput processing.
 */
 
-"use strict";
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Snackbar from 'material-ui/Snackbar';
-//import { Redirect } from 'react-router-dom';
+import Snackbar from '@material-ui/core/Snackbar';
 import { withRouter } from 'react-router-dom';
-import Typography from 'material-ui/Typography';
-import Divider from 'material-ui/Divider';
-import { withStyles } from 'material-ui/styles';
+import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
+import { withStyles } from '@material-ui/core/styles';
 import qs from 'qs';
 import C from "../reducers/constants"
 import { setUrlQS } from '../actions/app';

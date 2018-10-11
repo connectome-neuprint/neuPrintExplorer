@@ -4,10 +4,10 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import _ from 'underscore';
 import { connect } from 'react-redux';
-import Chip from 'material-ui/Chip';
+import Chip from '@material-ui/core/Chip';
 import C from '../reducers/constants';
 
 var COLORS = [
