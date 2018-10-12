@@ -2,7 +2,6 @@
  * Top bar for each query result.
 */
 
-"use strict";
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import { connect } from 'react-redux';
@@ -12,12 +11,11 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
 import { withStyles } from '@material-ui/core/styles';
-import Dialog, {
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
+import Dialog from '@material-ui/core/Dialog';
+import DialogContentText from '@material-ui/core/DialogContentText';
 import PropTypes from 'prop-types';
 import C from "../reducers/constants"
 

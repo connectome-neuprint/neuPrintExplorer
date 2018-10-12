@@ -48,35 +48,33 @@ class Master extends React.Component {
         <div className={classes.root}>
           <Neo4jQuery />
           <TopBar />
-          <div className={classes.root}>
-            <SideBar />
-            <QueryDrawer />
-            <main className={classes.content} >
-              <div className={classes.toolbar} />
-              <Switch>
-                <Route
-                  exact
-                  path="/"
-                  component={Home}
-                />
-                <Route
-                  path="/results"
-                  component={Results}
-                />
-                <Route
-                  path="/help"
-                  component={Help}
-                />
-                <Route
-                  path="/favorites"
-                  component={Favorites}
-                />
-                <Route
-                  component={Home}
-                />
-              </Switch>
-            </main>
-          </div>
+          <SideBar />
+          <QueryDrawer />
+          <main className={classes.content} >
+            <div className={classes.toolbar} />
+            <Switch>
+              <Route
+                exact
+                path="/"
+                component={Home}
+              />
+              <Route
+                path="/results"
+                component={Results}
+              />
+              <Route
+                path="/help"
+                component={Help}
+              />
+              <Route
+                path="/favorites"
+                component={Favorites}
+              />
+              <Route
+                component={Home}
+              />
+            </Switch>
+          </main>
         </div>
       </Router>
     );

@@ -4,7 +4,7 @@
 
 import SimpleCell from '../components/SimpleCell.react';
 import React from 'react';
-import { TableSortLabel } from '@material-ui/core/Table';
+import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Tooltip from '@material-ui/core/Tooltip';
 
 export default class SimpleCellWrapper {
