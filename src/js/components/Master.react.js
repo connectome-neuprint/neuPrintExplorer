@@ -23,6 +23,7 @@ import createBrowserHistory from 'history/createBrowserHistory';
 // adapted from material ui example
 const styles = theme => ({
   root: {
+    height: '100vh',
     flexGrow: 1,
     zIndex: 1,
     overflow: 'hidden',
@@ -30,6 +31,8 @@ const styles = theme => ({
     display: 'flex',
   },
   content: {
+    height: '100vh',
+    overflow: 'auto',
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
     padding: 0,
