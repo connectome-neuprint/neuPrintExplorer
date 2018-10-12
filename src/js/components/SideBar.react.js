@@ -123,7 +123,7 @@ class SideBar extends React.Component {
             <ListItemIcon>
               <Icon>storages</Icon>
             </ListItemIcon>
-            <ListItemText primary="" />
+            <ListItemText primary="Results" />
           </ListItem>
 
           <ListItem
@@ -134,7 +134,7 @@ class SideBar extends React.Component {
             <ListItemIcon>
               <Icon>star</Icon>
             </ListItemIcon>
-            <ListItemText primary="" />
+            <ListItemText primary="Favorites" />
           </ListItem>
 
           <ListItem
@@ -145,7 +145,7 @@ class SideBar extends React.Component {
             <ListItemIcon>
               <Icon>help</Icon>
             </ListItemIcon>
-            <ListItemText primary="" />
+            <ListItemText primary="Help" />
           </ListItem>
         </List>
       </Drawer>
