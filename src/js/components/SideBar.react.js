@@ -12,6 +12,9 @@ import { connect } from 'react-redux';
 import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 import Icon from '@material-ui/core/Icon';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
@@ -28,6 +31,7 @@ const styles = theme => ({
   drawerPaper: {
     height: '100vh',
     position: 'relative',
+    whiteSpace: 'nowrap',
     width: drawerWidth,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
@@ -36,7 +40,6 @@ const styles = theme => ({
   },
   drawerPaperClose: {
     overflowX: 'hidden',
-    alignItems: 'center',
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
@@ -45,9 +48,6 @@ const styles = theme => ({
     [theme.breakpoints.up('sm')]: {
       width: theme.spacing.unit * 9
     }
-  },
-  itemsAlign: {
-    alignItems: 'center'
   },
   toolbar: theme.mixins.toolbar
 });
@@ -94,53 +94,60 @@ class SideBar extends React.Component {
         open={false}
       >
         <div className={classes.toolbar} />
-        <div className={classes.itemsAlign}>
-          <Button
-            className={openQuery ? classNames(classes.button) : ''}
-            onClick={this.toggleQuery}
-          >
-            <List>
+        <List component="nav">
+          <ListItem button onClick={this.toggleQuery} selected={openQuery}>
+            <ListItemIcon>
               <Icon>search</Icon>
-            </List>
-          </Button>
+            </ListItemIcon>
+            <ListItemText primary="Search" />
+          </ListItem>
+
           <Divider />
-          <Button
+
+          <ListItem
             component={Link}
             to={{ pathname: '/', search: openQuery ? this.props.urlQueryString : '' }}
+            button
           >
-            <List>
+            <ListItemIcon>
               <Icon>home</Icon>
-            </List>
-          </Button>
-          <Button
+            </ListItemIcon>
+            <ListItemText primary="Home" />
+          </ListItem>
+
+          <ListItem
             component={Link}
             to={{ pathname: '/results', search: openQuery ? this.props.urlQueryString : '' }}
+            button
           >
-            <List>
+            <ListItemIcon>
               <Icon>storages</Icon>
-            </List>
-          </Button>
-          {this.props.userInfo !== null ? (
-            <Button
-              component={Link}
-              to={{ pathname: '/favorites', search: openQuery ? this.props.urlQueryString : '' }}
-            >
-              <List>
-                <Icon>star</Icon>
-              </List>
-            </Button>
-          ) : (
-            <div />
-          )}
-          <Button
+            </ListItemIcon>
+            <ListItemText primary="" />
+          </ListItem>
+
+          <ListItem
+            component={Link}
+            to={{ pathname: '/favorites', search: openQuery ? this.props.urlQueryString : '' }}
+            button
+          >
+            <ListItemIcon>
+              <Icon>star</Icon>
+            </ListItemIcon>
+            <ListItemText primary="" />
+          </ListItem>
+
+          <ListItem
             component={Link}
             to={{ pathname: '/help', search: openQuery ? this.props.urlQueryString : '' }}
+            button
           >
-            <List>
+            <ListItemIcon>
               <Icon>help</Icon>
-            </List>
-          </Button>
-        </div>
+            </ListItemIcon>
+            <ListItemText primary="" />
+          </ListItem>
+        </List>
       </Drawer>
     );
   }
