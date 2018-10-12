@@ -5,18 +5,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-
-import QueryForm from './QueryForm.react';
+import Select from 'react-select';
 
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
 import { LoadQueryString, SaveQueryString, RemoveQueryString } from '../helpers/qsparser';
 import Chip from '@material-ui/core/Chip';
+
+import QueryForm from './QueryForm.react';
 import { setUrlQS } from '../actions/app';
 
 const styles = theme => ({
@@ -46,6 +46,10 @@ const styles = theme => ({
   },
   selectWidth: {
     minWidth: 250
+  },
+  select: {
+    fontFamily: theme.typography.fontFamily,
+    margin: '0.5em 0 1em 0',
   }
 });
 
@@ -77,8 +81,8 @@ class Query extends React.Component {
     };
   }
 
-  setQuery = event => {
-    if (event.target.value !== this.state.qsParams.queryType) {
+  setQuery = selectedQuery => {
+    if (selectedQuery.value !== this.state.qsParams.queryType) {
       // delete query string from last query
       var found = false;
       for (var i in this.props.pluginList) {
@@ -92,17 +96,14 @@ class Query extends React.Component {
       }
 
       var oldparams = this.state.qsParams;
-      oldparams.queryType = event.target.value;
+      oldparams.queryType = selectedQuery.value;
       this.props.setURLQs(SaveQueryString('Query', oldparams));
       this.setState({ qsParams: oldparams });
     }
   };
 
-  handleChange = ev => {
-    var newdatasets = [ev.target.value];
-    if (ev === undefined) {
-      newdatasets = [];
-    }
+  handleChange = selectedDataSet => {
+    var newdatasets = [selectedDataSet.value];
     var oldparams = this.state.qsParams;
     oldparams.datasets = newdatasets;
     this.props.setURLQs(SaveQueryString('Query', oldparams));
@@ -139,70 +140,61 @@ class Query extends React.Component {
       datasetstr = this.state.qsParams.datasets[item];
     }
 
+    const generalOptions = this.props.pluginList.slice(0, this.props.reconIndex).map(val => {
+      return {
+        value: val.queryName,
+        label: val.queryName
+      };
+    });
+
+    const reconOptions = this.props.pluginList
+      .slice(this.props.reconIndex, this.props.pluginList.length)
+      .map(val => {
+        return {
+          value: val.queryName,
+          label: val.queryName
+        };
+      });
+
+    const queryOptions = [
+      {
+        label: 'General',
+        options: generalOptions
+      },
+      {
+        label: 'Reconstruction Related',
+        options: reconOptions
+      }
+    ];
+
+    const dataSetOptions = this.props.availableDatasets.map(dataset => {
+      return {
+        value: dataset,
+        label: dataset
+      };
+    });
+
     // TODO: fix default menu option (maybe make the custom query the default)
     return (
       <div className={classes.root}>
-        <FormControl className={classes.formControl}>
-          <InputLabel htmlFor="controlled-open-select">Query Type</InputLabel>
-          <Select
-            value={queryname}
-            onChange={this.setQuery}
-            input={<Input name="query" id="controlled-open-select" />}
-          >
-            {initmenuitem}
-            {this.props.pluginList.slice(0, this.props.reconIndex).map(function(val) {
-              return (
-                <MenuItem key={val.queryName} value={val.queryName}>
-                  {val.queryName}
-                </MenuItem>
-              );
-            })}
-            <MenuItem key={'recon'} value={'recon'} disabled>
-              <i>Reconstruction Related</i>
-            </MenuItem>
-            {this.props.pluginList
-              .slice(this.props.reconIndex, this.props.pluginList.length)
-              .map(function(val) {
-                return (
-                  <MenuItem key={val.queryName} value={val.queryName}>
-                    {val.queryName}
-                  </MenuItem>
-                );
-              })}
-          </Select>
-        </FormControl>
-        <FormControl className={classes.formControl2}>
-          <InputLabel htmlFor="select-multiple-chip">Select dataset</InputLabel>
-          <Select
-            value={this.state.qsParams.datasets}
-            onChange={this.handleChange}
-            input={<Input id="select-multiple-chip" />}
-            renderValue={selected => (
-              <div className={classes.chips}>
-                {selected.map(value => (
-                  <Chip key={value} label={value} className={classes.chip} />
-                ))}
-              </div>
-            )}
-            MenuProps={MenuProps}
-          >
-            {this.props.availableDatasets.map(name => (
-              <MenuItem
-                key={name}
-                value={name}
-                style={{
-                  fontWeight:
-                    this.state.qsParams.datasets.indexOf(name) === -1
-                      ? theme.typography.fontWeightRegular
-                      : theme.typography.fontWeightMedium
-                }}
-              >
-                {name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <InputLabel htmlFor="controlled-open-select">Query Type</InputLabel>
+        <Select
+          className={classes.select}
+          value={{ label: queryname, value: queryname }}
+          onChange={this.setQuery}
+          options={queryOptions}
+        />
+
+        <InputLabel htmlFor="select-multiple-chip">Select dataset</InputLabel>
+        <Select
+          className={classes.select}
+          value={{ value: this.state.qsParams.datasets, label: this.state.qsParams.datasets }}
+          onChange={this.handleChange}
+          options={dataSetOptions}
+        />
+
         <Divider className={classes.divider} />
+
         <QueryForm
           queryType={querytype}
           datasetstr={datasetstr}

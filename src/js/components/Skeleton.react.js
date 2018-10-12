@@ -38,6 +38,7 @@ var GlbShark = null;
 
 const styles = theme => ({
   root: {
+    position: 'relative',
     width: '100%',
     height: '100%',
     marginTop: theme.spacing.unit * 1,

@@ -36,7 +36,8 @@ var LightColors = [
 
 const styles = theme => ({
   root: {
-    padding: theme.spacing.unit * 3
+    padding: theme.spacing.unit,
+    outline: 0,
   },
   flex: {
     flex: 1
@@ -61,8 +62,7 @@ const styles = theme => ({
     float: 'right'
   },
   empty: {
-    width: '0%',
-    float: 'right'
+    padding: theme.spacing.unit * 3,
   },
   scroll: {
     overflow: 'auto',
@@ -304,16 +304,22 @@ class Results extends React.Component {
       <div
         tabIndex="0"
         onKeyPress={this.triggerKeyboard}
-        className={this.props.allTables === null ? classes.root : ''}
+        className={classes.root}
       >
         {this.props.userInfo !== null && this.props.allTables !== null ? (
-          <div />
+          <div/>
         ) : this.props.isQuerying ? (
           <Typography variant="title">Querying...</Typography>
         ) : this.props.allTables !== null ? (
           <div />
         ) : (
-          <Typography variant="title">No Results</Typography>
+          <div className={classes.empty}>
+            <Typography variant="title">No Search Results</Typography>
+            <Typography>
+              Please use the Menu to the left to start a search.
+            </Typography>
+          </div>
+
         )}
         <Fade
           in={this.props.isQuerying}
