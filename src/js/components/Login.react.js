@@ -7,9 +7,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { withStyles } from 'material-ui/styles';
-import Button from 'material-ui/Button';
-import Popover from 'material-ui/Popover';
+import { withStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import Popover from '@material-ui/core/Popover';
+import { withRouter } from 'react-router-dom';
 
 import C from "../reducers/constants"
 
@@ -73,15 +74,16 @@ class Login extends React.Component {
         // TODO: redirect to current path
         window.open('/login?redirect=/', "_self");
     }
-    
+
     logout = () => {
-        this.setState({isLoggedIn: false, imageURL: ""})
-        this.props.logoutUser();
-        fetch('/logout', {
-            method: 'POST',
-            credentials: 'include'
-        })
-        ;
+      const { history } = this.props;
+      this.setState({isLoggedIn: false, imageURL: ""})
+      this.props.logoutUser();
+      fetch('/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+      history.push('/');
     }
 
     launchUserPopup = (event) => {
@@ -172,8 +174,9 @@ Login.propTypes = {
     logoutUser: PropTypes.func.isRequired,
     loginUser: PropTypes.func.isRequired,
     setUserToken: PropTypes.func.isRequired,
+    history: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(connect(null, LoginDispatch)(Login));
+export default withRouter(withStyles(styles)(connect(null, LoginDispatch)(Login)));
 
 

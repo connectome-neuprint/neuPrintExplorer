@@ -2,8 +2,6 @@
  * Supports simple, custom neo4j query.
 */
 
-'use strict';
-
 import ClickableQuery from '../components/ClickableQuery.react';
 import SimpleCellWrapper from '../helpers/SimpleCellWrapper';
 import React from 'react';
@@ -38,14 +36,14 @@ var processSkeleton = function(results, state) {
       y: parseInt(record.get('y')),
       z: parseInt(record.get('z')),
       parent: parseInt(record.get('link')),
-      radius: record.get('radius'),
+      radius: record.get('radius')
     };
   });
 
   let table = {
     isSkeleton: true,
     swc: data,
-    name: state.sourceId.toString(),
+    name: state.sourceId.toString()
   };
   tables.push(table);
   return tables;
@@ -59,7 +57,7 @@ var processConnections = function(results, state) {
   let headerdata = [
     new SimpleCellWrapper(index++, 'Neuron ID'),
     new SimpleCellWrapper(index++, 'Neuron'),
-    new SimpleCellWrapper(index++, '#connections'),
+    new SimpleCellWrapper(index++, '#connections')
   ];
 
   let sortIndices = new Set([1, 2]);
@@ -67,8 +65,13 @@ var processConnections = function(results, state) {
   let table = {
     header: headerdata,
     body: data,
-    name: 'Connections ' + (state.isPre ? 'from ' : 'to ') + state.sourceName + ':bodyID=' + String(state.sourceId),
-    sortIndices: sortIndices,
+    name:
+      'Connections ' +
+      (state.isPre ? 'from ' : 'to ') +
+      state.sourceName +
+      ':bodyID=' +
+      String(state.sourceId),
+    sortIndices: sortIndices
   };
   results.records.forEach(function(record) {
     let bodyid = parseInt(record.get('Neuron2Id'));
@@ -77,7 +80,7 @@ var processConnections = function(results, state) {
     data.push([
       new SimpleCellWrapper(index++, bodyid),
       new SimpleCellWrapper(index++, bodyname),
-      new SimpleCellWrapper(index++, weight),
+      new SimpleCellWrapper(index++, weight)
     ]);
   });
   tables.push(table);
@@ -123,7 +126,7 @@ export var parseResults = function(neoResults, state) {
     new SimpleCellWrapper(index++, 'id'),
     new SimpleCellWrapper(index++, 'neuron'),
     new SimpleCellWrapper(index++, '#post (inputs)'),
-    new SimpleCellWrapper(index++, '#pre (outputs)'),
+    new SimpleCellWrapper(index++, '#pre (outputs)')
   ];
 
   var titlename =
@@ -160,32 +163,32 @@ export var parseResults = function(neoResults, state) {
     let statepre = {
       sourceId: bodyid,
       sourceName: neuronnames[bodyid].name,
-      isPre: true,
+      isPre: true
     };
     let statepost = {
       sourceId: bodyid,
       sourceName: neuronnames[bodyid].name,
-      isPre: false,
+      isPre: false
     };
     let neoPre = {
       queryStr: '/npexplorer/simpleconnections',
       params: preq,
       callback: processConnections,
       isChild: true,
-      state: statepre,
+      state: statepre
     };
     let neoPost = {
       queryStr: '/npexplorer/simpleconnections',
       params: postq,
       callback: processConnections,
       isChild: true,
-      state: statepost,
+      state: statepost
     };
     let neoSkel = {
       queryStr: skelq,
       callback: processSkeleton,
       isChild: true,
-      state: statepost,
+      state: statepost
     };
 
     let frowinfo = [];
@@ -213,10 +216,14 @@ export var parseResults = function(neoResults, state) {
     frowinfo.push(
       new SimpleCellWrapper(
         index++,
-        <ClickableQuery neoQueryObj={neoPre}>{JSON.stringify(neuronnames[bodyid].pre)}</ClickableQuery>,
+        (
+          <ClickableQuery neoQueryObj={neoPre}>
+            {JSON.stringify(neuronnames[bodyid].pre)}
+          </ClickableQuery>
+        ),
         false,
-        parseInt(neuronnames[bodyid].pre),
-      ),
+        parseInt(neuronnames[bodyid].pre)
+      )
     );
 
     var presizes = inputneuronROIs[bodyid];

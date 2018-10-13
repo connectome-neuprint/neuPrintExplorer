@@ -4,10 +4,10 @@
 
 "use strict";
 import React from 'react';
-import Typography from 'material-ui/Typography';
-import Tooltip from 'material-ui/Tooltip';
-import { withStyles } from 'material-ui/styles';
-import Badge from 'material-ui/Badge';
+import Typography from '@material-ui/core/Typography';
+import Tooltip from '@material-ui/core/Tooltip';
+import { withStyles } from '@material-ui/core/styles';
+import Badge from '@material-ui/core/Badge';
 import PropTypes from 'prop-types';
 
 const styles = () => ({

@@ -2,20 +2,16 @@
  * Main page to hold results from query.  This could be
  * a simple table or a table of tables.
 */
-
-"use strict";
-
 import React from 'react';
-import Typography from 'material-ui/Typography';
+import Typography from '@material-ui/core/Typography';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
-import Table, {
-  TableBody,
-  TableCell,
-  TableFooter,
-  TablePagination,
-  TableRow,
-} from 'material-ui/Table';
+import { withStyles } from '@material-ui/core/styles';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableFooter from '@material-ui/core/TableFooter';
+import TablePagination from '@material-ui/core/TablePagination';
+import TableRow from '@material-ui/core/TableRow';
 import { connect } from 'react-redux';
 import _ from "underscore";
 import TablePaginationActions from './TablePaginationActions.react';

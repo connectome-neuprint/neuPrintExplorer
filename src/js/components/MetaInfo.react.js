@@ -1,31 +1,28 @@
 /*
  * Handle neo4j server information.
 */
-
-"use strict";
-
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import _ from "underscore";
-import C from "../reducers/constants"
+import _ from 'underscore';
+import C from '../reducers/constants';
 
 class MetaInfo extends React.Component {
-    constructor(props) {
-        super(props);
-        this.updateDB(this.props.userInfo);
+  constructor(props) {
+    super(props);
+    this.updateDB(this.props.userInfo);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.userInfo === null && this.props.userInfo !== null) {
+      this.props.setNeoDatasets([], {}, {});
+      this.props.setNeoServer('');
     }
-   
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.userInfo === null && this.props.userInfo !== null) {
-            this.props.setNeoDatasets([], {}, {});
-            this.props.setNeoServer("");
-        }
-        
-        if (!_.isEqual(nextProps.userInfo, this.props.userInfo)) {
-            this.updateDB(nextProps.userInfo);        
-        }
+
+    if (!_.isEqual(nextProps.userInfo, this.props.userInfo)) {
+      this.updateDB(nextProps.userInfo);
     }
+  }
 
     updateDB = () => {
         fetch('/api/dbmeta/datasets', {
@@ -64,45 +61,44 @@ class MetaInfo extends React.Component {
                 }
             });
     }
-    
-    render () {
-        return (
-            <div />
-        );
-    }
+
+  render() {
+    return <div />;
+  }
 }
 
 MetaInfo.propTypes = {
-    setNeoDatasets: PropTypes.func.isRequired,
-    setNeoServer: PropTypes.func.isRequired,
-    userInfo: PropTypes.object,
+  setNeoDatasets: PropTypes.func.isRequired,
+  setNeoServer: PropTypes.func.isRequired,
+  userInfo: PropTypes.object
 };
 
-
 var MetaInfoState = function(state) {
-    return {
-        userInfo: state.user.userInfo
-    }
-}
+  return {
+    userInfo: state.user.userInfo
+  };
+};
 
 var MetaInfoDispatch = function(dispatch) {
-    return {
-        setNeoDatasets: function(datasets, rois, datasetInfo) {
-            dispatch({
-                type: C.SET_NEO_DATASETS,
-                availableDatasets: datasets,
-                availableROIs: rois,
-                datasetInfo: datasetInfo,
-            });
-        },
-        setNeoServer: function(server) {
-            dispatch({
-                type: C.SET_NEO_SERVER,
-                neoServer: server,
-            });
-        }
+  return {
+    setNeoDatasets: function(datasets, rois, datasetInfo) {
+      dispatch({
+        type: C.SET_NEO_DATASETS,
+        availableDatasets: datasets,
+        availableROIs: rois,
+        datasetInfo: datasetInfo
+      });
+    },
+    setNeoServer: function(server) {
+      dispatch({
+        type: C.SET_NEO_SERVER,
+        neoServer: server
+      });
     }
-}
+  };
+};
 
-export default connect(MetaInfoState, MetaInfoDispatch)(MetaInfo);
-
+export default connect(
+  MetaInfoState,
+  MetaInfoDispatch
+)(MetaInfo);

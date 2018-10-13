@@ -41,12 +41,9 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                use: [
-                  "babel-loader",
-                  "eslint-loader"
-                ]
+                test: /\.jsx?$/,
+                exclude: [/node_modules/],
+                use: ["babel-loader"],
             },
             {
                 test: /\.css$/,
@@ -55,14 +52,9 @@ module.exports = {
                     "css-loader"
                 ]
             },
-            {
-                test: [
-                    'webpack.config.js',
-                    'src/**/*.js'
-                ],
-                exclude: /node_modules/,
-                use: ['eslint-loader']
-            }
         ]
+    },
+    resolve: {
+      extensions: ['.js', '.jsx', '.react.js'],
     }
 }
