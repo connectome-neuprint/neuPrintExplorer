@@ -65,7 +65,7 @@
     "uuid": "^3.3.2"
   },
   "scripts": {
-    "pretest": "eslint \"src/**\"",
+    "pretest": "eslint --ext .jsx,.js src/js/",
     "test": "jest",
     "test-watch": "jest --watch",
     "dev-server": "webpack-dev-server --open",

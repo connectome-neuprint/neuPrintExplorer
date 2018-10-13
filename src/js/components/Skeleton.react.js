@@ -1,3 +1,4 @@
+/* global SharkViewer */
 /*
  * Uses SharkViewer to display a skeleton representation of a neuron
 */

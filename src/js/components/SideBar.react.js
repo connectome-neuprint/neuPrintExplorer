@@ -71,13 +71,13 @@ class SideBar extends React.Component {
       let urlqs = qs.stringify(query);
       this.props.setURLQs(urlqs);
 
-      history.replaceState(null, null, window.location.pathname + '?' + urlqs);
+      window.history.replaceState(null, null, window.location.pathname + '?' + urlqs);
     } else {
       query['openQuery'] = 'false';
       let urlqs = qs.stringify(query);
       this.props.setURLQs(urlqs);
 
-      history.replaceState(null, null, window.location.pathname);
+      window.history.replaceState(null, null, window.location.pathname);
     }
   };
 
