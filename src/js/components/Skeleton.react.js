@@ -237,7 +237,8 @@ var SkeletonState = function(state) {
   return {
     results: state.results.allTables,
     clearIndices: state.results.clearIndices,
-    numClear: state.results.numClear
+    numClear: state.results.numClear,
+    skeleton: state.skeleton,
   };
 };
 
