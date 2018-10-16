@@ -34,7 +34,7 @@ function settingAppDb(appDB) {
 }
 
 export function initPlugins(pluginList) {
-    const reconIndex = 7;
+    const reconIndex = 9;
     return initializingPlugins(pluginList, reconIndex);
 }
 export function setUrlQS(urlQueryString) {

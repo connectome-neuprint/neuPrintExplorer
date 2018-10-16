@@ -1,21 +1,22 @@
-/*
- * Queries common inputs/outputs given list of bodyIds 
-*/
 
-"use strict"
+/*
+ * Find similar neurons in a dataset.
+*/
 
 import React from 'react';
 import Button from 'material-ui/Button';
-import { FormControl, FormControlLabel } from 'material-ui/Form';
-import { Radio, RadioGroup } from 'material-ui/'
+import { FormControl } from 'material-ui/Form';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 import TextField from 'material-ui/TextField';
 import PropTypes from 'prop-types';
 import NeuronFilter from '../NeuronFilter.react';
-import queryCommonConnectivity from '../../neo4jqueries/commonConnectivity';
+import queryFindSimilarNeurons from '../../neo4jqueries/findSimilarNeurons.js';
 import { withStyles } from 'material-ui/styles';
 import { setUrlQS } from '../../actions/app';
 import { connect } from 'react-redux';
 import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
+
 
 const styles = theme => ({
     textField: {
@@ -32,14 +33,14 @@ const styles = theme => ({
         flexWrap: 'wrap',
     },
 });
-class CommonConnectivity extends React.Component {
+class FindSimilarNeurons extends React.Component {
 
     static get queryName() {
-        return "Common Connectivity";
+        return "Find Similar Neurons";
     }
 
     static get queryDescription() {
-        return "Finds common inputs/outputs for a group of bodies and weights of their connections to these inputs/outputs.";
+        return "Find neurons that are similar to a neuron of interest in terms of their input and output locations (ROIs).";
     }
 
     constructor(props) {
@@ -48,6 +49,7 @@ class CommonConnectivity extends React.Component {
             typeValue: "input",
             bodyIds: "",
             names: "",
+            getGroups: 'false'
         }
         const qsParams = LoadQueryString("Query:" + this.constructor.queryName, initqsParams, this.props.urlQueryString);
 
@@ -91,52 +93,42 @@ class CommonConnectivity extends React.Component {
         });
     }
 
+    getGroups = event => {
+        const oldParams = this.state.qsParams;
+        oldParams.getGroups = event.target.checked === true ? "true" : false;
+        this.props.setURLQs(SaveQueryString("Query:" + this.constructor.queryName, oldParams));
+        this.setState({ 
+            qsParams : oldParams 
+        });
+      };
+
     render() {
         const { classes } = this.props;
         return (
             <div>
                 <FormControl className={classes.formControl}>
                     <TextField
-                        label="Neuron bodyIds"
+                        label="Neuron bodyId"
                         multiline
                         fullWidth
                         rows={1}
                         value={this.state.qsParams.bodyIds}
-                        disabled={this.state.qsParams.names.length > 0}
+                        disabled={this.state.qsParams.getGroups === 'true' ? true : false}
                         rowsMax={4}
                         className={classes.textField}
-                        helperText="Separate ids with commas."
                         onChange={this.addNeuronBodyIds}
                     />
-                    <TextField
-                        label="Neuron names"
-                        multiline
-                        fullWidth
-                        rows={1}
-                        value={this.state.qsParams.names}
-                        disabled={this.state.qsParams.bodyIds.length > 0}
-                        rowsMax={4}
-                        className={classes.textField}
-                        helperText="Separate names with commas."
-                        onChange={this.addNeuronNames}
-                    />
-                    <RadioGroup
-                        aria-label="Type Of Connections"
-                        name="type"
-                        value={this.state.qsParams.typeValue}
-                        onChange={this.setInputOrOutput}
-                    >
-                        <FormControlLabel
-                            value="input"
-                            control={<Radio />}
-                            label="Inputs" />
-                        <FormControlLabel
-                            value="output"
-                            control={<Radio />}
-                            label="Outputs" />
-                    </RadioGroup>
-
                 </FormControl>
+                <FormControlLabel
+                control = {
+                    <Checkbox
+                    checked={this.state.qsParams.getGroups === 'true' ? true : false} 
+                    onChange={this.getGroups}
+                    value="getGroups"
+                />
+                }
+                label="Explore groups (provides a list of cluster names; click cluster names to view neuron body ids in that cluster)"
+                />
                 <NeuronFilter
                     callback={this.loadNeuronFilters}
                     datasetstr={this.props.datasetstr}
@@ -144,7 +136,7 @@ class CommonConnectivity extends React.Component {
                 <Button
                     variant="raised"
                     onClick={() => {
-                        this.props.callback(queryCommonConnectivity(this.props.datasetstr, this.state.qsParams.bodyIds, this.state.qsParams.names, this.state.limitBig, this.state.statusFilters, this.state.qsParams.typeValue));
+                        this.props.callback(queryFindSimilarNeurons(this.props.datasetstr, this.state.qsParams.bodyIds, this.state.qsParams.getGroups === 'true' ? true : false, this.state.qsParams.limitBig, this.state.qsParams.statusFilters));
                     }}
                 >
                     Submit
@@ -154,7 +146,7 @@ class CommonConnectivity extends React.Component {
     }
 }
 
-CommonConnectivity.propTypes = {
+FindSimilarNeurons.propTypes = {
     callback: PropTypes.func.isRequired,
     datasetstr: PropTypes.string.isRequired,
     setURLQs: PropTypes.func.isRequired,
@@ -162,13 +154,13 @@ CommonConnectivity.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-const CommonConnectivityState = function (state) {
+const FindSimilarNeuronsState = function (state) {
     return {
         urlQueryString: state.app.get("urlQueryString"),
     }
 };
 
-const CommonConnectivityDispatch = function (dispatch) {
+const FindSimilarNeuronsDispatch = function (dispatch) {
     return {
         setURLQs: function (querystring) {
             dispatch(setUrlQS(querystring));
@@ -177,5 +169,5 @@ const CommonConnectivityDispatch = function (dispatch) {
 }
 
 
-export default withStyles(styles, { withTheme: true })(connect(CommonConnectivityState, CommonConnectivityDispatch)(CommonConnectivity));
+export default withStyles(styles, { withTheme: true })(connect(FindSimilarNeuronsState, FindSimilarNeuronsDispatch)(FindSimilarNeurons));
 
