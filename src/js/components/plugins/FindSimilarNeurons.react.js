@@ -4,15 +4,15 @@
 */
 
 import React from 'react';
-import Button from 'material-ui/Button';
-import { FormControl } from 'material-ui/Form';
+import Button from '@material-ui/core/Button';
+import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import TextField from 'material-ui/TextField';
+import TextField from '@material-ui/core/TextField';
 import PropTypes from 'prop-types';
 import NeuronFilter from '../NeuronFilter.react';
 import queryFindSimilarNeurons from '../../neo4jqueries/findSimilarNeurons.js';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import { setUrlQS } from '../../actions/app';
 import { connect } from 'react-redux';
 import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
