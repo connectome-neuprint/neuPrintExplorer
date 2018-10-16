@@ -94,7 +94,7 @@ class QueryForm extends React.Component {
                     }}
                     message={<span id="message-id">{this.props.userInfo === null ? "User must log in" : "User not authorized for this server (please contact admin)"}</span>}
                 /> 
-                <Typography variant="body1">{CurrentQuery.queryDescription}</Typography>
+                <Typography>{CurrentQuery.queryDescription}</Typography>
                 <Divider className={classes.divider} />
                 <CurrentQuery
                                 datasetstr={this.props.datasetstr}

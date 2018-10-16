@@ -123,14 +123,14 @@ class Help extends React.Component {
                 
                 {value === 0 && <TabContainer>
                      <div className={classes.roottext}>
-                        <Typography variant="title">Graph Data Model</Typography>
-                        <Typography variant="body1">
+                        <Typography variant="h6">Graph Data Model</Typography>
+                        <Typography >
                             The data is store in Neo4j, a graph database, and is accessible
                             through custom Cypher queries.  This app provides a series
                             of interfaces to simplify common access patterns.
                         </Typography>
                         <br />
-                        <Typography variant="body1">
+                        <Typography >
                             The primary entry point into the graph model is the neuron 
                             node type.  Neurons (each which could be a subset or superset of an actual
                             neuron due to errors in automatic image segmentation) are connected
@@ -145,7 +145,7 @@ class Help extends React.Component {
                             is encoded by a relationship between nodes.
                         </Typography>
                         <br />
-                        <Typography variant="body1">
+                        <Typography >
                             Specific properties can be easily added to Neo4j as needed.  More
                             details of the graph model are shown in the accompanying illustration.
                         </Typography>
@@ -177,7 +177,7 @@ class Help extends React.Component {
                 </TabContainer>}
                 {value === 2 && <TabContainer>
                     <div className={classes.roottext}>
-                        <Typography variant="body1">
+                        <Typography >
                             The following slides describe how data is stored in Neo4j.
                         </Typography>
                     </div>

@@ -10,8 +10,8 @@ export default class RankCell extends React.Component {
     render() {
         return (
             <div style={{backgroundColor: this.props.color, padding: "1em", minWidth: "100px"}}>
-                <Typography variant="body1">{this.props.name}</Typography>
-                <Typography variant="body1">{this.props.weight}</Typography>
+                <Typography>{this.props.name}</Typography>
+                <Typography>{this.props.weight}</Typography>
                 <Typography variant="caption">{this.props.reverse}</Typography>
             </div>
         );

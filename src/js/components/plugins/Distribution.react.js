@@ -5,15 +5,15 @@
 "use strict"
 
 import React from 'react';
-import Button from 'material-ui/Button';
+import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
 import queryDistribution from '../../neo4jqueries/distribution';
 import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 import {connect} from 'react-redux';
-import { withStyles } from 'material-ui/styles';
-import Select from 'material-ui/Select';
-import { MenuItem } from 'material-ui/Menu';
-import { FormControl } from 'material-ui/Form';
+import { withStyles } from '@material-ui/core/styles';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
 import { setUrlQS } from '../../actions/app';
 
 const styles = theme => ({
@@ -112,7 +112,7 @@ class Distribution extends React.Component {
                     </Select>
                 
                     <Button
-                        variant="raised"
+                        variant="contained"
                         onClick={() => {
                             this.props.callback(queryDistribution(this.props.datasetstr, this.state.qsParams.roi, this.state.qsParams.type));
                         }}

@@ -308,12 +308,12 @@ class Results extends React.Component {
         {this.props.userInfo !== null && this.props.allTables !== null ? (
           <div/>
         ) : this.props.isQuerying ? (
-          <Typography variant="title">Querying...</Typography>
+          <Typography variant="h6">Querying...</Typography>
         ) : this.props.allTables !== null ? (
           <div />
         ) : (
           <div className={classes.empty}>
-            <Typography variant="title">No Search Results</Typography>
+            <Typography variant="h6">No Search Results</Typography>
             <Typography>
               Please use the Menu to the left to start a search.
             </Typography>

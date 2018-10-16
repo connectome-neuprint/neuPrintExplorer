@@ -5,7 +5,7 @@
 "use strict"
 
 import React from 'react';
-import Button from 'material-ui/Button';
+import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
 import NeuronFilter from '../NeuronFilter.react';
 import queryCompleteness from '../../neo4jqueries/completeness';
@@ -40,7 +40,7 @@ export default class Completeness extends React.Component {
                                         datasetstr={this.props.datasetstr}
                         />
                         <Button
-                            variant="raised"
+                            variant="contained"
                             onClick={() => {
                                 this.props.callback(queryCompleteness(this.props.datasetstr, this.props.availableROIs, this.state.limitBig, this.state.statusFilters));
                             }}

@@ -24,7 +24,7 @@ class NeuronHelp extends React.Component {
 
     var tooltip = (
       <Tooltip id="tooltip-icon" title={this.props.text} placement="top">
-        <Typography color="error" variant="body1" className={classes.badge} >
+        <Typography color="error" className={classes.badge} >
           ?
         </Typography>
       </Tooltip>

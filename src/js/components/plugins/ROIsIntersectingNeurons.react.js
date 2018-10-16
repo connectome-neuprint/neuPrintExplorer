@@ -5,11 +5,11 @@
 "use strict"
 
 import React from 'react';
-import TextField from 'material-ui/TextField';
-import Button from 'material-ui/Button';
-import { FormControl } from 'material-ui/Form';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import FormControl from '@material-ui/core/FormControl';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 import {connect} from 'react-redux';
 import NeuronHelp from '../NeuronHelp.react';
@@ -171,7 +171,7 @@ class ROIsIntersectingNeurons extends React.Component {
                     />
                     </NeuronHelp>
                     <Button
-                        variant="raised"
+                        variant="contained"
                         onClick={this.processRequest}
                     >
                         Submit

@@ -5,12 +5,14 @@
 "use strict";
 
 import React from 'react';
-import TextField from 'material-ui/TextField';
-import Button from 'material-ui/Button';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
-import Radio, { RadioGroup } from 'material-ui/Radio';
-import { FormLabel, FormControl, FormControlLabel } from 'material-ui/Form';
-import { withStyles } from 'material-ui/styles';
+import Radio, { RadioGroup } from '@material-ui/core/Radio';
+import FormLabel from '@material-ui/core/FormLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import { withStyles } from '@material-ui/core/styles';
 import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 import {connect} from 'react-redux';
 import NeuronHelp from '../NeuronHelp.react';
@@ -193,7 +195,7 @@ class SimpleConnections extends React.Component {
                         </RadioGroup>
                     </FormControl> 
                     <Button
-                        variant="raised"
+                        variant="contained"
                         onClick={this.processRequest}
                     >
                         Submit

@@ -100,15 +100,15 @@ class Favorites extends React.Component {
         
         return (
             <div className={classes.root}>
-                <Typography variant="title">Favorites</Typography>
+                <Typography variant="h6">Favorites</Typography>
                 {this.props.userInfo !== null ? 
                 (<Table className={classes.table}>
                     <TableBody>
                     {this.state.favoritesArr.slice(startRecord, page * rowsPerPage + rowsPerPage).map( (tableinfo, index) => {
                         return (
                             <TableRow key={startRecord + index}>
-                                <TableCell><Typography variant="body2"><a href={tableinfo.url}>{tableinfo.name}</a></Typography></TableCell>
-                                <TableCell><Typography variant="body1">{tableinfo.cypher}</Typography></TableCell>
+                                <TableCell><Typography ><a href={tableinfo.url}>{tableinfo.name}</a></Typography></TableCell>
+                                <TableCell><Typography >{tableinfo.cypher}</Typography></TableCell>
                             </TableRow>
                         );
                     })}

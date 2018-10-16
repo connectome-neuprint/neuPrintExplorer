@@ -7,14 +7,16 @@
 "use strict"
 
 import React from 'react';
-import TextField from 'material-ui/TextField';
-import Button from 'material-ui/Button';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
-import Radio, { RadioGroup } from 'material-ui/Radio';
-import { FormLabel, FormControl, FormControlLabel } from 'material-ui/Form';
-import Typography from 'material-ui/Typography';
+import Radio, { RadioGroup } from '@material-ui/core/Radio';
+import FormLabel from '@material-ui/core/FormLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Typography from '@material-ui/core/Typography';
 import {connect} from 'react-redux';
 import NeuronHelp from '../NeuronHelp.react';
 import RankCell from '../RankCell.react';
@@ -149,7 +151,6 @@ class RankedTable extends React.Component {
                     rowcomps.push(new SimpleCellWrapper(
                         index,
                         (<Typography 
-                                    variant="body1"
                                     align="center"
                          >
                             {neuronmatch1}
@@ -294,7 +295,7 @@ class RankedTable extends React.Component {
                         </RadioGroup>
                     </FormControl> 
                     <Button
-                        variant="raised"
+                        variant="contained"
                         onClick={this.processRequest}
                     >
                         Submit

@@ -5,14 +5,16 @@
 "use strict"
 
 import React from 'react';
-import Button from 'material-ui/Button';
-import { FormControl, FormControlLabel } from 'material-ui/Form';
-import { Radio, RadioGroup } from 'material-ui/'
-import TextField from 'material-ui/TextField';
+import Button from '@material-ui/core/Button';
+import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import TextField from '@material-ui/core/TextField';
 import PropTypes from 'prop-types';
 import NeuronFilter from '../NeuronFilter.react';
 import queryCommonConnectivity from '../../neo4jqueries/commonConnectivity';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import { setUrlQS } from '../../actions/app';
 import { connect } from 'react-redux';
 import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
@@ -142,7 +144,7 @@ class CommonConnectivity extends React.Component {
                     datasetstr={this.props.datasetstr}
                 />
                 <Button
-                    variant="raised"
+                    variant="contained"
                     onClick={() => {
                         this.props.callback(queryCommonConnectivity(this.props.datasetstr, this.state.qsParams.bodyIds, this.state.qsParams.names, this.state.limitBig, this.state.statusFilters, this.state.qsParams.typeValue));
                     }}

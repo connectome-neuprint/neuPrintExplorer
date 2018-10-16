@@ -5,7 +5,7 @@
 "use strict"
 
 import React from 'react';
-import Button from 'material-ui/Button';
+import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
 import queryAutapses from '../../neo4jqueries/autapses';
 
@@ -21,7 +21,7 @@ export default class Autapses extends React.Component {
     render() {
         return (
                     <Button
-                        variant="raised"
+                        variant="contained"
                         onClick={() => {
                             this.props.callback(queryAutapses(this.props.datasetstr));
                         }}

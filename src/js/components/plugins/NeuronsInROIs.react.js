@@ -203,7 +203,7 @@ class NeuronsInROIs extends React.Component {
           <NeuronFilter callback={this.loadNeuronFilters} datasetstr={this.props.datasetstr} />
         </FormControl>
 
-        <Button variant="raised" onClick={this.processRequest}>
+        <Button variant="contained" onClick={this.processRequest}>
           Submit
         </Button>
       </div>

@@ -108,9 +108,9 @@ class Home extends React.Component {
         <Grid container spacing={24}>
           <Grid item xs={12}>
             <div className={classes.roottext}>
-              <Typography variant="title">Analysis tools for connectomics</Typography>
+              <Typography variant="h6">Analysis tools for connectomics</Typography>
               <br />
-              <Typography variant="body1">
+              <Typography >
                 neuPrintExplorer provides tools to query and visualize connectomic data stored in{' '}
                 <a href="https://github.com/janelia-flyem/neuPrint">neuPrint</a>, which uses a neo4j
                 graph database. Use the search icon at the <a href="/?openQuery=true">top left</a>{' '}
