@@ -6,11 +6,11 @@
 // There should be no reason to have a React component
 // just to load in content. 
 
-import C from '../reducers/constants';
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import NeuPrintResult from '../helpers/NeuPrintResult';
+import { setQueryError, appendData, saveData, finishQuery } from '../actions/neoQuery';
 
 var UNIQUE_ID = 0;
 
@@ -88,28 +88,15 @@ var Neo4jQueryState = function(state) {
 var Neo4jQueryDispatch = function(dispatch) {
   return {
     setQueryError: function(error) {
-      dispatch({
-        type: C.SET_NEO_ERROR,
-        neoError: error
-      });
+      dispatch(setQueryError(error));
     },
     appendData: function(results) {
-      dispatch({
-        type: C.APPEND_RESULTS,
-        allTables: results
-      });
-      dispatch({
-        type: C.FINISH_QUERY
-      });
+      dispatch(appendData(results));
+      dispatch(finishQuery());
     },
     saveData: function(results) {
-      dispatch({
-        type: C.UPDATE_RESULTS,
-        allTables: results
-      });
-      dispatch({
-        type: C.FINISH_QUERY
-      });
+      dispatch(saveData(results));
+      dispatch(finishQuery());
     }
   };
 };
