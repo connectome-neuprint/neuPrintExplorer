@@ -35,7 +35,7 @@ const styles = theme => ({
 class CommonConnectivity extends React.Component {
 
     static get queryName() {
-        return "CommonConnectivity";
+        return "Common Connectivity";
     }
 
     static get queryDescription() {
