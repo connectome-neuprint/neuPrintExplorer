@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import NeuPrintResult from '../helpers/NeuPrintResult';
 import { setQueryError, appendData, saveData, finishQuery } from '../actions/neoQuery';
+import { skeletonAdd, skeletonOpen } from '../actions/skeleton';
 
 var UNIQUE_ID = 0;
 
@@ -97,6 +98,12 @@ var Neo4jQueryDispatch = function(dispatch) {
     saveData: function(results) {
       dispatch(saveData(results));
       dispatch(finishQuery());
+    },
+    skeletonAdd: function(id) {
+      dispatch(skeletonAdd(id));
+    },
+    skeletonOpen: function() {
+      dispatch(skeletonOpen());
     }
   };
 };
@@ -113,7 +120,9 @@ Neo4jQuery.propTypes = {
   appendData: PropTypes.func.isRequired,
   saveData: PropTypes.func.isRequired,
   isQuerying: PropTypes.bool.isRequired,
-  setQueryError: PropTypes.func.isRequired
+  setQueryError: PropTypes.func.isRequired,
+  skeletonAdd: PropTypes.func.isRequired,
+  skeletonOpen: PropTypes.func.isRequired,
 };
 
 export default connect(

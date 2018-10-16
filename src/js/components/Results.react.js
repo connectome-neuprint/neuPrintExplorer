@@ -16,6 +16,7 @@ import Grid from '@material-ui/core/Grid';
 import ResultsTopBar from './ResultsTopBar';
 import SimpleTables from './SimpleTables';
 import Skeleton from './Skeleton';
+// import NeuroGlancer from 'neuroglancer-react';
 
 import './Results.css';
 
@@ -372,6 +373,7 @@ class Results extends React.Component {
             </Grid>
             {this.state.showSkel ? (
               <Grid item xs={12} sm={6}>
+                {/* <NeuroGlancer perspectiveZoom={80} /> */}
                 <Skeleton disable={!this.state.showSkel} />
               </Grid>
             ) : (
