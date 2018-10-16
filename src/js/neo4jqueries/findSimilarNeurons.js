@@ -29,7 +29,7 @@ var processResults = function (results, state) {
 
     function ColorLegend(props) {
 
-        return viridisColorMap.map((color, index) => {
+        return <div>{"roi heatmap   0%"} {viridisColorMap.map((color, index) => {
             const styles = {
                 margin: '0px',
                 width: '2px',
@@ -39,8 +39,10 @@ var processResults = function (results, state) {
                 display: 'inline-flex',
                 flexDirection: 'row',
             }
-            return <div key={index} style={styles} ></div>
-        })
+            return <div key={index} style={styles} >
+            </div>
+        })}
+        {" 100%   (mouseover for details) "}</div>
     }
 
     let headerdata = [
@@ -49,7 +51,7 @@ var processResults = function (results, state) {
         new SimpleCellWrapper(index++, "status"),
         new SimpleCellWrapper(index++, "pre"),
         new SimpleCellWrapper(index++, "post"),
-        new SimpleCellWrapper(index++, ["roi heatmap   0%", ColorLegend(), "100%   (mouseover for details) "]),
+        new SimpleCellWrapper(index++, ColorLegend()),
         new SimpleCellWrapper(index++, "roi breakdown (mouseover for details)")
     ]
 
