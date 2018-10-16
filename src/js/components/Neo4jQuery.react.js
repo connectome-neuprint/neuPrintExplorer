@@ -21,14 +21,10 @@ class Neo4jQuery extends React.Component {
       // only authorized users could get server information
       if (nextProps.neoQueryObj.queryStr !== '' && nextProps.neoServer !== '') {
         // run query (TODO: handle blocking query??)
-        let setError = this.props.setQueryError;
+        const { setQueryError, saveData, appendData, skeletonAdd, skeletonOpen } = this.props;
         let processResults = nextProps.neoQueryObj.callback;
         let state = nextProps.neoQueryObj.state;
-        let saveData = this.props.saveData;
         let uniqueId = UNIQUE_ID++;
-        if (nextProps.neoQueryObj.isChild) {
-          saveData = this.props.appendData;
-        }
         let queryStr = nextProps.neoQueryObj.queryStr;
         let endpoint = '/api';
         let params = nextProps.neoQueryObj.params;
@@ -62,11 +58,15 @@ class Neo4jQuery extends React.Component {
                 data[i]['uniqueId'] = uniqueId;
               }
             }
-            saveData(data);
+            if (nextProps.neoQueryObj.isChild) {
+              appendData(data);
+            } else {
+              saveData(data);
+            }
           })
           .catch(function(error) {
             alert(error.message);
-            setError(error.message);
+            setQueryError(error);
           });
       }
     }
