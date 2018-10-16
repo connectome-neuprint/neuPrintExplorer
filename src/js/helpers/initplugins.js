@@ -9,7 +9,7 @@ import CommonConnectivity from '../components/plugins/CommonConnectivity.react';
 import FreeForm from '../components/plugins/FreeForm.react';
 import SimpleConnections from '../components/plugins/SimpleConnections.react';
 import RankedTable from '../components/plugins/RankedTable.react';
-import NeuronsInROIs from '../components/plugins/NeuronsInROIs.react';
+import FindNeurons from '../components/plugins/FindNeurons.react';
 import ROIsIntersectingNeurons from '../components/plugins/ROIsIntersectingNeurons.react';
 import ROIConnectivity from '../components/plugins/ROIConnectivity.react';
 import NeuronMeta from '../components/plugins/NeuronMeta.react';
@@ -18,7 +18,7 @@ import Distribution from '../components/plugins/Distribution.react';
 import Completeness from '../components/plugins/Completeness.react';
 import FindSimilarNeurons from '../components/plugins/FindSimilarNeurons.react';
 
-const pluginList = [NeuronsInROIs, NeuronMeta, ROIConnectivity, RankedTable, SimpleConnections, ROIsIntersectingNeurons, CommonConnectivity, FindSimilarNeurons, FreeForm, Autapses, Distribution, Completeness];
+const pluginList = [FindNeurons, NeuronMeta, ROIConnectivity, RankedTable, SimpleConnections, ROIsIntersectingNeurons, CommonConnectivity, FindSimilarNeurons, FreeForm, Autapses, Distribution, Completeness];
 
 export default function loadPlugins(store) {
     store.dispatch(initPlugins(pluginList));
