@@ -2,8 +2,6 @@
  * Loads plugin modules and names from plugin directory.
 */
 
-"use strict";
-
 import { initPlugins } from '../actions/app';
 
 // import plugins (could probably write a pre-processing script)
@@ -18,8 +16,9 @@ import NeuronMeta from '../components/plugins/NeuronMeta.react';
 import Autapses from '../components/plugins/Autapses.react';
 import Distribution from '../components/plugins/Distribution.react';
 import Completeness from '../components/plugins/Completeness.react';
+import FindSimilarNeurons from '../components/plugins/FindSimilarNeurons.react';
 
-const pluginList = [NeuronsInROIs, NeuronMeta, ROIConnectivity, RankedTable, SimpleConnections, ROIsIntersectingNeurons, CommonConnectivity, FreeForm, Autapses, Distribution, Completeness];
+const pluginList = [NeuronsInROIs, NeuronMeta, ROIConnectivity, RankedTable, SimpleConnections, ROIsIntersectingNeurons, CommonConnectivity, FindSimilarNeurons, FreeForm, Autapses, Distribution, Completeness];
 
 export default function loadPlugins(store) {
     store.dispatch(initPlugins(pluginList));
