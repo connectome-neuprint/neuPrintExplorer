@@ -171,8 +171,8 @@ var processResults = function (results, state) {
 
         data.push([
             new SimpleCellWrapper(index++, JSON.stringify(bodyId)),
-            new SimpleCellWrapper(index++, JSON.stringify(name)),
-            new SimpleCellWrapper(index++, JSON.stringify(status)),
+            new SimpleCellWrapper(index++, name),
+            new SimpleCellWrapper(index++, status),
             new SimpleCellWrapper(index++, JSON.stringify(pre)),
             new SimpleCellWrapper(index++, JSON.stringify(post)),
             // new SimpleCellWrapper(index++, JSON.stringify(roiInfo)),
