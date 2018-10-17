@@ -23,12 +23,10 @@ class Neo4jQuery extends React.Component {
       if (nextProps.neoQueryObj.queryStr !== '' && nextProps.neoServer !== '') {
         // run query (TODO: handle blocking query??)
         const { setQueryError, saveData, appendData, skeletonAdd, skeletonOpen } = this.props;
-        let processResults = nextProps.neoQueryObj.callback;
-        let state = nextProps.neoQueryObj.state;
+        const processResults = nextProps.neoQueryObj.callback;
+        let { queryStr, params, state } = nextProps.neoQueryObj;
         let uniqueId = UNIQUE_ID++;
-        let queryStr = nextProps.neoQueryObj.queryStr;
         let endpoint = '/api';
-        let params = nextProps.neoQueryObj.params;
         if (params !== undefined) {
           endpoint += queryStr;
         } else {
