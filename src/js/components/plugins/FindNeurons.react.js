@@ -16,7 +16,6 @@ import TextField from '@material-ui/core/TextField';
 import NeuronHelp from '../NeuronHelp.react';
 import NeuronFilter from '../NeuronFilter.react';
 import { parseResults } from '../../neo4jqueries/neuronsInROIs';
-//import _ from "underscore";
 import { setUrlQS } from '../../actions/app';
 import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 
