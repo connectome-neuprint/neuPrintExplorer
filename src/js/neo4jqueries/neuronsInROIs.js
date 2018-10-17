@@ -49,7 +49,7 @@ var processSkeleton = function(results, state) {
   return tables;
 };
 
-var processConnections = function(results, state) {
+var processConnections = function (results, state) {
   // state: sourceId, sourceName, isPre
 
   let tables = [];
@@ -73,7 +73,7 @@ var processConnections = function(results, state) {
       String(state.sourceId),
     sortIndices: sortIndices
   };
-  results.records.forEach(function(record) {
+  results.records.forEach(function (record) {
     let bodyid = parseInt(record.get('Neuron2Id'));
     let bodyname = record.get('Neuron2');
     let weight = parseInt(record.get('Weight'));
@@ -87,12 +87,12 @@ var processConnections = function(results, state) {
   return tables;
 };
 
-export var parseResults = function(neoResults, state) {
+export var parseResults = function (neoResults, state) {
   var inputneuronROIs = {};
   var outputneuronROIs = {};
   var neuronnames = {};
 
-  neoResults.records.forEach(function(record) {
+  neoResults.records.forEach(function (record) {
     var bodyid = record.get('bodyid');
     inputneuronROIs[bodyid] = {};
     outputneuronROIs[bodyid] = {};
@@ -101,6 +101,7 @@ export var parseResults = function(neoResults, state) {
     neuronnames[bodyid]['size'] = record.get('size');
     neuronnames[bodyid]['pre'] = record.get('npre');
     neuronnames[bodyid]['post'] = record.get('npost');
+    neuronnames[bodyid]['status'] = record.get('neuronStatus');
     var rois = JSON.parse(record.get('roiInfo'));
     for (let item in rois) {
       if (state.inputROIs.indexOf(item) !== -1) {
@@ -125,6 +126,7 @@ export var parseResults = function(neoResults, state) {
   let headerdata = [
     new SimpleCellWrapper(index++, 'id'),
     new SimpleCellWrapper(index++, 'neuron'),
+    new SimpleCellWrapper(index++, 'status'),
     new SimpleCellWrapper(index++, '#post (inputs)'),
     new SimpleCellWrapper(index++, '#pre (outputs)')
   ];
@@ -204,6 +206,8 @@ export var parseResults = function(neoResults, state) {
 
     frowinfo.push(new SimpleCellWrapper(index++, neuronnames[bodyid].name));
 
+    frowinfo.push(new SimpleCellWrapper(index++, neuronnames[bodyid].status));
+
     frowinfo.push(
       new SimpleCellWrapper(
         index++,
@@ -241,7 +245,7 @@ export var parseResults = function(neoResults, state) {
 
   formatinfo.sort(compareNeuronRows);
 
-  let sortIndices = new Set([1, 2, 3, 4]);
+  let sortIndices = new Set([0, 1, 2, 3, 4, 5]);
   for (let i = 5; i < headerdata.length; i++) {
     sortIndices.add(i);
   }
