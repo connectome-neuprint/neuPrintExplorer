@@ -49,7 +49,7 @@ const styles = theme => ({
   },
   select: {
     fontFamily: theme.typography.fontFamily,
-    margin: '0.5em 0 1em 0',
+    margin: '0.5em 0 1em 0'
   }
 });
 
@@ -116,7 +116,6 @@ class Query extends React.Component {
 
     var queryname = 'Select Query';
     var querytype = '';
-    var initmenuitem = <MenuItem value={queryname}>{queryname}</MenuItem>;
 
     // if query is selected, pass query along
     if (this.state.qsParams.queryType !== '') {
@@ -130,7 +129,6 @@ class Query extends React.Component {
       if (found) {
         queryname = this.state.qsParams.queryType;
         querytype = queryname;
-        initmenuitem = <div />;
       }
     }
 

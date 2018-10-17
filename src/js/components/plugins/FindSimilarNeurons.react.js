@@ -56,8 +56,7 @@ class FindSimilarNeurons extends React.Component {
 
     this.state = {
       qsParams: qsParams,
-      limitBig: true,
-      correctInput: qsParams.bodyIds.length > 0
+      limitBig: true
     };
   }
 
@@ -71,11 +70,9 @@ class FindSimilarNeurons extends React.Component {
   addNeuronBodyIds = event => {
     const oldParams = this.state.qsParams;
     oldParams.bodyIds = event.target.value;
-    const correctInput = oldParams.bodyIds.length > 0;
     this.props.setURLQs(SaveQueryString('Query:' + this.constructor.queryName, oldParams));
     this.setState({
-      qsParams: oldParams,
-      correctInput: correctInput
+      qsParams: oldParams
     });
   };
 
@@ -108,7 +105,6 @@ class FindSimilarNeurons extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const groupCheckbox = this.state.qsParams.getGroups === 'true' ? true : false;
     return (
       <div>
         <FormControl className={classes.formControl}>
@@ -118,20 +114,25 @@ class FindSimilarNeurons extends React.Component {
             fullWidth
             rows={1}
             value={this.state.qsParams.bodyIds}
-            disabled={groupCheckbox}
+            disabled={this.state.qsParams.getGroups === 'true' ? true : false}
             rowsMax={4}
             className={classes.textField}
             onChange={this.addNeuronBodyIds}
           />
         </FormControl>
         <FormControlLabel
-          control={<Checkbox checked={groupCheckbox} onChange={this.getGroups} value="getGroups" />}
+          control={
+            <Checkbox
+              checked={this.state.qsParams.getGroups === 'true' ? true : false}
+              onChange={this.getGroups}
+              value="getGroups"
+            />
+          }
           label="Explore groups (provides a list of cluster names; click cluster names to view neuron body ids in that cluster)"
         />
         <NeuronFilter callback={this.loadNeuronFilters} datasetstr={this.props.datasetstr} />
         <Button
-          variant="contained"
-          disabled={!(this.state.correctInput || groupCheckbox)}
+          variant="raised"
           onClick={() => {
             this.props.callback(
               queryFindSimilarNeurons(
