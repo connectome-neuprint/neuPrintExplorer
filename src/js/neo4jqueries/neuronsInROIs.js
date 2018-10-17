@@ -5,6 +5,8 @@
 import ClickableQuery from '../components/ClickableQuery.react';
 import SimpleCellWrapper from '../helpers/SimpleCellWrapper';
 import React from 'react';
+import RoiHeatMap, { ColorLegend } from '../components/visualization/MiniRoiHeatMap.react'
+import RoiBarGraph from '../components/visualization/MiniRoiBarGraph.react'
 
 const skeletonQuery =
   'MATCH (:`YY-Neuron` {bodyId:ZZ})-[:Contains]->(:Skeleton)-[:Contains]->(root :SkelNode) WHERE NOT (root)<-[:LinksTo]-() RETURN root.rowNumber AS rowId, root.location.x AS x, root.location.y AS y, root.location.z AS z, root.radius AS radius, -1 AS link ORDER BY root.rowNumber UNION match (:`YY-Neuron` {bodyId:ZZ})-[:Contains]->(:Skeleton)-[:Contains]->(s :SkelNode)<-[:LinksTo]-(ss :SkelNode) RETURN s.rowNumber AS rowId, s.location.x AS x, s.location.y AS y, s.location.z AS z, s.radius AS radius, ss.rowNumber AS link ORDER BY s.rowNumber';
@@ -20,7 +22,7 @@ function compareNeuronRows(row1, row2) {
   return total2 - total;
 }
 
-var processSkeleton = function(results, state) {
+var processSkeleton = function (results, state) {
   // state: sourceId, sourceName, isPre
   let tables = [];
 
@@ -28,7 +30,7 @@ var processSkeleton = function(results, state) {
   let data = {};
   let colorid = parseInt(state.sourceId); // % 8;
 
-  results.records.forEach(function(record) {
+  results.records.forEach(function (record) {
     let rowId = parseInt(record.get('rowId'));
     data[rowId] = {
       type: colorid,
@@ -102,16 +104,19 @@ export var parseResults = function (neoResults, state) {
     neuronnames[bodyid]['pre'] = record.get('npre');
     neuronnames[bodyid]['post'] = record.get('npost');
     neuronnames[bodyid]['status'] = record.get('neuronStatus');
-    var rois = JSON.parse(record.get('roiInfo'));
-    for (let item in rois) {
+    neuronnames[bodyid]['roiInfo'] = record.get('roiInfo');
+    neuronnames[bodyid]['roiInfoObject'] = JSON.parse(neuronnames[bodyid]['roiInfo']);
+    neuronnames[bodyid]['rois'] = record.get('rois');
+
+    for (let item in neuronnames[bodyid].roiInfoObject) {
       if (state.inputROIs.indexOf(item) !== -1) {
-        let insize = rois[item].post;
+        let insize = neuronnames[bodyid].roiInfoObject[item].post;
         if (insize > 0) {
           inputneuronROIs[bodyid][item] = insize;
         }
       }
       if (state.outputROIs.indexOf(item) !== -1) {
-        let outsize = rois[item].pre;
+        let outsize = neuronnames[bodyid].roiInfoObject[item].pre;
         if (outsize > 0) {
           outputneuronROIs[bodyid][item] = outsize;
         }
@@ -148,11 +153,26 @@ export var parseResults = function (neoResults, state) {
 
   headerdata.push(new SimpleCellWrapper(index++, '#voxels'));
 
+  headerdata.push(new SimpleCellWrapper(index++, <div>{"roi heatmap (mouseover for details)"} <ColorLegend /> </div>))
+  headerdata.push(new SimpleCellWrapper(index++, "roi breakdown (mouseover for details)"))
+
   // load table body
   var formatinfo = [];
   const skeletonQ = skeletonQuery.replace(/YY/g, state.datasetstr);
 
   for (let bodyid in neuronnames) {
+
+    let preTotal = 0
+    let postTotal = 0
+    const roiList = neuronnames[bodyid]['rois']
+
+    Object.keys(neuronnames[bodyid].roiInfoObject).map((roi) => {
+      if (roiList.find((element) => { return element === roi })) {
+        preTotal += neuronnames[bodyid].roiInfoObject[roi]["pre"]
+        postTotal += neuronnames[bodyid].roiInfoObject[roi]["post"]
+      }
+    })
+
     if (Object.keys(inputneuronROIs[bodyid]).length !== state.inputROIs.length) {
       continue;
     }
@@ -240,6 +260,10 @@ export var parseResults = function (neoResults, state) {
       frowinfo.push(new SimpleCellWrapper(index++, parseInt(postsizes[state.outputROIs[index2]])));
     }
     frowinfo.push(new SimpleCellWrapper(index++, neuronnames[bodyid].size));
+
+    frowinfo.push(new SimpleCellWrapper(index++, <RoiHeatMap roiList={roiList} roiInfoObject={neuronnames[bodyid].roiInfoObject} preTotal={preTotal} postTotal={postTotal} />));
+    frowinfo.push(new SimpleCellWrapper(index++, <RoiBarGraph roiList={roiList} roiInfoObject={neuronnames[bodyid].roiInfoObject} preTotal={preTotal} postTotal={postTotal} />));
+
     formatinfo.push(frowinfo);
   }
 
@@ -260,7 +284,7 @@ export var parseResults = function (neoResults, state) {
   return tables;
 };
 
-export default function(inputROIs, outputROIs, neuronsrc, datasetstr, isChild) {
+export default function (inputROIs, outputROIs, neuronsrc, datasetstr, isChild) {
   let params = { dataset: datasetstr, input_ROIs: inputROIs, output_ROIs: outputROIs };
   if (neuronsrc !== '') {
     if (isNaN(neuronsrc)) {
