@@ -19,7 +19,7 @@ const processResults = function (results, state) {
         new SimpleCellWrapper(index++, "status"),
         new SimpleCellWrapper(index++, "#pre (#no ROI)"),
         new SimpleCellWrapper(index++, "#post (#no ROI)"),
-        new SimpleCellWrapper(index++, ["roi heatmap (mouseover for details)", ColorLegend()]),
+        new SimpleCellWrapper(index++, <div>{"roi heatmap (mouseover for details)"} <ColorLegend /> </div>),
         new SimpleCellWrapper(index++, "roi breakdown (mouseover for details)")
     ]
 

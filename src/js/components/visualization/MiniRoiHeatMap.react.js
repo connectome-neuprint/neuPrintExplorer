@@ -47,15 +47,18 @@ function HeatMapLabels({ roiList }) {
 
 export function ColorLegend() {
 
-    return <div>{"0% "} {viridisColorMap.map((color, index) => {
+    const styles = {
+        display: 'inline-flex',
+        overflow: 'visible',
+        flexDirection: 'row'
+    }
+
+    return <div style={styles}>{"0% "} {viridisColorMap.map((color, index) => {
         const styles = {
             margin: '0px',
             width: '2px',
             height: '10px',
-            backgroundColor: color,
-            overflow: 'visible',
-            display: 'inline-flex',
-            flexDirection: 'row',
+            backgroundColor: color
         }
         return <div key={index} style={styles} >
         </div>

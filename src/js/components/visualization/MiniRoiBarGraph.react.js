@@ -29,11 +29,11 @@ function BarGraph({ listOfRoisToUse, roiInfoObject, roiInfoObjectKey, sumOfValue
             }
             const percent = roiInfoObject[roi][type] * 1.0 / total * 100
             return <ColorBox
+                key={roi}
                 margin={0}
                 width={percent * 4}
                 height={20}
                 backgroundColor={color}
-                key={roi}
                 title={roi + " " + Math.round(percent * 100) / 100 + "%"}
             />
         }

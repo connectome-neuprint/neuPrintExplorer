@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default ({margin, width, height, backgroundColor, key, title})  => {
+export default ({margin, width, height, backgroundColor, id, title})  => {
     const styles = {
         margin: margin + 'px',
         width: width + 'px',
@@ -10,5 +10,5 @@ export default ({margin, width, height, backgroundColor, key, title})  => {
         display: 'inline-flex',
         flexDirection: 'row',
     }
-    return <div key={key} style={styles} title={title}></div>
+    return <div style={styles} title={title}></div>
 }
