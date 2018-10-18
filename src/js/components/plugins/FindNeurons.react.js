@@ -155,7 +155,7 @@ class NeuronsInROIs extends React.Component {
 
     const outputOptions = this.props.availableROIs.map(name => {
       return {
-        label: `${name}_post`,
+        label: name,
         value: name,
       };
     });
