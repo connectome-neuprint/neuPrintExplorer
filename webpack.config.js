@@ -4,12 +4,6 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-const getClientEnvironment = require('./env');
-
-const publicUrl = '';
-// Get environment variables to inject into our app.
-const env = getClientEnvironment(publicUrl);
-
 
 const htmlPlugin = new HtmlWebPackPlugin({
     template: "./src/index.html",
@@ -34,7 +28,9 @@ module.exports = {
         cleanPlugin,
         miniCssExtractPlugin,
         copyWebpackPlugin,
-        new webpack.DefinePlugin(env.stringified),
+        new webpack.DefinePlugin({
+          VERSION: JSON.stringify(require('./package.json').version)
+        }),
     ],
     output: {
         path: path.resolve(__dirname, 'build'),
