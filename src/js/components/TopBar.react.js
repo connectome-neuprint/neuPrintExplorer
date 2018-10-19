@@ -1,6 +1,7 @@
+/* global VERSION */
 /*
  * Top level page for displaying queries and results.
-*/
+ */
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
