@@ -53,9 +53,11 @@ class TopBar extends React.Component {
       <AppBar position="absolute" className={classes.appBar}>
         <Toolbar>
           <div className={classes.flex}>
-            <Link to="/">
-              <img src="/public/neuprintexplorerw.png" className={classes.img} />
-            </Link>
+            <Tooltip title={VERSION} placement={'bottom'} enterDelay={300}>
+              <Link to="/">
+                <img src="/public/neuprintexplorerw.png" className={classes.img} />
+              </Link>
+            </Tooltip>
           </div>
           {this.props.userInfo !== null && this.props.userInfo.AuthLevel === 'noauth' ? (
             <Typography className={classes.textBox}>Not Authorized</Typography>
