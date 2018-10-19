@@ -80,6 +80,7 @@ class Results extends React.Component {
 
   // if only query string has updated, prevent re-render
   shouldComponentUpdate(nextProps, nextState) {
+    return true;
     nextProps.location['search'] = this.props.location['search'];
 
     let numSkels = 0;
@@ -240,13 +241,13 @@ class Results extends React.Component {
 
   render() {
     // TODO: show query runtime results
-    const { classes } = this.props;
+    const { classes, userInfo, allTables, isQuerying, neoError, allResults, viewPlugins } = this.props;
     let resArray = [];
     let currIndex = 0;
     let numTables = 0;
 
-    if (this.props.allTables !== null) {
-      this.props.allTables.forEach((result, index) => {
+    if (allTables !== null) {
+      allTables.forEach((result, index) => {
         if (
           !this.props.clearIndices.has(index) &&
           (!('isSkeleton' in result[0]) || !result[0].isSkeleton)
@@ -256,8 +257,8 @@ class Results extends React.Component {
       });
     }
 
-    if (this.props.neoError === null && this.props.allTables !== null) {
-      this.props.allTables.forEach((result, index) => {
+    if (neoError === null && allTables !== null) {
+      allTables.forEach((result, index) => {
         //  TODO: rather than skip over the skeleton and place it in a
         //  different container system, why not add it to the grid layout
         //  and fix the dimensions / location. Search for
@@ -299,17 +300,35 @@ class Results extends React.Component {
       });
     }
 
+    const results = allResults.map((query, index) => {
+      const View = viewPlugins.get(query.visType);
+      return (
+        <div key={index}>
+          <ResultsTopBar
+            version={2}
+            downloadCallback={this.downloadFile}
+            name='Results'
+            index={index}
+            queryStr={query.result.debug}
+            color={LightColors[index % LightColors.length]}
+          />
+          <View query={query} key={index} />
+        </div>
+      );
+    });
+
     return (
       <div
         tabIndex="0"
         onKeyPress={this.triggerKeyboard}
         className={classes.root}
       >
-        {this.props.userInfo !== null && this.props.allTables !== null ? (
+        {results}
+        {userInfo !== null && allTables !== null ? (
           <div/>
-        ) : this.props.isQuerying ? (
+        ) : isQuerying ? (
           <Typography variant="h6">Querying...</Typography>
-        ) : this.props.allTables !== null ? (
+        ) : allTables !== null ? (
           <div />
         ) : (
           <div className={classes.empty}>
@@ -321,16 +340,16 @@ class Results extends React.Component {
 
         )}
         <Fade
-          in={this.props.isQuerying}
+          in={isQuerying}
           style={{
-            transitionDelay: this.props.isQuerying ? '800ms' : '0ms'
+            transitionDelay: isQuerying ? '800ms' : '0ms'
           }}
           unmountOnExit
         >
           <CircularProgress />
         </Fade>
-        {this.props.neoError !== null ? (
-          <Typography>Error: {this.props.neoError}</Typography>
+        {neoError !== null ? (
+          <Typography>Error: {neoError}</Typography>
         ) : resArray.length > 0 ? (
           <Grid container spacing={0}>
             <Grid item xs={12} sm={this.state.showSkel ? 6 : 12}>
@@ -371,6 +390,8 @@ Results.propTypes = {
     search: PropTypes.string.isRequired
   }),
   allTables: PropTypes.array,
+  allResults: PropTypes.object.isRequired,
+  viewPlugins: PropTypes.object.isRequired,
   clearIndices: PropTypes.object,
   numClear: PropTypes.number,
   queryObj: PropTypes.object.isRequired,
@@ -387,6 +408,8 @@ var ResultsState = function(state) {
     isQuerying: state.query.isQuerying,
     neoError: state.query.neoError,
     allTables: state.results.allTables,
+    allResults: state.results.allResults,
+    viewPlugins: state.app.get('viewPlugins'),
     clearIndices: state.results.clearIndices,
     numClear: state.results.numClear,
     userInfo: state.user.userInfo,

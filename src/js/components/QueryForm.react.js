@@ -74,8 +74,8 @@ class QueryForm extends React.Component {
 
     let currROIs = [];
 
-    if (this.props.dataset in this.props.availableROIs) {
-      currROIs = this.props.availableROIs[this.props.dataset];
+    if (this.props.dataSet in this.props.availableROIs) {
+      currROIs = this.props.availableROIs[this.props.dataSet];
     }
 
     return (
@@ -99,6 +99,7 @@ class QueryForm extends React.Component {
         <Divider className={classes.divider} />
         <CurrentQuery
           datasetstr={this.props.datasetstr}
+          dataSet={this.props.dataSet}
           availableROIs={currROIs}
           callback={this.submitQuery}
           disable={this.props.isQuerying}
@@ -118,7 +119,7 @@ QueryForm.propTypes = {
   updateQuery: PropTypes.func.isRequired,
   pluginList: PropTypes.array.isRequired,
   datasetstr: PropTypes.string.isRequired,
-  dataset: PropTypes.string.isRequired,
+  dataSet: PropTypes.string.isRequired,
   isQuerying: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired,
   setURLQs: PropTypes.func.isRequired,

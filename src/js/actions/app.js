@@ -1,4 +1,5 @@
 import { v4 } from 'uuid';
+import C from '../reducers/constants';
 export const INIT_PLUGINS = 'INIT_PLUGINS';
 export const SET_URL_QS = 'SET_URL_QS';
 export const ACTIVATE_PLUGIN = 'ACTIVATE_PLUGIN';
@@ -31,6 +32,13 @@ function settingAppDb(appDB) {
         type: SET_APP_DB,
         appDB
     }
+}
+
+export function initViewPlugins(pluginsMap) {
+  return {
+    type: C.INIT_VIEWPLUGINS,
+    plugins: pluginsMap,
+  };
 }
 
 export function initPlugins(pluginList) {

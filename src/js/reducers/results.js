@@ -3,11 +3,13 @@
 */
 
 import C from './constants';
+import Immutable from 'immutable';
 
 var resultsState = {
   allTables: null,
   clearIndices: new Set(),
-  numClear: 0
+  numClear: 0,
+  allResults: Immutable.List([]),
 };
 
 export default function resultsReducer(state = resultsState, action) {
@@ -36,6 +38,14 @@ export default function resultsReducer(state = resultsState, action) {
       }
 
       return state;
+    }
+    case C.CLEAR_NEW_RESULT: {
+      const updated = state.allResults.remove(action.index);
+      return Object.assign({}, state, { allResults: updated});
+    }
+    case C.PLUGIN_SAVE_RESPONSE: {
+      const updated = state.allResults.push(action.combined);
+      return Object.assign({}, state, { allResults: updated});
     }
     default: {
       return state;

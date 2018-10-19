@@ -1,6 +1,9 @@
 import AppReducers from './reducers';
 import { Provider } from 'react-redux';
 import React from 'react';
+import { createStore, applyMiddleware, compose } from 'redux';
+import thunk from 'redux-thunk';
+
 import Master from './components/Master.react';
 import '../../node_modules/react-resizable/css/styles.css';
 import '../../node_modules/react-grid-layout/css/styles.css';
@@ -9,7 +12,6 @@ import { setAppDb } from './actions/app';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import loadPlugins from './helpers/initplugins';
 
-var Redux = require('redux');
 var ReactDOM = require('react-dom');
 
 // set theme colors
@@ -30,11 +32,10 @@ const theme = createMuiTheme({
   }
 });
 
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
 // create redux store to handle app state
-var store = Redux.createStore(
-  AppReducers,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-);
+const store = createStore(AppReducers, {}, composeEnhancers(applyMiddleware(thunk)));
 
 // include material UI font
 var filename = 'https://fonts.googleapis.com/css?family=Roboto:300,400,50';

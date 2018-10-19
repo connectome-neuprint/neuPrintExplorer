@@ -65,8 +65,8 @@ class Neo4jQuery extends React.Component {
             saveData(data);
           })
           .catch(function(error) {
-            alert(error);
-            setError(error);
+            alert(error.message);
+            setError(error.message);
           });
       }
     }
