@@ -2,7 +2,7 @@
  * Query to find autapses in the volume.
 */
 
-"use strict"
+""
 
 import React from 'react';
 import Button from '@material-ui/core/Button';

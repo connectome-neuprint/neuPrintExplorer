@@ -2,7 +2,7 @@
  * Plugin for body size distribution.
 */
 
-"use strict"
+""
 
 import React from 'react';
 import Button from '@material-ui/core/Button';

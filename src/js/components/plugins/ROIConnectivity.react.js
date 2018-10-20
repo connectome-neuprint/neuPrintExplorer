@@ -2,7 +2,7 @@
  * Supports simple, custom neo4j query.
 */
 
-"use strict"
+""
 
 import React from 'react';
 import Button from '@material-ui/core/Button';

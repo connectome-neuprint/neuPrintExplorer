@@ -2,7 +2,7 @@
  * Queries common inputs/outputs given list of bodyIds 
 */
 
-"use strict"
+""
 
 import React from 'react';
 import Button from '@material-ui/core/Button';

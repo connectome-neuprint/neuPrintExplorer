@@ -2,7 +2,7 @@
  * Defines actions.
 */ 
 
-"use strict"; 
+""; 
 
 const constants = {
     INIT_PLUGINS : 'INIT_PLUGINS',

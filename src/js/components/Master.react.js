@@ -2,7 +2,7 @@
  * Top level page for displaying queries and results.
  */
 
-"use strict";
+"";
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Router, Route, Switch } from 'react-router-dom';

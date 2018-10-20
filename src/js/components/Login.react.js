@@ -2,7 +2,7 @@
  * Manages login to http service.
 */
 
-"use strict"
+""
 
 import React from 'react';
 import PropTypes from 'prop-types';

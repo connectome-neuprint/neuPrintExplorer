@@ -2,7 +2,7 @@
  * Finds common input/outputs from a list of bodyIds and returns weight of connections for all 
 */
 
-"use strict";
+"";
 
 import SimpleCellWrapper from '../helpers/SimpleCellWrapper';
 

@@ -2,7 +2,7 @@
  * Implements ROI connectivity query and table parser.
 */
 
-"use strict";
+"";
 
 import SimpleCellWrapper from '../helpers/SimpleCellWrapper';
 import ClickableQuery from '../components/ClickableQuery.react';

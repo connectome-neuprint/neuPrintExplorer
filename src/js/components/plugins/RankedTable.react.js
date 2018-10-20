@@ -4,7 +4,7 @@
  * to be similar to Lou's tables.)
 */
 
-"use strict"
+""
 
 import React from 'react';
 import TextField from '@material-ui/core/TextField';
