@@ -2,7 +2,6 @@
  * Top level page for displaying queries and results.
  */
 
-"use strict";
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Router, Route, Switch } from 'react-router-dom';
@@ -16,6 +15,7 @@ import Favorites from './Favorites.react';
 import Neo4jQuery from './Neo4jQuery.react';
 import TopBar from './TopBar.react';
 import SideBar from './SideBar.react';
+import Contact from './Contact';
 import QueryDrawer from './QueryDrawer.react';
 import createBrowserHistory from 'history/createBrowserHistory';
 
@@ -78,6 +78,7 @@ class Master extends React.Component {
               />
             </Switch>
           </main>
+          <Contact />
         </div>
       </Router>
     );
