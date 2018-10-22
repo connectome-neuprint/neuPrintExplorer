@@ -8,9 +8,7 @@ import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
-import {
-  Deck, Slide, Image
-} from 'spectacle';
+//import { Deck, Slide, Image } from 'spectacle';
 //import {SwaggerUI} from 'react-swagger-ui'
 //import 'react-swagger-ui/dist/swagger-ui.css'
 import SwaggerUi, {presets} from 'swagger-ui';
@@ -80,7 +78,7 @@ class Help extends React.Component {
     }
  
     componentDidUpdate() {
-        if (this.state.value == 1) {
+        if (this.state.value === 1) {
             SwaggerUi({
                 dom_id: '#swaggerContainer',
                 url: '/api/help/swagger.yaml',
@@ -181,7 +179,7 @@ class Help extends React.Component {
                             The following slides describe how data is stored in Neo4j.
                         </Typography>
                     </div>
-                    <div className={classes.secroot}>
+                    {/* <div className={classes.secroot}>
                         <Deck
                                 controls
                         >
@@ -198,7 +196,7 @@ class Help extends React.Component {
                             })
                         }
                         </Deck>
-                    </div>
+                    </div> */}
                 </TabContainer>}
             </div>
         );
