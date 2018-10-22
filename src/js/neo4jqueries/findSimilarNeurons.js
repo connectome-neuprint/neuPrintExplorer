@@ -30,80 +30,91 @@ const processResults = function(results, state) {
   ];
 
   const data = [];
-  const clusterName = results.records.data[0][7];
-  const table = {
-    header: headerdata,
-    body: data,
-    name: 'Neurons similar to ' + state.bodyId + ' with classification ' + clusterName,
-    sortIndices: new Set([0, 1, 2, 3, 4])
-  };
+  let table;
 
-  results.records.forEach(function(record) {
-    const bodyId = record.get('n.bodyId');
-    const name = record.get('n.name');
-    const status = record.get('n.status');
-    const pre = record.get('n.pre');
-    const post = record.get('n.post');
-    const roiInfo = record.get('n.roiInfo');
-    const roiList = record.get('rois');
+  if (results.records.data.length > 0) {
+    const clusterName = results.records.data[0][7];
+    table = {
+      header: headerdata,
+      body: data,
+      name: 'Neurons similar to ' + state.bodyId + ' with classification ' + clusterName,
+      sortIndices: new Set([0, 1, 2, 3, 4])
+    };
 
-    const roiInfoObject = JSON.parse(roiInfo);
-    let preRoiTotal = 0;
-    let postRoiTotal = 0;
-    Object.keys(roiInfoObject).map(roi => {
-      if (
-        roiList.find(element => {
-          return element === roi;
-        })
-      ) {
-        preRoiTotal += roiInfoObject[roi]['pre'];
-        postRoiTotal += roiInfoObject[roi]['post'];
-      }
+    results.records.forEach(function(record) {
+      const bodyId = record.get('n.bodyId');
+      const name = record.get('n.name');
+      const status = record.get('n.status');
+      const pre = record.get('n.pre');
+      const post = record.get('n.post');
+      const roiInfo = record.get('n.roiInfo');
+      const roiList = record.get('rois');
+
+      const roiInfoObject = JSON.parse(roiInfo);
+      let preRoiTotal = 0;
+      let postRoiTotal = 0;
+      Object.keys(roiInfoObject).forEach(roi => {
+        if (
+          roiList.find(element => {
+            return element === roi;
+          })
+        ) {
+          preRoiTotal += roiInfoObject[roi]['pre'];
+          postRoiTotal += roiInfoObject[roi]['post'];
+        }
+      });
+      let preTotal = pre;
+      let postTotal = post;
+      roiInfoObject['none'] = {};
+      roiInfoObject['none']['pre'] = pre - preRoiTotal;
+      roiInfoObject['none']['post'] = post - postRoiTotal;
+      roiList.push('none');
+
+      data.push([
+        new SimpleCellWrapper(index++, JSON.stringify(bodyId)),
+        new SimpleCellWrapper(index++, name),
+        new SimpleCellWrapper(index++, status),
+        new SimpleCellWrapper(
+          index++,
+          JSON.stringify(pre) + ' (' + JSON.stringify(roiInfoObject['none']['pre']) + ')'
+        ),
+        new SimpleCellWrapper(
+          index++,
+          JSON.stringify(post) + ' (' + JSON.stringify(roiInfoObject['none']['post']) + ')'
+        ),
+        new SimpleCellWrapper(
+          index++,
+          (
+            <RoiHeatMap
+              roiList={roiList}
+              roiInfoObject={roiInfoObject}
+              preTotal={preTotal}
+              postTotal={postTotal}
+            />
+          )
+        ),
+        new SimpleCellWrapper(
+          index++,
+          (
+            <RoiBarGraph
+              roiList={roiList}
+              roiInfoObject={roiInfoObject}
+              preTotal={preTotal}
+              postTotal={postTotal}
+            />
+          )
+        )
+      ]);
     });
-    let preTotal = pre;
-    let postTotal = post;
-    roiInfoObject['none'] = {};
-    roiInfoObject['none']['pre'] = pre - preRoiTotal;
-    roiInfoObject['none']['post'] = post - postRoiTotal;
-    roiList.push('none');
-
-    data.push([
-      new SimpleCellWrapper(index++, JSON.stringify(bodyId)),
-      new SimpleCellWrapper(index++, name),
-      new SimpleCellWrapper(index++, status),
-      new SimpleCellWrapper(
-        index++,
-        JSON.stringify(pre) + ' (' + JSON.stringify(roiInfoObject['none']['pre']) + ')'
-      ),
-      new SimpleCellWrapper(
-        index++,
-        JSON.stringify(post) + ' (' + JSON.stringify(roiInfoObject['none']['post']) + ')'
-      ),
-      new SimpleCellWrapper(
-        index++,
-        (
-          <RoiHeatMap
-            roiList={roiList}
-            roiInfoObject={roiInfoObject}
-            preTotal={preTotal}
-            postTotal={postTotal}
-          />
-        )
-      ),
-      new SimpleCellWrapper(
-        index++,
-        (
-          <RoiBarGraph
-            roiList={roiList}
-            roiInfoObject={roiInfoObject}
-            preTotal={preTotal}
-            postTotal={postTotal}
-          />
-        )
-      )
-    ]);
-  });
-
+  } else {
+    alert('Body ID not in dataset.');
+    table = {
+      header: headerdata,
+      body: data,
+      name: '',
+      sortIndices: new Set([0, 1, 2, 3, 4])
+    };
+  }
   tables.push(table);
   return tables;
 };
