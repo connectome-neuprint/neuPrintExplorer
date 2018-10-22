@@ -5,10 +5,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import Popover from '@material-ui/core/Popover';
-import { withRouter } from 'react-router-dom';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
 
 import C from '../reducers/constants';
 
@@ -106,24 +108,23 @@ class Login extends React.Component {
             <Button ref="userbutton" className={classes.buttonBasic} onClick={this.launchUserPopup}>
               <img src={this.state.imageURL} className={classes.icon} />
             </Button>
-            <Popover
-              open={this.state.openUser}
+            <Menu
+              id="menu-appbar"
               anchorEl={this.state.userTarget}
-              anchorReference="anchorEl"
-              onClose={this.closeUser}
               anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'center'
+                vertical: 'top',
+                horizontal: 'right'
               }}
               transformOrigin={{
-                vertical: 'bottom',
-                horizontal: 'center'
+                vertical: 'top',
+                horizontal: 'right'
               }}
+              open={this.state.openUser}
+              onClose={this.closeUser}
             >
-              <Button className={classes.buttonBasic} onClick={this.logout}>
-                LOGOUT
-              </Button>
-            </Popover>
+              <MenuItem onClick={this.logout}>Logout</MenuItem>
+              <MenuItem component='a' href="/token" >Auth Token</MenuItem>
+            </Menu>
           </div>
         )}
       </div>
