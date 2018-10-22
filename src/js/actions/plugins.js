@@ -47,7 +47,7 @@ export function submit(query) {
         dispatch(saveQueryResponse(combined));
       })
       .catch(function(error) {
-        dispatch(submissionError(error.message));
+        dispatch(submissionError(error));
       });
   };
 }

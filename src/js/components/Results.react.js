@@ -80,7 +80,6 @@ class Results extends React.Component {
 
   // if only query string has updated, prevent re-render
   shouldComponentUpdate(nextProps, nextState) {
-    return true;
     nextProps.location['search'] = this.props.location['search'];
 
     let numSkels = 0;

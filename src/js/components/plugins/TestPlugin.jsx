@@ -62,7 +62,7 @@ class TestPlugin extends React.Component {
     };
     actions.submit(query);
     // redirect to the results page.
-    history.push(`/results/${dataSet}/${pluginName}/`);
+    history.push('/results');
   };
 
   handleChange = selected => {
