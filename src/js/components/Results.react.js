@@ -299,6 +299,8 @@ class Results extends React.Component {
       });
     }
 
+    // TODO: need to put results in flexible grid:
+    // https://github.com/STRML/react-grid-layout/blob/master/test/examples/6-dynamic-add-remove.jsx
     const results = allResults.map((query, index) => {
       const View = viewPlugins.get(query.visType);
       return (
@@ -306,10 +308,10 @@ class Results extends React.Component {
           <ResultsTopBar
             version={2}
             downloadCallback={this.downloadFile}
-            name='Results'
+            name={query.title}
             index={index}
             queryStr={query.result.debug}
-            color={LightColors[index % LightColors.length]}
+            color={query.menuColor}
           />
           <View query={query} key={index} />
         </div>
