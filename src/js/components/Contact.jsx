@@ -18,7 +18,7 @@ class Contact extends React.Component {
   render () {
     const { classes } = this.props;
     return (
-      <Button className={classes.contact} color="primary" variant="fab" component="a" href="mailto:neuprint@hhmi.org">
+      <Button className={classes.contact} color="primary" variant="fab" component="a" href="mailto:neuprint@janelia.hhmi.org">
         <Icon>contact_support</Icon>
       </Button>
     );
