@@ -162,16 +162,22 @@ export var parseResults = function (neoResults, state) {
 
   for (let bodyid in neuronnames) {
 
-    let preTotal = 0
-    let postTotal = 0
+    let preRoiTotal = 0
+    let postRoiTotal = 0
     const roiList = neuronnames[bodyid]['rois']
 
     Object.keys(neuronnames[bodyid].roiInfoObject).map((roi) => {
       if (roiList.find((element) => { return element === roi })) {
-        preTotal += neuronnames[bodyid].roiInfoObject[roi]["pre"]
-        postTotal += neuronnames[bodyid].roiInfoObject[roi]["post"]
+        preRoiTotal += neuronnames[bodyid].roiInfoObject[roi]["pre"]
+        postRoiTotal += neuronnames[bodyid].roiInfoObject[roi]["post"]
       }
     })
+    let preTotal = neuronnames[bodyid].pre;
+    let postTotal = neuronnames[bodyid].post;
+    neuronnames[bodyid].roiInfoObject['none'] = {};
+    neuronnames[bodyid].roiInfoObject['none']['pre'] = neuronnames[bodyid].pre - preRoiTotal;
+    neuronnames[bodyid].roiInfoObject['none']['post'] = neuronnames[bodyid].post - postRoiTotal;
+    roiList.push('none');
 
     if (Object.keys(inputneuronROIs[bodyid]).length !== state.inputROIs.length) {
       continue;

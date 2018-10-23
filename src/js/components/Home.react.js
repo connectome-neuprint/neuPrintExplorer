@@ -24,8 +24,7 @@ import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 const HintText = [
   <Typography>
     Explore high-level region-to-region projectome-level connectivity as an entry point to analysis
-    with the <a href="/?openQuery=true&Query%5BqueryType%5D=ROI%20Connectivity">ROI Connectivity</a>{' '}
-    query.
+    with the <a href="/?openQuery=true&Query%5BqueryType%5D=ROI%20Connectivity">ROI Connectivity</a> query.
   </Typography>,
   <Typography>
     Find neurons using region-based filters with the{' '}
