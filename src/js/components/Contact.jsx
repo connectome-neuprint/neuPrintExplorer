@@ -3,6 +3,7 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
+import { Link } from 'react-router-dom';
 
 
 const styles = theme => ({
@@ -18,7 +19,7 @@ class Contact extends React.Component {
   render () {
     const { classes } = this.props;
     return (
-      <Button className={classes.contact} color="primary" variant="fab" component="a" href="mailto:neuprint@janelia.hhmi.org">
+      <Button className={classes.contact} color="primary" variant="fab" component={Link} to="/about">
         <Icon>contact_support</Icon>
       </Button>
     );

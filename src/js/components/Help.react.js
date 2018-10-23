@@ -123,7 +123,7 @@ class Help extends React.Component {
                      <div className={classes.roottext}>
                         <Typography variant="h6">Graph Data Model</Typography>
                         <Typography >
-                            The data is store in Neo4j, a graph database, and is accessible
+                            The data is stored in Neo4j, a graph database, and is accessible
                             through custom Cypher queries.  This app provides a series
                             of interfaces to simplify common access patterns.
                         </Typography>

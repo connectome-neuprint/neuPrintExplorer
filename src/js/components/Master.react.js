@@ -16,6 +16,7 @@ import Neo4jQuery from './Neo4jQuery.react';
 import TopBar from './TopBar.react';
 import SideBar from './SideBar.react';
 import Contact from './Contact';
+import About from './About';
 import QueryDrawer from './QueryDrawer.react';
 import createBrowserHistory from 'history/createBrowserHistory';
 
@@ -72,6 +73,10 @@ class Master extends React.Component {
               <Route
                 path="/favorites"
                 component={Favorites}
+              />
+              <Route
+                path="/about"
+                component={About}
               />
               <Route
                 component={Home}
