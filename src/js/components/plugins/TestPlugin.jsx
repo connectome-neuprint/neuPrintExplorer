@@ -127,7 +127,7 @@ class TestPlugin extends React.Component {
   // use this function to generate the form that will accept and
   // validate the variables for your Neo4j query.
   render() {
-    const { classes } = this.props;
+    const { classes, isQuerying } = this.props;
     const selectValue = this.state.parameters.select;
     return (
       <div>
@@ -138,7 +138,7 @@ class TestPlugin extends React.Component {
           options={selectOptions}
           closeMenuOnSelect={true}
         />
-        <Button color="primary" variant="contained" onClick={this.processRequest}>
+        <Button disabled={isQuerying} color="primary" variant="contained" onClick={this.processRequest}>
           Submit
         </Button>
       </div>
@@ -153,11 +153,14 @@ TestPlugin.propTypes = {
   availableROIs: PropTypes.array.isRequired,
   dataSet: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired
+  history: PropTypes.object.isRequired,
+  isQuerying: PropTypes.bool.isRequired,
 };
 
 var TestPluginState = function(state) {
-  return {};
+  return {
+    isQuerying: state.query.isQuerying,
+  };
 };
 
 // The submit action which will accept your query, execute it and
