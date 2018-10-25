@@ -16,6 +16,7 @@ import Grid from '@material-ui/core/Grid';
 import ResultsTopBar from './ResultsTopBar';
 import SimpleTables from './SimpleTables';
 import Skeleton from './Skeleton';
+import { toggleSkeleton } from '../actions/skeleton';
 // import NeuroGlancer from 'neuroglancer-react';
 
 import './Results.css';
@@ -75,12 +76,12 @@ class Results extends React.Component {
     super(props, context);
     this.state = {
       currLayout: null,
-      showSkel: false
     };
   }
 
   // if only query string has updated, prevent re-render
   shouldComponentUpdate(nextProps, nextState) {
+    return true;
     nextProps.location['search'] = this.props.location['search'];
 
     let numSkels = 0;
@@ -107,17 +108,6 @@ class Results extends React.Component {
       });
     }
 
-    // if the number of skeletons in the results tables has changed
-    // then check to see if we are adding one and set showSkel in the
-    // state to make sure we show it.
-    if (numSkels2 !== numSkels) {
-      if (numSkels2 > 0 && !nextState.showSkel) {
-        this.setState({ showSkel: true });
-      } else if (numSkels2 === 0) {
-        this.setState({ showSkel: false });
-      }
-    }
-
     return !_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state);
   }
 
@@ -133,12 +123,13 @@ class Results extends React.Component {
       openQuery2 = true;
     }
 
-    if (prevState.showSkel !== this.state.showSkel || openQuery !== openQuery2) {
+    if (prevProps.showSkel !== this.props.showSkel || openQuery !== openQuery2) {
       window.dispatchEvent(new Event('resize'));
     }
   }
 
   triggerKeyboard = event => {
+    const { actions } = this.props;
     if (event.which === 32) {
       // check the mouse is over the skeleton div
       let numSkels = 0;
@@ -153,7 +144,7 @@ class Results extends React.Component {
         });
       }
       if (numSkels > 0) {
-        this.setState({ showSkel: !this.state.showSkel });
+        actions.toggleSkeleton();
       }
     }
   };
@@ -268,7 +259,7 @@ class Results extends React.Component {
           !this.props.clearIndices.has(index) &&
           (!('isSkeleton' in result[0]) || !result[0].isSkeleton)
         ) {
-          let unId = this.state.showSkel
+          let unId = this.props.showSkel
             ? result[0].uniqueId * 3 + 2
             : numTables > 1
               ? result[0].uniqueId * 3
@@ -350,39 +341,33 @@ class Results extends React.Component {
         >
           <CircularProgress />
         </Fade>
-        {neoError !== null ? (
-          <Typography>Error: {neoError}</Typography>
-        ) : resArray.length > 0 ? (
-          <Grid container spacing={0}>
-            <Grid item xs={12} sm={this.state.showSkel ? 6 : 12}>
-              <div className={classes.scroll}>
-                <ResponsiveGridLayout
-                  className="layout"
-                  rowHeight={30}
-                  breakpoints={{ lg: 2000 }}
-                  cols={{ lg: this.state.showSkel ? 6 : 12 }}
-                  draggableHandle=".topresultbar"
-                  compactType="vertical"
-                  onResizeStop={this.changeLayout}
-                >
-                  {resArray.map(result => {
-                    return result;
-                  })}
-                </ResponsiveGridLayout>
-              </div>
-            </Grid>
-            {this.state.showSkel ? (
-              <Grid item xs={12} sm={6}>
-                {/* <NeuroGlancer perspectiveZoom={80} /> */}
-                <Skeleton disable={!this.state.showSkel} />
-              </Grid>
-            ) : (
-              <div />
-            )}
+        <Grid container spacing={0}>
+          <Grid item xs={12} sm={this.props.showSkel ? 6 : 12}>
+            <div className={classes.scroll}>
+              <ResponsiveGridLayout
+                className="layout"
+                rowHeight={30}
+                breakpoints={{ lg: 2000 }}
+                cols={{ lg: this.props.showSkel ? 6 : 12 }}
+                draggableHandle=".topresultbar"
+                compactType="vertical"
+                onResizeStop={this.changeLayout}
+              >
+                {resArray.map(result => {
+                  return result;
+                })}
+              </ResponsiveGridLayout>
+            </div>
           </Grid>
-        ) : (
-          <div />
-        )}
+          {this.props.showSkel ? (
+            <Grid item xs={12} sm={6}>
+              {/* <NeuroGlancer perspectiveZoom={80} /> */}
+              <Skeleton disable={!this.props.showSkel} />
+            </Grid>
+          ) : (
+            <div />
+          )}
+        </Grid>
       </div>
     );
   }
@@ -402,11 +387,12 @@ Results.propTypes = {
   isQuerying: PropTypes.bool.isRequired,
   urlQueryString: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired,
+  showSkel: PropTypes.bool.isRequired,
   userInfo: PropTypes.object
 };
 
 // result data [{name: "table name", header: [headers...], body: [rows...]
-var ResultsState = function(state) {
+const ResultsState = function(state) {
   return {
     isQuerying: state.query.isQuerying,
     neoError: state.query.neoError,
@@ -415,15 +401,25 @@ var ResultsState = function(state) {
     viewPlugins: state.app.get('viewPlugins'),
     clearIndices: state.results.clearIndices,
     numClear: state.results.numClear,
+    showSkel: state.skeleton.get('display'),
     userInfo: state.user.userInfo,
     urlQueryString: state.app.get('urlQueryString'),
     queryObj: state.query.neoQueryObj
   };
 };
 
+const ResultDispatch = dispatch => ({
+  actions: {
+    toggleSkeleton: () => {
+      dispatch(toggleSkeleton());
+    }
+  }
+});
+
+
 export default withStyles(styles)(
   connect(
     ResultsState,
-    null
+    ResultDispatch,
   )(Results)
 );

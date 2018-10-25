@@ -42,7 +42,7 @@ export function submit(query) {
           throw resp.error;
         }
         // make new result object
-        let data = query.processResults(resp);
+        let data = query.processResults(query.dataSet, resp);
         const combined = Object.assign(query, {result: data});
         dispatch(saveQueryResponse(combined));
       })

@@ -11,6 +11,9 @@ import TablePaginationActions from '../../helpers/TablePaginationActions';
 
 const styles = theme => ({
   root: {},
+  clickable: {
+    cursor: 'pointer',
+  },
   scroll: {
     width: '100%',
     marginTop: theme.spacing.unit * 1,
@@ -33,6 +36,10 @@ class SimpleTable extends React.Component {
 
   handleChangeRowsPerPage = event => {
     this.setState({ rowsPerPage: event.target.value });
+  };
+
+  handleCellClick = action => event => {
+    action();
   };
 
   render() {
@@ -59,6 +66,12 @@ class SimpleTable extends React.Component {
                   return (
                     <TableRow key={index}>
                       {row.map((cell, i) => {
+                        if (cell && typeof cell === 'object' && 'value' in cell) {
+                          if ('action' in cell) {
+                            return <TableCell className={classes.clickable} key={i} onClick={this.handleCellClick(cell.action)}>{cell.value}</TableCell>;
+                          }
+                          return <TableCell key={i}>{cell.value}</TableCell>;
+                        }
                         return <TableCell key={i}>{cell}</TableCell>;
                       })}
                     </TableRow>

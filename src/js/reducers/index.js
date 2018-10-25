@@ -12,12 +12,12 @@ import user from './user';
 import skeleton from './skeleton';
 
 export default combineReducers({
+    skeleton,
     app,
     query,
     neo4jsettings,
     results,
     user,
-    skeleton,
 });
 
 

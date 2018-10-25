@@ -9,8 +9,9 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 
 import { submit } from '../../actions/plugins';
-import RoiHeatMap, { ColorLegend } from '../../components/visualization/MiniRoiHeatMap.react'
-import RoiBarGraph from '../../components/visualization/MiniRoiBarGraph.react'
+import { skeletonAddandOpen } from '../../actions/skeleton';
+import RoiHeatMap, { ColorLegend } from '../../components/visualization/MiniRoiHeatMap.react';
+import RoiBarGraph from '../../components/visualization/MiniRoiBarGraph.react';
 
 const styles = theme => ({
   select: {
@@ -20,53 +21,6 @@ const styles = theme => ({
 });
 
 const pluginName = 'TestPlugin';
-
-// this function will parse the results from the query to the
-// Neo4j server and place them in the correct format for the
-// visualization plugin.
-function processResults(apiResponse) {
-
-  const roiList = ['proximal','distal','none'];
-
-  const data = apiResponse.data.map(row => {
-
-    const roiInfoObject = JSON.parse(row[3]);
-
-    const post = Object.values(roiInfoObject).reduce((total, current) => {
-      return total + current.post;
-    }, 0);
-
-    const pre = Object.values(roiInfoObject).reduce((total, current) => {
-      return total + current.pre;
-    }, 0);
-
-    // add this after the other rois have been summed.
-    roiInfoObject['none'] = {
-      pre: row[5] - pre,
-      post: row[6] - post,
-    };
-
-    const heatMap = <RoiHeatMap roiList={roiList} roiInfoObject={roiInfoObject} preTotal={pre} postTotal={post} />;
-
-    const barGraph = <RoiBarGraph roiList={roiList} roiInfoObject={roiInfoObject} preTotal={pre} postTotal={post} />;
-
-    return [row[0], row[1], row[2], post, pre, row[4], heatMap, barGraph];
-  });
-  return {
-    columns: [
-      'id',
-      'neuron',
-      'status',
-      '#post (inputs)',
-      '#pre (outputs)',
-      '#voxels',
-      <div>roi heatmap <ColorLegend/></div>,
-      'roi breakdown'
-    ],
-    data,
-    debug: apiResponse.debug
-  };
-}
 
 const selectOptions = [{ label: 'One', value: '1' }, { label: 'Two', value: '2' }];
 
@@ -87,6 +41,74 @@ class TestPlugin extends React.Component {
     // it will be displayed in the form above the custom
     // inputs for this plugin.
     return 'Generates simple table on submit.';
+  }
+  // this function will parse the results from the query to the
+  // Neo4j server and place them in the correct format for the
+  // visualization plugin.
+  processResults = (dataSet, apiResponse) => {
+    const { actions } = this.props;
+    const roiList = ['proximal', 'distal', 'none'];
+
+    const data = apiResponse.data.map(row => {
+      const roiInfoObject = JSON.parse(row[3]);
+
+      const post = Object.values(roiInfoObject).reduce((total, current) => {
+        return total + current.post;
+      }, 0);
+
+      const pre = Object.values(roiInfoObject).reduce((total, current) => {
+        return total + current.pre;
+      }, 0);
+
+      // add this after the other rois have been summed.
+      roiInfoObject['none'] = {
+        pre: row[5] - pre,
+        post: row[6] - post
+      };
+
+      const heatMap = (
+        <RoiHeatMap roiList={roiList} roiInfoObject={roiInfoObject} preTotal={pre} postTotal={post} />
+      );
+
+      const barGraph = (
+        <RoiBarGraph
+          roiList={roiList}
+          roiInfoObject={roiInfoObject}
+          preTotal={pre}
+          postTotal={post}
+        />
+      );
+
+      return [
+        {
+          value: row[0],
+          action: () => actions.skeletonAddandOpen(row[0], dataSet)
+        },
+        row[1],
+        row[2],
+        post,
+        pre,
+        row[4],
+        heatMap,
+        barGraph
+      ];
+    });
+    return {
+      columns: [
+        'id',
+        'neuron',
+        'status',
+        '#post (inputs)',
+        '#pre (outputs)',
+        '#voxels',
+        <div>
+          roi heatmap <ColorLegend />
+        </div>,
+        'roi breakdown'
+      ],
+      data,
+      debug: apiResponse.debug
+    };
   }
 
   // use this method to cleanup your form data, perform validation
@@ -111,7 +133,7 @@ class TestPlugin extends React.Component {
       parameters, // <object>
       title: `Neurons with inputs in [${Math.random()}] and outputs in [bar]`,
       menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
-      processResults
+      processResults: this.processResults
     };
     actions.submit(query);
     // redirect to the results page.
@@ -138,7 +160,12 @@ class TestPlugin extends React.Component {
           options={selectOptions}
           closeMenuOnSelect={true}
         />
-        <Button disabled={isQuerying} color="primary" variant="contained" onClick={this.processRequest}>
+        <Button
+          disabled={isQuerying}
+          color="primary"
+          variant="contained"
+          onClick={this.processRequest}
+        >
           Submit
         </Button>
       </div>
@@ -154,12 +181,12 @@ TestPlugin.propTypes = {
   dataSet: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
-  isQuerying: PropTypes.bool.isRequired,
+  isQuerying: PropTypes.bool.isRequired
 };
 
 var TestPluginState = function(state) {
   return {
-    isQuerying: state.query.isQuerying,
+    isQuerying: state.query.isQuerying
   };
 };
 
@@ -169,6 +196,9 @@ var TestPluginDispatch = dispatch => ({
   actions: {
     submit: query => {
       dispatch(submit(query));
+    },
+    skeletonAddandOpen: (id, dataSet) => {
+      dispatch(skeletonAddandOpen(id, dataSet));
     }
   }
 });
