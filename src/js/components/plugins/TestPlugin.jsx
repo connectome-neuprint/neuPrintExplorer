@@ -7,11 +7,18 @@ import randomColor from 'randomcolor';
 
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import TextField from '@material-ui/core/TextField';
 
 import { submit } from '../../actions/plugins';
+import { setUrlQS } from '../../actions/app';
 import { skeletonAddandOpen } from '../../actions/skeleton';
 import RoiHeatMap, { ColorLegend } from '../../components/visualization/MiniRoiHeatMap.react';
 import RoiBarGraph from '../../components/visualization/MiniRoiBarGraph.react';
+import NeuronHelp from '../NeuronHelp.react';
+import NeuronFilter from '../NeuronFilter.react';
+import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 
 const styles = theme => ({
   select: {
@@ -22,14 +29,25 @@ const styles = theme => ({
 
 const pluginName = 'TestPlugin';
 
-const selectOptions = [{ label: 'One', value: '1' }, { label: 'Two', value: '2' }];
-
 class TestPlugin extends React.Component {
-  state = {
-    parameters: {
-      select: selectOptions[0]
-    }
-  };
+  constructor(props) {
+    super(props);
+    var initqsParams = {
+      InputROIs: [],
+      OutputROIs: [],
+      neuronsrc: ''
+    };
+    var qsParams = LoadQueryString(
+      'Query:' + this.constructor.queryName,
+      initqsParams,
+      this.props.urlQueryString
+    );
+    this.state = {
+      qsParams: qsParams,
+      limitBig: true,
+      statusFilters: []
+    };
+  }
 
   static get queryName() {
     // This is the string used in the 'Query Type' select.
@@ -67,7 +85,12 @@ class TestPlugin extends React.Component {
       };
 
       const heatMap = (
-        <RoiHeatMap roiList={roiList} roiInfoObject={roiInfoObject} preTotal={pre} postTotal={post} />
+        <RoiHeatMap
+          roiList={roiList}
+          roiInfoObject={roiInfoObject}
+          preTotal={pre}
+          postTotal={post}
+        />
       );
 
       const barGraph = (
@@ -109,20 +132,32 @@ class TestPlugin extends React.Component {
       data,
       debug: apiResponse.debug
     };
-  }
+  };
 
   // use this method to cleanup your form data, perform validation
   // and generate the query object.
   processRequest = () => {
     const { dataSet, actions, history } = this.props;
+    const { qsParams, statusFilters, limitBig } = this.state;
 
-    const parameters = Object.assign(
-      {
-        dataset: dataSet,
-        pre_threshold: 2
-      },
-      this.state.parameters
-    );
+    const parameters = {
+      dataset: dataSet,
+      input_ROIs: qsParams.InputROIs,
+      output_ROIs: qsParams.OutputROIs,
+      statuses: statusFilters
+    };
+
+    if (qsParams.neuronsrc !== '') {
+      if (isNaN(qsParams.neuronsrc)) {
+        parameters['neuron_name'] = qsParams.neuronsrc;
+      } else {
+        parameters['neuron_id'] = parseInt(qsParams.neuronsrc);
+      }
+    }
+
+    if (limitBig === 'true') {
+      parameters['pre_threshold'] = 2;
+    }
 
     const query = {
       dataSet, // <string> for the data set selected
@@ -131,7 +166,9 @@ class TestPlugin extends React.Component {
       visType: 'SimpleTable', // <string> which visualization plugin to use. Default is 'table'
       plugin: pluginName, // <string> the name of this plugin.
       parameters, // <object>
-      title: `Neurons with inputs in [${Math.random()}] and outputs in [bar]`,
+      title: `Neurons with inputs in [${qsParams.InputROIs}] and outputs in [${
+        qsParams.OutputROIs
+      }]`,
       menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
       processResults: this.processResults
     };
@@ -140,26 +177,109 @@ class TestPlugin extends React.Component {
     history.push('/results');
   };
 
-  handleChange = selected => {
-    const currentParameters = this.state.parameters;
-    const updatedParameters = Object.assign({}, currentParameters, { select: selected });
-    this.setState({ parameters: updatedParameters });
+  handleChangeROIsIn = selected => {
+    var rois = selected.map(item => item.value);
+    if (selected === undefined) {
+      rois = [];
+    }
+    var oldparams = this.state.qsParams;
+    oldparams.InputROIs = rois;
+    this.props.actions.setURLQs(SaveQueryString('Query:' + this.constructor.queryName, oldparams));
+
+    this.setState({ qsParams: oldparams });
+  };
+
+  handleChangeROIsOut = selected => {
+    var rois = selected.map(item => item.value);
+    if (selected === undefined) {
+      rois = [];
+    }
+    var oldparams = this.state.qsParams;
+    oldparams.OutputROIs = rois;
+    this.props.actions.setURLQs(SaveQueryString('Query:' + this.constructor.queryName, oldparams));
+
+    this.setState({ qsParams: oldparams });
+  };
+
+  addNeuron = event => {
+    var oldparams = this.state.qsParams;
+    oldparams.neuronsrc = event.target.value;
+    this.props.actions.setURLQs(SaveQueryString('Query:' + this.constructor.queryName, oldparams));
+    this.setState({ qsParams: oldparams });
+  };
+
+  loadNeuronFilters = params => {
+    this.setState({ limitBig: params.limitBig, statusFilters: params.statusFilters });
   };
 
   // use this function to generate the form that will accept and
   // validate the variables for your Neo4j query.
   render() {
-    const { classes, isQuerying } = this.props;
-    const selectValue = this.state.parameters.select;
+    const { classes, isQuerying, availableROIs } = this.props;
+    const { qsParams } = this.state;
+
+    const inputOptions = availableROIs.map(name => {
+      return {
+        label: name,
+        value: name
+      };
+    });
+
+    const inputValue = qsParams.InputROIs.map(roi => {
+      return {
+        label: roi,
+        value: roi
+      };
+    });
+
+    const outputOptions = availableROIs.map(name => {
+      return {
+        label: name,
+        value: name
+      };
+    });
+
+    const outputValue = qsParams.OutputROIs.map(roi => {
+      return {
+        label: roi,
+        value: roi
+      };
+    });
+
     return (
       <div>
+        <InputLabel htmlFor="select-multiple-chip">Input ROIs</InputLabel>
         <Select
           className={classes.select}
-          value={selectValue}
-          onChange={this.handleChange}
-          options={selectOptions}
-          closeMenuOnSelect={true}
+          isMulti
+          value={inputValue}
+          onChange={this.handleChangeROIsIn}
+          options={inputOptions}
+          closeMenuOnSelect={false}
         />
+        <InputLabel htmlFor="select-multiple-chip">Output ROIs</InputLabel>
+        <Select
+          className={classes.select}
+          isMulti
+          value={outputValue}
+          onChange={this.handleChangeROIsOut}
+          options={outputOptions}
+          closeMenuOnSelect={false}
+        />
+        <FormControl className={classes.formControl}>
+          <NeuronHelp>
+            <TextField
+              label="Neuron name (optional)"
+              multiline
+              rows={1}
+              value={this.state.qsParams.neuronsrc}
+              rowsMax={4}
+              className={classes.textField}
+              onChange={this.addNeuron}
+            />
+          </NeuronHelp>
+          <NeuronFilter callback={this.loadNeuronFilters} datasetstr={this.props.datasetstr} />
+        </FormControl>
         <Button
           disabled={isQuerying}
           color="primary"
@@ -199,6 +319,9 @@ var TestPluginDispatch = dispatch => ({
     },
     skeletonAddandOpen: (id, dataSet) => {
       dispatch(skeletonAddandOpen(id, dataSet));
+    },
+    setURLQs: function(querystring) {
+      dispatch(setUrlQS(querystring));
     }
   }
 });
