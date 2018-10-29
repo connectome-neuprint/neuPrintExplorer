@@ -35,7 +35,12 @@ export default function skeletonReducer(state = skeletonState, action) {
       })).set('loading', false);
     }
     case C.SKELETON_REMOVE: {
-      return state.deleteIn(['neurons', action.id]);
+     const updated = state.deleteIn(['neurons', action.id]);
+
+      if (updated.get('neurons').size < 1) {
+        return updated.set('display', false);
+      }
+      return updated;
     }
     case C.SKELETON_NEURON_LOADING: {
       return state.set('loading', true);
