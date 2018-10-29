@@ -62,8 +62,14 @@ class TestPlugin extends React.Component {
   }
 
   processSimpleConnections = (dataSet, apiResponse) => {
+    const { actions } = this.props;
     const data = apiResponse.data.map(row => {
-      return [row[2], row[1], row[3]];
+      return [
+        {
+          value: row[2],
+          action: () => actions.skeletonAddandOpen(row[2], dataSet)
+        },
+        row[1], row[3]];
     });
 
     return {
