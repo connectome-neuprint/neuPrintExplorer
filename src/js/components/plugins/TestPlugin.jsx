@@ -60,6 +60,23 @@ class TestPlugin extends React.Component {
     // inputs for this plugin.
     return 'Generates simple table on submit.';
   }
+
+  processSimpleConnections = (dataSet, apiResponse) => {
+    const data = apiResponse.data.map(row => {
+      return [row[2], row[1], row[3]];
+    });
+
+    return {
+      columns: [
+        'Neuron ID',
+        'Neuron',
+        '#connections',
+      ],
+      data,
+      debug: apiResponse.debug
+    };
+  };
+
   // this function will parse the results from the query to the
   // Neo4j server and place them in the correct format for the
   // visualization plugin.
@@ -102,6 +119,38 @@ class TestPlugin extends React.Component {
         />
       );
 
+      const postQuery = {
+        dataSet, // <string> for the data set selected
+        queryString: '/npexplorer/simpleconnections', // <neo4jquery string>
+        // cypherQuery: <string> if this is passed then use generic /api/custom/custom endpoint
+        visType: 'SimpleTable', // <string> which visualization plugin to use. Default is 'table'
+        plugin: pluginName, // <string> the name of this plugin.
+        parameters: {
+          dataset: dataSet,
+          find_inputs: true,
+          neuron_id: row[0]
+        },
+        title: `Connections to [${row[1]}]:bodyID=${row[0]}`,
+        menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
+        processResults: this.processSimpleConnections
+      };
+
+      const preQuery = {
+        dataSet, // <string> for the data set selected
+        queryString: '/npexplorer/simpleconnections', // <neo4jquery string>
+        // cypherQuery: <string> if this is passed then use generic /api/custom/custom endpoint
+        visType: 'SimpleTable', // <string> which visualization plugin to use. Default is 'table'
+        plugin: pluginName, // <string> the name of this plugin.
+        parameters: {
+          dataset: dataSet,
+          find_inputs: false,
+          neuron_id: row[0]
+        },
+        title: `Connections from [${row[1]}]:bodyID=${row[0]}`,
+        menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
+        processResults: this.processSimpleConnections
+      };
+
       return [
         {
           value: row[0],
@@ -109,8 +158,14 @@ class TestPlugin extends React.Component {
         },
         row[1],
         row[2],
-        post,
-        pre,
+        {
+          value: post,
+          action: () => actions.submit(postQuery)
+        },
+        {
+          value: pre,
+          action: () => actions.submit(preQuery)
+        },
         row[4],
         heatMap,
         barGraph
