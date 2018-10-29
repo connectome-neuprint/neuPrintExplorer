@@ -150,6 +150,7 @@ class Results extends React.Component {
   };
 
   changeLayout = layout => {
+    return;
     let currIndex = 0;
     let tempLayout = {};
     this.props.allTables.forEach((result, index) => {
@@ -296,7 +297,14 @@ class Results extends React.Component {
     const results = allResults.map((query, index) => {
       const View = viewPlugins.get(query.visType);
       return (
-        <div key={index}>
+        <div key={index}
+          data-grid={{
+            w: 6,
+            h: 20,
+            x: 0,
+            y: 0,
+          }}
+        >
           <ResultsTopBar
             version={2}
             downloadCallback={this.downloadFile}
@@ -316,21 +324,13 @@ class Results extends React.Component {
         onKeyPress={this.triggerKeyboard}
         className={classes.root}
       >
-        {results}
-        {userInfo !== null && allTables !== null ? (
-          <div/>
-        ) : isQuerying ? (
-          <Typography variant="h6">Querying...</Typography>
-        ) : allTables !== null ? (
-          <div />
-        ) : (
+        {results.size === 0 && (
           <div className={classes.empty}>
             <Typography variant="h6">No Search Results</Typography>
             <Typography>
               Please use the Menu to the left to start a search.
             </Typography>
           </div>
-
         )}
         <Fade
           in={isQuerying}
@@ -353,6 +353,7 @@ class Results extends React.Component {
                 compactType="vertical"
                 onResizeStop={this.changeLayout}
               >
+                {results}
                 {resArray.map(result => {
                   return result;
                 })}
