@@ -260,18 +260,14 @@ class Results extends React.Component {
           !this.props.clearIndices.has(index) &&
           (!('isSkeleton' in result[0]) || !result[0].isSkeleton)
         ) {
-          let unId = this.props.showSkel
-            ? result[0].uniqueId * 3 + 2
-            : numTables > 1
-              ? result[0].uniqueId * 3
-              : result[0].uniqueId * 3 + 1;
+          let unId = `old${index}`;
           resArray.push(
             <div
               key={unId}
               data-grid={{
-                x: (currIndex * 6) % 12,
-                y: Math.floor(currIndex / 2) * 18,
-                w: numTables > 1 ? 6 : 12,
+                x: 0,
+                y: 0,
+                w: 6,
                 h: 20
               }}
             >
