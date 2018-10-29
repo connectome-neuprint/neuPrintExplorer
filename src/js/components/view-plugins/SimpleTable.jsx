@@ -125,7 +125,7 @@ class SimpleTable extends React.Component {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   return (
-                    <TableRow key={index}>
+                    <TableRow hover key={index}>
                       {row.map((cell, i) => {
                         if (cell && typeof cell === 'object' && 'value' in cell) {
                           if ('action' in cell) {
