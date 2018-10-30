@@ -4,7 +4,9 @@ import C from './constants';
 
 const initialState = Immutable.Map({
   display: false,
-  neurons: Immutable.Map({})
+  neurons: Immutable.Map({}),
+  loading: false,
+  error: null,
 });
 
 describe('skeleton reducer', () => {
@@ -50,6 +52,9 @@ describe('skeleton reducer', () => {
         ['neurons', 34567],
         Immutable.Map({
           name: 34567,
+          dataSet: undefined,
+          swc: undefined,
+          color: undefined,
           visible: true
         })
       )
