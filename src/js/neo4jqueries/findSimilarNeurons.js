@@ -16,8 +16,8 @@ const processResults = function(results, state) {
     new SimpleCellWrapper(index++, 'bodyId'),
     new SimpleCellWrapper(index++, 'name'),
     new SimpleCellWrapper(index++, 'status'),
-    new SimpleCellWrapper(index++, '#pre (#no ROI)'),
-    new SimpleCellWrapper(index++, '#post (#no ROI)'),
+    new SimpleCellWrapper(index++, '#pre'),
+    new SimpleCellWrapper(index++, '#post'),
     new SimpleCellWrapper(
       index++,
       (
@@ -71,17 +71,11 @@ const processResults = function(results, state) {
       roiList.push('none');
 
       data.push([
-        new SimpleCellWrapper(index++, JSON.stringify(bodyId)),
+        new SimpleCellWrapper(index++, parseInt(bodyId)),
         new SimpleCellWrapper(index++, name),
         new SimpleCellWrapper(index++, status),
-        new SimpleCellWrapper(
-          index++,
-          JSON.stringify(pre) + ' (' + JSON.stringify(roiInfoObject['none']['pre']) + ')'
-        ),
-        new SimpleCellWrapper(
-          index++,
-          JSON.stringify(post) + ' (' + JSON.stringify(roiInfoObject['none']['post']) + ')'
-        ),
+        new SimpleCellWrapper(index++, parseInt(pre)),
+        new SimpleCellWrapper(index++, parseInt(post)),
         new SimpleCellWrapper(
           index++,
           (
@@ -176,7 +170,7 @@ const processCluster = function(results, state) {
   results.records.forEach(function(record) {
     const bodyId = record.get('n.bodyId');
 
-    data.push([new SimpleCellWrapper(index++, JSON.stringify(bodyId))]);
+    data.push([new SimpleCellWrapper(index++, parseInt(bodyId))]);
   });
 
   tables.push(table);
