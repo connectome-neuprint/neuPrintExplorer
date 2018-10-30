@@ -5,6 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Router, Route, Switch } from 'react-router-dom';
+import createBrowserHistory from 'history/createBrowserHistory';
 
 import { withStyles } from '@material-ui/core/styles';
 
@@ -18,7 +19,7 @@ import SideBar from './SideBar.react';
 import Contact from './Contact';
 import About from './About';
 import QueryDrawer from './QueryDrawer.react';
-import createBrowserHistory from 'history/createBrowserHistory';
+import Errors from './Errors';
 
 
 // adapted from material ui example
@@ -84,6 +85,7 @@ class Master extends React.Component {
             </Switch>
           </main>
           <Contact />
+          <Errors />
         </div>
       </Router>
     );

@@ -52,3 +52,9 @@ export function activatePlugin(data, query, viz) {
 export function setAppDb(appDb) {
     return settingAppDb(appDb);
 }
+
+export function clearErrors(query) {
+  return {
+    type: C.CLEAR_ERRORS,
+  };
+}

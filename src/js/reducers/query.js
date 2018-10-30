@@ -35,6 +35,7 @@ export default function queryReducer(state = queryState, action) {
         case C.PLUGIN_SUBMITTING: {
             return Object.assign({}, state, { isQuerying: true });
         }
+        case C.PLUGIN_SUBMIT_ERROR:
         case C.PLUGIN_SAVE_RESPONSE: {
             return Object.assign({}, state, { isQuerying: false });
         }
