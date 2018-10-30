@@ -49,6 +49,17 @@ const processResults = function(results, state) {
       const post = record.get('n.post');
       const roiInfo = record.get('n.roiInfo');
       const roiList = record.get('rois');
+      const connectionQuery =
+        'MATCH (n:`' +
+        state.dataset +
+        '-Neuron`{clusterName:"' +
+        clusterName +
+        '"}) WITH n.bodyId AS bodyId, ' +
+        'neuprint.getClusterNamesOfConnections(n.bodyId,"' +
+        state.dataset +
+        '") AS conInfo, ' +
+        'n.pre AS pre, n.post AS post, n.name AS name, n.status AS status ' +
+        'RETURN bodyId, pre, post, name, status, conInfo';
 
       const roiInfoObject = JSON.parse(roiInfo);
       let preRoiTotal = 0;
@@ -70,8 +81,22 @@ const processResults = function(results, state) {
       roiInfoObject['none']['post'] = post - postRoiTotal;
       roiList.push('none');
 
+      const neoConnectionClusters = {
+        queryStr: connectionQuery,
+        callback: processConnections,
+        isChild: true,
+        state: {
+          clusterName: clusterName,
+          dataset: state.dataset
+        }
+      };
+
       data.push([
         new SimpleCellWrapper(index++, parseInt(bodyId)),
+        new SimpleCellWrapper(
+          index++,
+          <ClickableQuery neoQueryObj={neoConnectionClusters}>{parseInt(bodyId)}</ClickableQuery>
+        ),
         new SimpleCellWrapper(index++, name),
         new SimpleCellWrapper(index++, status),
         new SimpleCellWrapper(index++, parseInt(pre)),
@@ -109,6 +134,79 @@ const processResults = function(results, state) {
       sortIndices: new Set([0, 1, 2, 3, 4])
     };
   }
+  tables.push(table);
+  return tables;
+};
+
+const processConnections = function(results, state) {
+  let index = 0;
+  const tables = [];
+  // bodyId, pre, post, name, status, conInfo
+  const headerdata = [
+    new SimpleCellWrapper(index++, 'bodyId'),
+    new SimpleCellWrapper(index++, 'pre'),
+    new SimpleCellWrapper(index++, 'post'),
+    new SimpleCellWrapper(index++, 'name'),
+    new SimpleCellWrapper(index++, 'status')
+    // new SimpleCellWrapper(index++, 'conInfo')
+  ];
+
+  const data = [];
+  const table = {
+    header: headerdata,
+    body: data,
+    name: 'Neurons with classification ' + state.clusterName,
+    sortIndices: new Set([0, 1, 2, 3, 4, 5])
+  };
+
+  results.records.forEach(function(record) {
+    const bodyId = record.get('bodyId');
+    const pre = record.get('pre');
+    const post = record.get('post');
+    const name = record.get('name');
+    const status = record.get('status');
+    const conInfo = record.get('conInfo');
+
+    const conInfoObject = JSON.parse(conInfo);
+
+    let inputs = '';
+    let outputs = '';
+    let breakdown = {};
+    Object.keys(conInfoObject).forEach(conType => {
+      conInfoObject[conType]['pre'] = (conInfoObject[conType]['pre'] * 1.0) / pre;
+      conInfoObject[conType]['post'] = (conInfoObject[conType]['post'] * 1.0) / post;
+      if (conInfoObject[conType]['pre'] > 0.1) {
+        if (outputs.length > 0) {
+          outputs = outputs + ',' + conType;
+        } else {
+          outputs = conType;
+        }
+        breakdown[conType]['pre'] = conInfoObject[conType]['pre'];
+        breakdown[conType]['post'] = conInfoObject[conType]['post'];
+      }
+      if (conInfoObject[conType]['post'] > 0.1) {
+        if (inputs.length > 0) {
+          inputs = inputs + ',' + conType;
+        } else {
+          inputs = conType;
+        }
+        breakdown[conType]['pre'] = conInfoObject[conType]['pre'];
+        breakdown[conType]['post'] = conInfoObject[conType]['post'];
+      }
+    });
+
+    const combo = inputs + '|' + outputs;
+
+    data.push([
+      new SimpleCellWrapper(index++, JSON.stringify(bodyId)),
+      new SimpleCellWrapper(index++, JSON.stringify(pre)),
+      new SimpleCellWrapper(index++, JSON.stringify(post)),
+      new SimpleCellWrapper(index++, JSON.stringify(name)),
+      new SimpleCellWrapper(index++, JSON.stringify(status))
+      // new SimpleCellWrapper(index++, JSON.stringify(conInfo))
+    ]);
+  });
+
   tables.push(table);
   return tables;
 };
@@ -203,7 +301,8 @@ export default function(dataset, bodyId, getGroups, limitBig, statusFilters) {
       // params: params,
       callback: processResults,
       state: {
-        bodyId: bodyId
+        bodyId: bodyId,
+        dataset: dataset
       }
     };
   } else {
