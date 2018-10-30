@@ -142,8 +142,8 @@ class RankedTable extends React.Component {
         (state.preOrPost === 'pre' && preid === node1id) ||
         (state.preOrPost === 'post' && preid !== node1id)
       ) {
-        if (lastbody != body1) {
-          if (lastbody != -1) {
+        if (lastbody !== body1) {
+          if (lastbody !== -1) {
             formattable.push(rowcomps);
             if (rowcomps.length > maxcols) {
               maxcols = rowcomps.length;

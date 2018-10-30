@@ -17,6 +17,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import C from '../reducers/constants';
 
 const styles = () => ({
@@ -78,7 +79,7 @@ class ResultsTopBar extends React.Component {
 
     return (
       <div
-        className={classes.root + ' ' + 'topresultbar'}
+        className={classNames(classes.root, 'topresultbar')}
         style={{ backgroundColor: color }}
       >
         <Toolbar>

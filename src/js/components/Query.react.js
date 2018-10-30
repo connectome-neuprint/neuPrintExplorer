@@ -7,14 +7,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Select from 'react-select';
 
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
 import { LoadQueryString, SaveQueryString, RemoveQueryString } from '../helpers/qsparser';
-import Chip from '@material-ui/core/Chip';
 
 import QueryForm from './QueryForm.react';
 import { setUrlQS } from '../actions/app';
@@ -52,17 +48,6 @@ const styles = theme => ({
     margin: '0.5em 0 1em 0'
   }
 });
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250
-    }
-  }
-};
 
 class Query extends React.Component {
   constructor(props) {
@@ -112,7 +97,7 @@ class Query extends React.Component {
   };
 
   render() {
-    const { classes, theme } = this.props;
+    const { classes } = this.props;
 
     var queryname = 'Select Query';
     var querytype = '';

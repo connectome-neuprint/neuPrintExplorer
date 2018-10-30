@@ -55,7 +55,7 @@ var processResults = function(results, state) {
 // creates query object and sends to callback
 export default function(datasetstr, rois, limitBig, statusFilters) {
     let params = { dataset: datasetstr, statuses: statusFilters };
-    if (limitBig == "true") {
+    if (limitBig === "true") {
         params["pre_threshold"] = 2; 
     }
 

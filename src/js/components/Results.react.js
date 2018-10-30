@@ -8,7 +8,6 @@ import Fade from '@material-ui/core/Fade';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
-import _ from 'underscore';
 import PropTypes from 'prop-types';
 import qs from 'qs';
 import { Responsive, WidthProvider } from 'react-grid-layout';
@@ -79,38 +78,6 @@ class Results extends React.Component {
     };
   }
 
-  // if only query string has updated, prevent re-render
-  shouldComponentUpdate(nextProps, nextState) {
-    return true;
-    nextProps.location['search'] = this.props.location['search'];
-
-    let numSkels = 0;
-    if (this.props.allTables !== null) {
-      this.props.allTables.forEach((result, index) => {
-        if (
-          !this.props.clearIndices.has(index) &&
-          ('isSkeleton' in result[0] && result[0].isSkeleton)
-        ) {
-          numSkels += 1;
-        }
-      });
-    }
-
-    let numSkels2 = 0;
-    if (nextProps.allTables !== null) {
-      nextProps.allTables.forEach((result, index) => {
-        if (
-          !nextProps.clearIndices.has(index) &&
-          ('isSkeleton' in result[0] && result[0].isSkeleton)
-        ) {
-          numSkels2 += 1;
-        }
-      });
-    }
-
-    return !_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state);
-  }
-
   componentDidUpdate(prevProps, prevState) {
     let query = qs.parse(prevProps.urlQueryString);
     let query2 = qs.parse(this.props.urlQueryString);
@@ -151,20 +118,6 @@ class Results extends React.Component {
 
   changeLayout = layout => {
     return;
-    let currIndex = 0;
-    let tempLayout = {};
-    this.props.allTables.forEach((result, index) => {
-      if (!this.props.clearIndices.has(index)) {
-        if (this.props.allTables.length - this.props.clearIndices.size > 1) {
-          tempLayout[result[0].uniqueId * 2] = layout[currIndex];
-        } else {
-          tempLayout[result[0].uniqueId * 2 + 1] = layout[currIndex];
-        }
-        currIndex++;
-      }
-    });
-
-    this.setState({ currLayout: tempLayout });
   };
 
   downloadFile = index => {
@@ -233,21 +186,8 @@ class Results extends React.Component {
 
   render() {
     // TODO: show query runtime results
-    const { classes, userInfo, allTables, isQuerying, neoError, allResults, viewPlugins } = this.props;
+    const { classes, allTables, isQuerying, neoError, allResults, viewPlugins } = this.props;
     let resArray = [];
-    let currIndex = 0;
-    let numTables = 0;
-
-    if (allTables !== null) {
-      allTables.forEach((result, index) => {
-        if (
-          !this.props.clearIndices.has(index) &&
-          (!('isSkeleton' in result[0]) || !result[0].isSkeleton)
-        ) {
-          numTables += 1;
-        }
-      });
-    }
 
     if (neoError === null && allTables !== null) {
       allTables.forEach((result, index) => {
@@ -283,7 +223,6 @@ class Results extends React.Component {
               </div>
             </div>
           );
-          currIndex += 1;
         }
       });
     }

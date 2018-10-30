@@ -56,7 +56,7 @@ class TopBar extends React.Component {
           <div className={classes.flex}>
             <Tooltip title={VERSION} placement={'bottom'} enterDelay={300}>
               <Link to="/">
-                <img src="/public/neuprintexplorerw.png" className={classes.img} />
+                <img alt="neuprintexplorer logo - home link" src="/public/neuprintexplorerw.png" className={classes.img} />
               </Link>
             </Tooltip>
           </div>

@@ -4,10 +4,11 @@ import Grid from '@material-ui/core/Grid';
 
 class NeuroGlancer extends React.Component {
   render() {
+    const viewerState = {};
     return (
       <Grid container>
         <Grid item xs={12}>
-          <Neuroglancer />
+          <Neuroglancer perspectiveZoom={80} viewerState={viewerState} />
         </Grid>
       </Grid>
     );

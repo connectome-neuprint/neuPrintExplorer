@@ -106,7 +106,7 @@ class Login extends React.Component {
         ) : (
           <div>
             <Button ref="userbutton" className={classes.buttonBasic} onClick={this.launchUserPopup}>
-              <img src={this.state.imageURL} className={classes.icon} />
+              <img alt="user avatar icon - click for menu" src={this.state.imageURL} className={classes.icon} />
             </Button>
             <Menu
               id="menu-appbar"

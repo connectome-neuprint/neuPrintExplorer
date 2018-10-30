@@ -11,7 +11,6 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import NeuPrintResult from '../helpers/NeuPrintResult';
 import { setQueryError, appendData, saveData, finishQuery } from '../actions/neoQuery';
-import { skeletonAdd, skeletonOpen } from '../actions/skeleton';
 
 var UNIQUE_ID = 0;
 
@@ -22,7 +21,7 @@ class Neo4jQuery extends React.Component {
       // only authorized users could get server information
       if (nextProps.neoQueryObj.queryStr !== '' && nextProps.neoServer !== '') {
         // run query (TODO: handle blocking query??)
-        const { setQueryError, saveData, appendData, skeletonAdd, skeletonOpen } = this.props;
+        const { setQueryError, saveData, appendData } = this.props;
         const processResults = nextProps.neoQueryObj.callback;
         let { queryStr, params, state } = nextProps.neoQueryObj;
         let uniqueId = UNIQUE_ID++;
@@ -97,12 +96,6 @@ var Neo4jQueryDispatch = function(dispatch) {
       dispatch(saveData(results));
       dispatch(finishQuery());
     },
-    skeletonAdd: function(id) {
-      dispatch(skeletonAdd(id));
-    },
-    skeletonOpen: function() {
-      dispatch(skeletonOpen());
-    }
   };
 };
 
@@ -119,8 +112,6 @@ Neo4jQuery.propTypes = {
   saveData: PropTypes.func.isRequired,
   isQuerying: PropTypes.bool.isRequired,
   setQueryError: PropTypes.func.isRequired,
-  skeletonAdd: PropTypes.func.isRequired,
-  skeletonOpen: PropTypes.func.isRequired,
 };
 
 export default connect(

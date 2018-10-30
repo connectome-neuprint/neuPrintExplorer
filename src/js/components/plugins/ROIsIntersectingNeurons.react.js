@@ -82,7 +82,7 @@ class ROIsIntersectingNeurons extends React.Component {
       data.sort(compareNeuronRows1); // sort by post
       var postname = '';
       for (let i = 0; i < data.length; i++) {
-        if (i == 2 || data[i][1].getValue() === null) {
+        if (i === 2 || data[i][1].getValue() === null) {
           break;
         }
         postname += data[i][0].getValue();
@@ -90,7 +90,7 @@ class ROIsIntersectingNeurons extends React.Component {
       data.sort(compareNeuronRows2); // sort by pre
       var prename = '';
       for (let i = 0; i < data.length; i++) {
-        if (i == 2 || data[i][2] === null || data[i][2].getValue() === 0) {
+        if (i === 2 || data[i][2] === null || data[i][2].getValue() === 0) {
           break;
         }
         prename += data[i][0].getValue();
@@ -103,7 +103,7 @@ class ROIsIntersectingNeurons extends React.Component {
       tables.push(table);
     }
 
-    if (tables.length == 0) {
+    if (tables.length === 0) {
       tables.push({
         header: headerdata,
         body: [],

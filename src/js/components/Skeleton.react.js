@@ -6,22 +6,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import _ from 'underscore';
 import { connect } from 'react-redux';
 import Chip from '@material-ui/core/Chip';
 import { skeletonNeuronToggle, skeletonRemove } from '../actions/skeleton';
-
-var COLORS = [
-  0xe41a1c,
-  0x377eb8,
-  0x4daf4a,
-  0x984ea3,
-  0xff7f00,
-  0xffff33,
-  0xa65628,
-  0xf781bf,
-  0x999999
-];
 
 var GlbShark = null;
 
