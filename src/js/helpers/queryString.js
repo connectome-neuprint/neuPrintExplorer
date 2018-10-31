@@ -3,7 +3,11 @@ import history from '../history';
 import merge from 'deepmerge';
 
 export function getQueryString() {
-  return qs.parse(window.location.search.substring(1));
+  return window.location.search.substring(1);
+}
+
+export function getQueryObject() {
+  return qs.parse(getQueryString());
 }
 
 export function setQueryString(newData) {
