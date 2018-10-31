@@ -37,7 +37,7 @@ class TestPlugin extends React.Component {
       outputROIs: [],
       neuronsrc: '',
       limitBig: true,
-      statusFilters: [],
+      statusFilters: []
     };
   }
   static get queryName() {
@@ -60,15 +60,13 @@ class TestPlugin extends React.Component {
           value: row[2],
           action: () => actions.skeletonAddandOpen(row[2], dataSet)
         },
-        row[1], row[3]];
+        row[1],
+        row[3]
+      ];
     });
 
     return {
-      columns: [
-        'Neuron ID',
-        'Neuron',
-        '#connections',
-      ],
+      columns: ['Neuron ID', 'Neuron', '#connections'],
       data,
       debug: apiResponse.debug
     };
@@ -226,18 +224,18 @@ class TestPlugin extends React.Component {
     // redirect to the results page.
     history.push({
       pathname: '/results',
-      search: getQueryString(),
+      search: getQueryString()
     });
   };
 
   handleChangeROIsIn = selected => {
     var rois = selected.map(item => item.value);
-    this.setState({ inputROIs: rois});
+    this.setState({ inputROIs: rois });
   };
 
   handleChangeROIsOut = selected => {
     var rois = selected.map(item => item.value);
-    this.setState({ outputROIs: rois});
+    this.setState({ outputROIs: rois });
   };
 
   addNeuron = event => {
