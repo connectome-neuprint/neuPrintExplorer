@@ -115,7 +115,6 @@ class NeuronFilter extends React.Component {
     let val = this.state.qsParams.limitBig === 'true' ? 'false' : 'true';
 
     let newparams = Object.assign({}, this.state.qsParams, { limitBig: val });
-    this.props.setURLQs(SaveQueryString('Query:NeuronFilter', newparams));
 
     this.props.callback(newparams);
     this.setState({ qsParams: newparams });
@@ -129,7 +128,6 @@ class NeuronFilter extends React.Component {
     let newparams = Object.assign({}, this.state.qsParams, { statusFilters: statuses });
 
     // save back status selections
-    this.props.setURLQs(SaveQueryString('Query:NeuronFilter', newparams));
     this.props.callback(newparams);
     this.setState({ qsParams: newparams });
   };

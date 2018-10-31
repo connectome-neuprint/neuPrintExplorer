@@ -61,7 +61,7 @@ class NeuronsInROIs extends React.Component {
       this.props.urlQueryString
     );
     this.state = {
-      qsParams: qsParams,
+      qsParams,
       limitBig: true,
       statusFilters: []
     };

@@ -5,7 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Router, Route, Switch } from 'react-router-dom';
-import createBrowserHistory from 'history/createBrowserHistory';
+import history from '../history';
 
 import { withStyles } from '@material-ui/core/styles';
 
@@ -49,7 +49,7 @@ class Master extends React.Component {
   render() {
     const { classes } = this.props;
     return (
-      <Router history={createBrowserHistory()}>
+      <Router history={history}>
         <div className={classes.root}>
           <Neo4jQuery />
           <TopBar />

@@ -14,6 +14,7 @@ import { LoadQueryString, SaveQueryString, RemoveQueryString } from '../helpers/
 
 import QueryForm from './QueryForm.react';
 import { setUrlQS } from '../actions/app';
+import { setQueryString } from '../helpers/queryString';
 
 const styles = theme => ({
   root: {
@@ -82,7 +83,11 @@ class Query extends React.Component {
 
       var oldparams = this.state.qsParams;
       oldparams.queryType = selectedQuery.value;
-      this.props.setURLQs(SaveQueryString('Query', oldparams));
+      setQueryString({
+        Query: {
+          queryType: selectedQuery.value
+        }
+      });
       this.setState({ qsParams: oldparams });
     }
   };
@@ -91,8 +96,11 @@ class Query extends React.Component {
     var newdatasets = [selectedDataSet.value];
     var oldparams = this.state.qsParams;
     oldparams.datasets = newdatasets;
-    this.props.setURLQs(SaveQueryString('Query', oldparams));
-
+    setQueryString({
+      Query: {
+        datasets: [selectedDataSet.value]
+      }
+    });
     this.setState({ qsParams: oldparams });
   };
 

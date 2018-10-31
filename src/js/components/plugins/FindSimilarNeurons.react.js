@@ -133,6 +133,7 @@ class FindSimilarNeurons extends React.Component {
         <NeuronFilter callback={this.loadNeuronFilters} datasetstr={this.props.datasetstr} />
         <Button
           variant="raised"
+          color="primary"
           onClick={() => {
             this.props.callback(
               queryFindSimilarNeurons(
