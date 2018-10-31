@@ -7,7 +7,7 @@ export function getQueryString() {
 }
 
 export function getQueryObject() {
-  return qs.parse(getQueryString());
+  return qs.parse(getQueryString()) || {};
 }
 
 export function setQueryString(newData) {

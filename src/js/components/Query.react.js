@@ -10,11 +10,9 @@ import Select from 'react-select';
 import InputLabel from '@material-ui/core/InputLabel';
 import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
-import { LoadQueryString, SaveQueryString, RemoveQueryString } from '../helpers/qsparser';
 
 import QueryForm from './QueryForm.react';
-import { setUrlQS } from '../actions/app';
-import { setQueryString } from '../helpers/queryString';
+import { getQueryObject, setQueryString } from '../helpers/queryString';
 
 const styles = theme => ({
   root: {
@@ -53,35 +51,28 @@ const styles = theme => ({
 class Query extends React.Component {
   constructor(props) {
     super(props);
-    var initqsParams = {
-      queryType: '',
-      datasets: []
-    };
-    var qsParams = LoadQueryString('Query', initqsParams, this.props.urlQueryString);
-    if (qsParams.datasets.length === 0 && this.props.availableDatasets.length > 0) {
-      qsParams.datasets = [this.props.availableDatasets[0]];
-      this.props.setURLQs(SaveQueryString('Query', qsParams));
-    }
+    const qsParams = getQueryObject();
     this.state = {
-      qsParams: qsParams
+      qsParams: qsParams.Query || {},
     };
   }
 
   setQuery = selectedQuery => {
-    if (selectedQuery.value !== this.state.qsParams.queryType) {
+    const { qsParams } = this.state;
+    if (selectedQuery.value !== qsParams.queryType) {
       // delete query string from last query
       var found = false;
       for (var i in this.props.pluginList) {
-        if (this.state.qsParams.queryType === this.props.pluginList[i].queryName) {
+        if (qsParams && qsParams.queryType === this.props.pluginList[i].queryName) {
           found = true;
         }
       }
 
       if (found) {
-        RemoveQueryString('Query:' + this.state.qsParams.queryType);
+        // RemoveQueryString('Query:' + this.state.qsParams.queryType);
       }
 
-      var oldparams = this.state.qsParams;
+      var oldparams = qsParams;
       oldparams.queryType = selectedQuery.value;
       setQueryString({
         Query: {
@@ -93,8 +84,9 @@ class Query extends React.Component {
   };
 
   handleChange = selectedDataSet => {
+    const { qsParams } = this.state;
     var newdatasets = [selectedDataSet.value];
-    var oldparams = this.state.qsParams;
+    var oldparams = qsParams;
     oldparams.datasets = newdatasets;
     setQueryString({
       Query: {
@@ -106,29 +98,31 @@ class Query extends React.Component {
 
   render() {
     const { classes } = this.props;
+    const { qsParams } = this.state;
 
     var queryname = 'Select Query';
     var querytype = '';
+    var datasetstr = 'Select a dataset';
 
     // if query is selected, pass query along
-    if (this.state.qsParams.queryType !== '') {
-      // check if query is in the list of plugins
-      var found = false;
-      for (var i in this.props.pluginList) {
-        if (this.state.qsParams.queryType === this.props.pluginList[i].queryName) {
-          found = true;
+    if (qsParams) {
+      if (qsParams.queryType !== '') {
+        // check if query is in the list of plugins
+        var found = false;
+        for (var i in this.props.pluginList) {
+          if (qsParams.queryType === this.props.pluginList[i].queryName) {
+            found = true;
+          }
+        }
+        if (found) {
+          queryname = qsParams.queryType;
+          querytype = queryname;
+        }
+
+        for (var item in qsParams.datasets) {
+          datasetstr = qsParams.datasets[item];
         }
       }
-      if (found) {
-        queryname = this.state.qsParams.queryType;
-        querytype = queryname;
-      }
-    }
-
-    var datasetstr = '';
-    //console.assert(this.state.qsParams.datasets.length <= 1);
-    for (var item in this.state.qsParams.datasets) {
-      datasetstr = this.state.qsParams.datasets[item];
     }
 
     const generalOptions = this.props.pluginList.slice(0, this.props.reconIndex).map(val => {
@@ -179,18 +173,14 @@ class Query extends React.Component {
         <InputLabel htmlFor="select-multiple-chip">Select dataset</InputLabel>
         <Select
           className={classes.select}
-          value={{ value: this.state.qsParams.datasets, label: this.state.qsParams.datasets }}
+          value={{ value: datasetstr, label: datasetstr }}
           onChange={this.handleChange}
           options={dataSetOptions}
         />
 
         <Divider className={classes.divider} />
 
-        <QueryForm
-          queryType={querytype}
-          datasetstr={datasetstr}
-          dataSet={datasetstr}
-        />
+        <QueryForm queryType={querytype} datasetstr={datasetstr} dataSet={datasetstr} />
       </div>
     );
   }
@@ -201,8 +191,6 @@ Query.propTypes = {
   reconIndex: PropTypes.number.isRequired,
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
-  setURLQs: PropTypes.func.isRequired,
-  urlQueryString: PropTypes.string.isRequired,
   availableDatasets: PropTypes.array.isRequired
 };
 
@@ -210,17 +198,12 @@ var QueryState = function(state) {
   return {
     pluginList: state.app.get('pluginList'),
     reconIndex: state.app.get('reconIndex'),
-    availableDatasets: state.neo4jsettings.availableDatasets,
-    urlQueryString: state.app.get('urlQueryString')
+    availableDatasets: state.neo4jsettings.availableDatasets
   };
 };
 
 var QueryDispatch = function(dispatch) {
-  return {
-    setURLQs: function(querystring) {
-      dispatch(setUrlQS(querystring));
-    }
-  };
+  return {};
 };
 
 export default withStyles(styles, { withTheme: true })(
