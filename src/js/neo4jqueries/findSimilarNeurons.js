@@ -13,7 +13,7 @@ const processResults = function(results, state) {
   const tables = [];
 
   const headerdata = [
-    new SimpleCellWrapper(index++, 'bodyId'),
+    new SimpleCellWrapper(index++, 'bodyId (click to group by connections)'),
     new SimpleCellWrapper(index++, 'name'),
     new SimpleCellWrapper(index++, 'status'),
     new SimpleCellWrapper(index++, '#pre'),
@@ -87,12 +87,12 @@ const processResults = function(results, state) {
         isChild: true,
         state: {
           clusterName: clusterName,
-          dataset: state.dataset
+          dataset: state.dataset,
+          bodyId: parseInt(bodyId)
         }
       };
 
       data.push([
-        new SimpleCellWrapper(index++, parseInt(bodyId)),
         new SimpleCellWrapper(
           index++,
           <ClickableQuery neoQueryObj={neoConnectionClusters}>{parseInt(bodyId)}</ClickableQuery>
@@ -147,17 +147,16 @@ const processConnections = function(results, state) {
     new SimpleCellWrapper(index++, 'pre'),
     new SimpleCellWrapper(index++, 'post'),
     new SimpleCellWrapper(index++, 'name'),
-    new SimpleCellWrapper(index++, 'status')
-    // new SimpleCellWrapper(index++, 'conInfo')
+    new SimpleCellWrapper(index++, 'status'),
+    new SimpleCellWrapper(index++, 'connection breakdown (mouseover for details)')
+    // new SimpleCellWrapper(index++, 'primary heatmap'),
+    // new SimpleCellWrapper(index++, 'secondary heatmap')
   ];
 
-  const data = [];
-  const table = {
-    header: headerdata,
-    body: data,
-    name: 'Neurons with classification ' + state.clusterName,
-    sortIndices: new Set([0, 1, 2, 3, 4, 5])
-  };
+  const allData = [];
+
+  let queriedCombo;
+  let countPerCombo = {};
 
   results.records.forEach(function(record) {
     const bodyId = record.get('bodyId');
@@ -171,43 +170,106 @@ const processConnections = function(results, state) {
 
     let inputs = '';
     let outputs = '';
-    let breakdown = {};
+
     Object.keys(conInfoObject).forEach(conType => {
-      conInfoObject[conType]['pre'] = (conInfoObject[conType]['pre'] * 1.0) / pre;
-      conInfoObject[conType]['post'] = (conInfoObject[conType]['post'] * 1.0) / post;
-      if (conInfoObject[conType]['pre'] > 0.1) {
+      conInfoObject[conType].pre = (conInfoObject[conType].pre * 1.0) / pre;
+      conInfoObject[conType].post = (conInfoObject[conType].post * 1.0) / post;
+
+      if (conInfoObject[conType].pre >= 0.1) {
         if (outputs.length > 0) {
           outputs = outputs + ',' + conType;
         } else {
           outputs = conType;
         }
-        breakdown[conType]['pre'] = conInfoObject[conType]['pre'];
-        breakdown[conType]['post'] = conInfoObject[conType]['post'];
       }
-      if (conInfoObject[conType]['post'] > 0.1) {
+
+      if (conInfoObject[conType].post >= 0.1) {
         if (inputs.length > 0) {
           inputs = inputs + ',' + conType;
         } else {
           inputs = conType;
         }
-        breakdown[conType]['pre'] = conInfoObject[conType]['pre'];
-        breakdown[conType]['post'] = conInfoObject[conType]['post'];
       }
     });
 
     const combo = inputs + '|' + outputs;
 
-    data.push([
-      new SimpleCellWrapper(index++, JSON.stringify(bodyId)),
-      new SimpleCellWrapper(index++, JSON.stringify(pre)),
-      new SimpleCellWrapper(index++, JSON.stringify(post)),
-      new SimpleCellWrapper(index++, JSON.stringify(name)),
-      new SimpleCellWrapper(index++, JSON.stringify(status))
-      // new SimpleCellWrapper(index++, JSON.stringify(conInfo))
-    ]);
+    if (parseInt(bodyId) === parseInt(state.bodyId)) {
+      queriedCombo = combo;
+    }
+
+    // rename blank category
+    if (conInfoObject['_']) {
+      conInfoObject['no name'] = conInfoObject['_'];
+      delete conInfoObject['_'];
+    }
+
+    countPerCombo[combo] = countPerCombo[combo] ? countPerCombo[combo] + 1 : 1;
+
+    allData.push({
+      bodyId: parseInt(bodyId),
+      pre: parseInt(pre),
+      post: parseInt(post),
+      name: name,
+      status: status,
+      combo: combo,
+      conInfoObject: conInfoObject
+    });
   });
 
-  tables.push(table);
+  let sortableCountPerCombo = [];
+
+  Object.keys(countPerCombo).forEach(combo => {
+    sortableCountPerCombo.push([combo, countPerCombo[combo]]);
+  });
+
+  sortableCountPerCombo.sort((a, b) => b[1] - a[1]);
+
+  let sortedCountPerCombo = {};
+  sortableCountPerCombo.forEach(element => {
+    sortedCountPerCombo[element[0]] = element[1];
+  });
+
+  console.log(sortedCountPerCombo);
+  Object.keys(sortedCountPerCombo).forEach(combo => {
+    const data = [];
+
+    const table = {
+      header: headerdata,
+      body: data,
+      name: 'Connection category ' + combo + ' - ' + sortedCountPerCombo[combo],
+      sortIndices: new Set([0, 1, 2, 3, 4, 5])
+    };
+
+    allData.forEach(body => {
+      if (body.combo === combo) {
+        data.push([
+          new SimpleCellWrapper(index++, body.bodyId),
+          new SimpleCellWrapper(index++, body.pre),
+          new SimpleCellWrapper(index++, body.post),
+          new SimpleCellWrapper(index++, body.name),
+          new SimpleCellWrapper(index++, body.status),
+          new SimpleCellWrapper(
+            index++,
+            (
+              <RoiBarGraph
+                roiList={Object.keys(body.conInfoObject)}
+                roiInfoObject={body.conInfoObject}
+                preTotal={1}
+                postTotal={1}
+              />
+            )
+          )
+        ]);
+      }
+    });
+    if (combo === queriedCombo) {
+      tables.unshift(table);
+    } else {
+      tables.push(table);
+    }
+  });
+
   return tables;
 };
 
