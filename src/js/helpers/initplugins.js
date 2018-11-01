@@ -20,12 +20,12 @@ import FindSimilarNeurons from '../components/plugins/FindSimilarNeurons.react';
 import TestPlugin from '../components/plugins/TestPlugin';
 
 // view plugins
-import SimpleTable from '../components/view-plugins/SimpleTable'; 
+import SimpleTable from '../components/view-plugins/SimpleTable';
 
 const pluginList = [FindNeurons, NeuronMeta, ROIConnectivity, RankedTable, SimpleConnections, ROIsIntersectingNeurons, CommonConnectivity, FindSimilarNeurons, FreeForm, Autapses, Distribution, Completeness, TestPlugin];
 
 const viewPlugins = {
-  SimpleTable: SimpleTable,
+  SimpleTable,
 }
 export default function loadPlugins(store) {
     store.dispatch(initPlugins(pluginList));
