@@ -52,7 +52,7 @@
     "immutable": "^3.8.2",
     "jquery": "^3.3.1",
     "prettier": "^1.14.3",
-    "qs": "^5.1.0",
+    "qs": "^6.5.2",
     "randomcolor": "^0.5.3",
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
