@@ -27,7 +27,7 @@ const styles = theme => ({
   }
 });
 
-const pluginName = 'TestPlugin';
+const pluginName = 'FindNeurons';
 
 class TestPlugin extends React.Component {
   constructor(props) {
@@ -42,14 +42,14 @@ class TestPlugin extends React.Component {
   }
   static get queryName() {
     // This is the string used in the 'Query Type' select.
-    return 'Test Plugin';
+    return 'Find neurons';
   }
 
   static get queryDescription() {
     // This is a description of the purpose of the plugin.
     // it will be displayed in the form above the custom
     // inputs for this plugin.
-    return 'Generates simple table on submit.';
+    return 'Find neurons that have inputs or outputs in ROIs';
   }
 
   processSimpleConnections = (dataSet, apiResponse) => {
@@ -205,7 +205,7 @@ class TestPlugin extends React.Component {
       }
     }
 
-    if (limitBig === 'true') {
+    if (limitBig) {
       parameters['pre_threshold'] = 2;
     }
 
