@@ -27,11 +27,13 @@ const styles = theme => ({
   }
 });
 
+// this should match the name of the file this plugin is stored in.
 const pluginName = 'FindNeurons';
 
 class TestPlugin extends React.Component {
   constructor(props) {
     super(props);
+    // set the default state for the query input.
     this.state = {
       inputROIs: [],
       outputROIs: [],
