@@ -49,7 +49,6 @@ function BarGraph({ listOfRoisToUse, roiInfoObject, roiInfoObjectKey, sumOfValue
         />
       );
     }
-    return null;
   });
 }
 
