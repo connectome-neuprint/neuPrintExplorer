@@ -10,7 +10,7 @@ function submittingQuery(query) {
 function submissionError(error) {
   return {
     type: C.PLUGIN_SUBMIT_ERROR,
-    error,
+    error: `PLUGIN ERROR: ${error}`,
   };
 }
 

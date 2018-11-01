@@ -57,7 +57,7 @@ class NeuronFilter extends React.Component {
     super(props);
 
     let initqsParams = {
-      limitBig: 'true',
+      limitBig: true,
       statusFilters: []
     };
     let qsParams = LoadQueryString('Query:NeuronFilter', initqsParams, this.props.urlQueryString);
@@ -112,7 +112,7 @@ class NeuronFilter extends React.Component {
   };
 
   toggleBig = () => {
-    let val = this.state.qsParams.limitBig === 'true' ? 'false' : 'true';
+    let val = !this.state.qsParams.limitBig;
 
     let newparams = Object.assign({}, this.state.qsParams, { limitBig: val });
 
@@ -134,7 +134,7 @@ class NeuronFilter extends React.Component {
 
   render() {
     const { classes, theme } = this.props;
-    let checkbox = this.state.qsParams.limitBig === 'true' ? true : false;
+    let checkbox = this.state.qsParams.limitBig;
     return (
       <ExpansionPanel className={classes.expandablePanel}>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
