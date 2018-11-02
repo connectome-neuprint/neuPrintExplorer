@@ -60,8 +60,6 @@ const styles = theme => ({
     },
 });
 
-const MaxSlideNum = 19;
-
 class Help extends React.Component {
     constructor(props) {
        super(props);
@@ -152,6 +150,7 @@ class Help extends React.Component {
                         <Button onClick={this.handleOpen}>
                         <img
                             src="/public/overview.png"
+                            alt="Neo4j graph model diagram"
                             className={classes.img}
                         />
                         </Button>
@@ -163,7 +162,10 @@ class Help extends React.Component {
                         >
                             <div className={classes.overflow}>
                             <Button onClick={this.handleClose}>
-                                <img src="/public/overview.png" />
+                                <img
+                                  src="/public/overview.png"
+                                  alt="Neo4j graph model diagram"
+                                />
                             </Button>
                             </div>
                         </Modal>

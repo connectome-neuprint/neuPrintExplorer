@@ -55,7 +55,7 @@ class Favorites extends React.Component {
     }
 
     fetchBookmarks = (props) => {
-        if (props.userInfo !== null && props.token != "") {
+        if (props.userInfo !== null && props.token !== "") {
             // fetch favorites and add to state
             fetch(this.props.appDB + "/user/favorites", {
                 headers: {
@@ -101,7 +101,7 @@ class Favorites extends React.Component {
         return (
             <div className={classes.root}>
                 <Typography variant="h6">Favorites</Typography>
-                {this.props.userInfo !== null ? 
+                {this.props.userInfo !== null ?
                 (<Table className={classes.table}>
                     <TableBody>
                     {this.state.favoritesArr.slice(startRecord, page * rowsPerPage + rowsPerPage).map( (tableinfo, index) => {

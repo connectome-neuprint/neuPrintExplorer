@@ -8,7 +8,7 @@
  *  }
 */
 
-"use strict"
+""
 
 
 class neuPrintRecord {

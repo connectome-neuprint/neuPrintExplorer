@@ -8,7 +8,6 @@ import Fade from '@material-ui/core/Fade';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
-import _ from 'underscore';
 import PropTypes from 'prop-types';
 import qs from 'qs';
 import { Responsive, WidthProvider } from 'react-grid-layout';
@@ -16,6 +15,8 @@ import Grid from '@material-ui/core/Grid';
 import ResultsTopBar from './ResultsTopBar';
 import SimpleTables from './SimpleTables';
 import Skeleton from './Skeleton';
+import { toggleSkeleton } from '../actions/skeleton';
+// import NeuroGlancer from '@janelia-flyem/react-neuroglancer';
 
 import './Results.css';
 
@@ -74,50 +75,7 @@ class Results extends React.Component {
     super(props, context);
     this.state = {
       currLayout: null,
-      showSkel: false
     };
-  }
-
-  // if only query string has updated, prevent re-render
-  shouldComponentUpdate(nextProps, nextState) {
-    nextProps.location['search'] = this.props.location['search'];
-
-    let numSkels = 0;
-    if (this.props.allTables !== null) {
-      this.props.allTables.forEach((result, index) => {
-        if (
-          !this.props.clearIndices.has(index) &&
-          ('isSkeleton' in result[0] && result[0].isSkeleton)
-        ) {
-          numSkels += 1;
-        }
-      });
-    }
-
-    let numSkels2 = 0;
-    if (nextProps.allTables !== null) {
-      nextProps.allTables.forEach((result, index) => {
-        if (
-          !nextProps.clearIndices.has(index) &&
-          ('isSkeleton' in result[0] && result[0].isSkeleton)
-        ) {
-          numSkels2 += 1;
-        }
-      });
-    }
-
-    // if the number of skeletons in the results tables has changed
-    // then check to see if we are adding one and set showSkel in the
-    // state to make sure we show it.
-    if (numSkels2 !== numSkels) {
-      if (numSkels2 > 0 && !nextState.showSkel) {
-        this.setState({ showSkel: true });
-      } else if (numSkels2 === 0) {
-        this.setState({ showSkel: false });
-      }
-    }
-
-    return !_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -132,12 +90,13 @@ class Results extends React.Component {
       openQuery2 = true;
     }
 
-    if (prevState.showSkel !== this.state.showSkel || openQuery !== openQuery2) {
+    if (prevProps.showSkel !== this.props.showSkel || openQuery !== openQuery2) {
       window.dispatchEvent(new Event('resize'));
     }
   }
 
   triggerKeyboard = event => {
+    const { actions } = this.props;
     if (event.which === 32) {
       // check the mouse is over the skeleton div
       let numSkels = 0;
@@ -152,26 +111,13 @@ class Results extends React.Component {
         });
       }
       if (numSkels > 0) {
-        this.setState({ showSkel: !this.state.showSkel });
+        actions.toggleSkeleton();
       }
     }
   };
 
   changeLayout = layout => {
-    let currIndex = 0;
-    let tempLayout = {};
-    this.props.allTables.forEach((result, index) => {
-      if (!this.props.clearIndices.has(index)) {
-        if (this.props.allTables.length - this.props.clearIndices.size > 1) {
-          tempLayout[result[0].uniqueId * 2] = layout[currIndex];
-        } else {
-          tempLayout[result[0].uniqueId * 2 + 1] = layout[currIndex];
-        }
-        currIndex++;
-      }
-    });
-
-    this.setState({ currLayout: tempLayout });
+    return;
   };
 
   downloadFile = index => {
@@ -240,24 +186,11 @@ class Results extends React.Component {
 
   render() {
     // TODO: show query runtime results
-    const { classes } = this.props;
+    const { classes, allTables, isQuerying, neoError, allResults, viewPlugins } = this.props;
     let resArray = [];
-    let currIndex = 0;
-    let numTables = 0;
 
-    if (this.props.allTables !== null) {
-      this.props.allTables.forEach((result, index) => {
-        if (
-          !this.props.clearIndices.has(index) &&
-          (!('isSkeleton' in result[0]) || !result[0].isSkeleton)
-        ) {
-          numTables += 1;
-        }
-      });
-    }
-
-    if (this.props.neoError === null && this.props.allTables !== null) {
-      this.props.allTables.forEach((result, index) => {
+    if (neoError === null && allTables !== null) {
+      allTables.forEach((result, index) => {
         //  TODO: rather than skip over the skeleton and place it in a
         //  different container system, why not add it to the grid layout
         //  and fix the dimensions / location. Search for
@@ -267,18 +200,14 @@ class Results extends React.Component {
           !this.props.clearIndices.has(index) &&
           (!('isSkeleton' in result[0]) || !result[0].isSkeleton)
         ) {
-          let unId = this.state.showSkel
-            ? result[0].uniqueId * 3 + 2
-            : numTables > 1
-              ? result[0].uniqueId * 3
-              : result[0].uniqueId * 3 + 1;
+          let unId = `old${index}`;
           resArray.push(
             <div
               key={unId}
               data-grid={{
-                x: (currIndex * 6) % 12,
-                y: Math.floor(currIndex / 2) * 18,
-                w: numTables > 1 ? 6 : 12,
+                x: 0,
+                y: 0,
+                w: 6,
                 h: 20
               }}
             >
@@ -294,10 +223,35 @@ class Results extends React.Component {
               </div>
             </div>
           );
-          currIndex += 1;
         }
       });
     }
+
+    // TODO: need to put results in flexible grid:
+    // https://github.com/STRML/react-grid-layout/blob/master/test/examples/6-dynamic-add-remove.jsx
+    const results = allResults.map((query, index) => {
+      const View = viewPlugins.get(query.visType);
+      return (
+        <div key={index}
+          data-grid={{
+            w: 6,
+            h: 20,
+            x: 0,
+            y: 0,
+          }}
+        >
+          <ResultsTopBar
+            version={2}
+            downloadCallback={this.downloadFile}
+            name={query.title}
+            index={index}
+            queryStr={query.result.debug}
+            color={query.menuColor}
+          />
+          <View query={query} key={index} />
+        </div>
+      );
+    });
 
     return (
       <div
@@ -305,62 +259,51 @@ class Results extends React.Component {
         onKeyPress={this.triggerKeyboard}
         className={classes.root}
       >
-        {this.props.userInfo !== null && this.props.allTables !== null ? (
-          <div/>
-        ) : this.props.isQuerying ? (
-          <Typography variant="h6">Querying...</Typography>
-        ) : this.props.allTables !== null ? (
-          <div />
-        ) : (
+        {(resArray.length === 0 && results.size === 0) && (
           <div className={classes.empty}>
             <Typography variant="h6">No Search Results</Typography>
             <Typography>
               Please use the Menu to the left to start a search.
             </Typography>
           </div>
-
         )}
         <Fade
-          in={this.props.isQuerying}
+          in={isQuerying}
           style={{
-            transitionDelay: this.props.isQuerying ? '800ms' : '0ms'
+            transitionDelay: isQuerying ? '800ms' : '0ms'
           }}
           unmountOnExit
         >
           <CircularProgress />
         </Fade>
-        {this.props.neoError !== null ? (
-          <Typography>Error: {this.props.neoError}</Typography>
-        ) : resArray.length > 0 ? (
-          <Grid container spacing={0}>
-            <Grid item xs={12} sm={this.state.showSkel ? 6 : 12}>
-              <div className={classes.scroll}>
-                <ResponsiveGridLayout
-                  className="layout"
-                  rowHeight={30}
-                  breakpoints={{ lg: 2000 }}
-                  cols={{ lg: this.state.showSkel ? 6 : 12 }}
-                  draggableHandle=".topresultbar"
-                  compactType="vertical"
-                  onResizeStop={this.changeLayout}
-                >
-                  {resArray.map(result => {
-                    return result;
-                  })}
-                </ResponsiveGridLayout>
-              </div>
-            </Grid>
-            {this.state.showSkel ? (
-              <Grid item xs={12} sm={6}>
-                <Skeleton disable={!this.state.showSkel} />
-              </Grid>
-            ) : (
-              <div />
-            )}
+        <Grid container spacing={0}>
+          <Grid item xs={12} sm={this.props.showSkel ? 6 : 12}>
+            <div className={classes.scroll}>
+              <ResponsiveGridLayout
+                className="layout"
+                rowHeight={30}
+                breakpoints={{ lg: 2000 }}
+                cols={{ lg: this.props.showSkel ? 6 : 12 }}
+                draggableHandle=".topresultbar"
+                compactType="vertical"
+                onResizeStop={this.changeLayout}
+              >
+                {results}
+                {resArray.map(result => {
+                  return result;
+                })}
+              </ResponsiveGridLayout>
+            </div>
           </Grid>
-        ) : (
-          <div />
-        )}
+          {this.props.showSkel ? (
+            <Grid item xs={12} sm={6}>
+              {/* <NeuroGlancer perspectiveZoom={80} /> */}
+              <Skeleton disable={!this.props.showSkel} />
+            </Grid>
+          ) : (
+            <div />
+          )}
+        </Grid>
       </div>
     );
   }
@@ -371,6 +314,8 @@ Results.propTypes = {
     search: PropTypes.string.isRequired
   }),
   allTables: PropTypes.array,
+  allResults: PropTypes.object.isRequired,
+  viewPlugins: PropTypes.object.isRequired,
   clearIndices: PropTypes.object,
   numClear: PropTypes.number,
   queryObj: PropTypes.object.isRequired,
@@ -378,26 +323,39 @@ Results.propTypes = {
   isQuerying: PropTypes.bool.isRequired,
   urlQueryString: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired,
+  showSkel: PropTypes.bool.isRequired,
   userInfo: PropTypes.object
 };
 
 // result data [{name: "table name", header: [headers...], body: [rows...]
-var ResultsState = function(state) {
+const ResultsState = function(state) {
   return {
     isQuerying: state.query.isQuerying,
     neoError: state.query.neoError,
     allTables: state.results.allTables,
+    allResults: state.results.allResults,
+    viewPlugins: state.app.get('viewPlugins'),
     clearIndices: state.results.clearIndices,
     numClear: state.results.numClear,
+    showSkel: state.skeleton.get('display'),
     userInfo: state.user.userInfo,
     urlQueryString: state.app.get('urlQueryString'),
     queryObj: state.query.neoQueryObj
   };
 };
 
+const ResultDispatch = dispatch => ({
+  actions: {
+    toggleSkeleton: () => {
+      dispatch(toggleSkeleton());
+    }
+  }
+});
+
+
 export default withStyles(styles)(
   connect(
     ResultsState,
-    null
+    ResultDispatch,
   )(Results)
 );

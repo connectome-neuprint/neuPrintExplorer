@@ -2,7 +2,7 @@
  * Finds common input/outputs from a list of bodyIds and returns weight of connections for all 
 */
 
-"use strict";
+"";
 
 import SimpleCellWrapper from '../helpers/SimpleCellWrapper';
 
@@ -89,7 +89,7 @@ export default function (datasetstr, bodyIds, names, limitBig, statusFilters, ty
                     "neuron_ids": idlist, 
                     find_inputs: typeValue !== "output" 
     };
-    if (limitBig === "true") {
+    if (limitBig) {
         params["pre_threshold"] = 2; 
     }
 

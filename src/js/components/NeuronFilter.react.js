@@ -4,6 +4,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import merge from 'deepmerge';
 import { withStyles } from '@material-ui/core/styles';
 import { LoadQueryString, SaveQueryString } from '../helpers/qsparser';
 import { connect } from 'react-redux';
@@ -23,6 +24,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Tooltip from '@material-ui/core/Tooltip';
 import { setUrlQS } from '../actions/app';
 import NeuPrintResult from '../helpers/NeuPrintResult';
+import { getQueryObject, setQueryString } from '../helpers/queryString';
 
 const styles = theme => ({
   formControl: {
@@ -56,16 +58,24 @@ class NeuronFilter extends React.Component {
   constructor(props) {
     super(props);
 
-    let initqsParams = {
-      limitBig: 'true',
-      statusFilters: []
+    const initParams = {
+      limitBig: true,
+      statusFilters: [],
     };
-    let qsParams = LoadQueryString('Query:NeuronFilter', initqsParams, this.props.urlQueryString);
+
+    const fullQuery = getQueryObject();
+
+    const qsParams = getQueryObject().NFilter || {};
+
+    const combinedParams = merge(initParams, qsParams);
     this.state = {
       statuses: [],
-      qsParams: qsParams
+      qsParams: combinedParams,
     };
-    this.props.callback(qsParams);
+
+    if (combinedParams) {
+      this.props.callback(combinedParams);
+    }
 
     this.queryStatuses(this.props.neoServer, this.props.datasetstr);
   }
@@ -112,12 +122,12 @@ class NeuronFilter extends React.Component {
   };
 
   toggleBig = () => {
-    let val = this.state.qsParams.limitBig === 'true' ? 'false' : 'true';
+    let val = !this.state.qsParams.limitBig;
 
     let newparams = Object.assign({}, this.state.qsParams, { limitBig: val });
-    this.props.setURLQs(SaveQueryString('Query:NeuronFilter', newparams));
 
     this.props.callback(newparams);
+    setQueryString({ NFilter: { limitBig: val }});
     this.setState({ qsParams: newparams });
   };
 
@@ -129,14 +139,18 @@ class NeuronFilter extends React.Component {
     let newparams = Object.assign({}, this.state.qsParams, { statusFilters: statuses });
 
     // save back status selections
-    this.props.setURLQs(SaveQueryString('Query:NeuronFilter', newparams));
     this.props.callback(newparams);
+    setQueryString({ NFilter: { statusFilters: statuses }});
     this.setState({ qsParams: newparams });
   };
 
   render() {
     const { classes, theme } = this.props;
-    let checkbox = this.state.qsParams.limitBig === 'true' ? true : false;
+    const { qsParams } = this.state;
+    let checkboxStatus = true;
+    if (qsParams) {
+      checkboxStatus = qsParams.limitBig;
+    }
     return (
       <ExpansionPanel className={classes.expandablePanel}>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
@@ -152,7 +166,7 @@ class NeuronFilter extends React.Component {
               >
                 <FormControlLabel
                   control={
-                    <Checkbox checked={checkbox} onChange={this.toggleBig} value="checkedBig" />
+                    <Checkbox checked={checkboxStatus} onChange={this.toggleBig} value="checkedBig" />
                   }
                   label="Limit to big segments"
                 />
@@ -162,7 +176,7 @@ class NeuronFilter extends React.Component {
               <InputLabel htmlFor="select-multiple-chip-status">Neuron status</InputLabel>
               <Select
                 multiple
-                value={this.state.qsParams.statusFilters}
+                value={qsParams.statusFilters}
                 onChange={this.handleStatus}
                 input={<Input id="select-multiple-chip-status" />}
                 renderValue={selected => (
@@ -180,7 +194,7 @@ class NeuronFilter extends React.Component {
                     value={name}
                     style={{
                       fontWeight:
-                        this.state.qsParams.statusFilters.indexOf(name) === -1
+                        qsParams.statusFilters.indexOf(name) === -1
                           ? theme.typography.fontWeightRegular
                           : theme.typography.fontWeightMedium
                     }}

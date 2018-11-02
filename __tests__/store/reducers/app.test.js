@@ -30,7 +30,8 @@ describe("app Reducer", () => {
                 reconIndex: 7,
                 urlQueryString: window.location.search.substring(1),
                 appDB: "",
-                activePlugins: Immutable.Map({})
+                activePlugins: Immutable.Map({}),
+                viewPlugins: Immutable.Map({})
             }));
         expect(reducer(state, action))
             .toEqual(Immutable.Map({
@@ -59,7 +60,8 @@ describe("app Reducer", () => {
                 reconIndex: 9999999,
                 urlQueryString: "teststring",
                 appDB: "",
-                activePlugins: Immutable.Map({})
+                activePlugins: Immutable.Map({}),
+                viewPlugins: Immutable.Map({})
             }));
         expect(reducer(state, action))
             .toEqual(Immutable.Map({
@@ -98,7 +100,8 @@ describe("app Reducer", () => {
                 appDB: "",
                 activePlugins: Immutable.Map({
                     a: newDataElement
-                })
+                }),
+                viewPlugins: Immutable.Map({})
             }))
         expect(reducer(state, action))
             .toEqual(Immutable.Map({

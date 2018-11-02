@@ -1,9 +1,9 @@
+/* global VERSION */
 import React from 'react';
 
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import Icon from '@material-ui/core/Icon';
-import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
@@ -33,7 +33,7 @@ class About extends React.Component {
           neuPrint Explorer
         </Typography>
         <Typography variant="body1" className={classes.centered}>
-          Version: 1.0.0
+          Version: {VERSION}
         </Typography>
         <Divider light={true} className={classes.spaced} />
         <Typography variant="h6">About:</Typography>

@@ -1,9 +1,6 @@
 /*
  * Stores information related to Neo4j queries.
 */
-
-"use strict";
-
 import C from "./constants"
 
 var queryState = {
@@ -31,6 +28,16 @@ export default function queryReducer(state = queryState, action) {
         }
         case C.FINISH_QUERY: {
             return Object.assign({}, state, { isQuerying: false, neoError: null });
+        }
+        case C.PLUGIN_SUBMIT: {
+            return Object.assign({}, state, { currentQuery: action.query });
+        }
+        case C.PLUGIN_SUBMITTING: {
+            return Object.assign({}, state, { isQuerying: true });
+        }
+        case C.PLUGIN_SUBMIT_ERROR:
+        case C.PLUGIN_SAVE_RESPONSE: {
+            return Object.assign({}, state, { isQuerying: false });
         }
         default: {
             return state;

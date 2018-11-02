@@ -6,34 +6,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import _ from 'underscore';
 import { connect } from 'react-redux';
 import Chip from '@material-ui/core/Chip';
-import C from '../reducers/constants';
-
-var COLORS = [
-  0xe41a1c,
-  0x377eb8,
-  0x4daf4a,
-  0x984ea3,
-  0xff7f00,
-  0xffff33,
-  0xa65628,
-  0xf781bf,
-  0x999999
-];
-
-var COLORSHTML = [
-  '#e41a1c',
-  '#377eb8',
-  '#4daf4a',
-  '#984ea3',
-  '#ff7f00',
-  '#ffff33',
-  '#a65628',
-  '#f781bf',
-  '#999999'
-];
+import { skeletonNeuronToggle, skeletonRemove } from '../actions/skeleton';
 
 var GlbShark = null;
 
@@ -71,78 +46,55 @@ class Skeleton extends React.Component {
 
   // load skeleton after render takes place
   componentDidMount() {
-    let swc = this.fetchSWC(this.props.results, this.props.clearIndices, this.state.hideIndices);
+    let swc = this.fetchSWC(this.props.neurons);
     this.createShark(swc);
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.disable && GlbShark !== null) {
-      GlbShark = null;
-      let pardiv = this.refs['skeletonviewer'];
-      pardiv.removeChild(pardiv.childNodes[0]);
-    }
-
-    let swc = this.fetchSWC(nextProps.results, nextProps.clearIndices, nextState.hideIndices);
-
-    if (this.props.disable && !nextProps.disable) {
-      this.createShark(swc);
-    } else {
-      // update swc if current one is different from previous
-      let oldswc = this.fetchSWC(
-        this.props.results,
-        this.props.clearIndices,
-        this.state.hideIndices
-      );
-      if (!_.isEqual(swc, oldswc)) {
-        this.createShark(swc);
-      }
-    }
-
-    return true;
+  componentDidUpdate() {
+    let swc = this.fetchSWC(this.props.neurons);
+    this.createShark(swc);
   }
 
-  handleDelete = data => () => {
-    this.props.clearResult(data[0]);
+  handleDelete = id => () => {
+    const { actions } = this.props;
+    actions.skeletonRemove(id);
   };
 
-  handleClick = data => () => {
-    let hideIds = new Set(this.state.hideIndices);
-    if (hideIds.has(data[0])) {
-      hideIds.delete(data[0]);
-    } else {
-      hideIds.add(data[0]);
-    }
-    this.setState({ hideIndices: hideIds });
+  handleClick = id => () => {
+    const { actions } = this.props;
+    actions.skeletonNeuronToggle(id);
   };
 
   // grab latest swc added
-  fetchSWC = (results, clearIndices, hideIndices) => {
-    let swc = {};
+  fetchSWC = neurons => {
+    const swc = {};
+    const colors = [];
     let offset = 0;
-    results.forEach((result, index) => {
-      if (
-        !hideIndices.has(index) &&
-        !clearIndices.has(index) &&
-        'isSkeleton' in result[0] &&
-        result[0].isSkeleton
-      ) {
-        offset = this.concatSkel(swc, result[0].swc, offset);
-      }
-    });
+    neurons
+      .valueSeq()
+      .filter(neuron => neuron.get('visible'))
+      .forEach((neuron, colorIndex) => {
+        offset = this.concatSkel(swc, neuron, offset, colorIndex);
+        colors.push(neuron.get('color'));
+      });
 
-    return swc;
+    return {
+      swc,
+      colors
+    };
   };
 
-  concatSkel = (newswc, origswc, offset) => {
+  concatSkel = (newswc, neuron, offset, colorIndex) => {
     let maxRowId = 0;
-    for (let rowId in origswc) {
+    const swc = neuron.get('swc');
+    for (let rowId in swc) {
       let newId = parseInt(rowId) + offset;
-      let val = origswc[rowId];
+      let val = swc[rowId];
       if (newId > maxRowId) {
         maxRowId = newId;
       }
       newswc[newId] = {
-        type: val.type % COLORS.length,
+        type: colorIndex,
         x: val.x,
         y: val.y,
         z: val.z,
@@ -150,7 +102,6 @@ class Skeleton extends React.Component {
         radius: val.radius
       };
     }
-
     return maxRowId + 1;
   };
 
@@ -168,14 +119,14 @@ class Skeleton extends React.Component {
       }
     }
 
-    if (Object.keys(swc).length !== 0) {
+    if (Object.keys(swc.swc).length !== 0) {
       GlbShark = new SharkViewer({
-        swc: swc,
+        swc: swc.swc,
         dom_element: 'skeletonviewer',
         center_node: -1,
         WIDTH: this.refs['skeletonviewer'].clientWidth,
         HEIGHT: this.refs['skeletonviewer'].clientHeight,
-        colors: COLORS
+        colors: swc.colors
       });
 
       GlbShark.init();
@@ -184,40 +135,38 @@ class Skeleton extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, display } = this.props;
 
-    let chipsArr = [];
-    this.props.results.forEach((result, index) => {
-      if (
-        !this.props.clearIndices.has(index) &&
-        'isSkeleton' in result[0] &&
-        result[0].isSkeleton
-      ) {
-        chipsArr.push([index, result[0].name]);
-      }
-    });
+    if (!display) {
+      return null;
+    }
+
+    let chips = this.props.neurons
+      .map(neuron => {
+        // gray out the chip if it is not active.
+        let currcolor = neuron.get('color');
+        if (!neuron.get('visible')) {
+          currcolor = 'gray';
+        }
+
+        const name = neuron.get('name');
+
+        return (
+          <Chip
+            key={name}
+            label={name}
+            onDelete={this.handleDelete(name)}
+            onClick={this.handleClick(name)}
+            className={classes.chip}
+            style={{ background: currcolor }}
+          />
+        );
+      })
+      .toArray();
 
     return (
       <div className={classes.root}>
-        <div className={classes.floater}>
-          {chipsArr.map(data => {
-            let currcolor = COLORSHTML[parseInt(data[1]) % COLORS.length];
-            if (this.state.hideIndices.has(data[0])) {
-              currcolor = 'gray';
-            }
-
-            return (
-              <Chip
-                key={data[0]}
-                label={data[1]}
-                onDelete={this.handleDelete(data)}
-                onClick={this.handleClick(data)}
-                className={classes.chip}
-                style={{ background: currcolor }}
-              />
-            );
-          })}
-        </div>
+        <div className={classes.floater}>{chips}</div>
         <div className={classes.skel} ref={'skeletonviewer'} id={'skeletonviewer'} />
       </div>
     );
@@ -225,32 +174,28 @@ class Skeleton extends React.Component {
 }
 
 Skeleton.propTypes = {
-  classes: PropTypes.object.isRequired,
-  results: PropTypes.array.isRequired,
+  display: PropTypes.bool.isRequired,
   disable: PropTypes.bool.isRequired,
-  clearResult: PropTypes.func.isRequired,
-  clearIndices: PropTypes.object.isRequired,
-  numClear: PropTypes.number.isRequired
+  actions: PropTypes.object.isRequired
 };
 
 var SkeletonState = function(state) {
   return {
-    results: state.results.allTables,
-    clearIndices: state.results.clearIndices,
-    numClear: state.results.numClear
+    neurons: state.skeleton.get('neurons'),
+    display: state.skeleton.get('display')
   };
 };
 
-var SkeletonDispatch = function(dispatch) {
-  return {
-    clearResult: function(index) {
-      dispatch({
-        type: C.CLEAR_RESULT,
-        index: index
-      });
+var SkeletonDispatch = dispatch => ({
+  actions: {
+    skeletonNeuronToggle: id => {
+      dispatch(skeletonNeuronToggle(id));
+    },
+    skeletonRemove: id => {
+      dispatch(skeletonRemove(id));
     }
-  };
-};
+  }
+});
 
 export default withStyles(styles)(
   connect(

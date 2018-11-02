@@ -1,7 +1,7 @@
 # neuPrintExplorer [![Picture](https://raw.github.com/janelia-flyem/janelia-flyem.github.com/master/images/HHMI_Janelia_Color_Alternate_180x40.png)](http://www.janelia.org)
-[![Build Status](https://travis-ci.org/janelia-flyem/neuPrintExplorer.svg?branch=master)](https://travis-ci.org/janelia-flyem/neuPrintExplorer)
+[![Build Status](https://travis-ci.org/connectome-neuprint/neuPrintExplorer.svg?branch=master)](https://travis-ci.org/connectome-neuprint/neuPrintExplorer)
 
-neuPrintExplorer is a single page web application that provides simple interfaces to query an EM connectome stored in [neuPrint](https://github.com/janelia-flyem/neuPrint), which uses the graph database Neo4j.  It contains
+neuPrintExplorer is a single page web application that provides simple interfaces to query an EM connectome stored in [neuPrint](https://github.com/connectome-neuprint/neuPrint), which uses the graph database Neo4j.  It contains
 a number of plugins to facilitate different types of queries.
 The application is written using REACT+Redux and Material-UI.
 
@@ -28,7 +28,7 @@ folder:
 
 ## Running
 
-This app is dependent on [neuPrintHTTP](https://github.com/janelia-flyem/neuPrintHTTP), which is an http REST
+This app is dependent on [neuPrintHTTP](https://github.com/connectome-neuprint/neuPrintHTTP), which is an http REST
 API for connectomics that connects to neuPrint and also serves this static application.  To launch neuPrintHTTP and
 the web application:
 
