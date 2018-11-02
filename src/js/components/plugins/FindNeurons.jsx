@@ -30,7 +30,7 @@ const styles = theme => ({
 // this should match the name of the file this plugin is stored in.
 const pluginName = 'FindNeurons';
 
-class TestPlugin extends React.Component {
+class FindNeurons extends React.Component {
   constructor(props) {
     super(props);
     // set the default state for the query input.
@@ -341,7 +341,7 @@ class TestPlugin extends React.Component {
 
 // data that will be provided to your form. Use it to build
 // inputs, selections and for validation.
-TestPlugin.propTypes = {
+FindNeurons.propTypes = {
   actions: PropTypes.object.isRequired,
   availableROIs: PropTypes.array.isRequired,
   dataSet: PropTypes.string.isRequired,
@@ -350,7 +350,7 @@ TestPlugin.propTypes = {
   isQuerying: PropTypes.bool.isRequired
 };
 
-var TestPluginState = function(state) {
+var FindNeuronsState = function(state) {
   return {
     isQuerying: state.query.isQuerying
   };
@@ -358,7 +358,7 @@ var TestPluginState = function(state) {
 
 // The submit action which will accept your query, execute it and
 // store the results for view plugins to display.
-var TestPluginDispatch = dispatch => ({
+var FindNeuronsDispatch = dispatch => ({
   actions: {
     submit: query => {
       dispatch(submit(query));
@@ -376,8 +376,8 @@ var TestPluginDispatch = dispatch => ({
 export default withRouter(
   withStyles(styles)(
     connect(
-      TestPluginState,
-      TestPluginDispatch
-    )(TestPlugin)
+      FindNeuronsState,
+      FindNeuronsDispatch
+    )(FindNeurons)
   )
 );
