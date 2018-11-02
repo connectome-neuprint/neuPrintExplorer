@@ -11,14 +11,14 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
 
-import { submit } from '../../actions/plugins';
-import { setUrlQS } from '../../actions/app';
-import { skeletonAddandOpen } from '../../actions/skeleton';
+import { submit } from 'actions/plugins';
+import { setUrlQS } from 'actions/app';
+import { skeletonAddandOpen } from 'actions/skeleton';
 import RoiHeatMap, { ColorLegend } from '../../components/visualization/MiniRoiHeatMap.react';
 import RoiBarGraph from '../../components/visualization/MiniRoiBarGraph.react';
 import NeuronHelp from '../NeuronHelp.react';
 import NeuronFilter from '../NeuronFilter.react';
-import { getQueryString } from '../../helpers/queryString';
+import { getQueryString } from 'helpers/queryString';
 
 const styles = theme => ({
   select: {

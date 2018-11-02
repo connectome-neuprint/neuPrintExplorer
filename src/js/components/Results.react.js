@@ -15,7 +15,7 @@ import Grid from '@material-ui/core/Grid';
 import ResultsTopBar from './ResultsTopBar';
 import SimpleTables from './SimpleTables';
 import Skeleton from './Skeleton';
-import { toggleSkeleton } from '../actions/skeleton';
+import { toggleSkeleton } from 'actions/skeleton';
 // import NeuroGlancer from '@janelia-flyem/react-neuroglancer';
 
 import './Results.css';
