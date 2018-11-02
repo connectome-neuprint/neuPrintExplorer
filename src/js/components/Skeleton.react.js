@@ -175,7 +175,6 @@ class Skeleton extends React.Component {
 
 Skeleton.propTypes = {
   display: PropTypes.bool.isRequired,
-  disable: PropTypes.bool.isRequired,
   actions: PropTypes.object.isRequired
 };
 
