@@ -2,8 +2,6 @@
  * Store user state / login.
 */
 
-"use strict";
-
 import C from "./constants"
 
 var userState = {

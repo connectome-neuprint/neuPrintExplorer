@@ -1,6 +1,7 @@
 import C from "../../../src/js/reducers/constants"
 import reducer from "../../../src/js/reducers/results"
 import SimpleCellWrapper from "../../../src/js/helpers/SimpleCellWrapper";
+import Immutable from 'immutable';
 
 const state = {
     allTables: [
@@ -59,6 +60,7 @@ describe("results Reducer", () => {
         };
         expect(reducer(undefined, action))
             .toEqual({
+                allResults: Immutable.List([]),
                 allTables: [action.allTables],
                 clearIndices: new Set(),
                 numClear: 0
@@ -100,6 +102,7 @@ describe("results Reducer", () => {
         };
         expect(reducer(undefined, action))
             .toEqual({
+                allResults: Immutable.List([]),
                 allTables: [action.allTables],
                 clearIndices: new Set(),
                 numClear: 0
@@ -117,6 +120,7 @@ describe("results Reducer", () => {
         };
         expect(reducer(undefined, action))
             .toEqual({
+                allResults: Immutable.List([]),
                 allTables: null,
                 clearIndices: new Set(),
                 numClear: 0

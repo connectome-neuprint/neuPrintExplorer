@@ -41,7 +41,7 @@ class MetaInfo extends React.Component {
                             const bStartsWithLetter = b.charAt(0).match(/[a-z]/i)
                             if (aStartsWithLetter && !bStartsWithLetter) return -1
                             if (bStartsWithLetter && !aStartsWithLetter) return 1
-                            return (a == b ? 0 : (a < b ? -1 : 1))
+                            return (a === b ? 0 : (a < b ? -1 : 1))
                         })
                         datasetInfo[dataset] = {
                             uuid:   items[dataset].uuid,

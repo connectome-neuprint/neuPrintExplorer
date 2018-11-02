@@ -2,7 +2,7 @@
  * Stores configuration and other basic information for neo4j datasets.
 */
 
-"use strict";
+"";
 
 import C from "./constants"
 

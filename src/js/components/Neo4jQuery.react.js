@@ -6,11 +6,11 @@
 // There should be no reason to have a React component
 // just to load in content. 
 
-import C from '../reducers/constants';
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import NeuPrintResult from '../helpers/NeuPrintResult';
+import { setQueryError, appendData, saveData, finishQuery } from '../actions/neoQuery';
 
 var UNIQUE_ID = 0;
 
@@ -21,17 +21,11 @@ class Neo4jQuery extends React.Component {
       // only authorized users could get server information
       if (nextProps.neoQueryObj.queryStr !== '' && nextProps.neoServer !== '') {
         // run query (TODO: handle blocking query??)
-        let setError = this.props.setQueryError;
-        let processResults = nextProps.neoQueryObj.callback;
-        let state = nextProps.neoQueryObj.state;
-        let saveData = this.props.saveData;
+        const { setQueryError, saveData, appendData } = this.props;
+        const processResults = nextProps.neoQueryObj.callback;
+        let { queryStr, params, state } = nextProps.neoQueryObj;
         let uniqueId = UNIQUE_ID++;
-        if (nextProps.neoQueryObj.isChild) {
-          saveData = this.props.appendData;
-        }
-        let queryStr = nextProps.neoQueryObj.queryStr;
         let endpoint = '/api';
-        let params = nextProps.neoQueryObj.params;
         if (params !== undefined) {
           endpoint += queryStr;
         } else {
@@ -62,11 +56,15 @@ class Neo4jQuery extends React.Component {
                 data[i]['uniqueId'] = uniqueId;
               }
             }
-            saveData(data);
+            if (nextProps.neoQueryObj.isChild) {
+              appendData(data);
+            } else {
+              saveData(data);
+            }
           })
           .catch(function(error) {
-            alert(error);
-            setError(error);
+            alert(error.message);
+            setQueryError(error);
           });
       }
     }
@@ -88,29 +86,16 @@ var Neo4jQueryState = function(state) {
 var Neo4jQueryDispatch = function(dispatch) {
   return {
     setQueryError: function(error) {
-      dispatch({
-        type: C.SET_NEO_ERROR,
-        neoError: error
-      });
+      dispatch(setQueryError(error));
     },
     appendData: function(results) {
-      dispatch({
-        type: C.APPEND_RESULTS,
-        allTables: results
-      });
-      dispatch({
-        type: C.FINISH_QUERY
-      });
+      dispatch(appendData(results));
+      dispatch(finishQuery());
     },
     saveData: function(results) {
-      dispatch({
-        type: C.UPDATE_RESULTS,
-        allTables: results
-      });
-      dispatch({
-        type: C.FINISH_QUERY
-      });
-    }
+      dispatch(saveData(results));
+      dispatch(finishQuery());
+    },
   };
 };
 
@@ -126,7 +111,7 @@ Neo4jQuery.propTypes = {
   appendData: PropTypes.func.isRequired,
   saveData: PropTypes.func.isRequired,
   isQuerying: PropTypes.bool.isRequired,
-  setQueryError: PropTypes.func.isRequired
+  setQueryError: PropTypes.func.isRequired,
 };
 
 export default connect(

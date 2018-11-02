@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -26,11 +27,15 @@ module.exports = {
         htmlPlugin,
         cleanPlugin,
         miniCssExtractPlugin,
-        copyWebpackPlugin
+        copyWebpackPlugin,
+        new webpack.DefinePlugin({
+          VERSION: JSON.stringify(require('./package.json').version)
+        }),
     ],
     output: {
         path: path.resolve(__dirname, 'build'),
-        filename: 'js/[name].[contenthash].bundle.js'
+        filename: 'js/[name].[contenthash].bundle.js',
+        publicPath: '/',
     },
     mode: 'development',
     watch: true,

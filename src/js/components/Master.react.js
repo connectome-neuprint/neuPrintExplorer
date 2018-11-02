@@ -5,6 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Router, Route, Switch } from 'react-router-dom';
+import history from '../history';
 
 import { withStyles } from '@material-ui/core/styles';
 
@@ -18,7 +19,7 @@ import SideBar from './SideBar.react';
 import Contact from './Contact';
 import About from './About';
 import QueryDrawer from './QueryDrawer.react';
-import createBrowserHistory from 'history/createBrowserHistory';
+import Errors from './Errors';
 
 
 // adapted from material ui example
@@ -48,7 +49,7 @@ class Master extends React.Component {
   render() {
     const { classes } = this.props;
     return (
-      <Router history={createBrowserHistory()}>
+      <Router history={history}>
         <div className={classes.root}>
           <Neo4jQuery />
           <TopBar />
@@ -84,6 +85,7 @@ class Master extends React.Component {
             </Switch>
           </main>
           <Contact />
+          <Errors />
         </div>
       </Router>
     );

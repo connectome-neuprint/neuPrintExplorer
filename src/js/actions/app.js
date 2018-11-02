@@ -1,25 +1,22 @@
 import { v4 } from 'uuid';
-export const INIT_PLUGINS = 'INIT_PLUGINS';
-export const SET_URL_QS = 'SET_URL_QS';
-export const ACTIVATE_PLUGIN = 'ACTIVATE_PLUGIN';
-export const SET_APP_DB = 'SET_APP_DB';
+import C from '../reducers/constants';
 
 function initializingPlugins(pluginList, reconIndex) {
     return {
-        type: INIT_PLUGINS,
+        type: C.INIT_PLUGINS,
         pluginList,
         reconIndex,
     }
 }
 function settingUrlQS(urlQueryString) {
     return {
-        type: SET_URL_QS,
+        type: C.SET_URL_QS,
         urlQueryString,
     }
 }
 function activatingPlugin(data, query, viz, uuid) {
     return {
-        type: ACTIVATE_PLUGIN,
+        type: C.ACTIVATE_PLUGIN,
         data,
         query,
         viz,
@@ -28,9 +25,16 @@ function activatingPlugin(data, query, viz, uuid) {
 }
 function settingAppDb(appDB) {
     return {
-        type: SET_APP_DB,
+        type: C.SET_APP_DB,
         appDB
     }
+}
+
+export function initViewPlugins(pluginsMap) {
+  return {
+    type: C.INIT_VIEWPLUGINS,
+    plugins: pluginsMap,
+  };
 }
 
 export function initPlugins(pluginList) {
@@ -47,4 +51,10 @@ export function activatePlugin(data, query, viz) {
 }
 export function setAppDb(appDb) {
     return settingAppDb(appDb);
+}
+
+export function clearErrors(query) {
+  return {
+    type: C.CLEAR_ERRORS,
+  };
 }
