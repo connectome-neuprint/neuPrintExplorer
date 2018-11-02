@@ -19,6 +19,11 @@ const styles = theme => ({
   }
 });
 
+function newIssue(e) {
+  e.preventDefault();
+  window.open('https://github.com/connectome-neuprint/neuPrintExplorer/issues/new?labels=user');
+}
+
 class About extends React.Component {
   render() {
     const { classes } = this.props;
@@ -35,6 +40,14 @@ class About extends React.Component {
         <Typography variant="body1" className={classes.spaced}>
           neuPrint Explorer is web based tool to query and visualize connectomic data stored in
           neuPrint, a neo4j graph database of the connectome.{' '}
+        </Typography>
+
+        <Typography variant="h6">Log an issue:</Typography>
+        <Typography variant="body1" className={classes.spaced}>
+          Note that you currently need to have a GitHub account to submit issues.<br/>
+          <Button variant="contained" color="primary" className={classes.button} onClick={newIssue}>
+          New issue
+          </Button>
         </Typography>
 
         <Typography variant="h6">Contact us:</Typography>
