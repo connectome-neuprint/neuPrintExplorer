@@ -15,7 +15,7 @@ export function skeletonClose() {
 
 export function toggleSkeleton() {
   return (dispatch, getState) => {
-    if (getState().skeleton.display) {
+    if (getState().skeleton.get('display')) {
       dispatch(skeletonClose());
     } else {
       dispatch(skeletonOpen());
