@@ -11,14 +11,14 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
 
-import { submit } from '../../actions/plugins';
-import { setUrlQS } from '../../actions/app';
-import { skeletonAddandOpen } from '../../actions/skeleton';
+import { submit } from 'actions/plugins';
+import { setUrlQS } from 'actions/app';
+import { skeletonAddandOpen } from 'actions/skeleton';
 import RoiHeatMap, { ColorLegend } from '../../components/visualization/MiniRoiHeatMap.react';
 import RoiBarGraph from '../../components/visualization/MiniRoiBarGraph.react';
 import NeuronHelp from '../NeuronHelp.react';
 import NeuronFilter from '../NeuronFilter.react';
-import { getQueryString } from '../../helpers/queryString';
+import { getQueryString } from 'helpers/queryString';
 
 const styles = theme => ({
   select: {
@@ -30,7 +30,7 @@ const styles = theme => ({
 // this should match the name of the file this plugin is stored in.
 const pluginName = 'FindNeurons';
 
-class TestPlugin extends React.Component {
+class FindNeurons extends React.Component {
   constructor(props) {
     super(props);
     // set the default state for the query input.
@@ -82,91 +82,100 @@ class TestPlugin extends React.Component {
     const roiList = ['proximal', 'distal', 'none'];
 
     const data = apiResponse.data.map(row => {
-      const roiInfoObject = JSON.parse(row[3]);
-
-      const post = Object.values(roiInfoObject).reduce((total, current) => {
-        return total + current.post;
-      }, 0);
-
-      const pre = Object.values(roiInfoObject).reduce((total, current) => {
-        return total + current.pre;
-      }, 0);
-
-      // add this after the other rois have been summed.
-      roiInfoObject['none'] = {
-        pre: row[5] - pre,
-        post: row[6] - post
-      };
-
-      const heatMap = (
-        <RoiHeatMap
-          roiList={roiList}
-          roiInfoObject={roiInfoObject}
-          preTotal={pre}
-          postTotal={post}
-        />
-      );
-
-      const barGraph = (
-        <RoiBarGraph
-          roiList={roiList}
-          roiInfoObject={roiInfoObject}
-          preTotal={pre}
-          postTotal={post}
-        />
-      );
-
-      const postQuery = {
-        dataSet, // <string> for the data set selected
-        queryString: '/npexplorer/simpleconnections', // <neo4jquery string>
-        // cypherQuery: <string> if this is passed then use generic /api/custom/custom endpoint
-        visType: 'SimpleTable', // <string> which visualization plugin to use. Default is 'table'
-        plugin: pluginName, // <string> the name of this plugin.
-        parameters: {
-          dataset: dataSet,
-          find_inputs: true,
-          neuron_id: row[0]
-        },
-        title: `Connections to [${row[1]}]:bodyID=${row[0]}`,
-        menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
-        processResults: this.processSimpleConnections
-      };
-
-      const preQuery = {
-        dataSet, // <string> for the data set selected
-        queryString: '/npexplorer/simpleconnections', // <neo4jquery string>
-        // cypherQuery: <string> if this is passed then use generic /api/custom/custom endpoint
-        visType: 'SimpleTable', // <string> which visualization plugin to use. Default is 'table'
-        plugin: pluginName, // <string> the name of this plugin.
-        parameters: {
-          dataset: dataSet,
-          find_inputs: false,
-          neuron_id: row[0]
-        },
-        title: `Connections from [${row[1]}]:bodyID=${row[0]}`,
-        menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
-        processResults: this.processSimpleConnections
-      };
-
-      return [
+      const converted = [
         {
           value: row[0],
           action: () => actions.skeletonAddandOpen(row[0], dataSet)
         },
         row[1],
         row[2],
-        {
-          value: post,
-          action: () => actions.submit(postQuery)
-        },
-        {
-          value: pre,
-          action: () => actions.submit(preQuery)
-        },
+        '-', // empty unless roiInfoObject present
+        '-',
         row[4],
-        heatMap,
-        barGraph
+        '',
+        '',
       ];
+
+      const roiInfoObject = JSON.parse(row[3]);
+
+      if (roiInfoObject) {
+
+        const post = Object.values(roiInfoObject).reduce((total, current) => {
+          return total + current.post;
+        }, 0);
+
+        const pre = Object.values(roiInfoObject).reduce((total, current) => {
+          return total + current.pre;
+        }, 0);
+
+        // add this after the other rois have been summed.
+        roiInfoObject['none'] = {
+          pre: row[5] - pre,
+          post: row[6] - post
+        };
+
+        const heatMap = (
+          <RoiHeatMap
+            roiList={roiList}
+            roiInfoObject={roiInfoObject}
+            preTotal={pre}
+            postTotal={post}
+          />
+        );
+        converted[6] = heatMap;
+
+        const barGraph = (
+          <RoiBarGraph
+            roiList={roiList}
+            roiInfoObject={roiInfoObject}
+            preTotal={pre}
+            postTotal={post}
+          />
+        );
+        converted[7] = barGraph;
+
+        const postQuery = {
+          dataSet, // <string> for the data set selected
+          queryString: '/npexplorer/simpleconnections', // <neo4jquery string>
+          // cypherQuery: <string> if this is passed then use generic /api/custom/custom endpoint
+          visType: 'SimpleTable', // <string> which visualization plugin to use. Default is 'table'
+          plugin: pluginName, // <string> the name of this plugin.
+          parameters: {
+            dataset: dataSet,
+            find_inputs: true,
+            neuron_id: row[0]
+          },
+          title: `Connections to [${row[1]}]:bodyID=${row[0]}`,
+          menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
+          processResults: this.processSimpleConnections
+        };
+        converted[3] = {
+          value: post,
+          action: () => actions.submit(postQuery),
+        };
+
+        const preQuery = {
+          dataSet, // <string> for the data set selected
+          queryString: '/npexplorer/simpleconnections', // <neo4jquery string>
+          // cypherQuery: <string> if this is passed then use generic /api/custom/custom endpoint
+          visType: 'SimpleTable', // <string> which visualization plugin to use. Default is 'table'
+          plugin: pluginName, // <string> the name of this plugin.
+          parameters: {
+            dataset: dataSet,
+            find_inputs: false,
+            neuron_id: row[0]
+          },
+          title: `Connections from [${row[1]}]:bodyID=${row[0]}`,
+          menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
+          processResults: this.processSimpleConnections
+        };
+        converted[4] = {
+          value: pre,
+          action: () => actions.submit(preQuery),
+        };
+      }
+
+      return converted;
     });
     return {
       columns: [
@@ -332,7 +341,7 @@ class TestPlugin extends React.Component {
 
 // data that will be provided to your form. Use it to build
 // inputs, selections and for validation.
-TestPlugin.propTypes = {
+FindNeurons.propTypes = {
   actions: PropTypes.object.isRequired,
   availableROIs: PropTypes.array.isRequired,
   dataSet: PropTypes.string.isRequired,
@@ -341,7 +350,7 @@ TestPlugin.propTypes = {
   isQuerying: PropTypes.bool.isRequired
 };
 
-var TestPluginState = function(state) {
+var FindNeuronsState = function(state) {
   return {
     isQuerying: state.query.isQuerying
   };
@@ -349,7 +358,7 @@ var TestPluginState = function(state) {
 
 // The submit action which will accept your query, execute it and
 // store the results for view plugins to display.
-var TestPluginDispatch = dispatch => ({
+var FindNeuronsDispatch = dispatch => ({
   actions: {
     submit: query => {
       dispatch(submit(query));
@@ -367,8 +376,8 @@ var TestPluginDispatch = dispatch => ({
 export default withRouter(
   withStyles(styles)(
     connect(
-      TestPluginState,
-      TestPluginDispatch
-    )(TestPlugin)
+      FindNeuronsState,
+      FindNeuronsDispatch
+    )(FindNeurons)
   )
 );

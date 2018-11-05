@@ -15,7 +15,7 @@ import Grid from '@material-ui/core/Grid';
 import ResultsTopBar from './ResultsTopBar';
 import SimpleTables from './SimpleTables';
 import Skeleton from './Skeleton';
-import { toggleSkeleton } from '../actions/skeleton';
+import { toggleSkeleton } from 'actions/skeleton';
 // import NeuroGlancer from '@janelia-flyem/react-neuroglancer';
 
 import './Results.css';
@@ -96,21 +96,9 @@ class Results extends React.Component {
   }
 
   triggerKeyboard = event => {
-    const { actions } = this.props;
+    const { actions, skeletonCount } = this.props;
     if (event.which === 32) {
-      // check the mouse is over the skeleton div
-      let numSkels = 0;
-      if (this.props.allTables !== null) {
-        this.props.allTables.forEach((result, index) => {
-          if (
-            !this.props.clearIndices.has(index) &&
-            ('isSkeleton' in result[0] && result[0].isSkeleton)
-          ) {
-            numSkels += 1;
-          }
-        });
-      }
-      if (numSkels > 0) {
+      if (skeletonCount > 0) {
         actions.toggleSkeleton();
       }
     }
@@ -227,8 +215,6 @@ class Results extends React.Component {
       });
     }
 
-    // TODO: need to put results in flexible grid:
-    // https://github.com/STRML/react-grid-layout/blob/master/test/examples/6-dynamic-add-remove.jsx
     const results = allResults.map((query, index) => {
       const View = viewPlugins.get(query.visType);
       return (
@@ -298,7 +284,7 @@ class Results extends React.Component {
           {this.props.showSkel ? (
             <Grid item xs={12} sm={6}>
               {/* <NeuroGlancer perspectiveZoom={80} /> */}
-              <Skeleton disable={!this.props.showSkel} />
+              <Skeleton />
             </Grid>
           ) : (
             <div />
@@ -324,6 +310,7 @@ Results.propTypes = {
   urlQueryString: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired,
   showSkel: PropTypes.bool.isRequired,
+  skeletonCount: PropTypes.number.isRequired,
   userInfo: PropTypes.object
 };
 
@@ -338,6 +325,7 @@ const ResultsState = function(state) {
     clearIndices: state.results.clearIndices,
     numClear: state.results.numClear,
     showSkel: state.skeleton.get('display'),
+    skeletonCount: state.skeleton.get('neurons').size,
     userInfo: state.user.userInfo,
     urlQueryString: state.app.get('urlQueryString'),
     queryObj: state.query.neoQueryObj

@@ -60,6 +60,12 @@ module.exports = {
         ]
     },
     resolve: {
+      alias: {
+        helpers: path.resolve(__dirname, 'src/js/helpers'),
+        plugins: path.resolve(__dirname, 'src/js/components/plugins'),
+        views: path.resolve(__dirname, 'src/js/components/view-plugins'),
+        actions: path.resolve(__dirname, 'src/js/actions'),
+      },
       extensions: ['.js', '.jsx', '.react.js'],
     }
 }
