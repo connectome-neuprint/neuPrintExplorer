@@ -79,7 +79,6 @@ class FindNeurons extends React.Component {
   // visualization plugin.
   processResults = (dataSet, apiResponse) => {
     const { actions } = this.props;
-    const roiList = ['proximal', 'distal', 'none'];
 
     const data = apiResponse.data.map(row => {
       const converted = [
@@ -95,6 +94,10 @@ class FindNeurons extends React.Component {
         '',
         '',
       ];
+
+      // make sure none is added to the rois list.
+      row[7].push('none');
+      const roiList = row[7];
 
       const roiInfoObject = JSON.parse(row[3]);
 
