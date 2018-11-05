@@ -131,7 +131,7 @@ var processResults = function(results, state, uniqueId) {
             </ClickableQuery>
           ),
           false,
-          count
+          val
         )
       );
     }
