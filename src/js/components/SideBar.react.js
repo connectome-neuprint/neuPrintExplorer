@@ -142,7 +142,7 @@ class SideBar extends React.Component {
             button
           >
             <ListItemIcon>
-              <Icon>help</Icon>
+              <Icon>info</Icon>
             </ListItemIcon>
             <ListItemText primary="Help" />
           </ListItem>
