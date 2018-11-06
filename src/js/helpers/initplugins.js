@@ -14,6 +14,7 @@ import ROIsIntersectingNeurons from 'plugins/ROIsIntersectingNeurons.react';
 import ROIConnectivity from 'plugins/ROIConnectivity.react';
 import NeuronMeta from 'plugins/NeuronMeta.react';
 import Autapses from 'plugins/Autapses';
+import PartnerCompleteness from 'plugins/PartnerCompleteness';
 import Distribution from 'plugins/Distribution.react';
 import Completeness from 'plugins/Completeness.react';
 import FindSimilarNeurons from 'plugins/FindSimilarNeurons.react';
@@ -21,7 +22,7 @@ import FindSimilarNeurons from 'plugins/FindSimilarNeurons.react';
 // view plugins
 import SimpleTable from 'views/SimpleTable';
 
-const pluginList = [FindNeurons, NeuronMeta, ROIConnectivity, RankedTable, SimpleConnections, ROIsIntersectingNeurons, CommonConnectivity, FindSimilarNeurons, FreeForm, Autapses, Distribution, Completeness];
+const pluginList = [FindNeurons, NeuronMeta, ROIConnectivity, RankedTable, SimpleConnections, ROIsIntersectingNeurons, CommonConnectivity, FindSimilarNeurons, FreeForm, Autapses, Distribution, Completeness, PartnerCompleteness];
 
 const viewPlugins = {
   SimpleTable,
