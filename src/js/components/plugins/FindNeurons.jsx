@@ -270,6 +270,14 @@ class FindNeurons extends React.Component {
     this.setState({ limitBig: params.limitBig, statusFilters: params.statusFilters });
   };
 
+  catchReturn = event => {
+    // submit request if user presses enter
+    if (event.keyCode === 13) {
+      event.preventDefault();
+      this.processRequest();
+    }
+  };
+
   // use this function to generate the form that will accept and
   // validate the variables for your Neo4j query.
   render() {
@@ -334,6 +342,7 @@ class FindNeurons extends React.Component {
               rowsMax={4}
               className={classes.textField}
               onChange={this.addNeuron}
+              onKeyDown={this.catchReturn}
             />
           </NeuronHelp>
           <NeuronFilter callback={this.loadNeuronFilters} datasetstr={this.props.datasetstr} />

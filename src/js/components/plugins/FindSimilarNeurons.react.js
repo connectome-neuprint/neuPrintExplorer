@@ -103,6 +103,23 @@ class FindSimilarNeurons extends React.Component {
     });
   };
 
+  catchReturn = event => {
+    // submit request if user presses enter
+    if (event.keyCode === 13) {
+      event.preventDefault();
+
+      this.props.callback(
+        queryFindSimilarNeurons(
+          this.props.datasetstr,
+          this.state.qsParams.bodyIds,
+          this.state.qsParams.getGroups === 'true' ? true : false,
+          this.state.qsParams.limitBig,
+          this.state.qsParams.statusFilters
+        )
+      );
+    }
+  };
+
   render() {
     const { classes } = this.props;
     return (
@@ -118,6 +135,7 @@ class FindSimilarNeurons extends React.Component {
             rowsMax={4}
             className={classes.textField}
             onChange={this.addNeuronBodyIds}
+            onKeyDown={this.catchReturn}
           />
         </FormControl>
         <FormControlLabel
