@@ -24,10 +24,20 @@ function saveQueryResponse(combined) {
 export function submit(query) {
   return function submitAsync(dispatch) {
     dispatch(submittingQuery(query));
+
+    // build the query url. Use the custom one by default.
+    let queryUrl = '/api/custom/custom';
+    if (query.queryString) {
+      queryUrl = `/api${query.queryString}`;
+    }
+
+    // if cypherQuery is passed in, then add it to the parameters.
+    if (query.cypherQuery) {
+      query.parameters.cypher = query.cypherQuery;
+    }
+
     // async action here to fetch the results and format them.
-    // should ideally run a function passed in by the plugin.
-    // eg: query.exec()
-    fetch(`/api${query.queryString}`, {
+    fetch(queryUrl, {
       headers: {
         'content-type': 'application/json',
         Accept: 'application/json'
