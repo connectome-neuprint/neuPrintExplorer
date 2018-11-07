@@ -5,10 +5,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import randomColor from 'randomcolor';
+import { withRouter } from 'react-router';
 
 import Button from '@material-ui/core/Button';
 
-import queryAutapses from '../../neo4jqueries/autapses';
 import { submit } from 'actions/plugins';
 import { getQueryString } from 'helpers/queryString';
 
@@ -92,7 +92,9 @@ var AutapsesDispatch = dispatch => ({
   }
 });
 
-export default connect(
-  AutapsesState,
-  AutapsesDispatch
-)(Autapses);
+export default withRouter(
+  connect(
+    AutapsesState,
+    AutapsesDispatch
+  )(Autapses)
+);
