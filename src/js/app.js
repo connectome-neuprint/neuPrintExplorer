@@ -16,6 +16,9 @@ var ReactDOM = require('react-dom');
 
 // set theme colors
 const theme = createMuiTheme({
+  typography: {
+    useNextVariants: true,
+  },
   palette: {
     primary: {
       light: '#6595c8',
