@@ -77,14 +77,14 @@ class FindNeurons extends React.Component {
   // this function will parse the results from the query to the
   // Neo4j server and place them in the correct format for the
   // visualization plugin.
-  processResults = (dataSet, apiResponse) => {
+  processResults = (query, apiResponse) => {
     const { actions } = this.props;
 
     const data = apiResponse.data.map(row => {
       const converted = [
         {
           value: row[0],
-          action: () => actions.skeletonAddandOpen(row[0], dataSet)
+          action: () => actions.skeletonAddandOpen(row[0], query.dataSet)
         },
         row[1],
         row[2],
@@ -147,13 +147,13 @@ class FindNeurons extends React.Component {
         converted[7] = barGraph;
 
         const postQuery = {
-          dataSet, // <string> for the data set selected
+          dataSet: query.dataSet, // <string> for the data set selected
           queryString: '/npexplorer/simpleconnections', // <neo4jquery string>
           // cypherQuery: <string> if this is passed then use generic /api/custom/custom endpoint
           visType: 'SimpleTable', // <string> which visualization plugin to use. Default is 'table'
           plugin: pluginName, // <string> the name of this plugin.
           parameters: {
-            dataset: dataSet,
+            dataset: query.dataSet,
             find_inputs: true,
             neuron_id: row[0]
           },
@@ -167,13 +167,13 @@ class FindNeurons extends React.Component {
         };
 
         const preQuery = {
-          dataSet, // <string> for the data set selected
+          dataSet: query.dataSet, // <string> for the data set selected
           queryString: '/npexplorer/simpleconnections', // <neo4jquery string>
           // cypherQuery: <string> if this is passed then use generic /api/custom/custom endpoint
           visType: 'SimpleTable', // <string> which visualization plugin to use. Default is 'table'
           plugin: pluginName, // <string> the name of this plugin.
           parameters: {
-            dataset: dataSet,
+            dataset: query.dataSet,
             find_inputs: false,
             neuron_id: row[0]
           },

@@ -23,7 +23,7 @@ class Autapses extends React.Component {
     return 'Finds all the self connections (loops) in the dataset.';
   }
 
-  processResults = (dataSet, apiResponse) => {
+  processResults = (query, apiResponse) => {
     const data = apiResponse.data.map(row => {
       return [row[0], row[2], row[1]];
     });
