@@ -10,6 +10,8 @@ import { withRouter } from 'react-router';
 import Button from '@material-ui/core/Button';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
 import { withStyles } from '@material-ui/core/styles';
 
 import { submit } from 'actions/plugins';
@@ -18,6 +20,7 @@ import { getQueryString } from 'helpers/queryString';
 const styles = theme => ({
   selects: {
     width: '100%',
+    margin: theme.spacing.unit
   }
 });
 
@@ -123,31 +126,43 @@ class Distribution extends React.Component {
     const { roi } = this.state;
     return (
       <form>
-        <Select value={roi} onChange={this.setROI} className={classes.selects}>
-          {availableROIs.map(val => {
-            return (
-              <MenuItem key={val} value={val}>
-                {val}
-              </MenuItem>
-            );
-          })}
-        </Select>
-        <Select
-          className={classes.selects}
-          value={this.state.isPre}
-          onChange={this.setType}
-          inputProps={{
-            name: 'Data type used for distribution',
-            id: 'controlled-open-select'
-          }}
-        >
-          <MenuItem key={'presyn'} value={true}>
-            Pre-synaptic
-          </MenuItem>
-          <MenuItem key={'postsyn'} value={false}>
-            Post-synaptic
-          </MenuItem>
-        </Select>
+        <FormControl className={classes.selects}>
+          <InputLabel htmlFor="roi">ROI</InputLabel>
+          <Select
+            value={roi}
+            onChange={this.setROI}
+            inputProps={{
+              name: 'roi',
+              id: 'roi'
+            }}
+          >
+            {availableROIs.map(val => {
+              return (
+                <MenuItem key={val} value={val}>
+                  {val}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        </FormControl>
+        <FormControl className={classes.selects}>
+        <InputLabel htmlFor="isPre">Pre or Post Synaptic</InputLabel>
+          <Select
+            value={this.state.isPre}
+            onChange={this.setType}
+            inputProps={{
+              name: 'isPre',
+              id: 'isPre'
+            }}
+          >
+            <MenuItem key={'presyn'} value={true}>
+              Pre-synaptic
+            </MenuItem>
+            <MenuItem key={'postsyn'} value={false}>
+              Post-synaptic
+            </MenuItem>
+          </Select>
+        </FormControl>
 
         <Button
           disabled={isQuerying}
