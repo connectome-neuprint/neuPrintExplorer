@@ -5,14 +5,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+import { withRouter } from 'react-router';
 import qs from 'qs';
 import { connect } from 'react-redux';
 
 import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
+import MenuList from '@material-ui/core/MenuList';
+import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Icon from '@material-ui/core/Icon';
@@ -81,7 +82,7 @@ class SideBar extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, location } = this.props;
     var openQuery = this.isOpen();
 
     return (
@@ -93,18 +94,19 @@ class SideBar extends React.Component {
         open={false}
       >
         <div className={classes.toolbar} />
-        <List component="nav">
-          <ListItem button onClick={this.toggleQuery} selected={openQuery}>
+        <MenuList component="nav">
+          <MenuItem button onClick={this.toggleQuery} selected={openQuery}>
             <ListItemIcon>
               <Icon>search</Icon>
             </ListItemIcon>
             <ListItemText primary="Search" />
-          </ListItem>
+          </MenuItem>
 
           <Divider />
 
-          <ListItem
-            component={Link}
+          <MenuItem
+            selected={location.pathname.match(/^\/$/)}
+            component={NavLink}
             to={{ pathname: '/', search: openQuery ? this.props.urlQueryString : '' }}
             button
           >
@@ -112,10 +114,11 @@ class SideBar extends React.Component {
               <Icon>home</Icon>
             </ListItemIcon>
             <ListItemText primary="Home" />
-          </ListItem>
+          </MenuItem>
 
-          <ListItem
-            component={Link}
+          <MenuItem
+            selected={location.pathname.match(/^\/results/)}
+            component={NavLink}
             to={{ pathname: '/results', search: openQuery ? this.props.urlQueryString : '' }}
             button
           >
@@ -123,10 +126,11 @@ class SideBar extends React.Component {
               <Icon>storages</Icon>
             </ListItemIcon>
             <ListItemText primary="Results" />
-          </ListItem>
+          </MenuItem>
 
-          <ListItem
-            component={Link}
+          <MenuItem
+            selected={location.pathname.match(/^\/favorites/)}
+            component={NavLink}
             to={{ pathname: '/favorites', search: openQuery ? this.props.urlQueryString : '' }}
             button
           >
@@ -134,10 +138,11 @@ class SideBar extends React.Component {
               <Icon>star</Icon>
             </ListItemIcon>
             <ListItemText primary="Favorites" />
-          </ListItem>
+          </MenuItem>
 
-          <ListItem
-            component={Link}
+          <MenuItem
+            selected={location.pathname.match(/^\/help/)}
+            component={NavLink}
             to={{ pathname: '/help', search: openQuery ? this.props.urlQueryString : '' }}
             button
           >
@@ -145,8 +150,8 @@ class SideBar extends React.Component {
               <Icon>info</Icon>
             </ListItemIcon>
             <ListItemText primary="Help" />
-          </ListItem>
-        </List>
+          </MenuItem>
+        </MenuList>
       </Drawer>
     );
   }
@@ -170,13 +175,16 @@ var SideBarDispatch = function(dispatch) {
 SideBar.propTypes = {
   classes: PropTypes.object.isRequired,
   userInfo: PropTypes.object,
+  location: PropTypes.object.isRequired,
   urlQueryString: PropTypes.string.isRequired,
   setURLQs: PropTypes.func.isRequired
 };
 
-export default withStyles(styles)(
-  connect(
-    SideBarState,
-    SideBarDispatch
-  )(SideBar)
+export default withRouter(
+  withStyles(styles)(
+    connect(
+      SideBarState,
+      SideBarDispatch
+    )(SideBar)
+  )
 );
