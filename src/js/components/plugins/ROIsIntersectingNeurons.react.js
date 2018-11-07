@@ -157,6 +157,14 @@ class ROIsIntersectingNeurons extends React.Component {
     this.setState({ qsParams: { neuronsrc: event.target.value } });
   };
 
+  catchReturn = event => {
+    // submit request if user presses enter
+    if (event.keyCode === 13) {
+      event.preventDefault();
+      this.processRequest();
+    }
+  };
+
   render() {
     const { classes } = this.props;
     return (
@@ -170,6 +178,7 @@ class ROIsIntersectingNeurons extends React.Component {
             rowsMax={4}
             className={classes.textField}
             onChange={this.handleClick}
+            onKeyDown={this.catchReturn}
           />
         </NeuronHelp>
         <Button variant="contained" onClick={this.processRequest}>
