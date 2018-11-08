@@ -37,7 +37,7 @@ class About extends React.Component {
       fetch('https://api.github.com/graphql', {
         method: 'POST',
         headers: {
-          'Authorization': 'token 39b7dbf6286a917295650df58a3209f053a3025d',
+          'Authorization': 'token 9cbe7a950926bf8784ca8d95de00a8e963c32315',
           'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
