@@ -16,6 +16,7 @@ import ResultsTopBar from './ResultsTopBar';
 import SimpleTables from './SimpleTables';
 import Skeleton from './Skeleton';
 import { toggleSkeleton } from 'actions/skeleton';
+import { setFullScreen, clearFullScreen } from 'actions/app';
 // import NeuroGlancer from '@janelia-flyem/react-neuroglancer';
 
 import './Results.css';
@@ -101,6 +102,12 @@ class Results extends React.Component {
       if (skeletonCount > 0) {
         actions.toggleSkeleton();
       }
+    } else if (event.which === 43) {
+      if (skeletonCount > 0) {
+        actions.setFullScreen('skeleton');
+      }
+    } else if (event.which === 95) {
+      actions.clearFullScreen();
     }
   };
 
@@ -174,8 +181,21 @@ class Results extends React.Component {
 
   render() {
     // TODO: show query runtime results
-    const { classes, allTables, isQuerying, neoError, allResults, viewPlugins } = this.props;
+    const { classes, allTables, isQuerying, neoError, allResults, viewPlugins, showSkel, fullscreen } = this.props;
     let resArray = [];
+    const gridWidth = showSkel ? 6 : 12;
+
+    if (fullscreen === 'skeleton' && showSkel) {
+      return (
+        <div
+          tabIndex="0"
+          onKeyPress={this.triggerKeyboard}
+          className={classes.full}
+        >
+          <Skeleton />
+        </div>
+      );
+    }
 
     if (neoError === null && allTables !== null) {
       allTables.forEach((result, index) => {
@@ -195,7 +215,7 @@ class Results extends React.Component {
               data-grid={{
                 x: 0,
                 y: 0,
-                w: 6,
+                w: gridWidth,
                 h: 20
               }}
             >
@@ -220,7 +240,7 @@ class Results extends React.Component {
       return (
         <div key={index}
           data-grid={{
-            w: 6,
+            w: gridWidth,
             h: 20,
             x: 0,
             y: 0,
@@ -229,7 +249,7 @@ class Results extends React.Component {
           <ResultsTopBar
             version={2}
             downloadCallback={this.downloadFile}
-            name={query.title}
+             name={query.title}
             index={index}
             queryStr={query.result.debug}
             color={query.menuColor}
@@ -263,13 +283,13 @@ class Results extends React.Component {
           <CircularProgress />
         </Fade>
         <Grid container spacing={0}>
-          <Grid item xs={12} sm={this.props.showSkel ? 6 : 12}>
+          <Grid item xs={12} sm={showSkel ? 6 : 12}>
             <div className={classes.scroll}>
               <ResponsiveGridLayout
                 className="layout"
                 rowHeight={30}
                 breakpoints={{ lg: 2000 }}
-                cols={{ lg: this.props.showSkel ? 6 : 12 }}
+                cols={{ lg: showSkel ? 6 : 12 }}
                 draggableHandle=".topresultbar"
                 compactType="vertical"
                 onResizeStop={this.changeLayout}
@@ -281,7 +301,7 @@ class Results extends React.Component {
               </ResponsiveGridLayout>
             </div>
           </Grid>
-          {this.props.showSkel ? (
+          {showSkel ? (
             <Grid item xs={12} sm={6}>
               {/* <NeuroGlancer perspectiveZoom={80} /> */}
               <Skeleton />
@@ -311,7 +331,8 @@ Results.propTypes = {
   classes: PropTypes.object.isRequired,
   showSkel: PropTypes.bool.isRequired,
   skeletonCount: PropTypes.number.isRequired,
-  userInfo: PropTypes.object
+  userInfo: PropTypes.object,
+  fullscreen: PropTypes.string.isRequired,
 };
 
 // result data [{name: "table name", header: [headers...], body: [rows...]
@@ -328,7 +349,8 @@ const ResultsState = function(state) {
     skeletonCount: state.skeleton.get('neurons').size,
     userInfo: state.user.userInfo,
     urlQueryString: state.app.get('urlQueryString'),
-    queryObj: state.query.neoQueryObj
+    queryObj: state.query.neoQueryObj,
+    fullscreen: state.app.get('fullscreen')
   };
 };
 
@@ -336,6 +358,12 @@ const ResultDispatch = dispatch => ({
   actions: {
     toggleSkeleton: () => {
       dispatch(toggleSkeleton());
+    },
+    setFullScreen: (viewer) => {
+      dispatch(setFullScreen(viewer));
+    },
+    clearFullScreen: () => {
+      dispatch(clearFullScreen());
     }
   }
 });

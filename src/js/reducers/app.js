@@ -9,6 +9,7 @@ const appState = Immutable.Map({
     reconIndex: 9999999,
     urlQueryString: window.location.search.substring(1),
     appDB: "",
+    fullscreen: null,
     activePlugins: Immutable.Map({}),
     viewPlugins: Immutable.Map({}),
 });
@@ -38,6 +39,10 @@ export default function appReducer(state = appState, action) {
             return state.deleteIn(["activePlugins", action.uuid]);
         case C.SET_APP_DB:
             return state.set("appDB", action.appDB);
+        case C.SET_FULLSCREEN_VIEWER:
+            return state.set('fullscreen', action.viewer);
+        case C.CLEAR_FULLSCREEN_VIEWER:
+            return state.set('fullscreen', null);
         default:
             return state;
     }

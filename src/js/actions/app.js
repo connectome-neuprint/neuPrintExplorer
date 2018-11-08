@@ -58,3 +58,16 @@ export function clearErrors(query) {
     type: C.CLEAR_ERRORS,
   };
 }
+
+export function setFullScreen(viewer) {
+  return {
+    type: C.SET_FULLSCREEN_VIEWER,
+    viewer
+  };
+}
+
+export function clearFullScreen() {
+  return {
+    type: C.CLEAR_FULLSCREEN_VIEWER,
+  };
+}
