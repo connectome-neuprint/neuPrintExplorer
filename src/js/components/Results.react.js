@@ -185,7 +185,7 @@ class Results extends React.Component {
     let resArray = [];
     const gridWidth = showSkel ? 6 : 12;
 
-    if (fullscreen === 'skeleton' && showSkel) {
+    if (fullscreen && showSkel) {
       return (
         <div
           tabIndex="0"
@@ -332,7 +332,7 @@ Results.propTypes = {
   showSkel: PropTypes.bool.isRequired,
   skeletonCount: PropTypes.number.isRequired,
   userInfo: PropTypes.object,
-  fullscreen: PropTypes.string.isRequired,
+  fullscreen: PropTypes.bool.isRequired,
 };
 
 // result data [{name: "table name", header: [headers...], body: [rows...]

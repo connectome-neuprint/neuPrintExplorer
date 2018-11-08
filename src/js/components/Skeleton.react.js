@@ -8,7 +8,10 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import Chip from '@material-ui/core/Chip';
-import { skeletonNeuronToggle, skeletonRemove } from '../actions/skeleton';
+import Icon from '@material-ui/core/Icon';
+import Button from '@material-ui/core/Button';
+import { skeletonNeuronToggle, skeletonRemove } from 'actions/skeleton';
+import { clearFullScreen } from 'actions/app';
 
 var GlbShark = null;
 
@@ -33,6 +36,12 @@ const styles = theme => ({
   },
   chip: {
     margin: theme.spacing.unit / 2
+  },
+  minimize: {
+    zIndex: 2,
+    position: 'absolute',
+    top: '1em',
+    right: '1em',
   }
 });
 
@@ -135,7 +144,7 @@ class Skeleton extends React.Component {
   };
 
   render() {
-    const { classes, display } = this.props;
+    const { classes, display, actions, fullscreen } = this.props;
 
     if (!display) {
       return null;
@@ -167,6 +176,13 @@ class Skeleton extends React.Component {
     return (
       <div className={classes.root}>
         <div className={classes.floater}>{chips}</div>
+        { fullscreen && (
+          <div className={classes.minimize}>
+            <Button variant="fab" color="primary" onClick={actions.clearFullScreen}>
+              <Icon>fullscreen_exit</Icon>
+            </Button>
+          </div>
+        )}
         <div className={classes.skel} ref={'skeletonviewer'} id={'skeletonviewer'} />
       </div>
     );
@@ -175,13 +191,15 @@ class Skeleton extends React.Component {
 
 Skeleton.propTypes = {
   display: PropTypes.bool.isRequired,
-  actions: PropTypes.object.isRequired
+  actions: PropTypes.object.isRequired,
+  fullscreen: PropTypes.bool.isRequired,
 };
 
 var SkeletonState = function(state) {
   return {
     neurons: state.skeleton.get('neurons'),
-    display: state.skeleton.get('display')
+    display: state.skeleton.get('display'),
+    fullscreen: state.app.get('fullscreen')
   };
 };
 
@@ -192,6 +210,9 @@ var SkeletonDispatch = dispatch => ({
     },
     skeletonRemove: id => {
       dispatch(skeletonRemove(id));
+    },
+    clearFullScreen: () => {
+      dispatch(clearFullScreen());
     }
   }
 });
