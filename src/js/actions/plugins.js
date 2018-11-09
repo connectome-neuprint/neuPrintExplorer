@@ -10,14 +10,21 @@ function submittingQuery(query) {
 function submissionError(error) {
   return {
     type: C.PLUGIN_SUBMIT_ERROR,
-    error: `PLUGIN ERROR: ${error}`,
+    error: `PLUGIN ERROR: ${error}`
+  };
+}
+
+export function pluginResponseError(error) {
+  return {
+    type: C.PLUGIN_RESPONSE_ERROR,
+    error: `PLUGIN RESPONSE ERROR: ${error}`
   };
 }
 
 function saveQueryResponse(combined) {
   return {
     type: C.PLUGIN_SAVE_RESPONSE,
-    combined,
+    combined
   };
 }
 
@@ -53,7 +60,7 @@ export function submit(query) {
         }
         // make new result object
         let data = query.processResults(query, resp);
-        const combined = Object.assign(query, {result: data});
+        const combined = Object.assign(query, { result: data });
         dispatch(saveQueryResponse(combined));
       })
       .catch(function(error) {
