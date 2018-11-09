@@ -3,21 +3,22 @@
  * a simple table or a table of tables.
 */
 import React from 'react';
-import Typography from '@material-ui/core/Typography';
-import Fade from '@material-ui/core/Fade';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import qs from 'qs';
 import { Responsive, WidthProvider } from 'react-grid-layout';
+
+import Typography from '@material-ui/core/Typography';
+import Fade from '@material-ui/core/Fade';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+
 import ResultsTopBar from './ResultsTopBar';
 import SimpleTables from './SimpleTables';
-import Skeleton from './Skeleton';
+import NeuronViz from './NeuronViz';
 import { toggleSkeleton } from 'actions/skeleton';
 import { setFullScreen, clearFullScreen } from 'actions/app';
-// import NeuroGlancer from '@janelia-flyem/react-neuroglancer';
 
 import './Results.css';
 
@@ -76,7 +77,12 @@ class Results extends React.Component {
     super(props, context);
     this.state = {
       currLayout: null,
+      selectedViewer: 1,
     };
+  }
+
+  handleViewerSelect = (event, value) => {
+    this.setState({selectedViewer: value});
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -192,7 +198,7 @@ class Results extends React.Component {
           onKeyPress={this.triggerKeyboard}
           className={classes.full}
         >
-          <Skeleton />
+          <NeuronViz />
         </div>
       );
     }
@@ -303,8 +309,7 @@ class Results extends React.Component {
           </Grid>
           {showSkel ? (
             <Grid item xs={12} sm={6}>
-              {/* <NeuroGlancer perspectiveZoom={80} /> */}
-              <Skeleton />
+              <NeuronViz />
             </Grid>
           ) : (
             <div />
