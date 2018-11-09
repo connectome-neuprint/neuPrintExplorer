@@ -10,6 +10,7 @@ import Button from '@material-ui/core/Button';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
+import Icon from '@material-ui/core/Icon';
 
 import { submit } from 'actions/plugins';
 import { setUrlQS } from 'actions/app';
@@ -81,9 +82,23 @@ class FindNeurons extends React.Component {
     const { actions } = this.props;
 
     const data = apiResponse.data.map(row => {
+      const hasSkeleton = row[8];
       const converted = [
         {
-          value: row[0],
+          value: hasSkeleton ? (
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row'
+              }}
+            >
+              {row[0]}
+              <div style={{ margin: '3px' }} />
+              <Icon fontSize="inherit">visibility</Icon>
+            </div>
+          ) : (
+            row[0]
+          ),
           action: () => actions.skeletonAddandOpen(row[0], query.dataSet)
         },
         row[1],
