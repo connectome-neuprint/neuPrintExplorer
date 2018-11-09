@@ -74,8 +74,8 @@ export default ({ roiList, roiInfoObject, preTotal, postTotal }) => {
         margin: '5px'
     }
 
-    const text = <div style={styles}><HeatMapLabels roiList={roiList} /></div>
-    const hmPost = <div style={styles}><RoiHeatMap listOfRoisToUse={roiList} roiInfoObject={roiInfoObject} roiInfoObjectKey={"post"} sumOfValues={postTotal} />inputs</div>
-    const hmPre = <div style={styles}><RoiHeatMap listOfRoisToUse={roiList} roiInfoObject={roiInfoObject} roiInfoObjectKey={"pre"} sumOfValues={preTotal} />outputs</div>
+    const text = <div key="labels" style={styles}><HeatMapLabels roiList={roiList} /></div>
+    const hmPost = <div key="post" style={styles}><RoiHeatMap listOfRoisToUse={roiList} roiInfoObject={roiInfoObject} roiInfoObjectKey={"post"} sumOfValues={postTotal} />inputs</div>
+    const hmPre = <div key="pre" style={styles}><RoiHeatMap listOfRoisToUse={roiList} roiInfoObject={roiInfoObject} roiInfoObjectKey={"pre"} sumOfValues={preTotal} />outputs</div>
     return [text, hmPost, hmPre]
 }
