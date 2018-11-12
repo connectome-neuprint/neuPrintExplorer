@@ -8,10 +8,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import Chip from '@material-ui/core/Chip';
-import Icon from '@material-ui/core/Icon';
-import Button from '@material-ui/core/Button';
 import { skeletonNeuronToggle, skeletonRemove } from 'actions/skeleton';
-import { setFullScreen, clearFullScreen } from 'actions/app';
 
 var GlbShark = null;
 
@@ -176,17 +173,6 @@ class Skeleton extends React.Component {
     return (
       <div className={classes.root}>
         <div className={classes.floater}>{chips}</div>
-        <div className={classes.minimize}>
-          { fullscreen ? (
-            <Button variant="fab" color="primary" onClick={actions.clearFullScreen}>
-              <Icon>fullscreen_exit</Icon>
-            </Button>
-          ) : (
-            <Button variant="fab" color="primary" onClick={actions.setFullScreen}>
-              <Icon>fullscreen</Icon>
-            </Button>
-          )}
-        </div>
         <div className={classes.skel} ref={'skeletonviewer'} id={'skeletonviewer'} />
       </div>
     );
@@ -215,12 +201,6 @@ var SkeletonDispatch = dispatch => ({
     skeletonRemove: id => {
       dispatch(skeletonRemove(id));
     },
-    clearFullScreen: () => {
-      dispatch(clearFullScreen());
-    },
-    setFullScreen: () => {
-      dispatch(setFullScreen());
-    }
   }
 });
 
