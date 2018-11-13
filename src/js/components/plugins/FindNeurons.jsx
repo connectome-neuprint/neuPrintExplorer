@@ -10,6 +10,7 @@ import Button from '@material-ui/core/Button';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
+import Icon from '@material-ui/core/Icon';
 
 import { submit } from 'actions/plugins';
 import { setUrlQS } from 'actions/app';
@@ -77,14 +78,28 @@ class FindNeurons extends React.Component {
   // this function will parse the results from the query to the
   // Neo4j server and place them in the correct format for the
   // visualization plugin.
-  processResults = (dataSet, apiResponse) => {
+  processResults = (query, apiResponse) => {
     const { actions } = this.props;
 
     const data = apiResponse.data.map(row => {
+      const hasSkeleton = row[8];
       const converted = [
         {
-          value: row[0],
-          action: () => actions.skeletonAddandOpen(row[0], dataSet)
+          value: hasSkeleton ? (
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row'
+              }}
+            >
+              {row[0]}
+              <div style={{ margin: '3px' }} />
+              <Icon fontSize="inherit">visibility</Icon>
+            </div>
+          ) : (
+            row[0]
+          ),
+          action: () => actions.skeletonAddandOpen(row[0], query.dataSet)
         },
         row[1],
         row[2],
@@ -92,37 +107,46 @@ class FindNeurons extends React.Component {
         '-',
         row[4],
         '',
-        '',
+        ''
       ];
 
       // make sure none is added to the rois list.
       row[7].push('none');
       const roiList = row[7];
+      const totalPre = row[5];
+      const totalPost = row[6];
 
       const roiInfoObject = JSON.parse(row[3]);
 
       if (roiInfoObject) {
-
-        const post = Object.values(roiInfoObject).reduce((total, current) => {
-          return total + current.post;
-        }, 0);
-
-        const pre = Object.values(roiInfoObject).reduce((total, current) => {
-          return total + current.pre;
-        }, 0);
+        // calculate # pre and post in super rois (which are disjoint) to get total
+        // number of synapses assigned to an roi
+        let postInSuperRois = 0;
+        let preInSuperRois = 0;
+        Object.keys(roiInfoObject).forEach(roi => {
+          if (
+            roiList.find(element => {
+              return element === roi;
+            })
+          ) {
+            preInSuperRois += roiInfoObject[roi]['pre'];
+            postInSuperRois += roiInfoObject[roi]['post'];
+          }
+        });
 
         // add this after the other rois have been summed.
+        // records # pre and post that are not in rois
         roiInfoObject['none'] = {
-          pre: row[5] - pre,
-          post: row[6] - post
+          pre: row[5] - preInSuperRois,
+          post: row[6] - postInSuperRois
         };
 
         const heatMap = (
           <RoiHeatMap
             roiList={roiList}
             roiInfoObject={roiInfoObject}
-            preTotal={pre}
-            postTotal={post}
+            preTotal={totalPre}
+            postTotal={totalPost}
           />
         );
         converted[6] = heatMap;
@@ -131,20 +155,20 @@ class FindNeurons extends React.Component {
           <RoiBarGraph
             roiList={roiList}
             roiInfoObject={roiInfoObject}
-            preTotal={pre}
-            postTotal={post}
+            preTotal={totalPre}
+            postTotal={totalPost}
           />
         );
         converted[7] = barGraph;
 
         const postQuery = {
-          dataSet, // <string> for the data set selected
+          dataSet: query.dataSet, // <string> for the data set selected
           queryString: '/npexplorer/simpleconnections', // <neo4jquery string>
           // cypherQuery: <string> if this is passed then use generic /api/custom/custom endpoint
           visType: 'SimpleTable', // <string> which visualization plugin to use. Default is 'table'
           plugin: pluginName, // <string> the name of this plugin.
           parameters: {
-            dataset: dataSet,
+            dataset: query.dataSet,
             find_inputs: true,
             neuron_id: row[0]
           },
@@ -153,18 +177,18 @@ class FindNeurons extends React.Component {
           processResults: this.processSimpleConnections
         };
         converted[3] = {
-          value: post,
-          action: () => actions.submit(postQuery),
+          value: totalPost,
+          action: () => actions.submit(postQuery)
         };
 
         const preQuery = {
-          dataSet, // <string> for the data set selected
+          dataSet: query.dataSet, // <string> for the data set selected
           queryString: '/npexplorer/simpleconnections', // <neo4jquery string>
           // cypherQuery: <string> if this is passed then use generic /api/custom/custom endpoint
           visType: 'SimpleTable', // <string> which visualization plugin to use. Default is 'table'
           plugin: pluginName, // <string> the name of this plugin.
           parameters: {
-            dataset: dataSet,
+            dataset: query.dataSet,
             find_inputs: false,
             neuron_id: row[0]
           },
@@ -173,8 +197,8 @@ class FindNeurons extends React.Component {
           processResults: this.processSimpleConnections
         };
         converted[4] = {
-          value: pre,
-          action: () => actions.submit(preQuery),
+          value: totalPre,
+          action: () => actions.submit(preQuery)
         };
       }
 
@@ -261,6 +285,14 @@ class FindNeurons extends React.Component {
     this.setState({ limitBig: params.limitBig, statusFilters: params.statusFilters });
   };
 
+  catchReturn = event => {
+    // submit request if user presses enter
+    if (event.keyCode === 13) {
+      event.preventDefault();
+      this.processRequest();
+    }
+  };
+
   // use this function to generate the form that will accept and
   // validate the variables for your Neo4j query.
   render() {
@@ -325,6 +357,7 @@ class FindNeurons extends React.Component {
               rowsMax={4}
               className={classes.textField}
               onChange={this.addNeuron}
+              onKeyDown={this.catchReturn}
             />
           </NeuronHelp>
           <NeuronFilter callback={this.loadNeuronFilters} datasetstr={this.props.datasetstr} />

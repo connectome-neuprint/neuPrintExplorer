@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import randomColor from 'randomcolor';
+import { withRouter } from 'react-router';
 
 import Button from '@material-ui/core/Button';
 
@@ -22,7 +23,7 @@ class Autapses extends React.Component {
     return 'Finds all the self connections (loops) in the dataset.';
   }
 
-  processResults = (dataSet, apiResponse) => {
+  processResults = (query, apiResponse) => {
     const data = apiResponse.data.map(row => {
       return [row[0], row[2], row[1]];
     });
@@ -91,7 +92,9 @@ var AutapsesDispatch = dispatch => ({
   }
 });
 
-export default connect(
-  AutapsesState,
-  AutapsesDispatch
-)(Autapses);
+export default withRouter(
+  connect(
+    AutapsesState,
+    AutapsesDispatch
+  )(Autapses)
+);

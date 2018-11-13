@@ -93,6 +93,23 @@ class CommonConnectivity extends React.Component {
     });
   };
 
+  catchReturn = event => {
+    // submit request if user presses enter
+    if (event.keyCode === 13) {
+      event.preventDefault();
+      this.props.callback(
+        queryCommonConnectivity(
+          this.props.datasetstr,
+          this.state.qsParams.bodyIds,
+          this.state.qsParams.names,
+          this.state.limitBig,
+          this.state.statusFilters,
+          this.state.qsParams.typeValue
+        )
+      );
+    }
+  };
+
   render() {
     const { classes } = this.props;
     return (
@@ -109,6 +126,7 @@ class CommonConnectivity extends React.Component {
             className={classes.textField}
             helperText="Separate ids with commas."
             onChange={this.addNeuronBodyIds}
+            onKeyDown={this.catchReturn}
           />
           <TextField
             label="Neuron names"
@@ -121,6 +139,7 @@ class CommonConnectivity extends React.Component {
             className={classes.textField}
             helperText="Separate names with commas."
             onChange={this.addNeuronNames}
+            onKeyDown={this.catchReturn}
           />
           <RadioGroup
             aria-label="Type Of Connections"

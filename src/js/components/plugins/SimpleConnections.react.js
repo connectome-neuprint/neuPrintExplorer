@@ -156,6 +156,14 @@ class SimpleConnections extends React.Component {
     this.setState({ qsParams: oldparams });
   };
 
+  catchReturn = event => {
+    // submit request if user presses enter
+    if (event.keyCode === 13) {
+      event.preventDefault();
+      this.processRequest();
+    }
+  };
+
   render() {
     const { classes } = this.props;
     return (
@@ -170,6 +178,7 @@ class SimpleConnections extends React.Component {
               rowsMax={4}
               className={classes.textField}
               onChange={this.handleClick}
+              onKeyDown={this.catchReturn}
             />
           </NeuronHelp>
         </FormControl>
