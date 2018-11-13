@@ -6,7 +6,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import merge from 'deepmerge';
 import { withStyles } from '@material-ui/core/styles';
-import { LoadQueryString, SaveQueryString } from '../helpers/qsparser';
+import { SaveQueryString } from '../helpers/qsparser';
 import { connect } from 'react-redux';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -60,7 +60,7 @@ class NeuronFilter extends React.Component {
 
     const initParams = {
       limitBig: true,
-      statusFilters: [],
+      statusFilters: []
     };
 
     const fullQuery = getQueryObject();
@@ -70,7 +70,7 @@ class NeuronFilter extends React.Component {
     const combinedParams = merge(initParams, qsParams);
     this.state = {
       statuses: [],
-      qsParams: combinedParams,
+      qsParams: combinedParams
     };
 
     if (combinedParams) {
@@ -127,7 +127,7 @@ class NeuronFilter extends React.Component {
     let newparams = Object.assign({}, this.state.qsParams, { limitBig: val });
 
     this.props.callback(newparams);
-    setQueryString({ NFilter: { limitBig: val }});
+    setQueryString({ NFilter: { limitBig: val } });
     this.setState({ qsParams: newparams });
   };
 
@@ -140,7 +140,7 @@ class NeuronFilter extends React.Component {
 
     // save back status selections
     this.props.callback(newparams);
-    setQueryString({ NFilter: { statusFilters: statuses }});
+    setQueryString({ NFilter: { statusFilters: statuses } });
     this.setState({ qsParams: newparams });
   };
 
@@ -166,7 +166,11 @@ class NeuronFilter extends React.Component {
               >
                 <FormControlLabel
                   control={
-                    <Checkbox checked={checkboxStatus} onChange={this.toggleBig} value="checkedBig" />
+                    <Checkbox
+                      checked={checkboxStatus}
+                      onChange={this.toggleBig}
+                      value="checkedBig"
+                    />
                   }
                   label="Limit to big segments"
                 />

@@ -21,11 +21,13 @@ import FindSimilarNeurons from 'plugins/FindSimilarNeurons.react';
 
 // view plugins
 import SimpleTable from 'views/SimpleTable';
+import PartnerCompletenessView from 'views/PartnerCompletenessView';
 
 const pluginList = [FindNeurons, NeuronMeta, ROIConnectivity, RankedTable, SimpleConnections, ROIsIntersectingNeurons, CommonConnectivity, FindSimilarNeurons, FreeForm, Autapses, Distribution, Completeness, PartnerCompleteness];
 
 const viewPlugins = {
   SimpleTable,
+  PartnerCompletenessView,
 }
 export default function loadPlugins(store) {
     store.dispatch(initPlugins(pluginList));

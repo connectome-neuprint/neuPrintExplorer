@@ -16,8 +16,6 @@ import { getQueryObject, getQueryString, setQueryString } from 'helpers/queryStr
 
 const pluginName = 'Partner Completeness';
 
-// ?! commit; make viz plugin that takes the information and produce a double table view
-
 const styles = theme => ({
   select: {
     fontFamily: theme.typography.fontFamily,
@@ -45,13 +43,26 @@ class PartnerCompleteness extends React.Component {
 
   processResults = (dataSet, apiResponse) => {
     const data = apiResponse.data.map(row => {
-      return [row[0], row[1], row[2], row[3], row[4], row[5], row[6]];
+      return [
+        row[0],
+        row[1],
+        row[2],
+        row[3],
+        row[4],
+        row[5],
+        row[6],
+        row[7],
+        row[8],
+        row[9],
+        row[10]
+      ];
     });
 
     return {
-      columns: ['id', 'name', 'in or out', '#connections', 'status', '#pre', '#post'],
+      columns: ['id', 'name', 'isinput', '#connections', 'status', '#pre', '#post'],
       data,
-      debug: apiResponse.debug
+      debug: apiResponse.debug,
+      bodyId: apiResponse.bodyId
     };
   };
 
@@ -65,17 +76,18 @@ class PartnerCompleteness extends React.Component {
       this.state.bodyId +
       '})-[x:ConnectsTo]-(m) RETURN m.bodyId, m.name, CASE WHEN startnode(x).bodyId = ' +
       this.state.bodyId +
-      ' THEN "output" ELSE "input" END, x.weight, m.status, m.pre, m.post ORDER BY x.weight DESC';
+      ' THEN false ELSE true END, x.weight, m.status, m.pre, m.post, n.name, n.pre, n.post, n.status ORDER BY x.weight DESC';
 
     const query = {
       dataSet,
       queryString: '/custom/custom',
-      visType: 'SimpleTable',
+      visType: 'PartnerCompletenessView',
       plugin: pluginName,
       parameters: { cypher: cypher },
       title: 'Tracing completeenss of connections to/from ' + this.state.bodyId,
       menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
-      processResults: this.processResults
+      processResults: this.processResults,
+      bodyId: this.state.bodyId
     };
     actions.submit(query);
     history.push({

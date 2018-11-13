@@ -8,7 +8,6 @@ import randomColor from 'randomcolor';
 
 import Button from '@material-ui/core/Button';
 
-import queryAutapses from '../../neo4jqueries/autapses';
 import { submit } from 'actions/plugins';
 import { getQueryString } from 'helpers/queryString';
 
