@@ -19,13 +19,12 @@ class NeuroGlancer extends React.Component {
 
     // loop over ngLayers and add them to the viewerState
     ngLayers.forEach(layer => {
-      // add segmentation
+      // add segmentation && grayscale layers
       viewerState.layers[layer.get('dataSet')] = {
-        source: `dvid://http://${layer.get('host')}/${layer.get('uuid')}/segmentation`,
-        type: 'segmentation',
+        source: `dvid://${layer.get('host')}/${layer.get('uuid')}/${layer.get('dataInstance')}`,
+        type: layer.get('dataType'),
         segments: [],
       }
-      // add greyscale
     });
     // loop over the neurons and add them to the layers
     ngNeurons.forEach(neuron => {

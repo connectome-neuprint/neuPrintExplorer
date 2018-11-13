@@ -37,12 +37,27 @@ function neuroglancerLoadError(error) {
 }
 
 function neuroglancerLoaded(dataSet, result) {
-  return {
-    type: C.NEUROGLANCER_LAYER_ADD,
-    host: result.data[0][0],
-    uuid: result.data[0][1],
-    dataSet,
-  };
+  return function neuroglancerLoadedAsync(dispatch) {
+    // grayscale
+    dispatch({
+      type: C.NEUROGLANCER_LAYER_ADD,
+      host: result.data[0][3],
+      uuid: result.data[0][4],
+      dataInstance: result.data[0][5],
+      dataType: 'image',
+      dataSet: `${dataSet}-grayscale`,
+    });
+
+    // segmentation
+    dispatch({
+      type: C.NEUROGLANCER_LAYER_ADD,
+      host: result.data[0][0],
+      uuid: result.data[0][1],
+      dataInstance: result.data[0][2],
+      dataType: 'segmentation',
+      dataSet,
+    });
+  }
 }
 
 export function neuroglancerAddNeuron(id, dataSet) {
@@ -60,7 +75,7 @@ export function neuroglancerAddLayer(id, dataSet) {
     // dispatch loading neuroglancer action
     dispatch(neuroglancerLoading(id));
     // generate the querystring.
-    const neuroglancerQuery = `MATCH (n:Meta:${dataSet}) RETURN n.dvidServer, n.uuid`;
+    const neuroglancerQuery = `MATCH (n:Meta:${dataSet}) WITH apoc.convert.fromJsonMap(n.neuroglancerInfo) as nInfo, n.uuid AS uuid RETURN nInfo.segmentation.host AS segmentationHost, uuid AS segmentationUuid, nInfo.segmentation.dataType AS segmentationDataType, nInfo.grayscale.host AS grayscaleHost, nInfo.grayscale.uuid AS grayscaleUuid, nInfo.grayscale.dataType AS grayscaleDataType`;
     // fetch swc data
     fetch('/api/custom/custom', {
       headers: {

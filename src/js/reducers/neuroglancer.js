@@ -30,6 +30,8 @@ export default function neuroglancerReducer(state = neuroglancerState, action) {
         uuid: action.uuid,
         dataSet: action.dataSet,
         host: action.host,
+        dataType: action.dataType,
+        dataInstance: action.dataInstance,
       })).set('layer_loading', false);
     }
     case C.NEUROGLANCER_LAYER_REMOVE: {
