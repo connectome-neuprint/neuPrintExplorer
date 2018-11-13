@@ -10,7 +10,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 import { setFullScreen, clearFullScreen } from 'actions/app';
 import Skeleton from './Skeleton';
-import NeuroGlancer from '@janelia-flyem/react-neuroglancer';
+import NeuroGlancer from './NeuroGlancer';
 
 const styles = theme => ({
   full: {
@@ -38,19 +38,6 @@ class NeuronViz extends React.Component {
 
   render() {
     const { classes, fullscreen, actions } = this.props;
-
-    const viewerState = {
-      perspectiveZoom: 20,
-      navigation: {
-        zoomFactor: 8
-      },
-      layers: {}
-    };
-
-    // fetch layers from neuprint, based on the query results or the query itself? 
-    // MATCH (n:Meta:mb6) RETURN n.dvidServer, n.uuid 
-    // set the list of neuron ids in the viewerState
-    
 
     return (
       <div className={classes.full}>
@@ -85,7 +72,7 @@ class NeuronViz extends React.Component {
           <Tab label="Skeleton" />
         </Tabs>
         {this.state.selectedViewer === 0 ? (
-          <NeuroGlancer perspectiveZoom={80} viewerState={viewerState} />
+          <NeuroGlancer />
         ) : (
           <Skeleton />
         )}

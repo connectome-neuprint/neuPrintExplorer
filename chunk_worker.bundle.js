@@ -1,1 +1,1 @@
-node_modules/neuroglancer-react/node_modules/neuroglancer/dist/min/chunk_worker.bundle.js
+node_modules/@janelia-flyem/neuroglancer/dist/min/chunk_worker.bundle.js

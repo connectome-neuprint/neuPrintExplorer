@@ -15,6 +15,7 @@ import Icon from '@material-ui/core/Icon';
 import { submit } from 'actions/plugins';
 import { setUrlQS } from 'actions/app';
 import { skeletonAddandOpen } from 'actions/skeleton';
+import { neuroglancerAddandOpen } from 'actions/neuroglancer';
 import RoiHeatMap, { ColorLegend } from '../../components/visualization/MiniRoiHeatMap.react';
 import RoiBarGraph from '../../components/visualization/MiniRoiBarGraph.react';
 import NeuronHelp from '../NeuronHelp.react';
@@ -61,7 +62,10 @@ class FindNeurons extends React.Component {
       return [
         {
           value: row[2],
-          action: () => actions.skeletonAddandOpen(row[2], dataSet)
+          action: () => {
+            actions.skeletonAddandOpen(row[2], dataSet)
+            actions.neuroglancerAddandOpen(row[2], dataSet)
+          }
         },
         row[1],
         row[3]
@@ -99,7 +103,10 @@ class FindNeurons extends React.Component {
           ) : (
             row[0]
           ),
-          action: () => actions.skeletonAddandOpen(row[0], query.dataSet)
+          action: () => {
+            actions.skeletonAddandOpen(row[0], query.dataSet)
+            actions.neuroglancerAddandOpen(row[0], query.dataSet)
+          }
         },
         row[1],
         row[2],
@@ -401,6 +408,9 @@ var FindNeuronsDispatch = dispatch => ({
     },
     skeletonAddandOpen: (id, dataSet) => {
       dispatch(skeletonAddandOpen(id, dataSet));
+    },
+    neuroglancerAddandOpen: (id, dataSet) => {
+      dispatch(neuroglancerAddandOpen (id, dataSet));
     },
     setURLQs: function(querystring) {
       dispatch(setUrlQS(querystring));

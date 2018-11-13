@@ -10,6 +10,7 @@ import neo4jsettings from './neo4jsettings';
 import results from './results';
 import user from './user';
 import skeleton from './skeleton';
+import neuroglancer from './neuroglancer';
 import errors from './errors';
 
 export default combineReducers({
@@ -20,6 +21,7 @@ export default combineReducers({
     results,
     user,
     errors,
+    neuroglancer,
 });
 
 

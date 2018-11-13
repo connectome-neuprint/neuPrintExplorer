@@ -30,7 +30,7 @@ class Errors extends React.Component {
     const { classes, errorMessage } = this.props;
     return (
       <Snackbar
-        open={errorMessage}
+        open={errorMessage !== null}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         onClose={this.handleClose}
         TransitionComponent={TransitionDown}
