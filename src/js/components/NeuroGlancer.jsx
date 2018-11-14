@@ -9,7 +9,8 @@ class NeuroGlancer extends React.Component {
   render() {
     const { ngLayers, ngNeurons, ngCoordinates } = this.props;
     const viewerState = {
-      perspectiveZoom: 20,
+      perspectiveOrientation: [0.1, -0.3, -0.3, 0.8],
+      perspectiveZoom: 95,
       navigation: {
         pose: {
           position: {
@@ -28,8 +29,8 @@ class NeuroGlancer extends React.Component {
       viewerState.layers[layer.get('dataSet')] = {
         source: `dvid://${layer.get('host')}/${layer.get('uuid')}/${layer.get('dataInstance')}`,
         type: layer.get('dataType'),
-        segments: [],
-      }
+        segments: []
+      };
     });
     // loop over the neurons and add them to the layers
     ngNeurons.forEach(neuron => {
@@ -54,7 +55,7 @@ NeuroGlancer.propTypes = {
   ngState: PropTypes.object.isRequired,
   ngLayers: PropTypes.object.isRequired,
   ngNeurons: PropTypes.object.isRequired,
-  ngCoordinates: PropTypes.array.isRequired,
+  ngCoordinates: PropTypes.array.isRequired
 };
 
 const NeuroGlancerState = state => {
@@ -62,7 +63,7 @@ const NeuroGlancerState = state => {
     ngState: state.neuroglancer,
     ngLayers: state.neuroglancer.get('layers'),
     ngNeurons: state.neuroglancer.get('neurons'),
-    ngCoordinates: state.neuroglancer.get('coordinates'),
+    ngCoordinates: state.neuroglancer.get('coordinates')
   };
 };
 
