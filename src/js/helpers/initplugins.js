@@ -16,7 +16,7 @@ import NeuronMeta from 'plugins/NeuronMeta.react';
 import Autapses from 'plugins/Autapses';
 import PartnerCompleteness from 'plugins/PartnerCompleteness';
 import Distribution from 'plugins/Distribution';
-import Completeness from 'plugins/Completeness.react';
+import Completeness from 'plugins/Completeness';
 import FindSimilarNeurons from 'plugins/FindSimilarNeurons.react';
 
 // view plugins
