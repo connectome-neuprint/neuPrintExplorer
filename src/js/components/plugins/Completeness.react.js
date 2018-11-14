@@ -61,7 +61,7 @@ class Completeness extends React.Component {
 
     const parameters = {
       dataset: dataSet,
-      statues: statusFilters,
+      statuses: statusFilters,
     };
 
     if (limitBig) {
