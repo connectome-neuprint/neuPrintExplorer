@@ -129,7 +129,7 @@ class Favorites extends React.Component {
                   page={page}
                   onChangePage={this.handleChangePage}
                   onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                  Actions={TablePaginationActions}
+                  ActionsComponent={TablePaginationActions}
                 />
               </TableRow>
             </TableFooter>
