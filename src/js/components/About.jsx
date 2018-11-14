@@ -56,9 +56,9 @@ class About extends React.Component {
           });
         });
         const listItems = issuelist.map((iss) =>
-          <li key={iss[2].toString()}><Tooltip title={iss[3]} placement={'bottom'} enterDelay={100}><a href={iss[1]} target="_blank" style={{color: "darkblue"}}>{iss[0]}</a></Tooltip></li>
+          <li key={iss[2].toString()}><Tooltip title={iss[3]} placement={'bottom'} enterDelay={100}><a href={iss[1]} style={{color: "darkblue"}}>{iss[0]}</a></Tooltip></li>
         );
-        if (issuelist.length == 0) {
+        if (issuelist.length === 0) {
           this.setState({
             data: 'No user issues found'
           })

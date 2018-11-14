@@ -6,7 +6,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import merge from 'deepmerge';
 import { withStyles } from '@material-ui/core/styles';
-import { SaveQueryString } from '../helpers/qsparser';
 import { connect } from 'react-redux';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -62,8 +61,6 @@ class NeuronFilter extends React.Component {
       limitBig: true,
       statusFilters: []
     };
-
-    const fullQuery = getQueryObject();
 
     const qsParams = getQueryObject().NFilter || {};
 

@@ -141,7 +141,7 @@ class Skeleton extends React.Component {
   };
 
   render() {
-    const { classes, display, actions, fullscreen } = this.props;
+    const { classes, display } = this.props;
 
     if (!display) {
       return null;
@@ -182,14 +182,12 @@ class Skeleton extends React.Component {
 Skeleton.propTypes = {
   display: PropTypes.bool.isRequired,
   actions: PropTypes.object.isRequired,
-  fullscreen: PropTypes.bool.isRequired,
 };
 
 var SkeletonState = function(state) {
   return {
     neurons: state.skeleton.get('neurons'),
     display: state.skeleton.get('display'),
-    fullscreen: state.app.get('fullscreen')
   };
 };
 
