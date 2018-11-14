@@ -7,10 +7,15 @@ import Grid from '@material-ui/core/Grid';
 
 class NeuroGlancer extends React.Component {
   render() {
-    const { ngLayers, ngNeurons } = this.props;
+    const { ngLayers, ngNeurons, ngCoordinates } = this.props;
     const viewerState = {
       perspectiveZoom: 20,
       navigation: {
+        pose: {
+          position: {
+            voxelCoordinates: []
+          }
+        },
         zoomFactor: 8
       },
       layout: 'xy-3d',
@@ -31,6 +36,9 @@ class NeuroGlancer extends React.Component {
       viewerState.layers[neuron.get('dataSet')].segments.push(neuron.get('id'));
     });
 
+    // set the x,y,z coordinates
+    viewerState.navigation.pose.position.voxelCoordinates = ngCoordinates.toJS();
+
     return (
       <Grid container>
         <Grid item xs={12}>
@@ -46,6 +54,7 @@ NeuroGlancer.propTypes = {
   ngState: PropTypes.object.isRequired,
   ngLayers: PropTypes.object.isRequired,
   ngNeurons: PropTypes.object.isRequired,
+  ngCoordinates: PropTypes.array.isRequired,
 };
 
 const NeuroGlancerState = state => {
@@ -53,6 +62,7 @@ const NeuroGlancerState = state => {
     ngState: state.neuroglancer,
     ngLayers: state.neuroglancer.get('layers'),
     ngNeurons: state.neuroglancer.get('neurons'),
+    ngCoordinates: state.neuroglancer.get('coordinates'),
   };
 };
 

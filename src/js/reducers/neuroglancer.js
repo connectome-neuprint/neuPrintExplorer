@@ -5,6 +5,7 @@ var neuroglancerState = Immutable.Map({
   display: false,
   neurons: Immutable.Map({}),
   layers: Immutable.Map({}),
+  coordinates: Immutable.List([]),
   loading: false,
   error: null,
 });
@@ -49,7 +50,7 @@ export default function neuroglancerReducer(state = neuroglancerState, action) {
         color: action.color,
         dataSet: action.dataSet,
         visible: true
-      })).set('loading', false);
+      })).set('coordinates', Immutable.List(action.coordinates)).set('loading', false);
     }
     case C.NEUROGLANCER_NEURON_REMOVE: {
      const updated = state.deleteIn(['neurons', action.id]);

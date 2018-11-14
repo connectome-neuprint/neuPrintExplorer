@@ -45,7 +45,7 @@ function neuroglancerLoaded(dataSet, result) {
       uuid: result.data[0][4],
       dataInstance: result.data[0][5],
       dataType: 'image',
-      dataSet: `${dataSet}-grayscale`,
+      dataSet: `${dataSet}-grayscale`
     });
 
     // segmentation
@@ -55,20 +55,54 @@ function neuroglancerLoaded(dataSet, result) {
       uuid: result.data[0][1],
       dataInstance: result.data[0][2],
       dataType: 'segmentation',
-      dataSet,
+      dataSet
     });
-  }
-}
-
-export function neuroglancerAddNeuron(id, dataSet) {
-  return {
-    type: C.NEUROGLANCER_NEURON_ADD,
-    id,
-    dataSet,
-    color: '#ffffff',
   };
 }
 
+function neuroncoordinatesloading(id) {
+  return {
+    type: C.NEUROGLANCER_NEURON_COORDINATES_LOADING,
+    id,
+  };
+}
+
+function neuroncoordinatesloadingerror(error) {
+  return {
+    type: C.NEUROGLANCER_NEURON_COORDINATES_LOAD_ERROR,
+    error,
+  };
+}
+
+export function neuroglancerAddNeuron(id, dataSet) {
+  return function neuroglancerAddNeuronAsync(dispatch) {
+    // load neuron coordinates from neo4j
+    dispatch(neuroncoordinatesloading(id));
+    const coordinatesQuery = `WITH neuprint.getNeuronCentroid(${id}, "${dataSet}") AS centroid RETURN centroid `;
+    fetch('/api/custom/custom', {
+      headers: {
+        'content-type': 'application/json',
+        Accept: 'application/json'
+      },
+      body: JSON.stringify({
+        cypher: coordinatesQuery
+      }),
+      method: 'POST',
+      credentials: 'include'
+    })
+      .then(result => result.json())
+      .then(result => {
+        dispatch({
+          type: C.NEUROGLANCER_NEURON_ADD,
+          id,
+          dataSet,
+          coordinates: result.data[0][0],
+          color: '#ffffff'
+        });
+      })
+      .catch(error => dispatch(neuroncoordinatesloadingerror(error)));
+  };
+}
 
 export function neuroglancerAddLayer(id, dataSet) {
   return function neuroglancerAddLayerAsync(dispatch) {
