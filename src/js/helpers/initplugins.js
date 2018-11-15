@@ -17,7 +17,7 @@ import Autapses from 'plugins/Autapses';
 import PartnerCompleteness from 'plugins/PartnerCompleteness';
 import Distribution from 'plugins/Distribution';
 import Completeness from 'plugins/Completeness';
-import FindSimilarNeurons from 'plugins/FindSimilarNeurons.react';
+import FindSimilarNeurons from 'plugins/FindSimilarNeurons';
 
 // view plugins
 import SimpleTable from 'views/SimpleTable';

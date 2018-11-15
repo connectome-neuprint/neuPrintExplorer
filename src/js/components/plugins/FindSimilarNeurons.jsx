@@ -5,7 +5,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Select from 'react-select';
 import { withRouter } from 'react-router';
 import randomColor from 'randomcolor';
 
@@ -18,11 +17,12 @@ import TextField from '@material-ui/core/TextField';
 
 import { submit, pluginResponseError } from 'actions/plugins';
 import { setUrlQS } from '../../actions/app';
-import RoiHeatMap, { ColorLegend } from '../../components/visualization/MiniRoiHeatMap.react';
-import RoiBarGraph from '../../components/visualization/MiniRoiBarGraph.react';
+import RoiHeatMap, { ColorLegend } from '../visualization/MiniRoiHeatMap.react';
+import RoiBarGraph from '../visualization/MiniRoiBarGraph.react';
 import NeuronFilter from '../NeuronFilter.react';
 import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 import { getQueryString } from 'helpers/queryString';
+import * as math from 'mathjs';
 
 const styles = theme => ({
   textField: {
@@ -81,14 +81,14 @@ class FindSimilarNeurons extends React.Component {
         actions.pluginResponseError(parameters.emptyDataErrorMessage);
       }
       let queriedBodyIdIndex;
+      let roiList = apiResponse.data[0][6];
+      roiList.push('none');
       let data = apiResponse.data.map((row, index) => {
         const bodyId = row[0];
         const name = row[1];
         const status = row[2];
         const totalPre = row[3];
         const totalPost = row[4];
-        const roiList = row[6];
-        roiList.push('none');
         const roiInfo = row[5];
 
         // get index of queried body id so can move this data to top of table
@@ -113,14 +113,15 @@ class FindSimilarNeurons extends React.Component {
           // number of synapses assigned to an roi
           let postInSuperRois = 0;
           let preInSuperRois = 0;
+          // generate vector for sorting by similarity; fill with zeros
+          const vector = Array(roiList.length * 2).fill(0);
           Object.keys(roiInfoObject).forEach(roi => {
-            if (
-              roiList.find(element => {
-                return element === roi;
-              })
-            ) {
+            const roiIndex = roiList.indexOf(roi);
+            if (roiIndex !== -1) {
               preInSuperRois += roiInfoObject[roi]['pre'];
               postInSuperRois += roiInfoObject[roi]['post'];
+              vector[roiIndex] = roiInfoObject[roi]['pre'] / totalPre;
+              vector[roiIndex + roiList.length] = roiInfoObject[roi]['post'] / totalPost;
             }
           });
 
@@ -131,16 +132,6 @@ class FindSimilarNeurons extends React.Component {
             post: totalPost - postInSuperRois
           };
 
-          const heatMap = (
-            <RoiHeatMap
-              roiList={roiList}
-              roiInfoObject={roiInfoObject}
-              preTotal={totalPre}
-              postTotal={totalPost}
-            />
-          );
-          converted[5] = heatMap;
-
           const barGraph = (
             <RoiBarGraph
               roiList={roiList}
@@ -149,34 +140,98 @@ class FindSimilarNeurons extends React.Component {
               postTotal={totalPost}
             />
           );
-          converted[6] = barGraph;
+          converted[5] = barGraph;
+
+          const heatMap = (
+            <RoiHeatMap
+              roiList={roiList}
+              roiInfoObject={roiInfoObject}
+              preTotal={totalPre}
+              postTotal={totalPost}
+            />
+          );
+          converted[6] = heatMap;
+
+          //store vector
+          converted[7] = vector;
         }
 
         return converted;
       });
-      // put queried body id at top
-      if (queriedBodyIdIndex) {
-        data = [data[queriedBodyIdIndex]].concat(
-          data.slice(0, queriedBodyIdIndex),
-          data.slice(queriedBodyIdIndex + 1)
-        );
-      }
 
-      // data.sort((a,b) => {
-      //   if (a[1])
-      // });
-      return {
-        columns: [
+      let columns;
+      if (queriedBodyIdIndex) {
+        // sort by vector and remove vector
+        const queriedBodyVector = data[queriedBodyIdIndex][7];
+        data.forEach(row => {
+          const rawVector = row[7];
+          row[7] = math.round(
+            math.sum(math.abs(math.subtract(queriedBodyVector, rawVector))) / 2,
+            3
+          );
+          row[8] = math.round(
+            math.sum(
+              math.abs(
+                math.subtract(
+                  queriedBodyVector.slice(roiList.length),
+                  rawVector.slice(roiList.length)
+                )
+              )
+            ),
+            3
+          );
+          row[9] = math.round(
+            math.sum(
+              math.abs(
+                math.subtract(
+                  queriedBodyVector.slice(0, roiList.length),
+                  rawVector.slice(0, roiList.length)
+                )
+              )
+            ),
+            3
+          );
+        });
+        columns = [
           'bodyId',
           'name',
           'status',
           'pre',
           'post',
+          'roi breakdown (mouseover for details)',
           <div>
             roi heatmap (mouseover for details) <ColorLegend />
           </div>,
-          'roi breakdown (mouseover for details)'
-        ],
+          'total similiarity score',
+          'input similiarity score',
+          'output similiarity score'
+        ];
+      } else {
+        data.forEach(row => {
+          delete row[7];
+        });
+        columns = [
+          'bodyId',
+          'name',
+          'status',
+          'pre',
+          'post',
+          'roi breakdown (mouseover for details)',
+          <div>
+            roi heatmap (mouseover for details) <ColorLegend />
+          </div>
+        ];
+      }
+
+      // sort by total similarity score; queried body id will be 0 so should be at top
+      data.sort((a, b) => {
+        if (a[7] < b[7]) return -1;
+        if (a[7] > b[7]) return 1;
+        return 0;
+      });
+
+      return {
+        columns: columns,
         data,
         debug: apiResponse.debug
       };
@@ -364,7 +419,7 @@ class FindSimilarNeurons extends React.Component {
         />
         <NeuronFilter callback={this.loadNeuronFilters} datasetstr={this.props.datasetstr} />
         <Button
-          variant="raised"
+          variant="contained"
           color="primary"
           onClick={this.processRequest}
           disabled={!(getGroupsBoolean || this.state.qsParams.bodyId.length > 0)}
@@ -377,18 +432,19 @@ class FindSimilarNeurons extends React.Component {
 }
 
 FindSimilarNeurons.propTypes = {
-  callback: PropTypes.func.isRequired,
+  actions: PropTypes.object.isRequired,
+  availableROIs: PropTypes.array.isRequired,
   dataSet: PropTypes.string.isRequired,
-  setURLQs: PropTypes.func.isRequired,
   urlQueryString: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
-  actions: PropTypes.func.isRequired
+  isQuerying: PropTypes.bool.isRequired
 };
 
 const FindSimilarNeuronsState = function(state) {
   return {
-    urlQueryString: state.app.get('urlQueryString')
+    urlQueryString: state.app.get('urlQueryString'),
+    isQuerying: state.query.isQuerying
   };
 };
 
