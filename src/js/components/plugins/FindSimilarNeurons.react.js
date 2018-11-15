@@ -74,12 +74,14 @@ class FindSimilarNeurons extends React.Component {
   // functions for processing results
   processResults = (query, apiResponse) => {
     const { actions } = this.props;
+    const { parameters } = query;
 
     if (!query.parameters.getGroupsBoolean) {
       if (!(apiResponse.data.length > 0)) {
-        actions.pluginResponseError('Body ID does not exist in the dataset.');
+        actions.pluginResponseError(parameters.emptyDataErrorMessage);
       }
-      const data = apiResponse.data.map(row => {
+      let queriedBodyIdIndex;
+      let data = apiResponse.data.map((row, index) => {
         const bodyId = row[0];
         const name = row[1];
         const status = row[2];
@@ -88,6 +90,11 @@ class FindSimilarNeurons extends React.Component {
         const roiList = row[6];
         roiList.push('none');
         const roiInfo = row[5];
+
+        // get index of queried body id so can move this data to top of table
+        if (bodyId === parseInt(parameters.bodyId)) {
+          queriedBodyIdIndex = index;
+        }
 
         const converted = [
           bodyId,
@@ -147,6 +154,17 @@ class FindSimilarNeurons extends React.Component {
 
         return converted;
       });
+      // put queried body id at top
+      if (queriedBodyIdIndex) {
+        data = [data[queriedBodyIdIndex]].concat(
+          data.slice(0, queriedBodyIdIndex),
+          data.slice(queriedBodyIdIndex + 1)
+        );
+      }
+
+      // data.sort((a,b) => {
+      //   if (a[1])
+      // });
       return {
         columns: [
           'bodyId',
@@ -164,28 +182,33 @@ class FindSimilarNeurons extends React.Component {
       };
     } else {
       // for displaying cluster names
-
       const data = apiResponse.data.map(row => {
         const clusterName = row[0];
 
         const clusterQueryString =
-          'MATCH (n:`' +
-          query.parameters.dataset +
-          '-Neuron`{clusterName:"' +
+          "MATCH (m:Meta{dataset:'" +
+          parameters.dataset +
+          "'}) WITH m.superLevelRois AS rois MATCH (n:`" +
+          parameters.dataset +
+          "-Neuron`{clusterName:'" +
           clusterName +
-          '"}) RETURN n.bodyId';
+          "'}) RETURN n.bodyId, n.name, n.status, n.pre, n.post, n.roiInfo, rois";
 
-        query.parameters.clusterName = clusterName;
+        parameters.clusterName = clusterName;
+        parameters.getGroupsBoolean = false;
+        parameters.emptyDataErrorMessage = 'Cluster name does not exist in the dataset.';
 
-        const query = {
-          dataSet: query.parameters.dataset,
+        const title = 'Neurons with classification ' + clusterName;
+
+        const clusterQuery = {
+          dataSet: parameters.dataset,
           cypherQuery: clusterQueryString,
           visType: 'SimpleTable',
           plugin: pluginName,
-          parameters: query.parameters,
-          title: '',
+          parameters: parameters,
+          title: title,
           menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
-          processResults: this.processClusterBodyIds
+          processResults: this.processResults
         };
 
         const converted = [
@@ -199,50 +222,11 @@ class FindSimilarNeurons extends React.Component {
       });
 
       return {
-        columns: ['cluster name'],
+        columns: ['cluster name (click to explore group)'],
         data,
         debug: apiResponse.debug
       };
     }
-
-    // let index = 0;
-    // const tables = [];
-
-    // const headerdata = [new SimpleCellWrapper(index++, 'clusterName')];
-
-    // const data = [];
-    // const table = {
-    //   header: headerdata,
-    //   body: data,
-    //   name: 'Cluster names for neurons.',
-    //   sortIndices: new Set([0, 1])
-    // };
-
-    // results.records.forEach(function(record) {
-    //   const clusterName = record.get('n.clusterName');
-    //   const clusterQuery =
-    //     'MATCH (n:`' + state.dataset + '-Neuron`{clusterName:"' + clusterName + '"}) RETURN n.bodyId';
-
-    //   const neoCluster = {
-    //     queryStr: clusterQuery,
-    //     callback: processCluster,
-    //     isChild: true,
-    //     state: {
-    //       clusterName: clusterName
-    //     }
-    //   };
-
-    //   data.push([
-    //     new SimpleCellWrapper(
-    //       index++,
-    //       <ClickableQuery neoQueryObj={neoCluster}>{clusterName}</ClickableQuery>
-    //     )
-    //   ]);
-    // });
-
-    // tables.push(table);
-    // return tables;
-    // code to deal with groups here
   };
 
   // processing intital request
@@ -253,9 +237,15 @@ class FindSimilarNeurons extends React.Component {
 
     const parameters = {
       dataset: dataSet,
-      bodyId: bodyId,
       getGroupsBoolean: getGroupsBoolean
     };
+
+    if (!getGroupsBoolean) {
+      parameters.bodyId = bodyId;
+      parameters.emptyDataErrorMessage = 'Body ID not found in the dataset.';
+    } else {
+      parameters.emptyDataErrorMessage = 'No cluster names found in the dataset.';
+    }
 
     const similarQuery =
       "MATCH (m:Meta{dataset:'" +
@@ -272,7 +262,10 @@ class FindSimilarNeurons extends React.Component {
 
     const queryStr = getGroupsBoolean ? groupsQuery : similarQuery;
 
-    const title = '';
+    // TODO: change title based on results
+    const title = getGroupsBoolean
+      ? 'Cluster names for ' + dataSet + ' dataset'
+      : 'Neurons similar to ' + bodyId;
 
     const query = {
       dataSet,
