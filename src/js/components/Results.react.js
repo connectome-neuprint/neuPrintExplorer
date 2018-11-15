@@ -271,7 +271,7 @@ class Results extends React.Component {
         onKeyPress={this.triggerKeyboard}
         className={classes.root}
       >
-        {(resArray.length === 0 && results.size === 0) && (
+        {(!isQuerying && resArray.length === 0 && results.size === 0) && (
           <div className={classes.empty}>
             <Typography variant="h6">No Search Results</Typography>
             <Typography>
