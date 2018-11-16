@@ -2,6 +2,8 @@
  * Find similar neurons in a dataset.
 */
 
+// TODO: create larger groups by merging similar groups
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -41,7 +43,6 @@ const styles = theme => ({
 });
 
 const pluginName = 'FindSimilarNeurons';
-
 class FindSimilarNeurons extends React.Component {
   constructor(props) {
     super(props);
@@ -78,11 +79,20 @@ class FindSimilarNeurons extends React.Component {
 
     if (!query.parameters.getGroupsBoolean) {
       if (!(apiResponse.data.length > 0)) {
+        // if no data produce appropriate error
         actions.pluginResponseError(parameters.emptyDataErrorMessage);
       }
+      // store the index of the queried body id
       let queriedBodyIdIndex;
+
+      // store super-level rois
       let roiList = apiResponse.data[0][6];
       roiList.push('none');
+      const numberOfRois = roiList.length;
+
+      // store sub-level rois
+      let subLevelRois = new Set();
+
       let data = apiResponse.data.map((row, index) => {
         const bodyId = row[0];
         const name = row[1];
@@ -114,14 +124,16 @@ class FindSimilarNeurons extends React.Component {
           let postInSuperRois = 0;
           let preInSuperRois = 0;
           // generate vector for sorting by similarity; fill with zeros
-          const vector = Array(roiList.length * 2).fill(0);
+          const vector = Array(numberOfRois * 2).fill(0);
           Object.keys(roiInfoObject).forEach(roi => {
             const roiIndex = roiList.indexOf(roi);
             if (roiIndex !== -1) {
               preInSuperRois += roiInfoObject[roi]['pre'];
               postInSuperRois += roiInfoObject[roi]['post'];
-              vector[roiIndex] = roiInfoObject[roi]['pre'] / totalPre;
-              vector[roiIndex + roiList.length] = roiInfoObject[roi]['post'] / totalPost;
+              vector[roiIndex] = (roiInfoObject[roi]['pre'] * 1.0) / totalPre;
+              vector[roiIndex + numberOfRois] = (roiInfoObject[roi]['post'] * 1.0) / totalPost;
+            } else {
+              subLevelRois.add(roi);
             }
           });
 
@@ -131,6 +143,9 @@ class FindSimilarNeurons extends React.Component {
             pre: totalPre - preInSuperRois,
             post: totalPost - postInSuperRois
           };
+          const noneIndex = roiList.indexOf('none');
+          vector[noneIndex] = (roiInfoObject['none']['pre'] * 1.0) / totalPre;
+          vector[noneIndex + numberOfRois] = (roiInfoObject['none']['post'] * 1.0) / totalPost;
 
           const barGraph = (
             <RoiBarGraph
@@ -159,38 +174,81 @@ class FindSimilarNeurons extends React.Component {
         return converted;
       });
 
+      // produce sub-level roi information if present
+      if (subLevelRois.size > 0) {
+        apiResponse.data.forEach((row, index) => {
+          const roiInfo = row[5];
+          const roiInfoObject = JSON.parse(roiInfo);
+          const totalPre = row[3];
+          const totalPost = row[4];
+          const subLevelRoiList = Array.from(subLevelRois);
+
+          // sub-level roi vector
+          const subLevelRoiVector = Array(subLevelRoiList.length * 2).fill(0);
+          Object.keys(roiInfoObject).forEach(roi => {
+            const roiIndex = subLevelRoiList.indexOf(roi);
+            if (roiIndex !== -1) {
+              subLevelRoiVector[roiIndex] = (roiInfoObject[roi]['pre'] * 1.0) / totalPre;
+              subLevelRoiVector[roiIndex + subLevelRoiList.length] =
+                (roiInfoObject[roi]['post'] * 1.0) / totalPost;
+            }
+          });
+          data[index][11] = subLevelRoiVector;
+
+          // sub-level ROI heatmap
+          data[index][10] = (
+            <RoiHeatMap
+              roiList={subLevelRoiList}
+              roiInfoObject={roiInfoObject}
+              preTotal={totalPre}
+              postTotal={totalPost}
+            />
+          );
+        });
+      }
+
       let columns;
       if (queriedBodyIdIndex) {
-        // sort by vector and remove vector
+        // sort by similarity
         const queriedBodyVector = data[queriedBodyIdIndex][7];
+        const queriedBodySubLevelVector = data[queriedBodyIdIndex][11];
         data.forEach(row => {
           const rawVector = row[7];
-          row[7] = math.round(
-            math.sum(math.abs(math.subtract(queriedBodyVector, rawVector))) / 2,
-            3
-          );
+          // input score (pre)
           row[8] = math.round(
             math.sum(
               math.abs(
-                math.subtract(
-                  queriedBodyVector.slice(roiList.length),
-                  rawVector.slice(roiList.length)
-                )
+                math.subtract(queriedBodyVector.slice(numberOfRois), rawVector.slice(numberOfRois))
               )
-            ),
-            3
+            ) / 2.0,
+            4
           );
+          // output score (post)
           row[9] = math.round(
             math.sum(
               math.abs(
                 math.subtract(
-                  queriedBodyVector.slice(0, roiList.length),
-                  rawVector.slice(0, roiList.length)
+                  queriedBodyVector.slice(0, numberOfRois),
+                  rawVector.slice(0, numberOfRois)
                 )
               )
-            ),
-            3
+            ) / 2.0,
+            4
           );
+          // total score
+          row[7] = math.round(
+            math.sum(math.abs(math.subtract(queriedBodyVector, rawVector))) / 4.0,
+            4
+          );
+          // sub-level rois
+          if (subLevelRois.size > 0) {
+            row[11] = math.round(
+              math.sum(math.abs(math.subtract(queriedBodySubLevelVector, row[11]))) / 4.0,
+              4
+            );
+            //incorporate sub-level rois into total score
+            row[7] = (row[7] + row[11]) / 2.0;
+          }
         });
         columns = [
           'bodyId',
@@ -206,6 +264,11 @@ class FindSimilarNeurons extends React.Component {
           'input similiarity score',
           'output similiarity score'
         ];
+        // add sub-level roi column headers if needed
+        if (subLevelRois.size > 0) {
+          columns[10] = 'sub-level rois';
+          columns[11] = 'sub-level roi similarity score';
+        }
       } else {
         data.forEach(row => {
           delete row[7];
