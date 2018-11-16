@@ -26,6 +26,9 @@ const styles = theme => ({
   select: {
     fontFamily: theme.typography.fontFamily,
     margin: '0.5em 0 1em 0'
+  },
+  clickable: {
+    cursor: 'pointer'
   }
 });
 
@@ -56,6 +59,12 @@ class FindNeurons extends React.Component {
     return 'Find neurons that have inputs or outputs in ROIs';
   }
 
+  handleShowSkeleton = (id, dataSet) => event => {
+    const { actions } = this.props;
+    actions.skeletonAddandOpen(id, dataSet);
+    actions.neuroglancerAddandOpen(id, dataSet);
+  };
+
   processSimpleConnections = (dataSet, apiResponse) => {
     const { actions } = this.props;
     const data = apiResponse.data.map(row => {
@@ -63,8 +72,8 @@ class FindNeurons extends React.Component {
         {
           value: row[2],
           action: () => {
-            actions.skeletonAddandOpen(row[2], dataSet)
-            actions.neuroglancerAddandOpen(row[2], dataSet)
+            actions.skeletonAddandOpen(row[2], dataSet);
+            actions.neuroglancerAddandOpen(row[2], dataSet);
           }
         },
         row[1],
@@ -83,31 +92,31 @@ class FindNeurons extends React.Component {
   // Neo4j server and place them in the correct format for the
   // visualization plugin.
   processResults = (query, apiResponse) => {
-    const { actions } = this.props;
+    const { actions, classes } = this.props;
 
     const data = apiResponse.data.map(row => {
       const hasSkeleton = row[8];
       const converted = [
-        {
-          value: hasSkeleton ? (
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'row'
-              }}
+        hasSkeleton ? (
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row'
+            }}
+          >
+            {row[0]}
+            <div style={{ margin: '3px' }} />
+            <Icon
+              className={classes.clickable}
+              onClick={this.handleShowSkeleton(row[0], query.dataSet)}
+              fontSize="inherit"
             >
-              {row[0]}
-              <div style={{ margin: '3px' }} />
-              <Icon fontSize="inherit">visibility</Icon>
-            </div>
-          ) : (
-            row[0]
-          ),
-          action: () => {
-            actions.skeletonAddandOpen(row[0], query.dataSet)
-            actions.neuroglancerAddandOpen(row[0], query.dataSet)
-          }
-        },
+              visibility
+            </Icon>
+          </div>
+        ) : (
+          row[0]
+        ),
         row[1],
         row[2],
         '-', // empty unless roiInfoObject present
@@ -410,7 +419,7 @@ var FindNeuronsDispatch = dispatch => ({
       dispatch(skeletonAddandOpen(id, dataSet));
     },
     neuroglancerAddandOpen: (id, dataSet) => {
-      dispatch(neuroglancerAddandOpen (id, dataSet));
+      dispatch(neuroglancerAddandOpen(id, dataSet));
     },
     setURLQs: function(querystring) {
       dispatch(setUrlQS(querystring));
