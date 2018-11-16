@@ -83,7 +83,7 @@ class FindSimilarNeurons extends React.Component {
         actions.pluginResponseError(parameters.emptyDataErrorMessage);
       }
       // store the index of the queried body id
-      let queriedBodyIdIndex;
+      let queriedBodyIdIndex = 'none';
 
       // store super-level rois
       let roiList = apiResponse.data[0][6];
@@ -208,7 +208,7 @@ class FindSimilarNeurons extends React.Component {
       }
 
       let columns;
-      if (queriedBodyIdIndex) {
+      if (queriedBodyIdIndex !== 'none') {
         // sort by similarity
         const queriedBodyVector = data[queriedBodyIdIndex][7];
         const queriedBodySubLevelVector = data[queriedBodyIdIndex][11];
