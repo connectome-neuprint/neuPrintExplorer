@@ -38,7 +38,7 @@ const styles = theme => ({
     zIndex: 2,
     position: 'absolute',
     top: '1em',
-    right: '1em',
+    right: '1em'
   }
 });
 
@@ -56,9 +56,12 @@ class Skeleton extends React.Component {
     this.createShark(swc);
   }
 
-  componentDidUpdate() {
-    let swc = this.fetchSWC(this.props.neurons);
-    this.createShark(swc);
+  componentDidUpdate(prevProps) {
+    if (prevProps.neurons !== this.props.neurons) {
+      let swc = this.fetchSWC(this.props.neurons);
+      this.createShark(swc);
+    }
+    return;
   }
 
   handleDelete = id => () => {
@@ -181,13 +184,13 @@ class Skeleton extends React.Component {
 
 Skeleton.propTypes = {
   display: PropTypes.bool.isRequired,
-  actions: PropTypes.object.isRequired,
+  actions: PropTypes.object.isRequired
 };
 
 var SkeletonState = function(state) {
   return {
     neurons: state.skeleton.get('neurons'),
-    display: state.skeleton.get('display'),
+    display: state.skeleton.get('display')
   };
 };
 
@@ -198,7 +201,7 @@ var SkeletonDispatch = dispatch => ({
     },
     skeletonRemove: id => {
       dispatch(skeletonRemove(id));
-    },
+    }
   }
 });
 
