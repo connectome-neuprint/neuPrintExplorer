@@ -15,12 +15,20 @@ function desc(a, b, orderBy) {
   let bVal = b[orderBy];
 
   // need to check if the cell has a value / action object
-  if (aVal && typeof aVal === 'object' && 'value' in aVal) {
-    aVal = aVal.value;
+  if (aVal && typeof aVal === 'object') {
+    if ('sortBy' in aVal) {
+      aVal = aVal.sortBy;
+    } else if ('value' in aVal) {
+      aVal = aVal.value;
+    }
   }
 
-  if (bVal && typeof bVal === 'object' && 'value' in bVal) {
-    bVal = bVal.value;
+  if (bVal && typeof bVal === 'object') {
+    if ('sortBy' in bVal) {
+      bVal = bVal.sortBy;
+    } else if ('value' in bVal) {
+      bVal = bVal.value;
+    }
   }
 
   // need to check for null values

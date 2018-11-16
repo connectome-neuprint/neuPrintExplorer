@@ -97,26 +97,29 @@ class FindNeurons extends React.Component {
     const data = apiResponse.data.map(row => {
       const hasSkeleton = row[8];
       const converted = [
-        hasSkeleton ? (
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row'
-            }}
-          >
-            {row[0]}
-            <div style={{ margin: '3px' }} />
-            <Icon
-              className={classes.clickable}
-              onClick={this.handleShowSkeleton(row[0], query.dataSet)}
-              fontSize="inherit"
+        {
+          value: hasSkeleton ? (
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row'
+              }}
             >
-              visibility
-            </Icon>
-          </div>
-        ) : (
-          row[0]
-        ),
+              {row[0]}
+              <div style={{ margin: '3px' }} />
+              <Icon
+                className={classes.clickable}
+                onClick={this.handleShowSkeleton(row[0], query.dataSet)}
+                fontSize="inherit"
+              >
+                visibility
+              </Icon>
+            </div>
+          ) : (
+            row[0]
+          ),
+          sortBy: row[0]
+        },
         row[1],
         row[2],
         '-', // empty unless roiInfoObject present
