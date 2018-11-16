@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import Chip from '@material-ui/core/Chip';
-import { skeletonNeuronToggle, skeletonRemove } from '../actions/skeleton';
+import { skeletonNeuronToggle, skeletonRemove } from 'actions/skeleton';
 
 var GlbShark = null;
 
@@ -33,6 +33,12 @@ const styles = theme => ({
   },
   chip: {
     margin: theme.spacing.unit / 2
+  },
+  minimize: {
+    zIndex: 2,
+    position: 'absolute',
+    top: '1em',
+    right: '1em'
   }
 });
 
@@ -50,9 +56,12 @@ class Skeleton extends React.Component {
     this.createShark(swc);
   }
 
-  componentDidUpdate() {
-    let swc = this.fetchSWC(this.props.neurons);
-    this.createShark(swc);
+  componentDidUpdate(prevProps) {
+    if (prevProps.neurons !== this.props.neurons) {
+      let swc = this.fetchSWC(this.props.neurons);
+      this.createShark(swc);
+    }
+    return;
   }
 
   handleDelete = id => () => {

@@ -7,6 +7,7 @@ const state = Immutable.Map({
     reconIndex: 2,
     urlQueryString: "existingstring",
     appDB: "existingDB",
+    fullscreen: false,
     activePlugins: Immutable.Map({
         existingplugin : Immutable.Map({
             data: "data",
@@ -30,6 +31,7 @@ describe("app Reducer", () => {
                 reconIndex: 7,
                 urlQueryString: window.location.search.substring(1),
                 appDB: "",
+                fullscreen: false,
                 activePlugins: Immutable.Map({}),
                 viewPlugins: Immutable.Map({})
             }));
@@ -39,6 +41,7 @@ describe("app Reducer", () => {
                 reconIndex: 7,
                 urlQueryString: "existingstring",
                 appDB: "existingDB",
+                fullscreen: false,
                 activePlugins: Immutable.Map({
                     "existingplugin": Immutable.Map({
                         data: "data",
@@ -60,6 +63,7 @@ describe("app Reducer", () => {
                 reconIndex: 9999999,
                 urlQueryString: "teststring",
                 appDB: "",
+                fullscreen: false,
                 activePlugins: Immutable.Map({}),
                 viewPlugins: Immutable.Map({})
             }));
@@ -69,6 +73,7 @@ describe("app Reducer", () => {
                 reconIndex: 2,
                 urlQueryString: "teststring",
                 appDB: "existingDB",
+                fullscreen: false,
                 activePlugins: Immutable.Map({
                     "existingplugin": Immutable.Map({
                         data: "data",
@@ -98,6 +103,7 @@ describe("app Reducer", () => {
                 reconIndex: 9999999,
                 urlQueryString: window.location.search.substring(1),
                 appDB: "",
+                fullscreen: false,
                 activePlugins: Immutable.Map({
                     a: newDataElement
                 }),
@@ -109,6 +115,7 @@ describe("app Reducer", () => {
                 reconIndex: 2,
                 urlQueryString: "existingstring",
                 appDB: "existingDB",
+                fullscreen: false,
                 activePlugins: Immutable.Map({
                     existingplugin: Immutable.Map({
                         data: "data",
@@ -133,6 +140,7 @@ describe("app Reducer", () => {
                 reconIndex: 2,
                 urlQueryString: "existingstring",
                 appDB: "existingDB",
+                fullscreen: false,
                 activePlugins:Immutable.Map({
                 })
             }))

@@ -76,7 +76,7 @@ Autapses.propTypes = {
   datasetstr: PropTypes.string.isRequired
 };
 
-var AutapsesState = function(state) {
+const AutapsesState = function(state) {
   return {
     isQuerying: state.query.isQuerying
   };
@@ -84,7 +84,7 @@ var AutapsesState = function(state) {
 
 // The submit action which will accept your query, execute it and
 // store the results for view plugins to display.
-var AutapsesDispatch = dispatch => ({
+const AutapsesDispatch = dispatch => ({
   actions: {
     submit: query => {
       dispatch(submit(query));

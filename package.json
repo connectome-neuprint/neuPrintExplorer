@@ -1,6 +1,6 @@
 {
   "name": "neuPrintExplorer",
-  "version": "1.0.1",
+  "version": "1.2.2",
   "description": "Application to query connectome results stored in neo4j",
   "main": "./src/js/app.js",
   "repository": {
@@ -25,8 +25,11 @@
     "css-loader": "^1.0.0",
     "eslint": "^4.18.2",
     "eslint-loader": "^2.1.1",
+    "eslint-plugin-flowtype": "^2.50.3",
+    "eslint-plugin-jsx-a11y": "^6.1.1",
     "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-react": "^7.11.1",
+    "eslint-config-react-app": "^3.0.3",
     "flightplan": "^0.6.19",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^23.6.0",
@@ -41,16 +44,14 @@
     "webpack-merge": "^4.1.4"
   },
   "dependencies": {
-    "@janelia-flyem/react-neuroglancer": "^1.0.1",
+    "@janelia-flyem/react-neuroglancer": "^1.1.0",
     "@material-ui/core": "^3.2.0",
     "@material-ui/icons": "^3.0.1",
     "colormap": "^2.3.0",
     "deepmerge": "^2.2.1",
-    "eslint-config-react-app": "^3.0.3",
-    "eslint-plugin-flowtype": "^2.50.3",
-    "eslint-plugin-jsx-a11y": "^6.1.1",
     "immutable": "^3.8.2",
     "jquery": "^3.3.1",
+    "mathjs": "^5.2.3",
     "prettier": "^1.14.3",
     "qs": "^6.5.2",
     "randomcolor": "^0.5.3",

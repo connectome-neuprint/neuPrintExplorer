@@ -15,14 +15,31 @@ function desc(a, b, orderBy) {
   let bVal = b[orderBy];
 
   // need to check if the cell has a value / action object
-  if (aVal && typeof aVal === 'object' && 'value' in aVal) {
-    aVal = aVal.value;
+  if (aVal && typeof aVal === 'object') {
+    if ('sortBy' in aVal) {
+      aVal = aVal.sortBy;
+    } else if ('value' in aVal) {
+      aVal = aVal.value;
+    }
   }
 
-  if (bVal && typeof bVal === 'object' && 'value' in bVal) {
-    bVal = bVal.value;
+  if (bVal && typeof bVal === 'object') {
+    if ('sortBy' in bVal) {
+      bVal = bVal.sortBy;
+    } else if ('value' in bVal) {
+      bVal = bVal.value;
+    }
   }
 
+  // need to check for null values
+  if (bVal === null) {
+    return 1;
+  }
+  if (aVal === null) {
+    return -1;
+  }
+
+  // now finish the sort
   if (bVal < aVal) {
     return -1;
   }
@@ -61,14 +78,26 @@ const styles = theme => ({
 });
 
 class SimpleTable extends React.Component {
-  state = {
-    order: 'asc',
-    orderBy: '',
-    selected: [],
-    data: [],
-    page: 0,
-    rowsPerPage: 5
-  };
+  constructor(props) {
+    super(props);
+    let rowsPerPage = 5;
+    if ('paginate' in props.query.result) {
+      if (props.query.result.paginate > 0) {
+        rowsPerPage = props.query.result.paginate;
+      } else {
+        rowsPerPage = props.query.result.data.length;
+      }
+    }
+
+    this.state = {
+      order: 'asc',
+      orderBy: '',
+      selected: [],
+      data: [],
+      page: 0,
+      rowsPerPage: rowsPerPage
+    };
+  }
 
   handleChangePage = (event, page) => {
     this.setState({ page });
@@ -99,6 +128,16 @@ class SimpleTable extends React.Component {
     const emptyRows =
       rowsPerPage - Math.min(rowsPerPage, query.result.data.length - page * rowsPerPage);
 
+    let paginate = true;
+    if ('paginate' in query.result && query.result.paginate === 0) {
+      paginate = false;
+    }
+
+    let highlightIndex = {};
+    if ('highlightIndex' in query.result) {
+      highlightIndex = query.result.highlightIndex;
+    }
+
     return (
       <div className={classes.root}>
         <div className={classes.scroll}>
@@ -106,17 +145,21 @@ class SimpleTable extends React.Component {
             <TableHead>
               <TableRow>
                 {query.result.columns.map((header, index) => {
-                  return (
-                    <TableCell key={index} sortDirection={orderBy === index ? order : false}>
-                      <TableSortLabel
-                        active={orderBy === index}
-                        direction={order}
-                        onClick={this.handleRequestSort(index)}
-                      >
-                        {header}
-                      </TableSortLabel>
-                    </TableCell>
-                  );
+                  if ('disableSort' in query.result && query.result.disableSort.has(index)) {
+                    return <TableCell key={index}>{header}</TableCell>;
+                  } else {
+                    return (
+                      <TableCell key={index} sortDirection={orderBy === index ? order : false}>
+                        <TableSortLabel
+                          active={orderBy === index}
+                          direction={order}
+                          onClick={this.handleRequestSort(index)}
+                        >
+                          {header}
+                        </TableSortLabel>
+                      </TableCell>
+                    );
+                  }
                 })}
               </TableRow>
             </TableHead>
@@ -124,8 +167,13 @@ class SimpleTable extends React.Component {
               {stableSort(query.result.data, getSorting(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
+                  let rowStyle = {};
+                  let currspot = page * rowsPerPage + index;
+                  if (currspot.toString() in highlightIndex) {
+                    rowStyle = { backgroundColor: highlightIndex[currspot.toString()] };
+                  }
                   return (
-                    <TableRow hover key={index}>
+                    <TableRow hover key={index} style={rowStyle}>
                       {row.map((cell, i) => {
                         if (cell && typeof cell === 'object' && 'value' in cell) {
                           if ('action' in cell) {
@@ -148,21 +196,23 @@ class SimpleTable extends React.Component {
                 })}
               {emptyRows > 0 && (
                 <TableRow style={{ height: 48 * emptyRows }}>
-                  <TableCell colSpan={6} />
+                  <TableCell key='empty' colSpan={6} />
                 </TableRow>
               )}
             </TableBody>
           </Table>
         </div>
-        <TablePagination
-          component="div"
-          count={query.result.data.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onChangePage={this.handleChangePage}
-          onChangeRowsPerPage={this.handleChangeRowsPerPage}
-          ActionsComponent={TablePaginationActions}
-        />
+        {paginate ? (
+          <TablePagination
+            component="div"
+            count={query.result.data.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onChangePage={this.handleChangePage}
+            onChangeRowsPerPage={this.handleChangeRowsPerPage}
+            ActionsComponent={TablePaginationActions}
+          />
+        ) : null}
       </div>
     );
   }

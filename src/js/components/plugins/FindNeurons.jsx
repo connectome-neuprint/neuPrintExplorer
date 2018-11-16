@@ -10,10 +10,12 @@ import Button from '@material-ui/core/Button';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
+import Icon from '@material-ui/core/Icon';
 
 import { submit } from 'actions/plugins';
 import { setUrlQS } from 'actions/app';
 import { skeletonAddandOpen } from 'actions/skeleton';
+import { neuroglancerAddandOpen } from 'actions/neuroglancer';
 import RoiHeatMap, { ColorLegend } from '../../components/visualization/MiniRoiHeatMap.react';
 import RoiBarGraph from '../../components/visualization/MiniRoiBarGraph.react';
 import NeuronHelp from '../NeuronHelp.react';
@@ -24,6 +26,9 @@ const styles = theme => ({
   select: {
     fontFamily: theme.typography.fontFamily,
     margin: '0.5em 0 1em 0'
+  },
+  clickable: {
+    cursor: 'pointer'
   }
 });
 
@@ -54,13 +59,22 @@ class FindNeurons extends React.Component {
     return 'Find neurons that have inputs or outputs in ROIs';
   }
 
+  handleShowSkeleton = (id, dataSet) => event => {
+    const { actions } = this.props;
+    actions.skeletonAddandOpen(id, dataSet);
+    actions.neuroglancerAddandOpen(id, dataSet);
+  };
+
   processSimpleConnections = (dataSet, apiResponse) => {
     const { actions } = this.props;
     const data = apiResponse.data.map(row => {
       return [
         {
           value: row[2],
-          action: () => actions.skeletonAddandOpen(row[2], dataSet)
+          action: () => {
+            actions.skeletonAddandOpen(row[2], dataSet);
+            actions.neuroglancerAddandOpen(row[2], dataSet);
+          }
         },
         row[1],
         row[3]
@@ -78,13 +92,33 @@ class FindNeurons extends React.Component {
   // Neo4j server and place them in the correct format for the
   // visualization plugin.
   processResults = (query, apiResponse) => {
-    const { actions } = this.props;
+    const { actions, classes } = this.props;
 
     const data = apiResponse.data.map(row => {
+      const hasSkeleton = row[8];
       const converted = [
         {
-          value: row[0],
-          action: () => actions.skeletonAddandOpen(row[0], query.dataSet)
+          value: hasSkeleton ? (
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row'
+              }}
+            >
+              {row[0]}
+              <div style={{ margin: '3px' }} />
+              <Icon
+                className={classes.clickable}
+                onClick={this.handleShowSkeleton(row[0], query.dataSet)}
+                fontSize="inherit"
+              >
+                visibility
+              </Icon>
+            </div>
+          ) : (
+            row[0]
+          ),
+          sortBy: row[0]
         },
         row[1],
         row[2],
@@ -386,6 +420,9 @@ var FindNeuronsDispatch = dispatch => ({
     },
     skeletonAddandOpen: (id, dataSet) => {
       dispatch(skeletonAddandOpen(id, dataSet));
+    },
+    neuroglancerAddandOpen: (id, dataSet) => {
+      dispatch(neuroglancerAddandOpen(id, dataSet));
     },
     setURLQs: function(querystring) {
       dispatch(setUrlQS(querystring));

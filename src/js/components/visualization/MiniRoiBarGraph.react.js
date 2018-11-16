@@ -61,7 +61,7 @@ export default ({ roiList, roiInfoObject, preTotal, postTotal }) => {
   };
 
   const inputBar = (
-    <div style={styles}>
+    <div key="post" style={styles}>
       <BarGraph
         roiInfoObject={roiInfoObject}
         listOfRoisToUse={roiList}
@@ -72,7 +72,7 @@ export default ({ roiList, roiInfoObject, preTotal, postTotal }) => {
     </div>
   );
   const outputBar = (
-    <div style={styles}>
+    <div key="pre" style={styles}>
       <BarGraph
         roiInfoObject={roiInfoObject}
         listOfRoisToUse={roiList}

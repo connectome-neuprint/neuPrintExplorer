@@ -105,7 +105,7 @@ class SideBar extends React.Component {
           <Divider />
 
           <MenuItem
-            selected={location.pathname.match(/^\/$/)}
+            selected={/^\/$/.test(location.pathname)}
             component={NavLink}
             to={{ pathname: '/', search: openQuery ? this.props.urlQueryString : '' }}
             button
@@ -117,7 +117,7 @@ class SideBar extends React.Component {
           </MenuItem>
 
           <MenuItem
-            selected={location.pathname.match(/^\/results/)}
+            selected={/^\/results/.test(location.pathname)}
             component={NavLink}
             to={{ pathname: '/results', search: openQuery ? this.props.urlQueryString : '' }}
             button
@@ -129,7 +129,7 @@ class SideBar extends React.Component {
           </MenuItem>
 
           <MenuItem
-            selected={location.pathname.match(/^\/favorites/)}
+            selected={/^\/favorites/.test(location.pathname)}
             component={NavLink}
             to={{ pathname: '/favorites', search: openQuery ? this.props.urlQueryString : '' }}
             button
@@ -141,7 +141,7 @@ class SideBar extends React.Component {
           </MenuItem>
 
           <MenuItem
-            selected={location.pathname.match(/^\/help/)}
+            selected={/^\/help/.test(location.pathname)}
             component={NavLink}
             to={{ pathname: '/help', search: openQuery ? this.props.urlQueryString : '' }}
             button

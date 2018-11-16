@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 
 const styles = theme => ({
   contact: {
+    'z-index': 200,
     position: 'absolute',
     bottom: '1em',
     right: '1em',
