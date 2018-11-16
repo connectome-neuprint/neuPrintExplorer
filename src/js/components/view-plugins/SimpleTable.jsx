@@ -23,6 +23,15 @@ function desc(a, b, orderBy) {
     bVal = bVal.value;
   }
 
+  // need to check for null values
+  if (bVal === null) {
+    return 1;
+  }
+  if (aVal === null) {
+    return -1;
+  }
+
+  // now finish the sort
   if (bVal < aVal) {
     return -1;
   }
