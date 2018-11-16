@@ -9,19 +9,18 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import randomColor from 'randomcolor';
+import Select from 'react-select';
 
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import Checkbox from '@material-ui/core/Checkbox';
+import Divider from '@material-ui/core/Divider';
 import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import TextField from '@material-ui/core/TextField';
 
 import { submit, pluginResponseError } from 'actions/plugins';
 import { setUrlQS } from '../../actions/app';
 import RoiHeatMap, { ColorLegend } from '../visualization/MiniRoiHeatMap.react';
 import RoiBarGraph from '../visualization/MiniRoiBarGraph.react';
-import NeuronFilter from '../NeuronFilter.react';
 import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 import { getQueryString } from 'helpers/queryString';
 import * as math from 'mathjs';
@@ -29,16 +28,24 @@ import * as math from 'mathjs';
 const styles = theme => ({
   textField: {
     minWidth: 250,
-    maxWidth: 300
+    maxWidth: 300,
+    margin: 4,
+    display: 'block',
+    marginLeft: 'auto',
+    marginRight: 'auto'
   },
   formControl: {
     margin: theme.spacing.unit,
     minWidth: 250,
     maxWidth: 300
   },
-  chips: {
-    display: 'flex',
-    flexWrap: 'wrap'
+  select: {
+    fontFamily: theme.typography.fontFamily,
+    margin: '0.5em 0 1em 0'
+  },
+  button: {
+    margin: 4,
+    display: 'block'
   }
 });
 
@@ -47,10 +54,9 @@ class FindSimilarNeurons extends React.Component {
   constructor(props) {
     super(props);
     const initqsParams = {
-      typeValue: 'input',
       bodyId: '',
-      names: '',
-      getGroups: 'false'
+      name: '',
+      rois: []
     };
     const qsParams = LoadQueryString(
       'Query:' + this.constructor.queryName,
@@ -59,8 +65,7 @@ class FindSimilarNeurons extends React.Component {
     );
 
     this.state = {
-      qsParams: qsParams,
-      limitBig: true
+      qsParams: qsParams
     };
   }
 
@@ -73,130 +78,188 @@ class FindSimilarNeurons extends React.Component {
   }
 
   // functions for processing results
-  processResults = (query, apiResponse) => {
+  processSimilarResults = (query, apiResponse) => {
     const { actions } = this.props;
     const { parameters } = query;
+    let columns;
 
-    if (!query.parameters.getGroupsBoolean) {
-      if (!(apiResponse.data.length > 0)) {
-        // if no data produce appropriate error
-        actions.pluginResponseError(parameters.emptyDataErrorMessage);
+    const shouldShowSubLevelRoiSimilarity = () => {
+      // produce sub-level roi information if present, there is more than one body id in the group, and a body id was queried
+      return subLevelRois.size > 0 && data.length > 1 && parameters.bodyId;
+    };
+
+    const shouldShowSubLevelRoiHeatMapOnly = () => {
+      return !parameters.bodyId || (data.length === 1 && parameters.bodyId);
+    };
+
+    const shouldShowClusterName = () => {
+      return !parameters.bodyId;
+    };
+
+    const shouldShowSimilarityScores = () => {
+      return data.length > 1 && parameters.bodyId;
+    };
+
+    if (apiResponse.data.length === 0) {
+      // produce appropriate error message depending on which query called the function
+      actions.pluginResponseError(parameters.emptyDataErrorMessage);
+      return {
+        columns: [],
+        data: [],
+        debug: apiResponse.debug
+      };
+    }
+
+    // store the index of the queried body id
+    let queriedBodyIdIndex;
+
+    // store super-level rois
+    let roiList = apiResponse.data[0][6];
+    roiList.push('none');
+    const numberOfRois = roiList.length;
+
+    // store sub-level rois
+    let subLevelRois = new Set();
+
+    let data = apiResponse.data.map((row, index) => {
+      const bodyId = row[0];
+      const name = row[1];
+      const status = row[2];
+      const totalPre = row[3];
+      const totalPost = row[4];
+      const roiInfo = row[5];
+
+      // get index of queried body id so can move this data to top of table
+      if (bodyId === parseInt(parameters.bodyId)) {
+        queriedBodyIdIndex = index;
       }
-      // store the index of the queried body id
-      let queriedBodyIdIndex = 'none';
 
-      // store super-level rois
-      let roiList = apiResponse.data[0][6];
-      roiList.push('none');
-      const numberOfRois = roiList.length;
+      const converted = [
+        bodyId,
+        name,
+        status,
+        totalPre,
+        totalPost,
+        '', // empty unless roiInfoObject present
+        ''
+      ];
 
-      // store sub-level rois
-      let subLevelRois = new Set();
+      const roiInfoObject = JSON.parse(roiInfo);
 
-      let data = apiResponse.data.map((row, index) => {
-        const bodyId = row[0];
-        const name = row[1];
-        const status = row[2];
+      if (roiInfoObject) {
+        // calculate # pre and post in super rois (which are disjoint) to get total
+        // number of synapses assigned to an roi
+        let postInSuperRois = 0;
+        let preInSuperRois = 0;
+        // generate vector for sorting by similarity; fill with zeros
+        const vector = Array(numberOfRois * 2).fill(0);
+        Object.keys(roiInfoObject).forEach(roi => {
+          const roiIndex = roiList.indexOf(roi);
+          if (roiIndex !== -1) {
+            preInSuperRois += roiInfoObject[roi]['pre'];
+            postInSuperRois += roiInfoObject[roi]['post'];
+            vector[roiIndex] = (roiInfoObject[roi]['pre'] * 1.0) / totalPre;
+            vector[roiIndex + numberOfRois] = (roiInfoObject[roi]['post'] * 1.0) / totalPost;
+          } else {
+            subLevelRois.add(roi);
+          }
+        });
+
+        // add this after the other rois have been summed.
+        // records # pre and post that are not in rois
+        roiInfoObject['none'] = {
+          pre: totalPre - preInSuperRois,
+          post: totalPost - postInSuperRois
+        };
+        const noneIndex = roiList.indexOf('none');
+        vector[noneIndex] = (roiInfoObject['none']['pre'] * 1.0) / totalPre;
+        vector[noneIndex + numberOfRois] = (roiInfoObject['none']['post'] * 1.0) / totalPost;
+
+        const barGraph = (
+          <RoiBarGraph
+            roiList={roiList}
+            roiInfoObject={roiInfoObject}
+            preTotal={totalPre}
+            postTotal={totalPost}
+          />
+        );
+        converted[5] = barGraph;
+
+        const heatMap = (
+          <RoiHeatMap
+            roiList={roiList}
+            roiInfoObject={roiInfoObject}
+            preTotal={totalPre}
+            postTotal={totalPost}
+          />
+        );
+        converted[6] = heatMap;
+
+        //store vector
+        converted[7] = vector;
+      }
+
+      return converted;
+    });
+
+    // basic columns
+    columns = [
+      'bodyId',
+      'name',
+      'status',
+      'pre',
+      'post',
+      'roi breakdown (mouseover for details)',
+      <div>
+        roi heatmap (mouseover for details) <ColorLegend />
+      </div>
+    ];
+
+    if (shouldShowSubLevelRoiSimilarity()) {
+      apiResponse.data.forEach((row, index) => {
+        const roiInfo = row[5];
+        const roiInfoObject = JSON.parse(roiInfo);
         const totalPre = row[3];
         const totalPost = row[4];
-        const roiInfo = row[5];
+        const subLevelRoiList = Array.from(subLevelRois);
 
-        // get index of queried body id so can move this data to top of table
-        if (bodyId === parseInt(parameters.bodyId)) {
-          queriedBodyIdIndex = index;
-        }
+        // sub-level roi vector
+        const subLevelRoiVector = Array(subLevelRoiList.length * 2).fill(0);
+        Object.keys(roiInfoObject).forEach(roi => {
+          const roiIndex = subLevelRoiList.indexOf(roi);
+          if (roiIndex !== -1) {
+            subLevelRoiVector[roiIndex] = (roiInfoObject[roi]['pre'] * 1.0) / totalPre;
+            subLevelRoiVector[roiIndex + subLevelRoiList.length] =
+              (roiInfoObject[roi]['post'] * 1.0) / totalPost;
+          }
+        });
+        data[index][11] = subLevelRoiVector;
 
-        const converted = [
-          bodyId,
-          name,
-          status,
-          totalPre,
-          totalPost,
-          '', // empty unless roiInfoObject present
-          ''
-        ];
+        // sub-level ROI heatmap
+        data[index][10] = (
+          <RoiHeatMap
+            roiList={subLevelRoiList}
+            roiInfoObject={roiInfoObject}
+            preTotal={totalPre}
+            postTotal={totalPost}
+          />
+        );
 
-        const roiInfoObject = JSON.parse(roiInfo);
-
-        if (roiInfoObject) {
-          // calculate # pre and post in super rois (which are disjoint) to get total
-          // number of synapses assigned to an roi
-          let postInSuperRois = 0;
-          let preInSuperRois = 0;
-          // generate vector for sorting by similarity; fill with zeros
-          const vector = Array(numberOfRois * 2).fill(0);
-          Object.keys(roiInfoObject).forEach(roi => {
-            const roiIndex = roiList.indexOf(roi);
-            if (roiIndex !== -1) {
-              preInSuperRois += roiInfoObject[roi]['pre'];
-              postInSuperRois += roiInfoObject[roi]['post'];
-              vector[roiIndex] = (roiInfoObject[roi]['pre'] * 1.0) / totalPre;
-              vector[roiIndex + numberOfRois] = (roiInfoObject[roi]['post'] * 1.0) / totalPost;
-            } else {
-              subLevelRois.add(roi);
-            }
-          });
-
-          // add this after the other rois have been summed.
-          // records # pre and post that are not in rois
-          roiInfoObject['none'] = {
-            pre: totalPre - preInSuperRois,
-            post: totalPost - postInSuperRois
-          };
-          const noneIndex = roiList.indexOf('none');
-          vector[noneIndex] = (roiInfoObject['none']['pre'] * 1.0) / totalPre;
-          vector[noneIndex + numberOfRois] = (roiInfoObject['none']['post'] * 1.0) / totalPost;
-
-          const barGraph = (
-            <RoiBarGraph
-              roiList={roiList}
-              roiInfoObject={roiInfoObject}
-              preTotal={totalPre}
-              postTotal={totalPost}
-            />
-          );
-          converted[5] = barGraph;
-
-          const heatMap = (
-            <RoiHeatMap
-              roiList={roiList}
-              roiInfoObject={roiInfoObject}
-              preTotal={totalPre}
-              postTotal={totalPost}
-            />
-          );
-          converted[6] = heatMap;
-
-          //store vector
-          converted[7] = vector;
-        }
-
-        return converted;
+        // update column info
+        columns[10] = 'sub-level rois';
       });
+    } else if (shouldShowSubLevelRoiHeatMapOnly()) {
+      // only add the sub-level heat-map (if appropriate) and include cluster name as a column
+      apiResponse.data.forEach((row, index) => {
+        const roiInfo = row[5];
+        const roiInfoObject = JSON.parse(roiInfo);
+        const totalPre = row[3];
+        const totalPost = row[4];
+        const subLevelRoiList = Array.from(subLevelRois);
 
-      // produce sub-level roi information if present and there is more than one body id in the group
-      if (subLevelRois.size > 0 && data.length > 1) {
-        apiResponse.data.forEach((row, index) => {
-          const roiInfo = row[5];
-          const roiInfoObject = JSON.parse(roiInfo);
-          const totalPre = row[3];
-          const totalPost = row[4];
-          const subLevelRoiList = Array.from(subLevelRois);
-
-          // sub-level roi vector
-          const subLevelRoiVector = Array(subLevelRoiList.length * 2).fill(0);
-          Object.keys(roiInfoObject).forEach(roi => {
-            const roiIndex = subLevelRoiList.indexOf(roi);
-            if (roiIndex !== -1) {
-              subLevelRoiVector[roiIndex] = (roiInfoObject[roi]['pre'] * 1.0) / totalPre;
-              subLevelRoiVector[roiIndex + subLevelRoiList.length] =
-                (roiInfoObject[roi]['post'] * 1.0) / totalPost;
-            }
-          });
-          data[index][11] = subLevelRoiVector;
-
+        if (subLevelRois.size > 0) {
           // sub-level ROI heatmap
-          data[index][10] = (
+          data[index][7] = (
             <RoiHeatMap
               roiList={subLevelRoiList}
               roiInfoObject={roiInfoObject}
@@ -204,166 +267,154 @@ class FindSimilarNeurons extends React.Component {
               postTotal={totalPost}
             />
           );
-        });
-      }
 
-      let columns;
-      if (queriedBodyIdIndex !== 'none' && data.length > 1) {
-        // sort by similarity
-        const queriedBodyVector = data[queriedBodyIdIndex][7];
-        const queriedBodySubLevelVector = data[queriedBodyIdIndex][11];
-        data.forEach(row => {
-          const rawVector = row[7];
-          // input score (pre)
-          row[8] = math.round(
-            math.sum(
-              math.abs(
-                math.subtract(queriedBodyVector.slice(numberOfRois), rawVector.slice(numberOfRois))
-              )
-            ) / 2.0,
-            4
-          );
-          // output score (post)
-          row[9] = math.round(
-            math.sum(
-              math.abs(
-                math.subtract(
-                  queriedBodyVector.slice(0, numberOfRois),
-                  rawVector.slice(0, numberOfRois)
-                )
-              )
-            ) / 2.0,
-            4
-          );
-          // total score
-          row[7] = math.round(
-            math.sum(math.abs(math.subtract(queriedBodyVector, rawVector))) / 4.0,
-            4
-          );
-          // sub-level rois
-          if (subLevelRois.size > 0) {
-            row[11] = math.round(
-              math.sum(math.abs(math.subtract(queriedBodySubLevelVector, row[11]))) / 4.0,
-              4
-            );
-            //incorporate sub-level rois into total score
-            row[7] = (row[7] + row[11]) / 2.0;
+          columns[7] = 'sub-level rois';
+
+          if (shouldShowClusterName()) {
+            // add cluster name
+            data[index][8] = row[7];
+            columns[8] = 'cluster name';
           }
-        });
-        columns = [
-          'bodyId',
-          'name',
-          'status',
-          'pre',
-          'post',
-          'roi breakdown (mouseover for details)',
-          <div>
-            roi heatmap (mouseover for details) <ColorLegend />
-          </div>,
-          'total similiarity score',
-          'input similiarity score',
-          'output similiarity score'
-        ];
-        // add sub-level roi column headers if needed
-        if (subLevelRois.size > 0) {
-          columns[10] = 'sub-level rois';
+        } else {
+          // add cluster name only
+          if (shouldShowClusterName()) {
+            data[index][7] = row[7];
+            columns[7] = 'cluster name';
+          }
+        }
+      });
+    }
+
+    if (shouldShowSimilarityScores()) {
+      // sort by similarity
+      const queriedBodyVector = data[queriedBodyIdIndex][7];
+      const queriedBodySubLevelVector = data[queriedBodyIdIndex][11];
+      data.forEach(row => {
+        const rawVector = row[7];
+        // input score (pre)
+        row[8] = math.round(
+          math.sum(
+            math.abs(
+              math.subtract(queriedBodyVector.slice(numberOfRois), rawVector.slice(numberOfRois))
+            )
+          ) / 2.0,
+          4
+        );
+        // output score (post)
+        row[9] = math.round(
+          math.sum(
+            math.abs(
+              math.subtract(
+                queriedBodyVector.slice(0, numberOfRois),
+                rawVector.slice(0, numberOfRois)
+              )
+            )
+          ) / 2.0,
+          4
+        );
+        // total score
+        row[7] = math.round(
+          math.sum(math.abs(math.subtract(queriedBodyVector, rawVector))) / 4.0,
+          4
+        );
+
+        // update columns
+        columns[7] = 'total similiarity score';
+        columns[8] = 'input similiarity score';
+        columns[9] = 'output similarity score';
+
+        // sub-level rois
+        if (shouldShowSubLevelRoiSimilarity()) {
+          row[11] = math.round(
+            math.sum(math.abs(math.subtract(queriedBodySubLevelVector, row[11]))) / 4.0,
+            4
+          );
+          //incorporate sub-level rois into total score
+          row[7] = (row[7] + row[11]) / 2.0;
+
+          // update columns
           columns[11] = 'sub-level roi similarity score';
         }
-      } else {
-        data.forEach(row => {
-          delete row[7];
-        });
-        columns = [
-          'bodyId',
-          'name',
-          'status',
-          'pre',
-          'post',
-          'roi breakdown (mouseover for details)',
-          <div>
-            roi heatmap (mouseover for details) <ColorLegend />
-          </div>
-        ];
-      }
-
+      });
       // sort by total similarity score; queried body id will be 0 so should be at top
       data.sort((a, b) => {
         if (a[7] < b[7]) return -1;
         if (a[7] > b[7]) return 1;
         return 0;
       });
-
-      return {
-        columns: columns,
-        data,
-        debug: apiResponse.debug
-      };
-    } else {
-      // for displaying cluster names
-      const data = apiResponse.data.map(row => {
-        const clusterName = row[0];
-
-        const clusterQueryString =
-          "MATCH (m:Meta{dataset:'" +
-          parameters.dataset +
-          "'}) WITH m.superLevelRois AS rois MATCH (n:`" +
-          parameters.dataset +
-          "-Neuron`{clusterName:'" +
-          clusterName +
-          "'}) RETURN n.bodyId, n.name, n.status, n.pre, n.post, n.roiInfo, rois";
-
-        parameters.clusterName = clusterName;
-        parameters.getGroupsBoolean = false;
-        parameters.emptyDataErrorMessage = 'Cluster name does not exist in the dataset.';
-
-        const title = 'Neurons with classification ' + clusterName;
-
-        const clusterQuery = {
-          dataSet: parameters.dataset,
-          cypherQuery: clusterQueryString,
-          visType: 'SimpleTable',
-          plugin: pluginName,
-          parameters: parameters,
-          title: title,
-          menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
-          processResults: this.processResults
-        };
-
-        const converted = [
-          {
-            value: clusterName,
-            action: () => actions.submit(clusterQuery)
-          }
-        ];
-
-        return converted;
-      });
-
-      return {
-        columns: ['cluster name (click to explore group)'],
-        data,
-        debug: apiResponse.debug
-      };
     }
+
+    return {
+      columns: columns,
+      data,
+      debug: apiResponse.debug
+    };
+  };
+
+  processGroupResults = (query, apiResponse) => {
+    const { actions } = this.props;
+    const { parameters } = query;
+
+    // for displaying cluster names
+    if (apiResponse.data.length === 0) {
+      actions.pluginResponseError('No cluster names found in the dataset.');
+    }
+
+    const data = apiResponse.data.map(row => {
+      const clusterName = row[0];
+
+      const clusterQueryString =
+        "MATCH (m:Meta{dataset:'" +
+        parameters.dataset +
+        "'}) WITH m.superLevelRois AS rois MATCH (n:`" +
+        parameters.dataset +
+        "-Neuron`{clusterName:'" +
+        clusterName +
+        "'}) RETURN n.bodyId, n.name, n.status, n.pre, n.post, n.roiInfo, rois, n.clusterName";
+
+      parameters.clusterName = clusterName;
+      parameters.emptyDataErrorMessage = 'Cluster name does not exist in the dataset.';
+
+      const title = 'Neurons with classification ' + clusterName;
+
+      const clusterQuery = {
+        dataSet: parameters.dataset,
+        cypherQuery: clusterQueryString,
+        visType: 'SimpleTable',
+        plugin: pluginName,
+        parameters: parameters,
+        title: title,
+        menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
+        processResults: this.processSimilarResults
+      };
+
+      const converted = [
+        {
+          value: clusterName,
+          action: () => actions.submit(clusterQuery)
+        }
+      ];
+
+      return converted;
+    });
+
+    return {
+      columns: ['cluster name (click to explore group)'],
+      data,
+      debug: apiResponse.debug
+    };
   };
 
   // processing intital request
-  processRequest = () => {
+  processIDRequest = () => {
     const { dataSet, actions, history } = this.props;
-    const { bodyId, getGroups } = this.state.qsParams;
-    const getGroupsBoolean = getGroups === 'true' ? true : false;
+    const { bodyId } = this.state.qsParams;
 
     const parameters = {
       dataset: dataSet,
-      getGroupsBoolean: getGroupsBoolean
+      bodyId: bodyId,
+      emptyDataErrorMessage: 'Body ID not found in dataset.'
     };
-
-    if (!getGroupsBoolean) {
-      parameters.bodyId = bodyId;
-      parameters.emptyDataErrorMessage = 'Body ID not found in the dataset.';
-    } else {
-      parameters.emptyDataErrorMessage = 'No cluster names found in the dataset.';
-    }
 
     const similarQuery =
       "MATCH (m:Meta{dataset:'" +
@@ -376,24 +427,18 @@ class FindSimilarNeurons extends React.Component {
       dataSet +
       '-Neuron`{clusterName:cn}) RETURN n.bodyId, n.name, n.status, n.pre, n.post, n.roiInfo, rois, n.clusterName';
 
-    const groupsQuery = 'MATCH (n:`' + dataSet + '-Neuron`) RETURN DISTINCT n.clusterName';
-
-    const queryStr = getGroupsBoolean ? groupsQuery : similarQuery;
-
     // TODO: change title based on results
-    const title = getGroupsBoolean
-      ? 'Cluster names for ' + dataSet + ' dataset'
-      : 'Neurons similar to ' + bodyId;
+    const title = 'Neurons similar to ' + bodyId;
 
     const query = {
       dataSet,
-      cypherQuery: queryStr,
+      cypherQuery: similarQuery,
       visType: 'SimpleTable',
       plugin: pluginName,
       parameters,
       title: title,
       menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
-      processResults: this.processResults
+      processResults: this.processSimilarResults
     };
 
     actions.submit(query);
@@ -404,10 +449,78 @@ class FindSimilarNeurons extends React.Component {
     });
   };
 
-  loadNeuronFilters = params => {
-    this.setState({
-      limitBig: params.limitBig,
-      statusFilters: params.statusFilters
+  processGroupRequest = () => {
+    const { dataSet, actions, history } = this.props;
+
+    const parameters = {
+      dataset: dataSet
+    };
+
+    const groupsQuery = 'MATCH (n:`' + dataSet + '-Neuron`) RETURN DISTINCT n.clusterName';
+
+    const title = 'Cluster names for ' + dataSet + ' dataset';
+
+    const query = {
+      dataSet,
+      cypherQuery: groupsQuery,
+      visType: 'SimpleTable',
+      plugin: pluginName,
+      parameters,
+      title: title,
+      menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
+      processResults: this.processGroupResults
+    };
+
+    actions.submit(query);
+
+    history.push({
+      pathname: '/results',
+      search: getQueryString()
+    });
+  };
+
+  processRoiRequest = () => {
+    const { dataSet, actions, history } = this.props;
+    const { rois } = this.state.qsParams;
+
+    const parameters = {
+      dataset: dataSet,
+      rois: rois,
+      emptyDataErrorMessage: 'No neurons located in all selected rois: ' + rois
+    };
+
+    let roiPredicate = '';
+    rois.forEach(roi => {
+      roiPredicate += 'exists(n.`' + roi + '`) AND ';
+    });
+    const roiQuery =
+      "MATCH (m:Meta{dataset:'" +
+      dataSet +
+      "'}) WITH m.superLevelRois AS rois MATCH (n:`" +
+      dataSet +
+      '-Neuron`) WHERE (' +
+      roiPredicate.slice(0, -4) +
+      ') RETURN n.bodyId, n.name, n.status, n.pre, n.post, n.roiInfo, rois, n.clusterName';
+
+    // TODO: change title based on results
+    const title = 'Neurons in ' + rois;
+
+    const query = {
+      dataSet,
+      cypherQuery: roiQuery,
+      visType: 'SimpleTable',
+      plugin: pluginName,
+      parameters,
+      title: title,
+      menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
+      processResults: this.processSimilarResults
+    };
+
+    actions.submit(query);
+
+    history.push({
+      pathname: '/results',
+      search: getQueryString()
     });
   };
 
@@ -420,27 +533,19 @@ class FindSimilarNeurons extends React.Component {
     });
   };
 
-  addNeuronNames = event => {
+  addNeuronName = event => {
     const oldParams = this.state.qsParams;
-    oldParams.names = event.target.value;
+    oldParams.name = event.target.value;
     this.props.actions.setURLQs(SaveQueryString('Query:' + this.constructor.queryName, oldParams));
     this.setState({
       qsParams: oldParams
     });
   };
 
-  setInputOrOutput = event => {
+  handleChangeRois = selected => {
     const oldParams = this.state.qsParams;
-    oldParams.typeValue = event.target.value;
-    this.props.actions.setURLQs(SaveQueryString('Query:' + this.constructor.queryName, oldParams));
-    this.setState({
-      qsParams: oldParams
-    });
-  };
-
-  getGroups = event => {
-    const oldParams = this.state.qsParams;
-    oldParams.getGroups = event.target.checked === true ? 'true' : false;
+    const rois = selected.map(item => item.value);
+    oldParams.rois = rois;
     this.props.actions.setURLQs(SaveQueryString('Query:' + this.constructor.queryName, oldParams));
     this.setState({
       qsParams: oldParams
@@ -451,13 +556,28 @@ class FindSimilarNeurons extends React.Component {
     // submit request if user presses enter
     if (event.keyCode === 13) {
       event.preventDefault();
-      this.processRequest();
+      this.processIDRequest();
     }
   };
 
   render() {
-    const { classes } = this.props;
-    const getGroupsBoolean = this.state.qsParams.getGroups === 'true' ? true : false;
+    const { classes, availableROIs } = this.props;
+    const rois = this.state.qsParams.rois;
+
+    const roiOptions = availableROIs.map(name => {
+      return {
+        label: name,
+        value: name
+      };
+    });
+
+    const roiValues = rois.map(roi => {
+      return {
+        label: roi,
+        value: roi
+      };
+    });
+
     return (
       <div>
         <FormControl className={classes.formControl}>
@@ -467,27 +587,47 @@ class FindSimilarNeurons extends React.Component {
             fullWidth
             rows={1}
             value={this.state.qsParams.bodyId}
-            disabled={getGroupsBoolean}
-            rowsMax={4}
+            rowsMax={2}
             className={classes.textField}
             onChange={this.addNeuronBodyId}
             onKeyDown={this.catchReturn}
           />
         </FormControl>
-        <FormControlLabel
-          control={
-            <Checkbox checked={getGroupsBoolean} onChange={this.getGroups} value="getGroups" />
-          }
-          label="Explore groups (provides a list of cluster names; click cluster names to view neuron body ids in that cluster)"
-        />
-        <NeuronFilter callback={this.loadNeuronFilters} datasetstr={this.props.datasetstr} />
         <Button
           variant="contained"
           color="primary"
-          onClick={this.processRequest}
-          disabled={!(getGroupsBoolean || this.state.qsParams.bodyId.length > 0)}
+          className={classes.button}
+          onClick={this.processIDRequest}
+          disabled={!(this.state.qsParams.bodyId.length > 0)}
         >
-          Submit
+          Search By Body ID
+        </Button>
+        <Divider />
+        <Select
+          className={classes.select}
+          isMulti
+          value={roiValues}
+          onChange={this.handleChangeRois}
+          options={roiOptions}
+          closeMenuOnSelect={false}
+        />
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={this.processRoiRequest}
+          className={classes.button}
+          disabled={!(roiValues.length > 0)}
+        >
+          Explore By ROI
+        </Button>
+        <Divider />
+        <Button
+          variant="contained"
+          color="primary"
+          className={classes.button}
+          onClick={this.processGroupRequest}
+        >
+          Explore Groups
         </Button>
       </div>
     );
