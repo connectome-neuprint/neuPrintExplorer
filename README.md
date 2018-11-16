@@ -1,5 +1,6 @@
 # neuPrintExplorer [![Picture](https://raw.github.com/janelia-flyem/janelia-flyem.github.com/master/images/HHMI_Janelia_Color_Alternate_180x40.png)](http://www.janelia.org)
 [![Build Status](https://travis-ci.org/connectome-neuprint/neuPrintExplorer.svg?branch=master)](https://travis-ci.org/connectome-neuprint/neuPrintExplorer)
+[![Waffle.io - Columns and their card count](https://badge.waffle.io/connectome-neuprint/neuPrintExplorer.svg?columns=all)](https://waffle.io/connectome-neuprint/neuPrintExplorer) 
 
 neuPrintExplorer is a single page web application that provides simple interfaces to query an EM connectome stored in [neuPrint](https://github.com/connectome-neuprint/neuPrint), which uses the graph database Neo4j.  It contains
 a number of plugins to facilitate different types of queries.
