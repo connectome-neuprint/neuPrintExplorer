@@ -2,10 +2,12 @@
 import React from 'react';
 
 import Typography from '@material-ui/core/Typography';
+import PropTypes from 'prop-types';
 import Divider from '@material-ui/core/Divider';
 import Icon from '@material-ui/core/Icon';
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
+import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
@@ -23,26 +25,31 @@ const styles = theme => ({
 
 function newIssue(e) {
   e.preventDefault();
-  window.open('https://github.com/connectome-neuprint/neuPrintExplorer/issues/new?labels=user');
+  window.open('https://github.com/connectome-neuprint/neuPrintExplorer/issues/new?labels=user&body=(Please%20provide%20additional%20details)');
 }
 
 class About extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      data: 'Loading user issues from GitHub'
+      data: 'Loading user issues from GitHub...',
     }
   }
-    componentDidMount() {
-      fetch('https://api.github.com/graphql', {
+    componentDidUpdate(nextProps) {
+      const {token} = this.props;
+      if (nextProps.token === token) {
+        return;
+      }
+      /* Call to Google API function */
+      fetch('https://us-east1-dvid-em.cloudfunctions.net/neuprint-janelia/gitinfo', {
         method: 'POST',
         headers: {
-          'Authorization': 'token 9cbe7a950926bf8784ca8d95de00a8e963c32315',
+          'Authorization': 'token ' + token,
           'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          query: '{ organization(login:"connectome-neuprint") { repositories(first: 50, orderBy: {field: NAME, direction:ASC}) { edges { node { name issues(first:50, states:[OPEN], labels: [user]) { edges { node { title url number body}}}}}}}}'
+          "organization": "connectome-neuprint"
         })
       })
       .then(result => result.json())
@@ -56,7 +63,7 @@ class About extends React.Component {
           });
         });
         const listItems = issuelist.map((iss) =>
-          <li key={iss[2].toString()}><Tooltip title={iss[3]} placement={'bottom'} enterDelay={100}><a href={iss[1]} target="_blank" style={{color: "darkblue"}}>{iss[0]}</a></Tooltip></li>
+          <li key={iss[2].toString()+iss[0]}><Tooltip title={iss[3]} placement={'bottom'} enterDelay={100}><a href={iss[1]} target="_blank" style={{color: "darkblue"}}>{iss[0]}</a></Tooltip></li>
         );
         if (issuelist.length == 0) {
           this.setState({
@@ -70,7 +77,9 @@ class About extends React.Component {
         }
       })
       .catch(function(error) {
-        alert(error);
+        this.setState({
+          data: error
+        })
       });
     };
 
@@ -115,4 +124,17 @@ class About extends React.Component {
   }
 }
 
-export default withStyles(styles)(About);
+var AboutState = function(state) {
+    return {
+        token: state.user.token,
+    }
+};
+
+About.propTypes = {
+    classes: PropTypes.object.isRequired,
+    token: PropTypes.string,
+};
+
+export default withStyles(styles)(connect(AboutState, null)(About));
+
+/* export default withStyles(styles)(About); */
