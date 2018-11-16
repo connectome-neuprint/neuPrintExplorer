@@ -63,11 +63,7 @@ class About extends React.Component {
           });
         });
         const listItems = issuelist.map((iss) =>
-<<<<<<< HEAD
           <li key={iss[2].toString()+iss[0]}><Tooltip title={iss[3]} placement={'bottom'} enterDelay={100}><a href={iss[1]} target="_blank" style={{color: "darkblue"}}>{iss[0]}</a></Tooltip></li>
-=======
-          <li key={iss[2].toString()}><Tooltip title={iss[3]} placement={'bottom'} enterDelay={100}><a href={iss[1]} style={{color: "darkblue"}}>{iss[0]}</a></Tooltip></li>
->>>>>>> ec5ae44d98dab049969cf3e76a495e464260b4fa
         );
         if (issuelist.length === 0) {
           this.setState({
