@@ -174,8 +174,8 @@ class FindSimilarNeurons extends React.Component {
         return converted;
       });
 
-      // produce sub-level roi information if present
-      if (subLevelRois.size > 0) {
+      // produce sub-level roi information if present and there is more than one body id in the group
+      if (subLevelRois.size > 0 && data.length > 1) {
         apiResponse.data.forEach((row, index) => {
           const roiInfo = row[5];
           const roiInfoObject = JSON.parse(roiInfo);
@@ -208,7 +208,7 @@ class FindSimilarNeurons extends React.Component {
       }
 
       let columns;
-      if (queriedBodyIdIndex !== 'none') {
+      if (queriedBodyIdIndex !== 'none' && data.length > 1) {
         // sort by similarity
         const queriedBodyVector = data[queriedBodyIdIndex][7];
         const queriedBodySubLevelVector = data[queriedBodyIdIndex][11];
