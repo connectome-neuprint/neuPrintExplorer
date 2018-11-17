@@ -39,7 +39,7 @@ var LightColors = [
 const styles = theme => ({
   root: {
     padding: theme.spacing.unit,
-    outline: 0,
+    outline: 0
   },
   flex: {
     flex: 1
@@ -64,7 +64,7 @@ const styles = theme => ({
     float: 'right'
   },
   empty: {
-    padding: theme.spacing.unit * 3,
+    padding: theme.spacing.unit * 3
   },
   scroll: {
     overflow: 'auto',
@@ -77,13 +77,13 @@ class Results extends React.Component {
     super(props, context);
     this.state = {
       currLayout: null,
-      selectedViewer: 1,
+      selectedViewer: 1
     };
   }
 
   handleViewerSelect = (event, value) => {
-    this.setState({selectedViewer: value});
-  }
+    this.setState({ selectedViewer: value });
+  };
 
   componentDidUpdate(prevProps, prevState) {
     let query = qs.parse(prevProps.urlQueryString);
@@ -122,82 +122,43 @@ class Results extends React.Component {
   };
 
   downloadFile = index => {
-    if (
-      'isSkeleton' in this.props.allTables[index][0] &&
-      this.props.allTables[index][0].isSkeleton
-    ) {
-      let swcdata = '';
-      let swc = this.props.allTables[index][0].swc;
-      let ids = Object.keys(swc);
-      ids.sort(function(a, b) {
-        return parseInt(a) - parseInt(b);
+    const { allResults } = this.props;
+    const results = allResults.get(index);
+    let csvData = results.result.columns.toString() + '\n';
+    results.result.data.forEach(row => {
+      const filteredRow = row.map(item => {
+        if (item === null) return '';
+        if (item.sortBy !== undefined) return item.sortBy;
+        if (item.value !== undefined) return item.value;
+        return item;
       });
-      for (let i = 0; i < ids.length; i++) {
-        let row = swc[ids[i]];
-        let currid = ids[i];
-        swcdata += currid + ' ';
-        swcdata += row.type.toString() + ' ';
-        swcdata += row.x.toString() + ' ';
-        swcdata += row.y.toString() + ' ';
-        swcdata += row.z.toString() + ' ';
-        swcdata += row.radius.toString() + ' ';
-        swcdata += row.parent.toString() + '\n';
-      }
-
-      let element = document.createElement('a');
-      let file = new Blob([swcdata], { type: 'text/plain' });
-      element.href = URL.createObjectURL(file);
-      element.download = this.props.allTables[index][0].name + '.swc';
-      element.click();
-    } else {
-      let csvdata = '';
-      this.props.allTables[index].forEach(tableinfo => {
-        // load one table -- fixed width
-
-        // load table name
-        var numelements = tableinfo.header.length;
-        csvdata = csvdata + tableinfo.name + ',';
-        for (var i = 1; i < numelements; i++) {
-          csvdata = csvdata + ',';
-        }
-        csvdata = csvdata + '\n';
-
-        // load headers
-        tableinfo.header.forEach(headinfo => {
-          csvdata = csvdata + headinfo.getValue() + ',';
-        });
-        csvdata = csvdata + '\n';
-
-        // load data
-        tableinfo.body.forEach(rowinfo => {
-          rowinfo.forEach(elinfo => {
-            csvdata = csvdata + elinfo.getValue() + ',';
-          });
-          csvdata = csvdata + '\n';
-        });
-      });
-
-      let element = document.createElement('a');
-      let file = new Blob([csvdata], { type: 'text/csv' });
-      element.href = URL.createObjectURL(file);
-      element.download = 'results.csv';
-      element.click();
-    }
+      csvData += filteredRow.toString() + '\n';
+    });
+    const element = document.createElement('a');
+    const file = new Blob([csvData], { type: 'text/csv' });
+    element.href = URL.createObjectURL(file);
+    element.download = 'results.csv';
+    element.click();
   };
 
   render() {
     // TODO: show query runtime results
-    const { classes, allTables, isQuerying, neoError, allResults, viewPlugins, showSkel, fullscreen } = this.props;
+    const {
+      classes,
+      allTables,
+      isQuerying,
+      neoError,
+      allResults,
+      viewPlugins,
+      showSkel,
+      fullscreen
+    } = this.props;
     let resArray = [];
     const gridWidth = showSkel ? 6 : 12;
 
     if (fullscreen && showSkel) {
       return (
-        <div
-          tabIndex="0"
-          onKeyPress={this.triggerKeyboard}
-          className={classes.full}
-        >
+        <div tabIndex="0" onKeyPress={this.triggerKeyboard} className={classes.full}>
           <NeuronViz />
         </div>
       );
@@ -226,7 +187,7 @@ class Results extends React.Component {
               }}
             >
               <ResultsTopBar
-                downloadCallback={this.downloadFile}
+                downloadCallback={() => this.downloadFile()}
                 name={result.length === 1 ? result[0].name : String(result.length) + ' tables'}
                 queryStr={result[0].queryStr}
                 index={index}
@@ -244,18 +205,19 @@ class Results extends React.Component {
     const results = allResults.map((query, index) => {
       const View = viewPlugins.get(query.visType);
       return (
-        <div key={index}
+        <div
+          key={index}
           data-grid={{
             w: gridWidth,
             h: 20,
             x: 0,
-            y: 0,
+            y: 0
           }}
         >
           <ResultsTopBar
             version={2}
             downloadCallback={this.downloadFile}
-             name={query.title}
+            name={query.title}
             index={index}
             queryStr={query.result.debug}
             color={query.menuColor}
@@ -266,19 +228,15 @@ class Results extends React.Component {
     });
 
     return (
-      <div
-        tabIndex="0"
-        onKeyPress={this.triggerKeyboard}
-        className={classes.root}
-      >
-        {(!isQuerying && resArray.length === 0 && results.size === 0) && (
-          <div className={classes.empty}>
-            <Typography variant="h6">No Search Results</Typography>
-            <Typography>
-              Please use the Menu to the left to start a search.
-            </Typography>
-          </div>
-        )}
+      <div tabIndex="0" onKeyPress={this.triggerKeyboard} className={classes.root}>
+        {!isQuerying &&
+          resArray.length === 0 &&
+          results.size === 0 && (
+            <div className={classes.empty}>
+              <Typography variant="h6">No Search Results</Typography>
+              <Typography>Please use the Menu to the left to start a search.</Typography>
+            </div>
+          )}
         <Fade
           in={isQuerying}
           style={{
@@ -337,7 +295,7 @@ Results.propTypes = {
   showSkel: PropTypes.bool.isRequired,
   skeletonCount: PropTypes.number.isRequired,
   userInfo: PropTypes.object,
-  fullscreen: PropTypes.bool.isRequired,
+  fullscreen: PropTypes.bool.isRequired
 };
 
 // result data [{name: "table name", header: [headers...], body: [rows...]
@@ -364,7 +322,7 @@ const ResultDispatch = dispatch => ({
     toggleSkeleton: () => {
       dispatch(toggleSkeleton());
     },
-    setFullScreen: (viewer) => {
+    setFullScreen: viewer => {
       dispatch(setFullScreen(viewer));
     },
     clearFullScreen: () => {
@@ -373,10 +331,9 @@ const ResultDispatch = dispatch => ({
   }
 });
 
-
 export default withStyles(styles)(
   connect(
     ResultsState,
-    ResultDispatch,
+    ResultDispatch
   )(Results)
 );
