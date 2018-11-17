@@ -285,6 +285,15 @@ class FindSimilarNeurons extends React.Component {
       });
     }
 
+    if (shouldShowClusterName()) {
+      const clusterNameColumn = columns[8] === 'cluster name' ? 8 : 7;
+      data.sort((a, b) => {
+        if (a[clusterNameColumn] < b[clusterNameColumn]) return -1;
+        if (a[clusterNameColumn] > b[clusterNameColumn]) return 1;
+        return 0;
+      });
+    }
+
     if (shouldShowSimilarityScores()) {
       // sort by similarity
       const queriedBodyVector = data[queriedBodyIdIndex][7];
