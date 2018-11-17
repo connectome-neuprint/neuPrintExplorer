@@ -143,11 +143,7 @@ class FindNeurons extends React.Component {
         let postInSuperRois = 0;
         let preInSuperRois = 0;
         Object.keys(roiInfoObject).forEach(roi => {
-          if (
-            roiList.find(element => {
-              return element === roi;
-            })
-          ) {
+          if (roiList.includes(roi)) {
             preInSuperRois += roiInfoObject[roi]['pre'];
             postInSuperRois += roiInfoObject[roi]['post'];
           }
