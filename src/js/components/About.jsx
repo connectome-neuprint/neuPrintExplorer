@@ -35,11 +35,8 @@ class About extends React.Component {
       data: 'Loading user issues from GitHub...',
     }
   }
-    componentDidUpdate(nextProps) {
+loadIssues () {
       const {token} = this.props;
-      if (nextProps.token === token) {
-        return;
-      }
       /* Call to Google API function */
       fetch('https://us-east1-dvid-em.cloudfunctions.net/neuprint-janelia/gitinfo', {
         method: 'POST',
@@ -63,7 +60,7 @@ class About extends React.Component {
           });
         });
         const listItems = issuelist.map((iss) =>
-          <li key={iss[2].toString()+iss[0]}><Tooltip title={iss[3]} placement={'bottom'} enterDelay={100}><a href={iss[1]} target="_blank" style={{color: "darkblue"}}>{iss[0]}</a></Tooltip></li>
+          <li key={iss[2].toString()+iss[0]}><Tooltip title={iss[3]} placement={'bottom'} enterDelay={100}><a href={iss[1]} target="_blank" rel="noopener noreferrer" style={{color: "darkblue"}}>{iss[0]}</a></Tooltip></li>
         );
         if (issuelist.length === 0) {
           this.setState({
@@ -81,6 +78,21 @@ class About extends React.Component {
           data: error
         })
       });
+}
+
+    componentDidMount() {
+      const {token} = this.props;
+      if (token === "") {
+        return;
+      }
+      this.loadIssues();
+    }
+    componentDidUpdate(nextProps) {
+      const {token} = this.props;
+      if (nextProps.token === token) {
+        return;
+      }
+      this.loadIssues();
     };
 
   render() {
