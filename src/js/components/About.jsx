@@ -60,7 +60,7 @@ loadIssues () {
           });
         });
         const listItems = issuelist.map((iss) =>
-          <li key={iss[2].toString()+iss[0]}><Tooltip title={iss[3]} placement={'bottom'} enterDelay={100}><a href={iss[1]} target="_blank" style={{color: "darkblue"}}>{iss[0]}</a></Tooltip></li>
+          <li key={iss[2].toString()+iss[0]}><Tooltip title={iss[3]} placement={'bottom'} enterDelay={100}><a href={iss[1]} target="_blank" rel="noopener noreferrer" style={{color: "darkblue"}}>{iss[0]}</a></Tooltip></li>
         );
         if (issuelist.length === 0) {
           this.setState({
@@ -82,7 +82,7 @@ loadIssues () {
 
     componentDidMount() {
       const {token} = this.props;
-      if (token == "") {
+      if (token === "") {
         return;
       }
       this.loadIssues();
