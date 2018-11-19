@@ -16,8 +16,11 @@ import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
+import Icon from '@material-ui/core/Icon';
 
 import { submit, pluginResponseError } from 'actions/plugins';
+import { skeletonAddandOpen } from 'actions/skeleton';
+import { neuroglancerAddandOpen } from 'actions/neuroglancer';
 import { setUrlQS } from '../../actions/app';
 import RoiHeatMap, { ColorLegend } from '../visualization/MiniRoiHeatMap.react';
 import RoiBarGraph from '../visualization/MiniRoiBarGraph.react';
@@ -46,6 +49,9 @@ const styles = theme => ({
   button: {
     margin: 4,
     display: 'block'
+  },
+  clickable: {
+    cursor: 'pointer'
   }
 });
 
@@ -76,6 +82,12 @@ class FindSimilarNeurons extends React.Component {
   static get queryDescription() {
     return 'Find neurons that are similar to a neuron of interest in terms of their input and output locations (ROIs).';
   }
+
+  handleShowSkeleton = (id, dataSet) => event => {
+    const { actions } = this.props;
+    actions.skeletonAddandOpen(id, dataSet);
+    actions.neuroglancerAddandOpen(id, dataSet);
+  };
 
   // functions for processing results
   processSimilarResults = (query, apiResponse) => {
@@ -128,6 +140,7 @@ class FindSimilarNeurons extends React.Component {
       const totalPre = row[3];
       const totalPost = row[4];
       const roiInfo = row[5];
+      const hasSkeleton = row[8];
 
       // get index of queried body id so can move this data to top of table
       if (bodyId === parseInt(parameters.bodyId)) {
@@ -135,7 +148,29 @@ class FindSimilarNeurons extends React.Component {
       }
 
       const converted = [
-        bodyId,
+        {
+          value: hasSkeleton ? (
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row'
+              }}
+            >
+              {bodyId}
+              <div style={{ margin: '3px' }} />
+              <Icon
+                className={styles.clickable}
+                onClick={this.handleShowSkeleton(bodyId, query.dataSet)}
+                fontSize="inherit"
+              >
+                visibility
+              </Icon>
+            </div>
+          ) : (
+            bodyId
+          ),
+          sortBy: bodyId
+        },
         name,
         status,
         totalPre,
@@ -379,7 +414,7 @@ class FindSimilarNeurons extends React.Component {
         parameters.dataset +
         "-Neuron`{clusterName:'" +
         clusterName +
-        "'}) RETURN n.bodyId, n.name, n.status, n.pre, n.post, n.roiInfo, rois, n.clusterName";
+        "'}) RETURN n.bodyId, n.name, n.status, n.pre, n.post, n.roiInfo, rois, n.clusterName, exists((n)-[:Contains]->(:Skeleton)) AS hasSkeleton";
 
       parameters.clusterName = clusterName;
       parameters.emptyDataErrorMessage = 'Cluster name does not exist in the dataset.';
@@ -434,7 +469,7 @@ class FindSimilarNeurons extends React.Component {
       bodyId +
       '}) WITH n.clusterName AS cn, rois MATCH (n:`' +
       dataSet +
-      '-Neuron`{clusterName:cn}) RETURN n.bodyId, n.name, n.status, n.pre, n.post, n.roiInfo, rois, n.clusterName';
+      '-Neuron`{clusterName:cn}) RETURN n.bodyId, n.name, n.status, n.pre, n.post, n.roiInfo, rois, n.clusterName, exists((n)-[:Contains]->(:Skeleton)) AS hasSkeleton';
 
     // TODO: change title based on results
     const title = 'Neurons similar to ' + bodyId;
@@ -509,7 +544,7 @@ class FindSimilarNeurons extends React.Component {
       dataSet +
       '-Neuron`) WHERE (' +
       roiPredicate.slice(0, -4) +
-      ') RETURN n.bodyId, n.name, n.status, n.pre, n.post, n.roiInfo, rois, n.clusterName';
+      ') RETURN n.bodyId, n.name, n.status, n.pre, n.post, n.roiInfo, rois, n.clusterName, exists((n)-[:Contains]->(:Skeleton)) AS hasSkeleton';
 
     // TODO: change title based on results
     const title = 'Neurons in ' + rois;
@@ -670,6 +705,12 @@ const FindSimilarNeuronsDispatch = dispatch => ({
     },
     pluginResponseError: error => {
       dispatch(pluginResponseError(error));
+    },
+    skeletonAddandOpen: (id, dataSet) => {
+      dispatch(skeletonAddandOpen(id, dataSet));
+    },
+    neuroglancerAddandOpen: (id, dataSet) => {
+      dispatch(neuroglancerAddandOpen(id, dataSet));
     }
   }
 });
