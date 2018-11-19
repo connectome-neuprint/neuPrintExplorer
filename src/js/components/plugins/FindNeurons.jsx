@@ -65,16 +65,32 @@ class FindNeurons extends React.Component {
     actions.neuroglancerAddandOpen(id, dataSet);
   };
 
-  processSimpleConnections = (dataSet, apiResponse) => {
-    const { actions } = this.props;
+  processSimpleConnections = (query, apiResponse) => {
+    const { dataSet, actions } = this.props;
+
+    const findNeuronQuery = bodyId => {
+      const parameters = {
+        dataset: dataSet,
+        neuron_id: bodyId
+      };
+      return {
+        dataSet, // <string> for the data set selected
+        queryString: '/npexplorer/findneurons', // <neo4jquery string>
+        // cypherQuery: <string> if this is passed then use generic /api/custom/custom endpoint
+        visType: 'SimpleTable', // <string> which visualization plugin to use. Default is 'table'
+        plugin: pluginName, // <string> the name of this plugin.
+        parameters, // <object>
+        title: `Neuron with id ` + bodyId,
+        menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
+        processResults: this.processResults
+      };
+    };
+
     const data = apiResponse.data.map(row => {
       return [
         {
           value: row[2],
-          action: () => {
-            actions.skeletonAddandOpen(row[2], dataSet);
-            actions.neuroglancerAddandOpen(row[2], dataSet);
-          }
+          action: () => actions.submit(findNeuronQuery(row[2]))
         },
         row[1],
         row[3]
@@ -187,7 +203,7 @@ class FindNeurons extends React.Component {
             find_inputs: true,
             neuron_id: row[0]
           },
-          title: `Connections to [${row[1]}]:bodyID=${row[0]}`,
+          title: `Connections to bodyID=${row[0]}`,
           menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
           processResults: this.processSimpleConnections
         };
