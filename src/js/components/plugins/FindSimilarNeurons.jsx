@@ -133,6 +133,37 @@ class FindSimilarNeurons extends React.Component {
     // store sub-level rois
     let subLevelRois = new Set();
 
+    // queries for getting neuron connections
+    const postQuery = bodyId => ({
+      dataSet: parameters.dataset,
+      queryString: '/npexplorer/simpleconnections',
+      visType: 'SimpleTable',
+      plugin: pluginName,
+      parameters: {
+        dataset: parameters.dataset,
+        find_inputs: true,
+        neuron_id: bodyId
+      },
+      title: `Connections to bodyID=${bodyId}`,
+      menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
+      processResults: this.processConnections
+    });
+
+    const preQuery = bodyId => ({
+      dataSet: parameters.dataset,
+      queryString: '/npexplorer/simpleconnections',
+      visType: 'SimpleTable',
+      plugin: pluginName,
+      parameters: {
+        dataset: parameters.dataset,
+        find_inputs: false,
+        neuron_id: bodyId
+      },
+      title: `Connections from bodyID=${bodyId}`,
+      menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
+      processResults: this.processConnections
+    });
+
     let data = apiResponse.data.map((row, index) => {
       const bodyId = row[0];
       const name = row[1];
@@ -173,8 +204,14 @@ class FindSimilarNeurons extends React.Component {
         },
         name,
         status,
-        totalPre,
-        totalPost,
+        {
+          value: totalPre,
+          action: () => actions.submit(preQuery(bodyId))
+        },
+        {
+          value: totalPost,
+          action: () => actions.submit(postQuery(bodyId))
+        },
         '', // empty unless roiInfoObject present
         ''
       ];
@@ -444,6 +481,60 @@ class FindSimilarNeurons extends React.Component {
 
     return {
       columns: ['cluster name (click to explore group)'],
+      data,
+      debug: apiResponse.debug
+    };
+  };
+
+  processConnections = (query, apiResponse) => {
+    const { dataSet, actions } = this.props;
+
+    const findSimilarNeuron = bodyId => {
+      const parameters = {
+        dataset: dataSet,
+        bodyId: bodyId,
+        emptyDataErrorMessage: 'Body ID not found in dataset.'
+      };
+
+      const similarQuery =
+        "MATCH (m:Meta{dataset:'" +
+        dataSet +
+        "'}) WITH m.superLevelRois AS rois MATCH (n:`" +
+        dataSet +
+        '-Neuron`{bodyId:' +
+        bodyId +
+        '}) WITH n.clusterName AS cn, rois MATCH (n:`' +
+        dataSet +
+        '-Neuron`{clusterName:cn}) RETURN n.bodyId, n.name, n.status, n.pre, n.post, n.roiInfo, rois, n.clusterName, exists((n)-[:Contains]->(:Skeleton)) AS hasSkeleton';
+
+      // TODO: change title based on results
+      const title = 'Neurons similar to ' + bodyId;
+
+      return {
+        dataSet,
+        cypherQuery: similarQuery,
+        visType: 'SimpleTable',
+        plugin: pluginName,
+        parameters,
+        title: title,
+        menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
+        processResults: this.processSimilarResults
+      };
+    };
+
+    const data = apiResponse.data.map(row => {
+      return [
+        {
+          value: row[2],
+          action: () => actions.submit(findSimilarNeuron(row[2]))
+        },
+        row[1],
+        row[3]
+      ];
+    });
+
+    return {
+      columns: ['body id (click to find similar neurons)', 'name', '# connections'],
       data,
       debug: apiResponse.debug
     };
