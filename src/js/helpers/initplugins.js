@@ -5,7 +5,7 @@
 import { initPlugins, initViewPlugins } from 'actions/app';
 
 // import plugins (could probably write a pre-processing script)
-import CommonConnectivity from 'plugins/CommonConnectivity.react';
+import CommonConnectivity from 'plugins/CommonConnectivity';
 import FreeForm from 'plugins/FreeForm.react';
 import SimpleConnections from 'plugins/SimpleConnections.react';
 import RankedTable from 'plugins/RankedTable.react';
