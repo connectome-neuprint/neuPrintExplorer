@@ -223,7 +223,7 @@ class FindNeurons extends React.Component {
             find_inputs: false,
             neuron_id: row[0]
           },
-          title: `Connections from [${row[1]}]:bodyID=${row[0]}`,
+          title: `Connections from bodyID=${row[0]}`,
           menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
           processResults: this.processSimpleConnections
         };
