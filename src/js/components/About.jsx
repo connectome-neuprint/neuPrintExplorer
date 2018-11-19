@@ -35,11 +35,8 @@ class About extends React.Component {
       data: 'Loading user issues from GitHub...',
     }
   }
-    componentDidUpdate(nextProps) {
+loadIssues () {
       const {token} = this.props;
-      if (nextProps.token === token) {
-        return;
-      }
       /* Call to Google API function */
       fetch('https://us-east1-dvid-em.cloudfunctions.net/neuprint-janelia/gitinfo', {
         method: 'POST',
@@ -81,6 +78,21 @@ class About extends React.Component {
           data: error
         })
       });
+}
+
+    componentDidMount() {
+      const {token} = this.props;
+      if (token == "") {
+        return;
+      }
+      this.loadIssues();
+    }
+    componentDidUpdate(nextProps) {
+      const {token} = this.props;
+      if (nextProps.token === token) {
+        return;
+      }
+      this.loadIssues();
     };
 
   render() {
