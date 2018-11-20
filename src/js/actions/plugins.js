@@ -28,6 +28,13 @@ function saveQueryResponse(combined) {
   };
 }
 
+const handleError = (response, dispatch) => {
+  if (!response.ok) {
+    dispatch(submissionError('Error processing query'));
+  }
+  return response;
+};
+
 export function submit(query) {
   return function submitAsync(dispatch) {
     dispatch(submittingQuery(query));
@@ -53,11 +60,9 @@ export function submit(query) {
       method: 'POST',
       credentials: 'include'
     })
+      .then(result => handleError(result, dispatch))
       .then(result => result.json())
       .then(resp => {
-        if ('error' in resp) {
-          throw resp.error;
-        }
         // make new result object
         let data = query.processResults(query, resp);
         const combined = Object.assign(query, { result: data });
