@@ -5,8 +5,6 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 
 import Master from './components/Master.react';
-import '../../node_modules/react-resizable/css/styles.css';
-import '../../node_modules/react-grid-layout/css/styles.css';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { setAppDb } from './actions/app';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
@@ -17,7 +15,7 @@ var ReactDOM = require('react-dom');
 // set theme colors
 const theme = createMuiTheme({
   typography: {
-    useNextVariants: true,
+    useNextVariants: true
   },
   palette: {
     primary: {

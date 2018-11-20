@@ -283,6 +283,7 @@ class FindNeurons extends React.Component {
       queryString: '/npexplorer/findneurons', // <neo4jquery string>
       // cypherQuery: <string> if this is passed then use generic /api/custom/custom endpoint
       visType: 'SimpleTable', // <string> which visualization plugin to use. Default is 'table'
+      visProps: { rowsPerPage: 25 },
       plugin: pluginName, // <string> the name of this plugin.
       parameters, // <object>
       title: `Neurons with inputs in [${inputROIs}] and outputs in [${outputROIs}]`,

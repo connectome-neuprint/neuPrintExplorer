@@ -6,7 +6,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import qs from 'qs';
-import { Responsive, WidthProvider } from 'react-grid-layout';
 
 import Typography from '@material-ui/core/Typography';
 import Fade from '@material-ui/core/Fade';
@@ -21,8 +20,6 @@ import { toggleSkeleton } from 'actions/skeleton';
 import { setFullScreen, clearFullScreen } from 'actions/app';
 
 import './Results.css';
-
-const ResponsiveGridLayout = WidthProvider(Responsive);
 
 var LightColors = [
   '#d9d9d9',
@@ -222,7 +219,7 @@ class Results extends React.Component {
             queryStr={query.result.debug}
             color={query.menuColor}
           />
-          <View query={query} key={index} />
+          <View query={query} key={index} properties={query.visProps} />
         </div>
       );
     });
@@ -249,24 +246,14 @@ class Results extends React.Component {
         <Grid container spacing={0}>
           <Grid item xs={12} sm={showSkel ? 6 : 12}>
             <div className={classes.scroll}>
-              <ResponsiveGridLayout
-                className="layout"
-                rowHeight={30}
-                breakpoints={{ lg: 2000 }}
-                cols={{ lg: showSkel ? 6 : 12 }}
-                draggableHandle=".topresultbar"
-                compactType="vertical"
-                onResizeStop={this.changeLayout}
-              >
-                {results}
-                {resArray.map(result => {
-                  return result;
-                })}
-              </ResponsiveGridLayout>
+              {results}
+              {resArray.map(result => {
+                return result;
+              })}
             </div>
           </Grid>
           {showSkel ? (
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} h={2}>
               <NeuronViz />
             </Grid>
           ) : (

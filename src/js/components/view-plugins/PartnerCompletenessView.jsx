@@ -25,15 +25,13 @@ class PartnerCompletenessView extends React.Component {
     let inputTable = {
       result: {
         columns: ['id', 'name', '#connections', 'status', '#pre', '#post'],
-        data: [],
-        paginate: 10
+        data: []
       }
     };
     let outputTable = {
       result: {
         columns: ['id', 'name', '#connections', 'status', '#pre', '#post'],
-        data: [],
-        paginate: 10
+        data: []
       }
     };
 
@@ -219,6 +217,8 @@ class PartnerCompletenessView extends React.Component {
       };
     });
 
+    const visProperties = { rowsPerPage: 10 };
+
     return (
       <div className={classes.root}>
         <Typography variant="h6">Neuron information</Typography>
@@ -250,13 +250,13 @@ class PartnerCompletenessView extends React.Component {
           {((inputStats.highconn / inputStats.totalconn) * 100).toFixed(2)} percent connections,{' '}
           {inputStats.numhigh} bodies highlighted out of {inputStats.numbodies}
         </Typography>
-        <SimpleTable query={inputTable} />
+        <SimpleTable query={inputTable} properties={visProperties} />
         <Typography variant="h6">Outputs</Typography>
         <Typography>
           {((outputStats.highconn / outputStats.totalconn) * 100).toFixed(2)} percent connections,{' '}
           {outputStats.numhigh} bodies highlighted out of {outputStats.numbodies}
         </Typography>
-        <SimpleTable query={outputTable} />
+        <SimpleTable query={outputTable} properties={visProperties} />
       </div>
     );
   }

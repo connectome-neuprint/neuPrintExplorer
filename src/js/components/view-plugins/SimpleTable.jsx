@@ -80,12 +80,19 @@ const styles = theme => ({
 class SimpleTable extends React.Component {
   constructor(props) {
     super(props);
-    let rowsPerPage = 5;
-    if ('paginate' in props.query.result) {
-      if (props.query.result.paginate > 0) {
-        rowsPerPage = props.query.result.paginate;
+    const { properties } = this.props;
+    let rowsPerPage;
+    let paginate;
+    if (properties) {
+      if (properties.rowsPerPage) {
+        rowsPerPage = properties.rowsPerPage;
       } else {
-        rowsPerPage = props.query.result.data.length;
+        rowsPerPage = 5;
+      }
+      if (properties.paginate) {
+        paginate = properties.paginate;
+      } else {
+        paginate = true;
       }
     }
 
@@ -95,7 +102,8 @@ class SimpleTable extends React.Component {
       selected: [],
       data: [],
       page: 0,
-      rowsPerPage: rowsPerPage
+      rowsPerPage: rowsPerPage,
+      paginate: paginate
     };
   }
 
@@ -128,6 +136,7 @@ class SimpleTable extends React.Component {
     const emptyRows =
       rowsPerPage - Math.min(rowsPerPage, query.result.data.length - page * rowsPerPage);
 
+    // TODO: use visProps when roi connectivity plugin has been refactored.
     let paginate = true;
     if ('paginate' in query.result && query.result.paginate === 0) {
       paginate = false;
@@ -196,7 +205,7 @@ class SimpleTable extends React.Component {
                 })}
               {emptyRows > 0 && (
                 <TableRow style={{ height: 48 * emptyRows }}>
-                  <TableCell key='empty' colSpan={6} />
+                  <TableCell key="empty" colSpan={6} />
                 </TableRow>
               )}
             </TableBody>
@@ -210,6 +219,7 @@ class SimpleTable extends React.Component {
             page={page}
             onChangePage={this.handleChangePage}
             onChangeRowsPerPage={this.handleChangeRowsPerPage}
+            rowsPerPageOptions={[5, 10, 25, 50, 100]}
             ActionsComponent={TablePaginationActions}
           />
         ) : null}
