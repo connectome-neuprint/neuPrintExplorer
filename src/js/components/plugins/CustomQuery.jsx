@@ -2,14 +2,19 @@
  * Supports simple, custom neo4j query.
 */
 import React from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import randomColor from 'randomcolor';
+import { withRouter } from 'react-router';
+
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+
+import { submit } from 'actions/plugins';
+import { getQueryString } from 'helpers/queryString';
 import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
-import { connect } from 'react-redux';
-import SimpleCellWrapper from '../../helpers/SimpleCellWrapper';
 import { setUrlQS } from '../../actions/app';
 
 const styles = () => ({
@@ -19,6 +24,8 @@ const styles = () => ({
   formControl: {}
 });
 
+const pluginName = 'CustomQuery';
+
 class FreeForm extends React.Component {
   static get queryName() {
     return 'Custom';
@@ -26,36 +33,6 @@ class FreeForm extends React.Component {
 
   static get queryDescription() {
     return 'Enter custom Neo4j Cypher query';
-  }
-
-  static parseResults(neoResults) {
-    // load one table from neoResults
-    var tables = [];
-    var maindata = [];
-    var headerdata = [];
-
-    neoResults.records.forEach(function(record) {
-      var recorddata = [];
-      record.toArr().forEach(function(value) {
-        var newval = value;
-        recorddata.push(new SimpleCellWrapper(recorddata.length, JSON.stringify(newval)));
-      });
-      maindata.push(recorddata);
-    });
-
-    if (neoResults.columns.length > 0) {
-      for (var i = 0; i < neoResults.columns.length; i++) {
-        headerdata.push(new SimpleCellWrapper(i, neoResults.columns[i]));
-      }
-    }
-
-    tables.push({
-      header: headerdata,
-      body: maindata,
-      name: 'Custom Query'
-    });
-
-    return tables;
   }
 
   constructor(props) {
@@ -73,21 +50,51 @@ class FreeForm extends React.Component {
     };
   }
 
-  processRequest = () => {
-    let query = {
-      queryStr: this.state.qsParams.textValue,
-      callback: FreeForm.parseResults,
-      state: {}
-    };
-
-    this.props.callback(query);
+  processResults = (query, apiResponse) => {
+    if (apiResponse.data) {
+      return {
+        columns: apiResponse.columns,
+        data: apiResponse.data,
+        debug: apiResponse.debug
+      };
+    } else {
+      return {
+        columns: [],
+        data: [],
+        debug: ''
+      };
+    }
   };
 
-  handleClick = event => {
-    this.props.setURLQs(
-      SaveQueryString('Query:' + this.constructor.queryName, { textValue: event.target.value })
-    );
-    this.setState({ qsParams: { textValue: event.target.value } });
+  processRequest = () => {
+    const { dataSet, actions, history } = this.props;
+    const { textValue } = this.state.qsParams;
+
+    const query = {
+      dataSet,
+      cypherQuery: textValue,
+      visType: 'SimpleTable',
+      plugin: pluginName,
+      parameters: {},
+      title: 'Custom query',
+      menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
+      processResults: this.processResults
+    };
+    actions.submit(query);
+    history.push({
+      pathname: '/results',
+      search: getQueryString()
+    });
+    return query;
+  };
+
+  handleChange = event => {
+    const oldParams = this.state.qsParams;
+    oldParams.textValue = event.target.value;
+    this.props.actions.setURLQs(SaveQueryString('Query:' + this.constructor.queryName, oldParams));
+    this.setState({
+      qsParams: oldParams
+    });
   };
 
   catchReturn = event => {
@@ -109,7 +116,7 @@ class FreeForm extends React.Component {
           rows={1}
           rowsMax={4}
           className={classes.textField}
-          onChange={this.handleClick}
+          onChange={this.handleChange}
           onKeyDown={this.catchReturn}
         />
         {this.props.disable ? (
@@ -127,30 +134,35 @@ class FreeForm extends React.Component {
 }
 
 FreeForm.propTypes = {
-  callback: PropTypes.func.isRequired,
   disable: PropTypes.bool,
   urlQueryString: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired,
-  setURLQs: PropTypes.func.isRequired
+  actions: PropTypes.object.isRequired
 };
 
 var FreeFormState = function(state) {
   return {
-    urlQueryString: state.app.get('urlQueryString')
+    urlQueryString: state.app.get('urlQueryString'),
+    isQuerying: state.query.isQuerying
   };
 };
 
-var FreeFormDispatch = function(dispatch) {
-  return {
+var FreeFormDispatch = dispatch => ({
+  actions: {
+    submit: query => {
+      dispatch(submit(query));
+    },
     setURLQs: function(querystring) {
       dispatch(setUrlQS(querystring));
     }
-  };
-};
+  }
+});
 
 export default withStyles(styles)(
-  connect(
-    FreeFormState,
-    FreeFormDispatch
-  )(FreeForm)
+  withRouter(
+    connect(
+      FreeFormState,
+      FreeFormDispatch
+    )(FreeForm)
+  )
 );

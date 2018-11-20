@@ -6,7 +6,7 @@ import { initPlugins, initViewPlugins } from 'actions/app';
 
 // import plugins (could probably write a pre-processing script)
 import CommonConnectivity from 'plugins/CommonConnectivity';
-import FreeForm from 'plugins/FreeForm.react';
+import CustomQuery from 'plugins/CustomQuery';
 import SimpleConnections from 'plugins/SimpleConnections.react';
 import RankedTable from 'plugins/RankedTable.react';
 import FindNeurons from 'plugins/FindNeurons';
@@ -32,7 +32,7 @@ const pluginList = [
   ROIsIntersectingNeurons,
   CommonConnectivity,
   FindSimilarNeurons,
-  FreeForm,
+  CustomQuery,
   Autapses,
   Distribution,
   Completeness,
