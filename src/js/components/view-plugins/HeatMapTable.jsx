@@ -1,17 +1,11 @@
 import React from 'react';
 import ColorBox from '../visualization/ColorBox.react';
-import Table from '@material-ui/core/Table';
-import TableRow from '@material-ui/core/TableRow';
-import TableCell from '@material-ui/core/TableCell';
 import Typography from '@material-ui/core/Typography';
 
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
   root: {},
-  clickable: {
-    cursor: 'pointer'
-  },
   scroll: {
     width: '100%',
     marginTop: theme.spacing.unit * 1,
@@ -28,7 +22,6 @@ const styles = theme => ({
   labelBlank: {
     margin: '0px',
     padding: '0px',
-    position: '-webkit-sticky',
     position: 'sticky',
     zIndex: 1,
     top: '0px',
@@ -37,14 +30,12 @@ const styles = theme => ({
   labelTop: {
     margin: '0px',
     padding: '0px',
-    position: '-webkit-sticky',
     position: 'sticky',
     top: '0px'
   },
   labelSide: {
     margin: '0px',
     padding: '0px',
-    position: '-webkit-sticky',
     position: 'sticky',
     left: '0px'
   },

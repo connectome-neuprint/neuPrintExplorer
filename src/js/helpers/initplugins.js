@@ -11,7 +11,7 @@ import SimpleConnections from 'plugins/SimpleConnections.react';
 import RankedTable from 'plugins/RankedTable.react';
 import FindNeurons from 'plugins/FindNeurons';
 import ROIsIntersectingNeurons from 'plugins/ROIsIntersectingNeurons.react';
-import ROIConnectivity from 'plugins/ROIConnectivity.react';
+import ROIConnectivity from 'plugins/ROIConnectivity';
 import NeuronMeta from 'plugins/NeuronMeta.react';
 import Autapses from 'plugins/Autapses';
 import PartnerCompleteness from 'plugins/PartnerCompleteness';
