@@ -46,6 +46,7 @@ function BarGraph({ listOfRoisToUse, roiInfoObject, roiInfoObjectKey, sumOfValue
           height={20}
           backgroundColor={color}
           title={roi + ' ' + Math.round(percent * 100) / 100 + '%'}
+          text=""
         />
       );
     }
