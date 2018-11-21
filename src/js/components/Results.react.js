@@ -125,6 +125,7 @@ class Results extends React.Component {
     results.result.data.forEach(row => {
       const filteredRow = row.map(item => {
         if (item === null) return '';
+        if (item.csvValue !== undefined) return item.csvValue;
         if (item.sortBy !== undefined) return item.sortBy;
         if (item.value !== undefined) return item.value;
         return item;
