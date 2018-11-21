@@ -81,18 +81,16 @@ class SimpleTable extends React.Component {
   constructor(props) {
     super(props);
     const { properties } = this.props;
-    let rowsPerPage;
-    let paginate;
+    //default values
+    let rowsPerPage = 5;
+    let paginate = true;
+    // check for user-specified props
     if (properties) {
       if (properties.rowsPerPage) {
         rowsPerPage = properties.rowsPerPage;
-      } else {
-        rowsPerPage = 5;
       }
       if (properties.paginate) {
         paginate = properties.paginate;
-      } else {
-        paginate = true;
       }
     }
 
