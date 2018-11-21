@@ -22,6 +22,7 @@ import FindSimilarNeurons from 'plugins/FindSimilarNeurons';
 // view plugins
 import SimpleTable from 'views/SimpleTable';
 import PartnerCompletenessView from 'views/PartnerCompletenessView';
+import HeatMapTable from 'views/HeatMapTable';
 
 const pluginList = [
   FindNeurons,
@@ -41,7 +42,8 @@ const pluginList = [
 
 const viewPlugins = {
   SimpleTable,
-  PartnerCompletenessView
+  PartnerCompletenessView,
+  HeatMapTable
 };
 export default function loadPlugins(store) {
   store.dispatch(initPlugins(pluginList));
