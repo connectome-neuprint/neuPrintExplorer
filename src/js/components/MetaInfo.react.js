@@ -24,47 +24,49 @@ class MetaInfo extends React.Component {
     }
   }
 
-    updateDB = () => {
-        fetch('/api/dbmeta/datasets', {
-            credentials: 'include'
-        })
-            .then(result=>result.json())
-            .then(items=> {
-                if (!("message" in items)) {
-                    let datasets = [];
-                    let rois = {}
-                    let datasetInfo = {}
-                    for (let dataset in items) {
-                        datasets.push(dataset)
-                        rois[dataset] = items[dataset].ROIs.sort(function (a, b) {
-                            const aStartsWithLetter = a.charAt(0).match(/[a-z]/i)
-                            const bStartsWithLetter = b.charAt(0).match(/[a-z]/i)
-                            if (aStartsWithLetter && !bStartsWithLetter) return -1
-                            if (bStartsWithLetter && !aStartsWithLetter) return 1
-                            return (a === b ? 0 : (a < b ? -1 : 1))
-                        })
-                        datasetInfo[dataset] = {
-                            uuid:   items[dataset].uuid,
-                            lastmod: items[dataset]["last-mod"]
-                        }
-                    }
-                    this.props.setNeoDatasets(datasets, rois, datasetInfo);
-                }
-            });
-        fetch('/api/dbmeta/database', {
-            credentials: 'include'
-        })            
-            .then(result=>result.json())
-            .then(data=> {
-                if (!("message" in data)) {
-                    this.props.setNeoServer(data.Location);
-                }
-            });
-    }
+  updateDB = () => {
+    fetch('/api/dbmeta/datasets', {
+      credentials: 'include'
+    })
+      .then(result => result.json())
+      .then(items => {
+        if (!('message' in items)) {
+          let datasets = [];
+          let rois = {};
+          let datasetInfo = {};
+          for (let dataset in items) {
+            datasets.push(dataset);
+            rois[dataset] = items[dataset].ROIs.sort(sortRois);
+            datasetInfo[dataset] = {
+              uuid: items[dataset].uuid,
+              lastmod: items[dataset]['last-mod']
+            };
+          }
+          this.props.setNeoDatasets(datasets, rois, datasetInfo);
+        }
+      });
+    fetch('/api/dbmeta/database', {
+      credentials: 'include'
+    })
+      .then(result => result.json())
+      .then(data => {
+        if (!('message' in data)) {
+          this.props.setNeoServer(data.Location);
+        }
+      });
+  };
 
   render() {
     return <div />;
   }
+}
+
+export function sortRois(a, b) {
+  const aStartsWithLetter = a.charAt(0).match(/[a-z]/i);
+  const bStartsWithLetter = b.charAt(0).match(/[a-z]/i);
+  if (aStartsWithLetter && !bStartsWithLetter) return -1;
+  if (bStartsWithLetter && !aStartsWithLetter) return 1;
+  return a === b ? 0 : a < b ? -1 : 1;
 }
 
 MetaInfo.propTypes = {
