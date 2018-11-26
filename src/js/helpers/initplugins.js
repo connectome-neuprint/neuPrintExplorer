@@ -12,7 +12,7 @@ import RankedTable from 'plugins/RankedTable.react';
 import FindNeurons from 'plugins/FindNeurons';
 import ROIsIntersectingNeurons from 'plugins/ROIsIntersectingNeurons.react';
 import ROIConnectivity from 'plugins/ROIConnectivity';
-import NeuronMeta from 'plugins/NeuronMeta.react';
+import NeuronMeta from 'plugins/NeuronMeta';
 import Autapses from 'plugins/Autapses';
 import PartnerCompleteness from 'plugins/PartnerCompleteness';
 import Distribution from 'plugins/Distribution';
