@@ -7,7 +7,7 @@ import { initPlugins, initViewPlugins } from 'actions/app';
 // import plugins (could probably write a pre-processing script)
 import CommonConnectivity from 'plugins/CommonConnectivity';
 import CustomQuery from 'plugins/CustomQuery';
-import SimpleConnections from 'plugins/SimpleConnections.react';
+import SimpleConnections from 'plugins/SimpleConnections';
 import RankedTable from 'plugins/RankedTable.react';
 import FindNeurons from 'plugins/FindNeurons';
 import ROIsIntersectingNeurons from 'plugins/ROIsIntersectingNeurons.react';
