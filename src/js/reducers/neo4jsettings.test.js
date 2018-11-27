@@ -1,5 +1,5 @@
 import C from '../../../src/js/reducers/constants';
-import reducer from '../../../src/js/reducers/neo4jsettings';
+import neo4jsettings from '../../../src/js/reducers/neo4jsettings';
 import Immutable from 'immutable';
 
 const state = Immutable.Map({
@@ -10,6 +10,13 @@ const state = Immutable.Map({
     uuid: 'existingversion'
   },
   neoServer: 'foobar'
+});
+
+const initialState = Immutable.Map({
+  availableDatasets: [],
+  availableROIs: {},
+  datasetInfo: {},
+  neoServer: ''
 });
 
 describe('neo4jsettings Reducer', () => {
@@ -23,7 +30,7 @@ describe('neo4jsettings Reducer', () => {
         uuid: 'newversion'
       }
     };
-    expect(reducer(undefined, action)).toEqual(
+    expect(neo4jsettings(undefined, action)).toEqual(
       Immutable.Map({
         availableDatasets: ['newdataset'],
         availableROIs: { rois: ['newrois'] },
@@ -34,7 +41,7 @@ describe('neo4jsettings Reducer', () => {
         neoServer: ''
       })
     );
-    expect(reducer(state, action)).toEqual(
+    expect(neo4jsettings(state, action)).toEqual(
       Immutable.Map({
         availableDatasets: ['newdataset'],
         availableROIs: { rois: ['newrois'] },
@@ -45,5 +52,12 @@ describe('neo4jsettings Reducer', () => {
         neoServer: 'foobar'
       })
     );
+  });
+  it('SET_NEO_SERVER success', () => {
+    const action = {
+      type: C.SET_NEO_SERVER,
+      neoServer: 'testServer'
+    };
+    expect(neo4jsettings(undefined, action)).toEqual(initialState.set('neoServer', 'testServer'));
   });
 });

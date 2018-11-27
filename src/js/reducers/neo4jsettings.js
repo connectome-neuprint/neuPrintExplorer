@@ -4,7 +4,7 @@
 import C from './constants';
 import Immutable from 'immutable';
 
-var neo4jsettingsState = Immutable.Map({
+const neo4jsettingsState = Immutable.Map({
   availableDatasets: [],
   availableROIs: {},
   datasetInfo: {},
@@ -20,7 +20,7 @@ export default function neo4jreducer(state = neo4jsettingsState, action) {
         .set('datasetInfo', action.datasetInfo);
     }
     case C.SET_NEO_SERVER: {
-      return state.set(('neoServer', action.neoServer));
+      return state.set('neoServer', action.neoServer);
     }
     default: {
       return state;
