@@ -73,3 +73,10 @@ export function submit(query) {
       });
   };
 }
+
+export function formError(error) {
+  return {
+    type: C.PLUGIN_SUBMIT_ERROR,
+    error,
+  };
+}

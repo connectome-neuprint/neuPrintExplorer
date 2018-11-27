@@ -2,24 +2,30 @@
  * Supports simple, custom neo4j query.
 */
 import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import randomColor from 'randomcolor';
+import { withRouter } from 'react-router';
+
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import PropTypes from 'prop-types';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { withStyles } from '@material-ui/core/styles';
-import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
-import { connect } from 'react-redux';
-import NeuronHelp from '../NeuronHelp.react';
-import SimpleCellWrapper from '../../helpers/SimpleCellWrapper';
-import { setUrlQS } from '../../actions/app';
 
-const styles = () => ({
+import NeuronHelp from '../NeuronHelp.react';
+import { submit, formError } from 'actions/plugins';
+import { getQueryString } from 'helpers/queryString';
+
+const styles = theme => ({
   textField: {},
-  formControl: {},
+  formControl: {
+    margin: '0.5em 0 1em 0',
+    width: '100%'
+  },
   badge: {
     right: '-10px',
     width: '100px',
@@ -28,132 +34,127 @@ const styles = () => ({
   }
 });
 
+const pluginName = 'SimpleConnection';
+
 class SimpleConnections extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      neuronName: '',
+      preOrPost: 'pre'
+    };
+  }
+
   static get queryName() {
     return 'Simple Connections';
   }
 
   static get queryDescription() {
-    return 'List inputs or outputs to provided neuron(s)';
+    return 'List inputs or outputs to selected neuron(s)';
   }
 
-  static parseResults(neoResults, state) {
-    // load one table from neoResults
-    var tables = [];
-    let index = 0;
-    var headerdata = [
-      new SimpleCellWrapper(index++, 'ID'),
-      new SimpleCellWrapper(index++, 'Name'),
-      new SimpleCellWrapper(index++, 'Weight')
-    ];
-    var currtable = [];
-    var lastbody = -1;
+  processResults = (query, apiResponse) => {
+    const tables = [];
+    const columnNames = [ 'ID', 'Name', 'Weight'];
 
-    var lastname = '';
-    // retrieve records
-    neoResults.records.forEach(function(record) {
-      var newval = record.get('Neuron1Id');
-      if (lastbody !== -1 && newval !== lastbody) {
-        var tabname = lastname + ' id=(' + String(lastbody) + ')';
-        if (state.preOrPost === 'pre') {
-          tabname = tabname + ' => ...';
+    let currentTable = [];
+    let lastBody = -1;
+    let lastName = '';
+
+    apiResponse.data.forEach(row => {
+      const neuron1Id = row[4];
+       if (lastBody !== -1 && neuron1Id !== lastBody) {
+        let tableName = `${lastName} id=(${String(lastBody)})`;
+        if (query.parameters.find_inputs === false) {
+          tableName = tableName + ' => ...';
         } else {
-          tabname = '... => ' + tabname;
+          tableName = '... => ' + tableName;
         }
 
         tables.push({
-          header: headerdata,
-          body: currtable,
-          name: tabname
+          columns: columnNames,
+          data: currentTable,
+          name: tableName
         });
-        currtable = [];
+        currentTable = [];
       }
-      lastbody = newval;
-      lastname = record.get('Neuron1');
+      lastBody = neuron1Id;
+      lastName = row[0];
 
-      let neuronname = record.get('Neuron2');
-      if (neuronname === null) {
-        neuronname = '';
+      let neuron2Name = row[1];
+      if (neuron2Name === null) {
+        neuron2Name = '';
       }
-      currtable.push([
-        new SimpleCellWrapper(index++, record.get('Neuron2Id')),
-        new SimpleCellWrapper(index++, neuronname),
-        new SimpleCellWrapper(index++, record.get('Weight'))
+      currentTable.push([
+        row[2],
+        neuron2Name,
+        row[3]
       ]);
     });
 
-    if (lastbody !== -1) {
-      var tabname = lastname + ' id=(' + String(lastbody) + ')';
-      if (state.preOrPost === 'pre') {
-        tabname = tabname + ' => ...';
+    if (lastBody !== -1) {
+      let tableName = lastName + ' id=(' + String(lastBody) + ')';
+      if (query.parameters.find_inputs === false) {
+        tableName = tableName + ' => ...';
       } else {
-        tabname = '... => ' + tabname;
+        tableName = '... => ' + tableName;
       }
 
       tables.push({
-        header: headerdata,
-        body: currtable,
-        name: tabname
+        columns: columnNames,
+        data: currentTable,
+        name: tableName
       });
     }
 
-    return tables;
-  }
-
-  constructor(props) {
-    super(props);
-    var initqsParams = {
-      neuronpre: '',
-      preorpost: 'pre'
+    return {
+      data: tables,
+      debug: apiResponse.debug
     };
-    var qsParams = LoadQueryString(
-      'Query:' + this.constructor.queryName,
-      initqsParams,
-      this.props.urlQueryString
-    );
-    this.state = {
-      qsParams: qsParams
-    };
-  }
+  };
 
   processRequest = () => {
-    if (this.state.qsParams.neuronpre !== '') {
-      let params = { dataset: this.props.datasetstr };
-      if (isNaN(this.state.qsParams.neuronpre)) {
-        params['neuron_name'] = this.state.qsParams.neuronpre;
+    const { dataSet, actions, history } = this.props;
+    const { neuronName, preOrPost } = this.state;
+    if (this.state.neuronName !== '') {
+      let parameters = { dataset: dataSet };
+      if (isNaN(neuronName)) {
+        parameters['neuron_name'] = neuronName;
       } else {
-        params['neuron_id'] = parseInt(this.state.qsParams.neuronpre);
+        parameters['neuron_id'] = parseInt(neuronName);
       }
-      if (this.state.qsParams.preorpost === 'pre') {
-        params['find_inputs'] = false;
+      if (preOrPost === 'pre') {
+        parameters['find_inputs'] = false;
       } else {
-        params['find_inputs'] = true;
+        parameters['find_inputs'] = true;
       }
       let query = {
-        queryStr: '/npexplorer/simpleconnections',
-        params: params,
-        callback: SimpleConnections.parseResults,
-        state: {
-          preOrPost: this.state.qsParams.preorpost
-        }
+        dataSet,
+        queryString: '/npexplorer/simpleconnections',
+        visType: 'CollapsibleTable',
+        plugin: pluginName,
+        parameters,
+        title: `${preOrPost}-synaptic connections to ${neuronName}`,
+        menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
+        processResults: this.processResults
       };
 
-      this.props.callback(query);
+      actions.submit(query);
+      history.push({
+        pathname: '/results',
+        search: getQueryString()
+      });
+    } else {
+      actions.formError('Please enter a neuron name.');
     }
   };
 
-  handleClick = event => {
-    this.props.setURLQs(
-      SaveQueryString('Query:' + this.constructor.queryName, { neuronpre: event.target.value })
-    );
-    this.setState({ qsParams: { neuronpre: event.target.value } });
+  handleNeuronName = event => {
+    this.setState({ neuronName: event.target.value });
   };
 
-  setDirection = event => {
-    var oldparams = this.state.qsParams;
-    oldparams.preorpost = event.target.value;
-    this.props.setURLQs(SaveQueryString('Query:' + this.constructor.queryName, oldparams));
-    this.setState({ qsParams: oldparams });
+  handleDirection = event => {
+    this.setState({ preOrPost: event.target.value });
   };
 
   catchReturn = event => {
@@ -165,7 +166,7 @@ class SimpleConnections extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, isQuerying } = this.props;
     return (
       <div>
         <FormControl className={classes.formControl}>
@@ -173,29 +174,43 @@ class SimpleConnections extends React.Component {
             <TextField
               label="Neuron name"
               multiline
+              fullWidth
               rows={1}
-              value={this.state.qsParams.neuronpre}
+              value={this.state.neuronName}
               rowsMax={4}
               className={classes.textField}
-              onChange={this.handleClick}
+              onChange={this.handleNeuronName}
               onKeyDown={this.catchReturn}
             />
           </NeuronHelp>
         </FormControl>
-        <FormControl component="fieldset" required className={classes.formControl}>
+        <FormControl className={classes.formControl}>
           <FormLabel component="legend">Neuron Direction</FormLabel>
           <RadioGroup
-            aria-label="preorpost"
-            name="preorpost"
+            aria-label="preOrPost"
+            name="preOrPost"
             className={classes.group}
-            value={this.state.qsParams.preorpost}
-            onChange={this.setDirection}
+            value={this.state.preOrPost}
+            onChange={this.handleDirection}
           >
-            <FormControlLabel value="pre" control={<Radio />} label="Pre-synaptic" />
-            <FormControlLabel value="post" control={<Radio />} label="Post-synaptic" />
+            <FormControlLabel
+              value="pre"
+              control={<Radio color="primary" />}
+              label="Pre-synaptic"
+            />
+            <FormControlLabel
+              value="post"
+              control={<Radio color="primary" />}
+              label="Post-synaptic"
+            />
           </RadioGroup>
         </FormControl>
-        <Button variant="contained" onClick={this.processRequest}>
+        <Button
+          variant="contained"
+          disabled={isQuerying}
+          color="primary"
+          onClick={this.processRequest}
+        >
           Submit
         </Button>
       </div>
@@ -204,31 +219,32 @@ class SimpleConnections extends React.Component {
 }
 
 SimpleConnections.propTypes = {
-  callback: PropTypes.func.isRequired,
-  disable: PropTypes.bool,
-  setURLQs: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
   datasetstr: PropTypes.string.isRequired,
-  urlQueryString: PropTypes.string.isRequired
 };
 
-var SimpleConnectionsState = function(state) {
+const SimpleConnectionsState = function(state) {
   return {
-    urlQueryString: state.app.get('urlQueryString')
+    isQuerying: state.query.isQuerying
   };
 };
 
-var SimpleConnectionsDispatch = function(dispatch) {
-  return {
-    setURLQs: function(querystring) {
-      dispatch(setUrlQS(querystring));
+const SimpleConnectionsDispatch = dispatch => ({
+  actions: {
+    submit: query => {
+      dispatch(submit(query));
+    },
+    formError: query => {
+      dispatch(formError(query));
     }
-  };
-};
+  }
+});
 
-export default withStyles(styles)(
-  connect(
-    SimpleConnectionsState,
-    SimpleConnectionsDispatch
-  )(SimpleConnections)
+export default withRouter(
+  withStyles(styles)(
+    connect(
+      SimpleConnectionsState,
+      SimpleConnectionsDispatch
+    )(SimpleConnections)
+  )
 );

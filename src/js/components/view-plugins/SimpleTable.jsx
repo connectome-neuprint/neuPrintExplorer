@@ -64,16 +64,16 @@ function getSorting(order, orderBy) {
 }
 
 const styles = theme => ({
-  root: {},
+  root: {
+    width: '100%'
+  },
   clickable: {
     cursor: 'pointer'
   },
   scroll: {
-    width: '100%',
     marginTop: theme.spacing.unit * 1,
     overflowY: 'auto',
     overflowX: 'auto',
-    height: '100%'
   }
 });
 
