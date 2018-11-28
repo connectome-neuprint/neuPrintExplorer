@@ -6,7 +6,7 @@ const initialState = Immutable.Map({
   display: false,
   neurons: Immutable.Map({}),
   loading: false,
-  error: null,
+  error: null
 });
 
 describe('skeleton reducer', () => {
@@ -63,6 +63,32 @@ describe('skeleton reducer', () => {
 
   it('should handle removing a skeleton', () => {
     expect(reducer(skeletonAdded, { type: C.SKELETON_REMOVE, id: 34567 })).toEqual(initialState);
+    expect(
+      reducer(
+        skeletonAdded.setIn(
+          ['neurons', 123],
+          Immutable.Map({
+            name: 123,
+            dataSet: 'testDataSet',
+            swc: 'testSwc',
+            color: 'testColor',
+            visible: true
+          })
+        ),
+        { type: C.SKELETON_REMOVE, id: 34567 }
+      )
+    ).toEqual(
+      initialState.setIn(
+        ['neurons', 123],
+        Immutable.Map({
+          name: 123,
+          dataSet: 'testDataSet',
+          swc: 'testSwc',
+          color: 'testColor',
+          visible: true
+        })
+      )
+    );
   });
 
   const neuronVisible = initialState.setIn(
@@ -86,8 +112,4 @@ describe('skeleton reducer', () => {
       neuronHidden
     );
   });
-
-
-
-
 });
