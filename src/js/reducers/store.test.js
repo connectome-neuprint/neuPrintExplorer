@@ -117,6 +117,7 @@ describe('store Creation', () => {
   it('should clear fullscreen viewer', () => {
     testReducerAction('app', app, { type: C.CLEAR_FULLSCREEN_VIEWER });
   });
+  // TODO: add rest of actions
   //query
   //neo4jsettings
   //results
