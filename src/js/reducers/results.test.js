@@ -26,7 +26,10 @@ const state = {
       name: 'Test Name',
       sortIndices: new Set([1, 2])
     }
-  ]
+  ],
+  allResults: Immutable.List([{ existingResult: 'testResult' }]),
+  clearIndices: new Set(),
+  numClear: 0
 };
 
 describe('results Reducer', () => {
@@ -66,7 +69,8 @@ describe('results Reducer', () => {
     expect(reducer(state, action)).toEqual({
       allTables: [action.allTables],
       clearIndices: new Set(),
-      numClear: 0
+      numClear: 0,
+      allResults: Immutable.List([{ existingResult: 'testResult' }])
     });
   });
 
@@ -104,7 +108,10 @@ describe('results Reducer', () => {
       numClear: 0
     });
     expect(reducer(state, action)).toEqual({
-      allTables: [...state.allTables.slice(0, state.allTables.size), action.allTables]
+      allTables: [...state.allTables.slice(0, state.allTables.size), action.allTables],
+      allResults: Immutable.List([{ existingResult: 'testResult' }]),
+      clearIndices: new Set(),
+      numClear: 0
     });
   });
 
@@ -122,7 +129,66 @@ describe('results Reducer', () => {
     expect(reducer(state, action)).toEqual({
       allTables: state.allTables,
       clearIndices: new Set([action.index]),
-      numClear: 1
+      numClear: 1,
+      allResults: Immutable.List([{ existingResult: 'testResult' }])
+    });
+  });
+
+  it('CLEAR_NEW_RESULT success', () => {
+    const action = {
+      type: C.CLEAR_NEW_RESULT,
+      index: 0
+    };
+    expect(reducer(undefined, action)).toEqual({
+      allResults: Immutable.List([]),
+      allTables: null,
+      clearIndices: new Set(),
+      numClear: 0
+    });
+    expect(reducer(state, action)).toEqual({
+      allTables: state.allTables,
+      clearIndices: new Set(),
+      allResults: Immutable.List([]),
+      numClear: 0
+    });
+  });
+
+  it('PLUGIN_SAVE_RESPONSE success', () => {
+    const action = {
+      type: C.PLUGIN_SAVE_RESPONSE,
+      combined: {
+        dataSet: 'hemibrain',
+        queryString: 'testQueryString',
+        visType: 'testVisType',
+        result: { columns: ['a', 'b'], data: [1, 2] }
+      }
+    };
+    expect(reducer(undefined, action)).toEqual({
+      allResults: Immutable.List([
+        {
+          dataSet: 'hemibrain',
+          queryString: 'testQueryString',
+          visType: 'testVisType',
+          result: { columns: ['a', 'b'], data: [1, 2] }
+        }
+      ]),
+      allTables: null,
+      clearIndices: new Set(),
+      numClear: 0
+    });
+    expect(reducer(state, action)).toEqual({
+      allTables: state.allTables,
+      clearIndices: new Set(),
+      allResults: Immutable.List([
+        { existingResult: 'testResult' },
+        {
+          dataSet: 'hemibrain',
+          queryString: 'testQueryString',
+          visType: 'testVisType',
+          result: { columns: ['a', 'b'], data: [1, 2] }
+        }
+      ]),
+      numClear: 0
     });
   });
 });
