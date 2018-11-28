@@ -29,4 +29,13 @@ describe('user Reducer', () => {
     expect(reducer(undefined, action)).toEqual(initialState);
     expect(reducer(state, action)).toEqual(initialState);
   });
+
+  it('SET_USER_TOKEN success', () => {
+    const action = {
+      type: C.SET_USER_TOKEN,
+      token: 'testToken'
+    };
+    expect(reducer(undefined, action)).toEqual(initialState.set('token', 'testToken'));
+    expect(reducer(state, action)).toEqual(state.set('token', 'testToken'));
+  });
 });
