@@ -137,6 +137,43 @@ describe('neuroglancer Reducer', () => {
       action
     );
     expect(results).toEqual(initialState);
+
+    const removeNeuronWithExistingNeuron = neuroglancer(
+      initialState
+        .setIn(
+          ['neurons', 'testId'],
+          Immutable.Map({
+            id: 'testId',
+            color: 'testColor',
+            dataSet: 'testDataset',
+            visible: true
+          })
+        )
+        .setIn(
+          ['neurons', 'existingId'],
+          Immutable.Map({
+            id: 'existingId',
+            color: 'existingColor',
+            dataSet: 'existingDataset',
+            visible: true
+          })
+        )
+        .set('display', true),
+      action
+    );
+    expect(removeNeuronWithExistingNeuron).toEqual(
+      initialState
+        .setIn(
+          ['neurons', 'existingId'],
+          Immutable.Map({
+            id: 'existingId',
+            color: 'existingColor',
+            dataSet: 'existingDataset',
+            visible: true
+          })
+        )
+        .set('display', true)
+    );
   });
 
   it('NEUROGLANCER_NEURON_LOADING success', () => {
