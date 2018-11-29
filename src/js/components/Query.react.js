@@ -53,7 +53,7 @@ class Query extends React.Component {
     super(props);
     const qsParams = getQueryObject();
     this.state = {
-      qsParams: qsParams.Query || {},
+      qsParams: qsParams.Query || {}
     };
   }
 
@@ -198,7 +198,7 @@ var QueryState = function(state) {
   return {
     pluginList: state.app.get('pluginList'),
     reconIndex: state.app.get('reconIndex'),
-    availableDatasets: state.neo4jsettings.availableDatasets
+    availableDatasets: state.neo4jsettings.get('availableDatasets')
   };
 };
 

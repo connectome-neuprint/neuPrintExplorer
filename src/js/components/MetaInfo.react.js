@@ -77,7 +77,7 @@ MetaInfo.propTypes = {
 
 var MetaInfoState = function(state) {
   return {
-    userInfo: state.user.userInfo
+    userInfo: state.user.get('userInfo')
   };
 };
 

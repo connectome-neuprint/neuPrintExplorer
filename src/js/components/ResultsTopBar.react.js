@@ -78,10 +78,7 @@ class ResultsTopBar extends React.Component {
     const { classes, color, name, index, queryStr, version } = this.props;
 
     return (
-      <div
-        className={classNames(classes.root, 'topresultbar')}
-        style={{ backgroundColor: color }}
-      >
+      <div className={classNames(classes.root, 'topresultbar')} style={{ backgroundColor: color }}>
         <Toolbar>
           <Typography variant="caption" color="inherit" className={classes.flex} noWrap>
             {name}
@@ -165,7 +162,7 @@ class ResultsTopBar extends React.Component {
 
 var ResultsTopBarState = function(state) {
   return {
-    token: state.user.token,
+    token: state.user.get('token'),
     appDB: state.app.get('appDB')
   };
 };
@@ -186,10 +183,9 @@ var ResultsTopBarDispatch = function(dispatch) {
     clearNewResult: function(index) {
       dispatch({
         type: C.CLEAR_NEW_RESULT,
-        index,
+        index
       });
     }
-
   };
 };
 
@@ -204,11 +200,11 @@ ResultsTopBar.propTypes = {
   index: PropTypes.number.isRequired,
   token: PropTypes.string,
   appDB: PropTypes.string,
-  version: PropTypes.number,
+  version: PropTypes.number
 };
 
 ResultsTopBar.defaultProps = {
-  version: 1,
+  version: 1
 };
 
 export default withStyles(styles)(

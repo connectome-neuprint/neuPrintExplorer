@@ -144,8 +144,8 @@ class Favorites extends React.Component {
 
 var FavoritesState = function(state) {
   return {
-    userInfo: state.user.userInfo,
-    token: state.user.token,
+    userInfo: state.user.get('userInfo'),
+    token: state.user.get('token'),
     appDB: state.app.get('appDB')
   };
 };

@@ -5,7 +5,7 @@ import C from './constants';
 import Immutable from 'immutable';
 
 const appState = Immutable.Map({
-  pluginList: Immutable.List([]),
+  pluginList: [],
   reconIndex: 9999999,
   urlQueryString: window.location.search.substring(1),
   appDB: '',
@@ -17,9 +17,7 @@ const appState = Immutable.Map({
 export default function appReducer(state = appState, action) {
   switch (action.type) {
     case C.INIT_PLUGINS:
-      return state
-        .set('pluginList', Immutable.List(action.pluginList))
-        .set('reconIndex', action.reconIndex);
+      return state.set('pluginList', action.pluginList).set('reconIndex', action.reconIndex);
     case C.INIT_VIEWPLUGINS:
       return state.set('viewPlugins', Immutable.Map(action.plugins));
     case C.SET_URL_QS:

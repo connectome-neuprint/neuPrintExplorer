@@ -135,9 +135,9 @@ var QueryFormState = function(state) {
     isQuerying: state.query.isQuerying,
     neoResults: state.query.neoResults,
     neoError: state.query.neoError,
-    userInfo: state.user.userInfo,
+    userInfo: state.user.get('userInfo'),
     urlQueryString: state.app.get('urlQueryString'),
-    availableROIs: state.neo4jsettings.availableROIs
+    availableROIs: state.neo4jsettings.get('availableROIs')
   };
 };
 

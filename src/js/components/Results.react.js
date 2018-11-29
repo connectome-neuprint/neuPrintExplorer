@@ -298,7 +298,7 @@ const ResultsState = function(state) {
     numClear: state.results.numClear,
     showSkel: state.skeleton.get('display'),
     skeletonCount: state.skeleton.get('neurons').size,
-    userInfo: state.user.userInfo,
+    userInfo: state.user.get('userInfo'),
     urlQueryString: state.app.get('urlQueryString'),
     queryObj: state.query.neoQueryObj,
     fullscreen: state.app.get('fullscreen')

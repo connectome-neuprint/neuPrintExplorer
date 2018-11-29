@@ -4,7 +4,7 @@
 
 //TODO: convert this class into a redux thunk.
 // There should be no reason to have a React component
-// just to load in content. 
+// just to load in content.
 
 import React from 'react';
 import { connect } from 'react-redux';
@@ -79,7 +79,7 @@ var Neo4jQueryState = function(state) {
   return {
     neoQueryObj: state.query.neoQueryObj,
     isQuerying: state.query.isQuerying,
-    neoServer: state.neo4jsettings.neoServer
+    neoServer: state.neo4jsettings.get('neoServer')
   };
 };
 
@@ -95,7 +95,7 @@ var Neo4jQueryDispatch = function(dispatch) {
     saveData: function(results) {
       dispatch(saveData(results));
       dispatch(finishQuery());
-    },
+    }
   };
 };
 
@@ -111,7 +111,7 @@ Neo4jQuery.propTypes = {
   appendData: PropTypes.func.isRequired,
   saveData: PropTypes.func.isRequired,
   isQuerying: PropTypes.bool.isRequired,
-  setQueryError: PropTypes.func.isRequired,
+  setQueryError: PropTypes.func.isRequired
 };
 
 export default connect(

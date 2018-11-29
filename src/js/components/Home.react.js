@@ -24,7 +24,8 @@ import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 const HintText = [
   <Typography>
     Explore high-level region-to-region projectome-level connectivity as an entry point to analysis
-    with the <a href="/?openQuery=true&Query%5BqueryType%5D=ROI%20Connectivity">ROI Connectivity</a> query.
+    with the <a href="/?openQuery=true&Query%5BqueryType%5D=ROI%20Connectivity">ROI Connectivity</a>{' '}
+    query.
   </Typography>,
   <Typography>
     Find neurons using region-based filters with the{' '}
@@ -109,7 +110,7 @@ class Home extends React.Component {
             <div className={classes.roottext}>
               <Typography variant="h6">Analysis tools for connectomics</Typography>
               <br />
-              <Typography >
+              <Typography>
                 neuPrintExplorer provides tools to query and visualize connectomic data stored in{' '}
                 <a href="https://github.com/janelia-flyem/neuPrint">neuPrint</a>, which uses a neo4j
                 graph database. Use the search icon at the <a href="/?openQuery=true">top left</a>{' '}
@@ -196,9 +197,9 @@ class Home extends React.Component {
 
 var HomeState = function(state) {
   return {
-    neoServer: state.neo4jsettings.neoServer,
-    availableDatasets: state.neo4jsettings.availableDatasets,
-    datasetInfo: state.neo4jsettings.datasetInfo
+    neoServer: state.neo4jsettings.get('neoServer'),
+    availableDatasets: state.neo4jsettings.get('availableDatasets'),
+    datasetInfo: state.neo4jsettings.get('datasetInfo')
   };
 };
 

@@ -56,7 +56,11 @@ class TopBar extends React.Component {
           <div className={classes.flex}>
             <Tooltip title={VERSION} placement={'bottom'} enterDelay={300}>
               <Link to="/">
-                <img alt="neuprintexplorer logo - home link" src="/public/neuprintexplorerw.png" className={classes.img} />
+                <img
+                  alt="neuprintexplorer logo - home link"
+                  src="/public/neuprintexplorerw.png"
+                  className={classes.img}
+                />
               </Link>
             </Tooltip>
           </div>
@@ -85,7 +89,7 @@ class TopBar extends React.Component {
 
 var TopBarState = function(state) {
   return {
-    userInfo: state.user.userInfo
+    userInfo: state.user.get('userInfo')
   };
 };
 
