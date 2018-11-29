@@ -63,14 +63,14 @@ function neuroglancerLoaded(dataSet, result) {
 function neuroncoordinatesloading(id) {
   return {
     type: C.NEUROGLANCER_NEURON_COORDINATES_LOADING,
-    id,
+    id
   };
 }
 
 function neuroncoordinatesloadingerror(error) {
   return {
     type: C.NEUROGLANCER_NEURON_COORDINATES_LOAD_ERROR,
-    error,
+    error
   };
 }
 
@@ -79,7 +79,7 @@ export function neuroglancerAddNeuron(id, dataSet) {
     // load neuron coordinates from neo4j
     dispatch(neuroncoordinatesloading(id));
     const coordinatesQuery = `WITH neuprint.getNeuronCentroid(${id}, "${dataSet}") AS centroid RETURN centroid `;
-    fetch('/api/custom/custom', {
+    return fetch('/api/custom/custom', {
       headers: {
         'content-type': 'application/json',
         Accept: 'application/json'
@@ -111,7 +111,7 @@ export function neuroglancerAddLayer(id, dataSet) {
     // generate the querystring.
     const neuroglancerQuery = `MATCH (n:Meta:${dataSet}) WITH apoc.convert.fromJsonMap(n.neuroglancerInfo) as nInfo, n.uuid AS uuid RETURN nInfo.segmentation.host AS segmentationHost, uuid AS segmentationUuid, nInfo.segmentation.dataType AS segmentationDataType, nInfo.grayscale.host AS grayscaleHost, nInfo.grayscale.uuid AS grayscaleUuid, nInfo.grayscale.dataType AS grayscaleDataType`;
     // fetch swc data
-    fetch('/api/custom/custom', {
+    return fetch('/api/custom/custom', {
       headers: {
         'content-type': 'application/json',
         Accept: 'application/json'
