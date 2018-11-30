@@ -1,34 +1,42 @@
 /*
- * Implements table view that shows ordered strongest conenction to each neuron
+ * Implements table view that shows ordered strongest connection to each neuron
  * and visually indicates the different classes of neurons.  (This is meant
  * to be similar to Lou's tables.)
 */
 import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
+import randomColor from 'randomcolor';
+
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Typography from '@material-ui/core/Typography';
-import { connect } from 'react-redux';
+
+import { submit, formError } from 'actions/plugins';
+import { getQueryString } from 'helpers/queryString';
+import ColorBox from '../visualization/ColorBox';
 import NeuronHelp from '../NeuronHelp.react';
-import RankCell from '../RankCell.react';
+import RankCell from '../RankCell';
 import SimpleCellWrapper from '../../helpers/SimpleCellWrapper';
-import { setUrlQS } from '../../actions/app';
 
 const styles = () => ({
   textField: {},
-  formControl: {}
+  formControl: {
+    margin: '0.5em 0 1em 0',
+    width: '100%'
+  }
 });
 
 // available colors
 
-var colorArray = [
+const colorArray = [
   '#8dd3c7',
   '#ffffb3',
   '#bebada',
@@ -43,28 +51,17 @@ var colorArray = [
   '#ffed6f'
 ];
 
-/* color blind safe colros
-#8e0152
-#c51b7d
-#de77ae
-#f1b6da
-#fde0ef
-#f7f7f7
-#e6f5d0
-#b8e186
-#7fbc41
-#4d9221
-#276419
-
-or
-
-#a6cee3
-#1f78b4
-#b2df8a
-#33a02c
-*/
+const pluginName = 'RankedTable';
 
 class RankedTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      neuronSrc: '',
+      preOrPost: 'pre'
+    };
+  }
+
   static get queryName() {
     return 'Ranked Table';
   }
@@ -73,18 +70,18 @@ class RankedTable extends React.Component {
     return 'Show connections to neuron(s) ranked in order and colored by neuron class';
   }
 
-  static parseResults(neoResults, state) {
+  parseResults = (neoResults, state) => {
     // create one comparison table
-    var tables = [];
-    var headerdata = [];
-    var formattable = [];
+    const tables = [];
+    const headerdata = [];
+    const formattable = [];
 
     // create table info object
-    var titlename = '';
+    let titlename = '';
     if (state.preOrPost === 'pre') {
-      titlename = 'Outputs from ' + state.neuronSrc;
+      titlename = `Outputs from ${state.neuronSrc}`;
     } else {
-      titlename = 'Inputs to ' + state.neuronSrc;
+      titlename = `Inputs to ${state.neuronSrc}`;
     }
     tables.push({
       header: headerdata,
@@ -93,23 +90,23 @@ class RankedTable extends React.Component {
     });
 
     // grab type info and reverse mapping information
-    var type2color = {};
-    var reversecounts = {};
-    neoResults.records.forEach(function(record) {
-      var typeinfo = record.get('Neuron2Type');
+    const type2color = {};
+    const reversecounts = {};
+    neoResults.records.forEach(record => {
+      const typeinfo = record.get('Neuron2Type');
       if (typeinfo !== null) {
         type2color[typeinfo] = 1;
       }
 
-      var preid = record.get('pre_id');
-      var node1id = record.get('m_id');
+      const preid = record.get('pre_id');
+      const node1id = record.get('m_id');
       if (
         (state.preOrPost === 'pre' && preid !== node1id) ||
         (state.preOrPost === 'post' && preid === node1id)
       ) {
-        var body1 = record.get('Body1');
-        var body2 = record.get('Body2');
-        var weight = record.get('Weight');
+        const body1 = record.get('Body1');
+        const body2 = record.get('Body2');
+        const weight = record.get('Weight');
 
         if (body2 in reversecounts) {
           reversecounts[String(body2)][String(body1)] = weight;
@@ -121,23 +118,23 @@ class RankedTable extends React.Component {
     });
 
     // load colors
-    var count = 0;
-    for (let type in type2color) {
+    let count = 0;
+    for (const type in type2color) {
       type2color[type] = count % colorArray.length;
       count += 1;
     }
 
     // load array of connections for each matching neuron
-    var rowcomps = [];
-    var lastbody = -1;
-    var maxcols = 0;
+    let rowcomps = [];
+    let lastbody = -1;
+    let maxcols = 0;
     let index = 0;
-    neoResults.records.forEach(function(record) {
-      var body1 = record.get('Body1');
+    neoResults.records.forEach(record => {
+      const body1 = record.get('Body1');
 
       // do not add reverse edges
-      var preid = record.get('pre_id');
-      var node1id = record.get('m_id');
+      const preid = record.get('pre_id');
+      const node1id = record.get('m_id');
       if (
         (state.preOrPost === 'pre' && preid === node1id) ||
         (state.preOrPost === 'post' && preid !== node1id)
@@ -153,7 +150,7 @@ class RankedTable extends React.Component {
           lastbody = body1;
 
           // set first cell element
-          var neuronmatch1 = record.get('Neuron1');
+          let neuronmatch1 = record.get('Neuron1');
           if (neuronmatch1 === null) {
             neuronmatch1 = body1;
           }
@@ -168,21 +165,21 @@ class RankedTable extends React.Component {
           );
         }
 
-        var neuronmatch2 = record.get('Neuron2');
+        let neuronmatch2 = record.get('Neuron2');
         if (neuronmatch2 === null) {
           neuronmatch2 = record.get('Body2');
         }
 
         // add custom cell element
-        var weight = record.get('Weight');
-        var typeinfo = record.get('Neuron2Type');
+        const weight = record.get('Weight');
+        const typeinfo = record.get('Neuron2Type');
 
-        var typecolor = '#ffffff';
+        let typecolor = '#ffffff';
         if (typeinfo !== null) {
           typecolor = colorArray[type2color[typeinfo]];
         }
-        var body2 = record.get('Body2');
-        var weight2 = 0;
+        const body2 = record.get('Body2');
+        let weight2 = 0;
         if (body2 in reversecounts && body1 in reversecounts[body2]) {
           weight2 = reversecounts[body2][body1];
         }
@@ -209,62 +206,149 @@ class RankedTable extends React.Component {
     // load headers based on max number of columns
     headerdata.push(new SimpleCellWrapper(0, 'neuron'));
     for (let i = 1; i < maxcols; i++) {
-      headerdata.push(new SimpleCellWrapper(i, '#' + String(i)));
+      headerdata.push(new SimpleCellWrapper(i, `#${String(i)}`));
     }
 
     return tables;
-  }
+  };
 
-  constructor(props) {
-    super(props);
-    var initqsParams = {
-      neuronsrc: '',
-      preorpost: 'pre'
+  processResults = (query, apiResponse) => {
+    const { dataSet } = query;
+
+    const colorMap = {};
+    const reverseCounts = {};
+
+    const data = [];
+    let lastBody = -1;
+    let columns = [];
+    let maxColumns = 0;
+
+    apiResponse.data.forEach(row => {
+      const [, , weight, body2, , , , , , body1] = row;
+
+      if (body2 in reverseCounts) {
+        reverseCounts[String(body2)][String(body1)] = weight;
+      } else {
+        reverseCounts[String(body2)] = {};
+        reverseCounts[String(body2)][String(body1)] = weight;
+      }
+    });
+
+    apiResponse.data.forEach((row, index) => {
+      const [neuron1, neuron2, weight, body2, , neuron2Type, , , , body1] = row;
+
+      // check the colormap for the current type.
+      // if present use the existing color.
+      // else add a new one from the list. Unless they have all been used,
+      // then add a random one.
+      if (!(neuron2Type in colorMap)) {
+        colorMap[neuron2Type] = randomColor({ luminosity: 'light', hue: 'random' });
+      }
+      // color should be white if we don't have a type defined.
+      const weightColor = neuron2Type ? colorMap[neuron2Type] : '#ffffff';
+
+      // start a new row for each body1.
+      if (body1 !== lastBody) {
+        data.push(columns);
+        maxColumns = Math.max(columns.length, maxColumns);
+        columns = [`${neuron1 || body1} (${body1})`];
+      }
+
+      let reverseWeight = 0;
+      /* this is broken as we should be using the weight from the opposite
+       * bodies, which we don't have.
+      if (body2 in reverseCounts && body1 in reverseCounts[body2]) {
+        reverseWeight = reverseCounts[body2][body1];
+      }
+      */
+
+      const cellKey = `${index}${body1}${body2}`;
+
+      // add the current item to the current columns array
+      columns.push({
+        value: (
+          <ColorBox
+            margin={0}
+            width={85}
+            height={85}
+            backgroundColor={weightColor}
+            title=""
+            key={cellKey}
+            text={
+              <div>
+                <Typography>{neuron2 || body2}</Typography>
+                <Typography variant="caption">{weight}</Typography>
+                <Typography variant="caption">{reverseWeight}</Typography>
+              </div>
+            }
+          />
+        ),
+        uniqueId: cellKey
+      });
+
+      lastBody = body1;
+    });
+    // make sure the last column is added.
+    maxColumns = Math.max(columns.length, maxColumns);
+    data.push(columns);
+
+    const headings = Array(maxColumns - 1).fill(0).map((e,i)=>`#${i+1}`);
+
+    return {
+      columns: ['', ...headings],
+      data,
+      debug: apiResponse.debug,
+      dataSet
     };
-    var qsParams = LoadQueryString(
-      'Query:' + this.constructor.queryName,
-      initqsParams,
-      this.props.urlQueryString
-    );
-    this.state = {
-      qsParams: qsParams
-    };
-  }
+  };
 
   processRequest = () => {
-    if (this.state.qsParams.neuronsrc !== '') {
-      let params = { dataset: this.props.datasetstr };
-      if (isNaN(this.state.qsParams.neuronsrc)) {
-        params['neuron_name'] = this.state.qsParams.neuronsrc;
+    const { neuronSrc, preOrPost } = this.state;
+    const { dataSet, actions, history } = this.props;
+    if (neuronSrc !== '') {
+      const parameters = { dataset: dataSet };
+      if (/^\d+$/.test(neuronSrc)) {
+        parameters.neuron_id = parseInt(neuronSrc, 10);
       } else {
-        params['neuron_id'] = parseInt(this.state.qsParams.neuronsrc);
+        parameters.neuron_name = neuronSrc;
       }
-      let query = {
-        queryStr: '/npexplorer/rankedtable',
-        params: params,
-        callback: RankedTable.parseResults,
-        state: {
-          preOrPost: this.state.qsParams.preorpost,
-          neuronSrc: this.state.qsParams.neuronsrc
-        }
+      let title = `Outputs from ${neuronSrc}`;
+
+      if (preOrPost === 'pre') {
+        parameters.find_inputs = false;
+      } else {
+        parameters.find_inputs = true;
+        title = `Inputs to ${neuronSrc}`;
+      }
+
+      const query = {
+        dataSet,
+        queryString: '/npexplorer/rankedtable',
+        visType: 'HeatMapTable',
+        visProps: { squareSize: 85 },
+        plugin: pluginName,
+        parameters,
+        title,
+        menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
+        processResults: this.processResults
       };
 
-      this.props.callback(query);
+      actions.submit(query);
+      history.push({
+        pathname: '/results',
+        search: getQueryString()
+      });
+    } else {
+      actions.formError('Please enter a neuron name.');
     }
   };
 
   addNeuron = event => {
-    var oldparams = this.state.qsParams;
-    oldparams.neuronsrc = event.target.value;
-    this.props.setURLQs(SaveQueryString('Query:' + this.constructor.queryName, oldparams));
-    this.setState({ qsParams: oldparams });
+    this.setState({ neuronSrc: event.target.value });
   };
 
   setDirection = event => {
-    var oldparams = this.state.qsParams;
-    oldparams.preorpost = event.target.value;
-    this.props.setURLQs(SaveQueryString('Query:' + this.constructor.queryName, oldparams));
-    this.setState({ qsParams: oldparams });
+    this.setState({ preOrPost: event.target.value });
   };
 
   catchReturn = event => {
@@ -276,7 +360,8 @@ class RankedTable extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, isQuerying } = this.props;
+    const { neuronSrc, preOrPost } = this.state;
     return (
       <div>
         <FormControl className={classes.formControl}>
@@ -284,8 +369,9 @@ class RankedTable extends React.Component {
             <TextField
               label="Neuron name"
               multiline
+              fullWidth
               rows={1}
-              value={this.state.qsParams.neuronsrc}
+              value={neuronSrc}
               rowsMax={4}
               className={classes.textField}
               onChange={this.addNeuron}
@@ -299,14 +385,27 @@ class RankedTable extends React.Component {
             aria-label="preorpost"
             name="preorpost"
             className={classes.group}
-            value={this.state.qsParams.preorpost}
+            value={preOrPost}
             onChange={this.setDirection}
           >
-            <FormControlLabel value="pre" control={<Radio />} label="Pre-synaptic" />
-            <FormControlLabel value="post" control={<Radio />} label="Post-synaptic" />
+            <FormControlLabel
+              value="pre"
+              control={<Radio color="primary" />}
+              label="Pre-synaptic"
+            />
+            <FormControlLabel
+              value="post"
+              control={<Radio color="primary" />}
+              label="Post-synaptic"
+            />
           </RadioGroup>
         </FormControl>
-        <Button variant="contained" onClick={this.processRequest}>
+        <Button
+          disabled={isQuerying}
+          variant="contained"
+          color="primary"
+          onClick={this.processRequest}
+        >
           Submit
         </Button>
       </div>
@@ -315,31 +414,34 @@ class RankedTable extends React.Component {
 }
 
 RankedTable.propTypes = {
-  callback: PropTypes.func.isRequired,
-  disable: PropTypes.bool,
-  setURLQs: PropTypes.func.isRequired,
+  isQuerying: PropTypes.bool.isRequired,
+  history: PropTypes.object.isRequired,
+  actions: PropTypes.object.isRequired,
   classes: PropTypes.object.isRequired,
-  datasetstr: PropTypes.string.isRequired,
-  urlQueryString: PropTypes.string.isRequired
+  dataSet: PropTypes.string.isRequired
 };
 
-var RankedTableState = function(state) {
-  return {
-    urlQueryString: state.app.get('urlQueryString')
-  };
-};
+const RankedTableState = state => ({
+  isQuerying: state.query.isQuerying,
+  urlQueryString: state.app.get('urlQueryString')
+});
 
-var RankedTableDispatch = function(dispatch) {
-  return {
-    setURLQs: function(querystring) {
-      dispatch(setUrlQS(querystring));
+const RankedTableDispatch = dispatch => ({
+  actions: {
+    submit: query => {
+      dispatch(submit(query));
+    },
+    formError: query => {
+      dispatch(formError(query));
     }
-  };
-};
+  }
+});
 
-export default withStyles(styles)(
-  connect(
-    RankedTableState,
-    RankedTableDispatch
-  )(RankedTable)
+export default withRouter(
+  withStyles(styles)(
+    connect(
+      RankedTableState,
+      RankedTableDispatch
+    )(RankedTable)
+  )
 );
