@@ -30,7 +30,7 @@ const styles = () => ({
 
 const pluginName = 'CustomQuery';
 
-class FreeForm extends React.Component {
+class CustomQuery extends React.Component {
   static get queryName() {
     return 'Custom';
   }
@@ -137,20 +137,20 @@ class FreeForm extends React.Component {
   }
 }
 
-FreeForm.propTypes = {
+CustomQuery.propTypes = {
   urlQueryString: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired
 };
 
-var FreeFormState = function(state) {
+var CustomQueryState = function(state) {
   return {
     urlQueryString: state.app.get('urlQueryString'),
     isQuerying: state.query.isQuerying
   };
 };
 
-var FreeFormDispatch = dispatch => ({
+var CustomQueryDispatch = dispatch => ({
   actions: {
     submit: query => {
       dispatch(submit(query));
@@ -164,8 +164,8 @@ var FreeFormDispatch = dispatch => ({
 export default withStyles(styles)(
   withRouter(
     connect(
-      FreeFormState,
-      FreeFormDispatch
-    )(FreeForm)
+      CustomQueryState,
+      CustomQueryDispatch
+    )(CustomQuery)
   )
 );

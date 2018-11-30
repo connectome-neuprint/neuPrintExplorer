@@ -2,7 +2,7 @@ import CustomQuery from './CustomQuery';
 import AppReducers from '../../reducers';
 import React from 'react';
 import { Provider } from 'react-redux';
-import { mount } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import { createStore, applyMiddleware, compose } from 'redux';
 import renderer from 'react-test-renderer';
 import { Router } from 'react-router-dom';
@@ -14,23 +14,23 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(AppReducers, {}, composeEnhancers(applyMiddleware(thunk)));
 const history = createMemoryHistory('/');
 
+const component = (
+  <Provider store={store}>
+    <Router history={history}>
+      <CustomQuery />
+    </Router>
+  </Provider>
+);
+
 describe('custom query Plugin', () => {
   it('renders correctly', () => {
-    const pluginView = renderer
-      .create(
-        <Provider store={store}>
-          <Router history={history}>
-            <CustomQuery />
-          </Router>
-        </Provider>
-      )
-      .toJSON();
+    const pluginView = renderer.create(component).toJSON();
     expect(pluginView).toMatchInlineSnapshot(`
 <div
-  className="MuiFormControl-root-4 withRouter-Connect-FreeForm---formControl-3"
+  className="MuiFormControl-root-4 withRouter-Connect-CustomQuery---formControl-3"
 >
   <div
-    className="MuiFormControl-root-4 withRouter-Connect-FreeForm---textField-1"
+    className="MuiFormControl-root-4 withRouter-Connect-CustomQuery---textField-1"
     onKeyDown={[Function]}
   >
     <label
@@ -82,7 +82,7 @@ describe('custom query Plugin', () => {
     </div>
   </div>
   <button
-    className="MuiButtonBase-root-81 MuiButtonBase-disabled-82 MuiButton-root-55 MuiButton-contained-66 MuiButton-containedPrimary-67 MuiButton-raised-69 MuiButton-raisedPrimary-70 MuiButton-disabled-75 withRouter-Connect-FreeForm---button-2"
+    className="MuiButtonBase-root-81 MuiButtonBase-disabled-82 MuiButton-root-55 MuiButton-contained-66 MuiButton-containedPrimary-67 MuiButton-raised-69 MuiButton-raisedPrimary-70 MuiButton-disabled-75 withRouter-Connect-CustomQuery---button-2"
     disabled={true}
     onBlur={[Function]}
     onClick={[Function]}
@@ -108,7 +108,11 @@ describe('custom query Plugin', () => {
 `);
   });
   describe('when user clicks submit', () => {
-    it('should submit a request to neuprinthttp', () => {});
+    it('should submit a request to neuprinthttp', () => {
+      const wrapper = mount(component);
+      const button = wrapper.children().find('button');
+      console.log(wrapper.debug());
+    });
     it('should process returned results from neuprinthttp', () => {});
   });
   describe('when user hits enter key', () => {
