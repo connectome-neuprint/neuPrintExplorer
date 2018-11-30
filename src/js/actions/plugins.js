@@ -51,7 +51,7 @@ export function submit(query) {
     }
 
     // async action here to fetch the results and format them.
-    fetch(queryUrl, {
+    return fetch(queryUrl, {
       headers: {
         'content-type': 'application/json',
         Accept: 'application/json'
