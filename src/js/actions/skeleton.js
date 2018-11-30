@@ -48,8 +48,8 @@ function skeletonLoaded(id, dataSet, result) {
       y: parseInt(row[2]),
       z: parseInt(row[3]),
       radius: parseInt(row[4]),
-      parent: parseInt(row[5]),
-    }
+      parent: parseInt(row[5])
+    };
   });
 
   return {
@@ -57,7 +57,7 @@ function skeletonLoaded(id, dataSet, result) {
     id,
     dataSet,
     swc: data,
-    color,
+    color
   };
 }
 
@@ -71,7 +71,7 @@ export function skeletonAdd(id, dataSet) {
     // generate the querystring.
     const completeQuery = skeletonQuery.replace(/YY/g, dataSet).replace(/ZZ/g, id);
     // fetch swc data
-    fetch('/api/custom/custom', {
+    return fetch('/api/custom/custom', {
       headers: {
         'content-type': 'application/json',
         Accept: 'application/json'
