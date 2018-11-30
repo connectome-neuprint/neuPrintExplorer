@@ -21,6 +21,10 @@ const styles = () => ({
   textField: {
     width: 300
   },
+  button: {
+    margin: 4,
+    display: 'block'
+  },
   formControl: {}
 });
 
@@ -119,22 +123,21 @@ class FreeForm extends React.Component {
           onChange={this.handleChange}
           onKeyDown={this.catchReturn}
         />
-        {this.props.disable ? (
-          <Button variant="contained" onClick={this.processRequest} disabled>
-            Submit
-          </Button>
-        ) : (
-          <Button variant="contained" onClick={this.processRequest}>
-            Submit
-          </Button>
-        )}
+        <Button
+          variant="contained"
+          className={classes.button}
+          onClick={this.processRequest}
+          disabled={!(this.state.qsParams.textValue.length > 0)}
+          color="primary"
+        >
+          Submit
+        </Button>
       </FormControl>
     );
   }
 }
 
 FreeForm.propTypes = {
-  disable: PropTypes.bool,
   urlQueryString: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired

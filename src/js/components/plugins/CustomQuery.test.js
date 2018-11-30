@@ -20,35 +20,35 @@ describe('custom query Plugin', () => {
       .create(
         <Provider store={store}>
           <Router history={history}>
-            <CustomQuery disable={false} />
+            <CustomQuery />
           </Router>
         </Provider>
       )
       .toJSON();
     expect(pluginView).toMatchInlineSnapshot(`
 <div
-  className="MuiFormControl-root-3 withRouter-Connect-FreeForm---formControl-2"
+  className="MuiFormControl-root-4 withRouter-Connect-FreeForm---formControl-3"
 >
   <div
-    className="MuiFormControl-root-3 withRouter-Connect-FreeForm---textField-1"
+    className="MuiFormControl-root-4 withRouter-Connect-FreeForm---textField-1"
     onKeyDown={[Function]}
   >
     <label
-      className="MuiFormLabel-root-14 MuiInputLabel-root-7 MuiInputLabel-formControl-8 MuiInputLabel-animated-11"
+      className="MuiFormLabel-root-15 MuiInputLabel-root-8 MuiInputLabel-formControl-9 MuiInputLabel-animated-12"
       data-shrink={false}
     >
       Custom Cypher Query
     </label>
     <div
-      className="MuiInputBase-root-34 MuiInput-root-21 MuiInput-underline-25 MuiInputBase-formControl-35 MuiInput-formControl-22 MuiInputBase-multiline-42 MuiInput-multiline-27"
+      className="MuiInputBase-root-35 MuiInput-root-22 MuiInput-underline-26 MuiInputBase-formControl-36 MuiInput-formControl-23 MuiInputBase-multiline-43 MuiInput-multiline-28"
       onClick={[Function]}
     >
       <div
-        className="MuiPrivateTextarea-root-51"
+        className="MuiPrivateTextarea-root-52"
       >
         <textarea
           aria-hidden="true"
-          className="MuiPrivateTextarea-textarea-52 MuiPrivateTextarea-shadow-53"
+          className="MuiPrivateTextarea-textarea-53 MuiPrivateTextarea-shadow-54"
           readOnly={true}
           rows="1"
           tabIndex={-1}
@@ -56,7 +56,7 @@ describe('custom query Plugin', () => {
         />
         <textarea
           aria-hidden="true"
-          className="MuiPrivateTextarea-textarea-52 MuiPrivateTextarea-shadow-53"
+          className="MuiPrivateTextarea-textarea-53 MuiPrivateTextarea-shadow-54"
           readOnly={true}
           rows={1}
           tabIndex={-1}
@@ -64,7 +64,7 @@ describe('custom query Plugin', () => {
         />
         <textarea
           aria-invalid={false}
-          className="MuiPrivateTextarea-textarea-52 MuiInputBase-input-44 MuiInput-input-29 MuiInputBase-inputMultiline-46 MuiInput-inputMultiline-31"
+          className="MuiPrivateTextarea-textarea-53 MuiInputBase-input-45 MuiInput-input-30 MuiInputBase-inputMultiline-47 MuiInput-inputMultiline-32"
           disabled={false}
           onBlur={[Function]}
           onChange={[Function]}
@@ -82,8 +82,8 @@ describe('custom query Plugin', () => {
     </div>
   </div>
   <button
-    className="MuiButtonBase-root-80 MuiButton-root-54 MuiButton-contained-65 MuiButton-raised-68"
-    disabled={false}
+    className="MuiButtonBase-root-81 MuiButtonBase-disabled-82 MuiButton-root-55 MuiButton-contained-66 MuiButton-containedPrimary-67 MuiButton-raised-69 MuiButton-raisedPrimary-70 MuiButton-disabled-75 withRouter-Connect-FreeForm---button-2"
+    disabled={true}
     onBlur={[Function]}
     onClick={[Function]}
     onFocus={[Function]}
@@ -95,17 +95,14 @@ describe('custom query Plugin', () => {
     onTouchEnd={[Function]}
     onTouchMove={[Function]}
     onTouchStart={[Function]}
-    tabIndex="0"
+    tabIndex="-1"
     type="button"
   >
     <span
-      className="MuiButton-label-55"
+      className="MuiButton-label-56"
     >
       Submit
     </span>
-    <span
-      className="MuiTouchRipple-root-83"
-    />
   </button>
 </div>
 `);
