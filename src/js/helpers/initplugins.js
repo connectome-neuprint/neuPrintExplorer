@@ -8,7 +8,7 @@ import { initPlugins, initViewPlugins } from 'actions/app';
 import CommonConnectivity from 'plugins/CommonConnectivity';
 import CustomQuery from 'plugins/CustomQuery';
 import SimpleConnections from 'plugins/SimpleConnections';
-import RankedTable from 'plugins/RankedTable.react';
+import RankedTable from 'plugins/RankedTable';
 import FindNeurons from 'plugins/FindNeurons';
 import ROIsIntersectingNeurons from 'plugins/ROIsIntersectingNeurons.react';
 import ROIConnectivity from 'plugins/ROIConnectivity';
