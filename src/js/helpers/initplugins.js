@@ -10,7 +10,7 @@ import CustomQuery from 'plugins/CustomQuery';
 import SimpleConnections from 'plugins/SimpleConnections';
 import RankedTable from 'plugins/RankedTable';
 import FindNeurons from 'plugins/FindNeurons';
-import ROIsIntersectingNeurons from 'plugins/ROIsIntersectingNeurons.react';
+import ROIsIntersectingNeurons from 'plugins/ROIsIntersectingNeurons';
 import ROIConnectivity from 'plugins/ROIConnectivity';
 import NeuronMeta from 'plugins/NeuronMeta';
 import Autapses from 'plugins/Autapses';
