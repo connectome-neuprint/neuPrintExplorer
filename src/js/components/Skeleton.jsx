@@ -75,14 +75,14 @@ class Skeleton extends React.Component {
 
   // grab latest swc added
   fetchSWC = neurons => {
-    const swc = {};
+    let swc = {};
     const colors = [];
     let offset = 0;
     neurons
       .valueSeq()
       .filter(neuron => neuron.get('visible'))
       .forEach((neuron, colorIndex) => {
-        offset = this.concatSkel(swc, neuron, offset, colorIndex);
+        [offset, swc] = this.concatSkel(swc, neuron, offset, colorIndex);
         colors.push(neuron.get('color'));
       });
 
@@ -93,25 +93,28 @@ class Skeleton extends React.Component {
   };
 
   // can we do this better with recursion?
-  concatSkel = (newswc, neuron, offset, colorIndex) => {
+  concatSkel = (mainswc, neuron, offset, colorIndex) => {
+    const newSWC = mainswc;
     let maxRowId = 0;
     const swc = neuron.get('swc');
-    for (const rowId in swc) {
-      const newId = parseInt(rowId, 10) + offset;
-      const val = swc[rowId];
+    Object.entries(swc).forEach(entry => {
+      const [ rowName, rowData ] = entry;
+      const newId = parseInt(rowName, 10) + offset;
       if (newId > maxRowId) {
         maxRowId = newId;
       }
-      newswc[newId] = {
+      newSWC[newId] = {
         type: colorIndex,
-        x: val.x,
-        y: val.y,
-        z: val.z,
-        parent: val.parent === -1 ? -1 : val.parent + offset,
-        radius: val.radius
+        x: rowData.x,
+        y: rowData.y,
+        z: rowData.z,
+        parent: rowData.parent === -1 ? -1 : rowData.parent + offset,
+        radius: rowData.radius
       };
-    }
-    return maxRowId + 1;
+
+    });
+
+    return [ maxRowId + 1, newSWC];
   };
 
   createShark = swc => {
