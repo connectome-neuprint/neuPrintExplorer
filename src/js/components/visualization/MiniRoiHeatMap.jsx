@@ -1,6 +1,6 @@
 import React from 'react';
 import colormap from 'colormap';
-import ColorBox from './ColorBox.react';
+import ColorBox from './ColorBox';
 
 const viridisColorMap = colormap({
   colormap: 'viridis',
@@ -26,7 +26,7 @@ function RoiHeatMap({ roiInfoObject, roiInfoObjectKey, sumOfValues, listOfRoisTo
             : viridisColorMap[0]
         }
         key={roi}
-        title={roi + ' ' + Math.round(percent * 100) / 100 + '%'}
+        title={`${roi  } ${  Math.round(percent * 100) / 100  }%`}
         text=""
       />
     );
@@ -46,13 +46,11 @@ function HeatMapLabels({ roiList }) {
     transformOrigin: 'left top 0',
     fontSize: '10px'
   };
-  return roiList.map(roi => {
-    return (
+  return roiList.map(roi => (
       <div title={roi} style={styles} key={roi}>
         {roi}
       </div>
-    );
-  });
+    ));
 }
 
 export function ColorLegend() {
@@ -66,13 +64,14 @@ export function ColorLegend() {
     <div style={styles}>
       {'0% '}{' '}
       {viridisColorMap.map((color, index) => {
-        const styles = {
+        const key = `${color}${index}`;
+        const divStyles = {
           margin: '0px',
           width: '2px',
           height: '10px',
           backgroundColor: color
         };
-        return <div key={index} style={styles} />;
+        return <div key={key} style={divStyles} />;
       })}
       {' 100%'}
     </div>
@@ -96,7 +95,7 @@ export default ({ roiList, roiInfoObject, preTotal, postTotal }) => {
       <RoiHeatMap
         listOfRoisToUse={roiList}
         roiInfoObject={roiInfoObject}
-        roiInfoObjectKey={'post'}
+        roiInfoObjectKey="post"
         sumOfValues={postTotal}
       />
       inputs
@@ -107,7 +106,7 @@ export default ({ roiList, roiInfoObject, preTotal, postTotal }) => {
       <RoiHeatMap
         listOfRoisToUse={roiList}
         roiInfoObject={roiInfoObject}
-        roiInfoObjectKey={'pre'}
+        roiInfoObjectKey="pre"
         sumOfValues={preTotal}
       />
       outputs

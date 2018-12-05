@@ -1,16 +1,16 @@
-import AppReducers from './reducers';
 import { Provider } from 'react-redux';
 import React from 'react';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 
-import Master from './components/Master.react';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { setAppDb } from './actions/app';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import Master from './components/Master';
+import { setAppDb } from './actions/app';
+import AppReducers from './reducers';
 import loadPlugins from './helpers/initplugins';
 
-var ReactDOM = require('react-dom');
+const ReactDOM = require('react-dom');
 
 // set theme colors
 const theme = createMuiTheme({
@@ -33,33 +33,34 @@ const theme = createMuiTheme({
   }
 });
 
+// eslint-disable-next-line  no-underscore-dangle
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 // create redux store to handle app state
 const store = createStore(AppReducers, {}, composeEnhancers(applyMiddleware(thunk)));
 
 // include material UI font
-var filename = 'https://fonts.googleapis.com/css?family=Roboto:300,400,50';
-var fileref = document.createElement('link');
+const filename = 'https://fonts.googleapis.com/css?family=Roboto:300,400,50';
+const fileref = document.createElement('link');
 fileref.setAttribute('rel', 'stylesheet');
 fileref.setAttribute('href', filename);
 document.getElementsByTagName('head')[0].appendChild(fileref);
 
-var filename2 = 'https://fonts.googleapis.com/icon?family=Material+Icons';
-var fileref2 = document.createElement('link');
+const filename2 = 'https://fonts.googleapis.com/icon?family=Material+Icons';
+const fileref2 = document.createElement('link');
 fileref2.setAttribute('rel', 'stylesheet');
 fileref2.setAttribute('href', filename2);
 document.getElementsByTagName('head')[0].appendChild(fileref2);
 
 // load js hacks (TODO: make proper npm module for the sharkviewer)
-var jssref = document.createElement('script');
+const jssref = document.createElement('script');
 jssref.setAttribute('src', '/external/SharkViewer/js/threejs/three.js');
 document.getElementsByTagName('head')[0].appendChild(jssref);
-jssref.onload = function() {
-  var jssref2 = document.createElement('script');
+jssref.onload = function refOnload() {
+  const jssref2 = document.createElement('script');
   jssref2.setAttribute('src', '/external/SharkViewer/js/threejs/TrackballControls.js');
   document.getElementsByTagName('head')[0].appendChild(jssref2);
-  var jssref3 = document.createElement('script');
+  const jssref3 = document.createElement('script');
   jssref3.setAttribute('src', '/external/SharkViewer/js/shark_viewer.js');
   document.getElementsByTagName('head')[0].appendChild(jssref3);
 };
@@ -68,7 +69,7 @@ jssref.onload = function() {
 loadPlugins(store);
 
 // access global google datastore through the specified cloud function
-var appDB = document.getElementById('analyzer').getAttribute('appdb');
+const appDB = document.getElementById('analyzer').getAttribute('appdb');
 store.dispatch(setAppDb(appDB));
 
 /*

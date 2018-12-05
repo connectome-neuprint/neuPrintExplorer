@@ -3,10 +3,10 @@
 */
 import C from "./constants"
 
-var queryState = {
+const queryState = {
     neoQueryObj: {
         queryStr: "",
-        callback: function () { },
+        callback: function callback() { },
         state: null,
         params: undefined,
     },

@@ -1,5 +1,5 @@
-import C from '../reducers/constants';
 import randomColor from 'randomcolor';
+import C from '../reducers/constants';
 
 export function skeletonOpen() {
   return {
@@ -43,13 +43,13 @@ function skeletonLoaded(id, dataSet, result) {
   const color = randomColor({ luminosity: 'light', hue: 'random' });
 
   result.data.forEach(row => {
-    data[parseInt(row[0])] = {
-      x: parseInt(row[1]),
-      y: parseInt(row[2]),
-      z: parseInt(row[3]),
-      radius: parseInt(row[4]),
-      parent: parseInt(row[5])
-    };
+    data[parseInt(row[0], 10)] = {
+      x: parseInt(row[1], 10),
+      y: parseInt(row[2], 10),
+      z: parseInt(row[3], 10),
+      radius: parseInt(row[4], 10),
+      parent: parseInt(row[5], 10),
+    }
   });
 
   return {
@@ -120,7 +120,7 @@ export function skeletonNeuronHide(id) {
   };
 }
 export function skeletonNeuronToggle(id) {
-  return function(dispatch, getState) {
+  return function skeletonNeuronToggleAsync(dispatch, getState) {
     if (getState().skeleton.getIn(['neurons', id, 'visible'])) {
       dispatch(skeletonNeuronHide(id));
     } else {

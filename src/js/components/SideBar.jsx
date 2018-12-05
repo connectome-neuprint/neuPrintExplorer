@@ -54,36 +54,38 @@ const styles = theme => ({
 
 class SideBar extends React.Component {
   isOpen = () => {
-    var query = qs.parse(this.props.urlQueryString);
-    var openQuery = false;
-    if ('openQuery' in query && query['openQuery'] === 'true') {
+    const { urlQueryString } = this.props;
+    const query = qs.parse(urlQueryString);
+    let openQuery = false;
+    if ('openQuery' in query && query.openQuery === 'true') {
       openQuery = true;
     }
     return openQuery;
   };
 
   toggleQuery = () => {
-    var openQuery = this.isOpen();
-    var query = qs.parse(this.props.urlQueryString);
+    const { setURLQs, urlQueryString  } = this.props;
+    const openQuery = this.isOpen();
+    const query = qs.parse(urlQueryString);
 
     if (!openQuery) {
-      query['openQuery'] = 'true';
-      let urlqs = qs.stringify(query);
-      this.props.setURLQs(urlqs);
+      query.openQuery = 'true';
+      const urlqs = qs.stringify(query);
+      setURLQs(urlqs);
 
-      window.history.replaceState(null, null, window.location.pathname + '?' + urlqs);
+      window.history.replaceState(null, null, `${window.location.pathname  }?${  urlqs}`);
     } else {
-      query['openQuery'] = 'false';
-      let urlqs = qs.stringify(query);
-      this.props.setURLQs(urlqs);
+      query.openQuery = 'false';
+      const urlqs = qs.stringify(query);
+      setURLQs(urlqs);
 
       window.history.replaceState(null, null, window.location.pathname);
     }
   };
 
   render() {
-    const { classes, location } = this.props;
-    var openQuery = this.isOpen();
+    const { classes, location, urlQueryString } = this.props;
+    const openQuery = this.isOpen();
 
     return (
       <Drawer
@@ -107,7 +109,7 @@ class SideBar extends React.Component {
           <MenuItem
             selected={/^\/$/.test(location.pathname)}
             component={NavLink}
-            to={{ pathname: '/', search: openQuery ? this.props.urlQueryString : '' }}
+            to={{ pathname: '/', search: openQuery ? urlQueryString : '' }}
             button
           >
             <ListItemIcon>
@@ -119,7 +121,7 @@ class SideBar extends React.Component {
           <MenuItem
             selected={/^\/results/.test(location.pathname)}
             component={NavLink}
-            to={{ pathname: '/results', search: openQuery ? this.props.urlQueryString : '' }}
+            to={{ pathname: '/results', search: openQuery ? urlQueryString : '' }}
             button
           >
             <ListItemIcon>
@@ -131,7 +133,7 @@ class SideBar extends React.Component {
           <MenuItem
             selected={/^\/favorites/.test(location.pathname)}
             component={NavLink}
-            to={{ pathname: '/favorites', search: openQuery ? this.props.urlQueryString : '' }}
+            to={{ pathname: '/favorites', search: openQuery ? urlQueryString : '' }}
             button
           >
             <ListItemIcon>
@@ -143,7 +145,7 @@ class SideBar extends React.Component {
           <MenuItem
             selected={/^\/help/.test(location.pathname)}
             component={NavLink}
-            to={{ pathname: '/help', search: openQuery ? this.props.urlQueryString : '' }}
+            to={{ pathname: '/help', search: openQuery ? urlQueryString : '' }}
             button
           >
             <ListItemIcon>
@@ -157,24 +159,19 @@ class SideBar extends React.Component {
   }
 }
 
-var SideBarState = function(state) {
-  return {
-    userInfo: state.user.get('userInfo'),
-    urlQueryString: state.app.get('urlQueryString')
-  };
-};
+const SideBarState = state => ({
+  userInfo: state.user.get('userInfo'),
+  urlQueryString: state.app.get('urlQueryString')
+});
 
-var SideBarDispatch = function(dispatch) {
-  return {
-    setURLQs: function(querystring) {
-      dispatch(setUrlQS(querystring));
-    }
-  };
-};
+const SideBarDispatch = dispatch => ({
+  setURLQs(querystring) {
+    dispatch(setUrlQS(querystring));
+  }
+});
 
 SideBar.propTypes = {
   classes: PropTypes.object.isRequired,
-  userInfo: PropTypes.object,
   location: PropTypes.object.isRequired,
   urlQueryString: PropTypes.string.isRequired,
   setURLQs: PropTypes.func.isRequired

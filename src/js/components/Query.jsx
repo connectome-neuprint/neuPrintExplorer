@@ -11,7 +11,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
 
-import QueryForm from './QueryForm.react';
+import QueryForm from './QueryForm';
 import { getQueryObject, setQueryString } from '../helpers/queryString';
 
 const styles = theme => ({
@@ -59,20 +59,23 @@ class Query extends React.Component {
 
   setQuery = selectedQuery => {
     const { qsParams } = this.state;
+    const { pluginList } = this.props;
     if (selectedQuery.value !== qsParams.queryType) {
       // delete query string from last query
-      var found = false;
-      for (var i in this.props.pluginList) {
-        if (qsParams && qsParams.queryType === this.props.pluginList[i].queryName) {
-          found = true;
-        }
+      let found = false;
+      if (qsParams) {
+        pluginList.forEach(plugin => {
+          if (plugin.queryName === qsParams.queryType) {
+            found = true;
+          }
+        });
       }
 
       if (found) {
         // RemoveQueryString('Query:' + this.state.qsParams.queryType);
       }
 
-      var oldparams = qsParams;
+      const oldparams = qsParams;
       oldparams.queryType = selectedQuery.value;
       setQueryString({
         Query: {
@@ -85,8 +88,8 @@ class Query extends React.Component {
 
   handleChange = selectedDataSet => {
     const { qsParams } = this.state;
-    var newdatasets = [selectedDataSet.value];
-    var oldparams = qsParams;
+    const newdatasets = [selectedDataSet.value];
+    const oldparams = qsParams;
     oldparams.datasets = newdatasets;
     setQueryString({
       Query: {
@@ -97,49 +100,46 @@ class Query extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, pluginList, reconIndex, availableDatasets } = this.props;
     const { qsParams } = this.state;
 
-    var queryname = 'Select Query';
-    var querytype = '';
-    var datasetstr = 'Select a dataset';
+    let queryname = 'Select Query';
+    let querytype = '';
+    let datasetstr = 'Select a dataset';
 
     // if query is selected, pass query along
     if (qsParams) {
       if (qsParams.queryType !== '') {
         // check if query is in the list of plugins
-        var found = false;
-        for (var i in this.props.pluginList) {
-          if (qsParams.queryType === this.props.pluginList[i].queryName) {
+        let found = false;
+        pluginList.forEach(plugin => {
+          if (plugin.queryName === qsParams.queryType) {
             found = true;
           }
-        }
+        });
+
         if (found) {
           queryname = qsParams.queryType;
           querytype = queryname;
         }
 
-        for (var item in qsParams.datasets) {
-          datasetstr = qsParams.datasets[item];
-        }
+        // why is this for loop here? It just sets datsetstr to be
+        // the value of the last item in the list.
+        qsParams.datasets.forEach(dataset => {
+          datasetstr = dataset;
+        });
       }
     }
 
-    const generalOptions = this.props.pluginList.slice(0, this.props.reconIndex).map(val => {
-      return {
-        value: val.queryName,
-        label: val.queryName
-      };
-    });
+    const generalOptions = pluginList.slice(0, reconIndex).map(val => ({
+      value: val.queryName,
+      label: val.queryName
+    }));
 
-    const reconOptions = this.props.pluginList
-      .slice(this.props.reconIndex, this.props.pluginList.length)
-      .map(val => {
-        return {
-          value: val.queryName,
-          label: val.queryName
-        };
-      });
+    const reconOptions = pluginList.slice(reconIndex, pluginList.length).map(val => ({
+      value: val.queryName,
+      label: val.queryName
+    }));
 
     const queryOptions = [
       {
@@ -152,12 +152,10 @@ class Query extends React.Component {
       }
     ];
 
-    const dataSetOptions = this.props.availableDatasets.map(dataset => {
-      return {
-        value: dataset,
-        label: dataset
-      };
-    });
+    const dataSetOptions = availableDatasets.map(dataset => ({
+      value: dataset,
+      label: dataset
+    }));
 
     // TODO: fix default menu option (maybe make the custom query the default)
     return (
@@ -187,28 +185,16 @@ class Query extends React.Component {
 }
 
 Query.propTypes = {
-  pluginList: PropTypes.array.isRequired,
+  pluginList: PropTypes.arrayOf(PropTypes.func).isRequired,
   reconIndex: PropTypes.number.isRequired,
   classes: PropTypes.object.isRequired,
-  theme: PropTypes.object.isRequired,
-  availableDatasets: PropTypes.array.isRequired
+  availableDatasets: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
-var QueryState = function(state) {
-  return {
-    pluginList: state.app.get('pluginList'),
-    reconIndex: state.app.get('reconIndex'),
-    availableDatasets: state.neo4jsettings.get('availableDatasets')
-  };
-};
+const QueryState = state => ({
+  pluginList: state.app.get('pluginList'),
+  reconIndex: state.app.get('reconIndex'),
+  availableDatasets: state.neo4jsettings.get('availableDatasets')
+});
 
-var QueryDispatch = function(dispatch) {
-  return {};
-};
-
-export default withStyles(styles, { withTheme: true })(
-  connect(
-    QueryState,
-    QueryDispatch
-  )(Query)
-);
+export default withStyles(styles, { withTheme: true })(connect(QueryState)(Query));

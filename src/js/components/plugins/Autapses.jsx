@@ -24,9 +24,7 @@ class Autapses extends React.Component {
   }
 
   processResults = (query, apiResponse) => {
-    const data = apiResponse.data.map(row => {
-      return [row[0], row[2], row[1]];
-    });
+    const data = apiResponse.data.map(row => [row[0], row[2], row[1]]);
 
     return {
       columns: ['id', 'name', '#connections'],
@@ -72,15 +70,15 @@ class Autapses extends React.Component {
 }
 
 Autapses.propTypes = {
-  callback: PropTypes.func.isRequired,
-  datasetstr: PropTypes.string.isRequired
+  dataSet: PropTypes.string.isRequired,
+  isQuerying: PropTypes.bool.isRequired,
+  actions: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired
 };
 
-const AutapsesState = function(state) {
-  return {
-    isQuerying: state.query.isQuerying
-  };
-};
+const AutapsesState = state => ({
+  isQuerying: state.query.isQuerying
+});
 
 // The submit action which will accept your query, execute it and
 // store the results for view plugins to display.

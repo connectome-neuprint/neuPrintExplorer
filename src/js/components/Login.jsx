@@ -48,24 +48,26 @@ class Login extends React.Component {
   }
 
   fetchProfile = () => {
+    const { loginUser } = this.props;
     fetch('/profile', {
       credentials: 'include'
     })
       .then(result => result.json())
       .then(userInfo => {
-        this.props.loginUser(userInfo);
+        loginUser(userInfo);
         this.setState({ isLoggedIn: true, imageURL: userInfo.ImageURL });
       });
   };
 
   fetchToken = () => {
+    const { setUserToken } = this.props;
     fetch('/token', {
       credentials: 'include'
     })
       .then(result => result.json())
       .then(data => {
         if (!('message' in data)) {
-          this.props.setUserToken(data.token);
+          setUserToken(data.token);
         }
       });
   };
@@ -76,9 +78,10 @@ class Login extends React.Component {
   };
 
   logout = () => {
+    const { logoutUser } = this.props;
     const { history } = this.props;
     this.setState({ isLoggedIn: false, imageURL: '' });
-    this.props.logoutUser();
+    logoutUser();
     fetch('/logout', {
       method: 'POST',
       credentials: 'include'
@@ -96,21 +99,22 @@ class Login extends React.Component {
 
   render() {
     const { classes } = this.props;
+    const { isLoggedIn, userTarget, openUser, imageURL } = this.state;
 
     return (
       <div className={classes.buttonWrap}>
-        {!this.state.isLoggedIn ? (
+        {!isLoggedIn ? (
           <Button className={classes.buttonBasic} onClick={this.login}>
             LOGIN
           </Button>
         ) : (
           <div>
-            <Button ref="userbutton" className={classes.buttonBasic} onClick={this.launchUserPopup}>
-              <img alt="user avatar icon - click for menu" src={this.state.imageURL} className={classes.icon} />
+            <Button className={classes.buttonBasic} onClick={this.launchUserPopup}>
+              <img alt="user avatar icon - click for menu" src={imageURL} className={classes.icon} />
             </Button>
             <Menu
               id="menu-appbar"
-              anchorEl={this.state.userTarget}
+              anchorEl={userTarget}
               anchorOrigin={{
                 vertical: 'top',
                 horizontal: 'right'
@@ -119,7 +123,7 @@ class Login extends React.Component {
                 vertical: 'top',
                 horizontal: 'right'
               }}
-              open={this.state.openUser}
+              open={openUser}
               onClose={this.closeUser}
             >
               <MenuItem onClick={this.logout}>Logout</MenuItem>
@@ -132,27 +136,25 @@ class Login extends React.Component {
   }
 }
 
-var LoginDispatch = function(dispatch) {
-  return {
-    loginUser: function(info) {
-      dispatch({
-        type: C.LOGIN_USER,
-        userInfo: info
-      });
-    },
-    logoutUser: function() {
-      dispatch({
-        type: C.LOGOUT_USER
-      });
-    },
-    setUserToken: function(token) {
-      dispatch({
-        type: C.SET_USER_TOKEN,
-        token: token
-      });
-    }
-  };
-};
+const LoginDispatch = dispatch => ({
+  loginUser(info) {
+    dispatch({
+      type: C.LOGIN_USER,
+      userInfo: info
+    });
+  },
+  logoutUser() {
+    dispatch({
+      type: C.LOGOUT_USER
+    });
+  },
+  setUserToken(token) {
+    dispatch({
+      type: C.SET_USER_TOKEN,
+      token
+    });
+  }
+});
 
 Login.propTypes = {
   classes: PropTypes.object.isRequired,

@@ -16,11 +16,11 @@ import { submit } from 'actions/plugins';
 import { setUrlQS } from 'actions/app';
 import { skeletonAddandOpen } from 'actions/skeleton';
 import { neuroglancerAddandOpen } from 'actions/neuroglancer';
-import RoiHeatMap, { ColorLegend } from '../../components/visualization/MiniRoiHeatMap.react';
-import RoiBarGraph from '../../components/visualization/MiniRoiBarGraph.react';
-import NeuronHelp from '../NeuronHelp.react';
-import NeuronFilter from '../NeuronFilter.react';
 import { getQueryString } from 'helpers/queryString';
+import RoiHeatMap, { ColorLegend } from "../visualization/MiniRoiHeatMap";
+import RoiBarGraph from '../visualization/MiniRoiBarGraph';
+import NeuronHelp from '../NeuronHelp';
+import NeuronFilter from '../NeuronFilter';
 
 const styles = theme => ({
   select: {
@@ -47,6 +47,7 @@ class FindNeurons extends React.Component {
       statusFilters: []
     };
   }
+
   static get queryName() {
     // This is the string used in the 'Query Type' select.
     return 'Find neurons';
@@ -59,7 +60,7 @@ class FindNeurons extends React.Component {
     return 'Find neurons that have inputs or outputs in ROIs';
   }
 
-  handleShowSkeleton = (id, dataSet) => event => {
+  handleShowSkeleton = (id, dataSet) => () => {
     const { actions } = this.props;
     actions.skeletonAddandOpen(id, dataSet);
     actions.neuroglancerAddandOpen(id, dataSet);
@@ -80,22 +81,20 @@ class FindNeurons extends React.Component {
         visType: 'SimpleTable', // <string> which visualization plugin to use. Default is 'table'
         plugin: pluginName, // <string> the name of this plugin.
         parameters, // <object>
-        title: `Neuron with id ` + bodyId,
+        title: `Neuron with id ${  bodyId}`,
         menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
         processResults: this.processResults
       };
     };
 
-    const data = apiResponse.data.map(row => {
-      return [
+    const data = apiResponse.data.map(row => [
         {
           value: row[2],
           action: () => actions.submit(findNeuronQuery(row[2]))
         },
         row[1],
         row[3]
-      ];
-    });
+      ]);
 
     return {
       columns: ['Neuron ID', 'Neuron', '#connections'],
@@ -160,14 +159,14 @@ class FindNeurons extends React.Component {
         let preInSuperRois = 0;
         Object.keys(roiInfoObject).forEach(roi => {
           if (roiList.includes(roi)) {
-            preInSuperRois += roiInfoObject[roi]['pre'];
-            postInSuperRois += roiInfoObject[roi]['post'];
+            preInSuperRois += roiInfoObject[roi].pre;
+            postInSuperRois += roiInfoObject[roi].post;
           }
         });
 
         // add this after the other rois have been summed.
         // records # pre and post that are not in rois
-        roiInfoObject['none'] = {
+        roiInfoObject.none = {
           pre: row[5] - preInSuperRois,
           post: row[6] - postInSuperRois
         };
@@ -267,15 +266,15 @@ class FindNeurons extends React.Component {
     };
 
     if (neuronsrc !== '') {
-      if (isNaN(neuronsrc)) {
-        parameters['neuron_name'] = neuronsrc;
+      if (/^\d+$/.test(neuronsrc)) {
+        parameters.neuron_id = parseInt(neuronsrc, 10);
       } else {
-        parameters['neuron_id'] = parseInt(neuronsrc);
+        parameters.neuron_name = neuronsrc;
       }
     }
 
     if (limitBig) {
-      parameters['pre_threshold'] = 2;
+      parameters.pre_threshold = 2;
     }
 
     const query = {
@@ -299,12 +298,12 @@ class FindNeurons extends React.Component {
   };
 
   handleChangeROIsIn = selected => {
-    var rois = selected.map(item => item.value);
+    const rois = selected.map(item => item.value);
     this.setState({ inputROIs: rois });
   };
 
   handleChangeROIsOut = selected => {
-    var rois = selected.map(item => item.value);
+    const rois = selected.map(item => item.value);
     this.setState({ outputROIs: rois });
   };
 
@@ -328,36 +327,28 @@ class FindNeurons extends React.Component {
   // use this function to generate the form that will accept and
   // validate the variables for your Neo4j query.
   render() {
-    const { classes, isQuerying, availableROIs } = this.props;
+    const { classes, isQuerying, availableROIs, dataSet } = this.props;
     const { inputROIs, outputROIs, neuronsrc } = this.state;
 
-    const inputOptions = availableROIs.map(name => {
-      return {
+    const inputOptions = availableROIs.map(name => ({
         label: name,
         value: name
-      };
-    });
+      }));
 
-    const inputValue = inputROIs.map(roi => {
-      return {
+    const inputValue = inputROIs.map(roi => ({
         label: roi,
         value: roi
-      };
-    });
+      }));
 
-    const outputOptions = availableROIs.map(name => {
-      return {
+    const outputOptions = availableROIs.map(name => ({
         label: name,
         value: name
-      };
-    });
+      }));
 
-    const outputValue = outputROIs.map(roi => {
-      return {
+    const outputValue = outputROIs.map(roi => ({
         label: roi,
         value: roi
-      };
-    });
+      }));
 
     return (
       <div>
@@ -392,7 +383,7 @@ class FindNeurons extends React.Component {
               onKeyDown={this.catchReturn}
             />
           </NeuronHelp>
-          <NeuronFilter callback={this.loadNeuronFilters} datasetstr={this.props.datasetstr} />
+          <NeuronFilter callback={this.loadNeuronFilters} datasetstr={dataSet} />
         </FormControl>
         <Button
           disabled={isQuerying}
@@ -411,22 +402,20 @@ class FindNeurons extends React.Component {
 // inputs, selections and for validation.
 FindNeurons.propTypes = {
   actions: PropTypes.object.isRequired,
-  availableROIs: PropTypes.array.isRequired,
+  availableROIs: PropTypes.arrayOf(PropTypes.string).isRequired,
   dataSet: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   isQuerying: PropTypes.bool.isRequired
 };
 
-var FindNeuronsState = function(state) {
-  return {
-    isQuerying: state.query.isQuerying
-  };
-};
+const FindNeuronsState = state => ({
+  isQuerying: state.query.isQuerying
+});
 
 // The submit action which will accept your query, execute it and
 // store the results for view plugins to display.
-var FindNeuronsDispatch = dispatch => ({
+const FindNeuronsDispatch = dispatch => ({
   actions: {
     submit: query => {
       dispatch(submit(query));
@@ -437,7 +426,7 @@ var FindNeuronsDispatch = dispatch => ({
     neuroglancerAddandOpen: (id, dataSet) => {
       dispatch(neuroglancerAddandOpen(id, dataSet));
     },
-    setURLQs: function(querystring) {
+    setURLQs(querystring) {
       dispatch(setUrlQS(querystring));
     }
   }

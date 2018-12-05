@@ -1,5 +1,5 @@
 import React from 'react';
-import ColorBox from './ColorBox.react';
+import ColorBox from './ColorBox';
 
 const colorArray = [
   '#4e79a7',
@@ -21,9 +21,7 @@ function BarGraph({ listOfRoisToUse, roiInfoObject, roiInfoObjectKey, sumOfValue
 
   return Object.keys(roiInfoObject).map(roi => {
     if (
-      listOfRoisToUse.find(element => {
-        return element === roi;
-      })
+      listOfRoisToUse.find(element => element === roi)
     ) {
       let color;
       if (roiToColorMap[roi]) {
@@ -32,7 +30,7 @@ function BarGraph({ listOfRoisToUse, roiInfoObject, roiInfoObjectKey, sumOfValue
         roiToColorMap[roi] = colorArray[usedColorIndex];
         color = colorArray[usedColorIndex];
         if (usedColorIndex < colorArray.length - 1) {
-          usedColorIndex++;
+          usedColorIndex += 1;
         } else {
           usedColorIndex = 0;
         }
@@ -45,7 +43,7 @@ function BarGraph({ listOfRoisToUse, roiInfoObject, roiInfoObjectKey, sumOfValue
           width={percent * 4}
           height={20}
           backgroundColor={color}
-          title={roi + ' ' + Math.round(percent * 100) / 100 + '%'}
+          title={`${roi  } ${  Math.round(percent * 100) / 100  }%`}
           text=""
         />
       );
@@ -66,7 +64,7 @@ export default ({ roiList, roiInfoObject, preTotal, postTotal }) => {
       <BarGraph
         roiInfoObject={roiInfoObject}
         listOfRoisToUse={roiList}
-        roiInfoObjectKey={'post'}
+        roiInfoObjectKey="post"
         sumOfValues={postTotal}
       />
       inputs
@@ -77,7 +75,7 @@ export default ({ roiList, roiInfoObject, preTotal, postTotal }) => {
       <BarGraph
         roiInfoObject={roiInfoObject}
         listOfRoisToUse={roiList}
-        roiInfoObjectKey={'pre'}
+        roiInfoObjectKey="pre"
         sumOfValues={preTotal}
       />
       outputs

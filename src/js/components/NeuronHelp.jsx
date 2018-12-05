@@ -18,30 +18,28 @@ const styles = () => ({
   }
 });
 
-class NeuronHelp extends React.Component {
-  render() {
-    const { classes } = this.props;
+const NeuronHelp = (props) => {
+  const { classes, children, text } = props;
 
-    var tooltip = (
-      <Tooltip id="tooltip-icon" title={this.props.text} placement="top">
-        <Typography color="error" className={classes.badge} >
-          ?
-        </Typography>
-      </Tooltip>
-    );
-    return (
-      <div>
-        {this.props.children}
-        {tooltip}
-      </div>
-    );
-  }
+  const tooltip = (
+    <Tooltip id="tooltip-icon" title={text} placement="top">
+      <Typography color="error" className={classes.badge} >
+        ?
+      </Typography>
+    </Tooltip>
+  );
+  return (
+    <div>
+      {children}
+      {tooltip}
+    </div>
+  );
 }
 
 NeuronHelp.propTypes = {
   children: PropTypes.element.isRequired,
   classes: PropTypes.object.isRequired,
-  text: PropTypes.string.isRequired
+  text: PropTypes.string
 };
 
 NeuronHelp.defaultProps = {

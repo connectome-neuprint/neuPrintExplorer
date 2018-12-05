@@ -1,8 +1,8 @@
 import qs from 'qs';
-import history from '../history';
 import merge from 'deepmerge';
+import history from '../history';
 
-const overwriteMerge = (destinationArray, sourceArray, options) => sourceArray;
+const overwriteMerge = (destinationArray, sourceArray) => sourceArray;
 const keywords = {
   true: true,
   false: false
@@ -15,7 +15,7 @@ export function getQueryString() {
 export function getQueryObject() {
   return (
     qs.parse(decodeURIComponent(getQueryString()), {
-      decoder: function(value) {
+      decoder(value) {
         if (value in keywords) {
           return keywords[value];
         }
@@ -27,7 +27,7 @@ export function getQueryObject() {
 
 export function setQueryString(newData) {
   const currentQuery = qs.parse(decodeURIComponent(getQueryString()), {
-    decoder: function(value) {
+    decoder(value) {
       if (value in keywords) {
         return keywords[value];
       }

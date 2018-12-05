@@ -13,25 +13,12 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 
-import ResultsTopBar from './ResultsTopBar';
-import SimpleTables from './SimpleTables';
-import NeuronViz from './NeuronViz';
 import { toggleSkeleton } from 'actions/skeleton';
 import { setFullScreen, clearFullScreen } from 'actions/app';
+import ResultsTopBar from './ResultsTopBar';
+import NeuronViz from './NeuronViz';
 
 import './Results.css';
-
-var LightColors = [
-  '#d9d9d9',
-  '#8dd3c7',
-  '#ffffb3',
-  '#bebada',
-  '#fb8072',
-  '#80b1d3',
-  '#fdb462',
-  '#b3de69',
-  '#fccde5'
-];
 
 const styles = theme => ({
   root: {
@@ -70,31 +57,20 @@ const styles = theme => ({
 });
 
 class Results extends React.Component {
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-      currLayout: null,
-      selectedViewer: 1
-    };
-  }
-
-  handleViewerSelect = (event, value) => {
-    this.setState({ selectedViewer: value });
-  };
-
-  componentDidUpdate(prevProps, prevState) {
-    let query = qs.parse(prevProps.urlQueryString);
-    let query2 = qs.parse(this.props.urlQueryString);
+  componentDidUpdate(prevProps) {
+    const { urlQueryString, showSkel } = this.props;
+    const query = qs.parse(prevProps.urlQueryString);
+    const query2 = qs.parse(urlQueryString);
     let openQuery = false;
     let openQuery2 = false;
-    if ('openQuery' in query && query['openQuery'] === 'true') {
+    if ('openQuery' in query && query.openQuery === 'true') {
       openQuery = true;
     }
-    if ('openQuery' in query2 && query2['openQuery'] === 'true') {
+    if ('openQuery' in query2 && query2.openQuery === 'true') {
       openQuery2 = true;
     }
 
-    if (prevProps.showSkel !== this.props.showSkel || openQuery !== openQuery2) {
+    if (prevProps.showSkel !== showSkel || openQuery !== openQuery2) {
       window.dispatchEvent(new Event('resize'));
     }
   }
@@ -114,14 +90,10 @@ class Results extends React.Component {
     }
   };
 
-  changeLayout = layout => {
-    return;
-  };
-
   downloadFile = index => {
     const { allResults } = this.props;
     const results = allResults.get(index);
-    let csvData = results.result.columns.toString() + '\n';
+    let csvData = `${results.result.columns.toString()}\n`;
     results.result.data.forEach(row => {
       const filteredRow = row.map(item => {
         if (item === null) return '';
@@ -130,7 +102,7 @@ class Results extends React.Component {
         if (item.value !== undefined) return item.value;
         return item;
       });
-      csvData += filteredRow.toString() + '\n';
+      csvData += `${filteredRow.toString()}\n`;
     });
     const element = document.createElement('a');
     const file = new Blob([csvData], { type: 'text/csv' });
@@ -141,18 +113,8 @@ class Results extends React.Component {
 
   render() {
     // TODO: show query runtime results
-    const {
-      classes,
-      allTables,
-      isQuerying,
-      neoError,
-      allResults,
-      viewPlugins,
-      showSkel,
-      fullscreen
-    } = this.props;
-    let resArray = [];
-    const gridWidth = showSkel ? 6 : 12;
+    const { classes, isQuerying, allResults, viewPlugins, showSkel, fullscreen } = this.props;
+    const resArray = [];
 
     if (fullscreen && showSkel) {
       return (
@@ -162,56 +124,11 @@ class Results extends React.Component {
       );
     }
 
-    if (neoError === null && allTables !== null) {
-      allTables.forEach((result, index) => {
-        //  TODO: rather than skip over the skeleton and place it in a
-        //  different container system, why not add it to the grid layout
-        //  and fix the dimensions / location. Search for
-        //  'set layout properties directly on the children' @
-        //  https://www.npmjs.com/package/react-grid-layout for an example.
-        if (
-          !this.props.clearIndices.has(index) &&
-          (!('isSkeleton' in result[0]) || !result[0].isSkeleton)
-        ) {
-          let unId = `old${index}`;
-          resArray.push(
-            <div
-              key={unId}
-              data-grid={{
-                x: 0,
-                y: 0,
-                w: gridWidth,
-                h: 20
-              }}
-            >
-              <ResultsTopBar
-                downloadCallback={() => this.downloadFile()}
-                name={result.length === 1 ? result[0].name : String(result.length) + ' tables'}
-                queryStr={result[0].queryStr}
-                index={index}
-                color={LightColors[index % LightColors.length]}
-              />
-              <div className={classes.tablesDiv}>
-                <SimpleTables allTables={result} />
-              </div>
-            </div>
-          );
-        }
-      });
-    }
-
     const results = allResults.map((query, index) => {
       const View = viewPlugins.get(query.visType);
+      const key = `${query.pluginName}${index}`;
       return (
-        <div
-          key={index}
-          data-grid={{
-            w: gridWidth,
-            h: 20,
-            x: 0,
-            y: 0
-          }}
-        >
+        <div key={key}>
           <ResultsTopBar
             version={2}
             downloadCallback={this.downloadFile}
@@ -220,7 +137,7 @@ class Results extends React.Component {
             queryStr={query.result.debug}
             color={query.menuColor}
           />
-          <View query={query} key={index} properties={query.visProps} />
+          <View query={query} properties={query.visProps} />
         </div>
       );
     });
@@ -248,9 +165,7 @@ class Results extends React.Component {
           <Grid item xs={12} sm={showSkel ? 6 : 12}>
             <div className={classes.scroll}>
               {results}
-              {resArray.map(result => {
-                return result;
-              })}
+              {resArray.map(result => result)}
             </div>
           </Grid>
           {showSkel ? (
@@ -269,41 +184,34 @@ class Results extends React.Component {
 Results.propTypes = {
   location: PropTypes.shape({
     search: PropTypes.string.isRequired
-  }),
-  allTables: PropTypes.array,
+  }).isRequired,
   allResults: PropTypes.object.isRequired,
   viewPlugins: PropTypes.object.isRequired,
-  clearIndices: PropTypes.object,
-  numClear: PropTypes.number,
-  queryObj: PropTypes.object.isRequired,
-  neoError: PropTypes.string,
   isQuerying: PropTypes.bool.isRequired,
   urlQueryString: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired,
   showSkel: PropTypes.bool.isRequired,
   skeletonCount: PropTypes.number.isRequired,
-  userInfo: PropTypes.object,
+  actions: PropTypes.object.isRequired,
   fullscreen: PropTypes.bool.isRequired
 };
 
 // result data [{name: "table name", header: [headers...], body: [rows...]
-const ResultsState = function(state) {
-  return {
-    isQuerying: state.query.isQuerying,
-    neoError: state.query.neoError,
-    allTables: state.results.allTables,
-    allResults: state.results.allResults,
-    viewPlugins: state.app.get('viewPlugins'),
-    clearIndices: state.results.clearIndices,
-    numClear: state.results.numClear,
-    showSkel: state.skeleton.get('display'),
-    skeletonCount: state.skeleton.get('neurons').size,
-    userInfo: state.user.get('userInfo'),
-    urlQueryString: state.app.get('urlQueryString'),
-    queryObj: state.query.neoQueryObj,
-    fullscreen: state.app.get('fullscreen')
-  };
-};
+const ResultsState = state => ({
+  isQuerying: state.query.isQuerying,
+  neoError: state.query.neoError,
+  allTables: state.results.allTables,
+  allResults: state.results.allResults,
+  viewPlugins: state.app.get('viewPlugins'),
+  clearIndices: state.results.clearIndices,
+  numClear: state.results.numClear,
+  showSkel: state.skeleton.get('display'),
+  skeletonCount: state.skeleton.get('neurons').size,
+  userInfo: state.user.get('userInfo'),
+  urlQueryString: state.app.get('urlQueryString'),
+  queryObj: state.query.neoQueryObj,
+  fullscreen: state.app.get('fullscreen')
+});
 
 const ResultDispatch = dispatch => ({
   actions: {

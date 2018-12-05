@@ -3,14 +3,13 @@
 */
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
-import _ from 'underscore';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
-//import { Deck, Slide, Image } from 'spectacle';
-//import {SwaggerUI} from 'react-swagger-ui'
-//import 'react-swagger-ui/dist/swagger-ui.css'
+// import { Deck, Slide, Image } from 'spectacle';
+// import {SwaggerUI} from 'react-swagger-ui'
+// import 'react-swagger-ui/dist/swagger-ui.css'
 import SwaggerUi, { presets } from 'swagger-ui';
 import 'swagger-ui/dist/swagger-ui.css';
 import Tabs from '@material-ui/core/Tabs';
@@ -18,9 +17,10 @@ import Tab from '@material-ui/core/Tab';
 import AppBar from '@material-ui/core/AppBar';
 
 function TabContainer(props) {
+  const { children } = props;
   return (
     <Typography component="div" style={{ padding: 8 * 3 }}>
-      {props.children}
+      {children}
     </Typography>
   );
 }
@@ -67,14 +67,9 @@ class Help extends React.Component {
     };
   }
 
-  // if only query string has updated, prevent re-render
-  shouldComponentUpdate(nextProps, nextState) {
-    nextProps.location['search'] = this.props.location['search'];
-    return !_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state);
-  }
-
   componentDidUpdate() {
-    if (this.state.value === 1) {
+    const { value } = this.state;
+    if (value === 1) {
       SwaggerUi({
         dom_id: '#swaggerContainer',
         url: '/api/help/swagger.yaml',
@@ -97,9 +92,9 @@ class Help extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { value } = this.state;
+    const { value, open } = this.state;
 
-    //<SwaggerUI url='/swagger.yaml' spec={object} />
+    // <SwaggerUI url='/swagger.yaml' spec={object} />
     return (
       <div className={classes.root}>
         <AppBar position="static" color="default">
@@ -141,7 +136,7 @@ class Help extends React.Component {
             <div className={classes.flex}>
               <Button onClick={this.handleOpen}>
                 <img
-                  src="https://raw.githubusercontent.com/connectome-neuprint/neuPrint/master/pgmv1.png"
+                  src="/public/overview.png"
                   alt="Neo4j graph model diagram"
                   className={classes.img}
                 />
@@ -149,15 +144,12 @@ class Help extends React.Component {
               <Modal
                 aria-labelledby="Neo4j Graph Model"
                 aria-describedby="simple-modal-description"
-                open={this.state.open}
+                open={open}
                 onClose={this.handleClose}
               >
                 <div className={classes.overflow}>
                   <Button onClick={this.handleClose}>
-                    <img
-                      src="https://raw.githubusercontent.com/connectome-neuprint/neuPrint/master/pgmv1.png"
-                      alt="Neo4j graph model diagram"
-                    />
+                    <img src="/public/overview.png" alt="Neo4j graph model diagram" />
                   </Button>
                 </div>
               </Modal>
@@ -180,11 +172,11 @@ class Help extends React.Component {
                         >
                         {
                             _.range(1, MaxSlideNum+1).map( val => {
-                                return (<Slide 
+                                return (<Slide
                                                 bgColor={"#D0D0D0"}
                                                 key={val}
                                         >
-                                                <Image 
+                                                <Image
                                                         src={"/public/graphmodel/Slide" + String(val) + ".jpeg"}
                                                 />
                                         </Slide>)
@@ -202,8 +194,8 @@ class Help extends React.Component {
 Help.propTypes = {
   location: PropTypes.shape({
     search: PropTypes.string.isRequired
-  }),
-  classes: PropTypes.object
+  }).isRequired,
+  classes: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(Help);

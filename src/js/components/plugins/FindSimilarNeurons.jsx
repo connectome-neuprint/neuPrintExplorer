@@ -21,12 +21,12 @@ import Icon from '@material-ui/core/Icon';
 import { submit, pluginResponseError } from 'actions/plugins';
 import { skeletonAddandOpen } from 'actions/skeleton';
 import { neuroglancerAddandOpen } from 'actions/neuroglancer';
-import { setUrlQS } from '../../actions/app';
-import RoiHeatMap, { ColorLegend } from '../visualization/MiniRoiHeatMap.react';
-import RoiBarGraph from '../visualization/MiniRoiBarGraph.react';
-import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 import { getQueryString } from 'helpers/queryString';
 import * as math from 'mathjs';
+import { setUrlQS } from '../../actions/app';
+import RoiHeatMap, { ColorLegend } from '../visualization/MiniRoiHeatMap';
+import RoiBarGraph from '../visualization/MiniRoiBarGraph';
+import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 
 const styles = theme => ({
   textField: {
@@ -65,13 +65,13 @@ class FindSimilarNeurons extends React.Component {
       rois: []
     };
     const qsParams = LoadQueryString(
-      'Query:' + this.constructor.queryName,
+      `Query:${this.constructor.queryName}`,
       initqsParams,
-      this.props.urlQueryString
+      props.urlQueryString
     );
 
     this.state = {
-      qsParams: qsParams
+      qsParams
     };
   }
 
@@ -83,7 +83,7 @@ class FindSimilarNeurons extends React.Component {
     return 'Find neurons that are similar to a neuron of interest in terms of their input and output locations (ROIs).';
   }
 
-  handleShowSkeleton = (id, dataSet) => event => {
+  handleShowSkeleton = (id, dataSet) => () => {
     const { actions } = this.props;
     actions.skeletonAddandOpen(id, dataSet);
     actions.neuroglancerAddandOpen(id, dataSet);
@@ -93,24 +93,17 @@ class FindSimilarNeurons extends React.Component {
   processSimilarResults = (query, apiResponse) => {
     const { actions } = this.props;
     const { parameters } = query;
-    let columns;
 
-    const shouldShowSubLevelRoiSimilarity = () => {
+    const shouldShowSubLevelRoiSimilarity = () =>
       // produce sub-level roi information if present, there is more than one body id in the group, and a body id was queried
-      return subLevelRois.size > 0 && data.length > 1 && parameters.bodyId;
-    };
+      subLevelRois.size > 0 && data.length > 1 && parameters.bodyId;
 
-    const shouldShowSubLevelRoiHeatMapOnly = () => {
-      return !parameters.bodyId || (data.length === 1 && parameters.bodyId);
-    };
+    const shouldShowSubLevelRoiHeatMapOnly = () =>
+      !parameters.bodyId || (data.length === 1 && parameters.bodyId);
 
-    const shouldShowClusterName = () => {
-      return !parameters.bodyId;
-    };
+    const shouldShowClusterName = () => !parameters.bodyId;
 
-    const shouldShowSimilarityScores = () => {
-      return data.length > 1 && parameters.bodyId;
-    };
+    const shouldShowSimilarityScores = () => data.length > 1 && parameters.bodyId;
 
     if (apiResponse.data.length === 0) {
       // produce appropriate error message depending on which query called the function
@@ -126,7 +119,7 @@ class FindSimilarNeurons extends React.Component {
     let queriedBodyIdIndex;
 
     // store super-level rois
-    let roiList = apiResponse.data[0][6];
+    const roiList = apiResponse.data[0][6];
     roiList.push('none');
     const numberOfRois = roiList.length;
 
@@ -174,7 +167,7 @@ class FindSimilarNeurons extends React.Component {
       const hasSkeleton = row[8];
 
       // get index of queried body id so can move this data to top of table
-      if (bodyId === parseInt(parameters.bodyId)) {
+      if (bodyId === parseInt(parameters.bodyId, 10)) {
         queriedBodyIdIndex = index;
       }
 
@@ -228,10 +221,10 @@ class FindSimilarNeurons extends React.Component {
         Object.keys(roiInfoObject).forEach(roi => {
           const roiIndex = roiList.indexOf(roi);
           if (roiIndex !== -1) {
-            preInSuperRois += roiInfoObject[roi]['pre'];
-            postInSuperRois += roiInfoObject[roi]['post'];
-            vector[roiIndex] = (roiInfoObject[roi]['pre'] * 1.0) / totalPre;
-            vector[roiIndex + numberOfRois] = (roiInfoObject[roi]['post'] * 1.0) / totalPost;
+            preInSuperRois += roiInfoObject[roi].pre;
+            postInSuperRois += roiInfoObject[roi].post;
+            vector[roiIndex] = (roiInfoObject[roi].pre * 1.0) / totalPre;
+            vector[roiIndex + numberOfRois] = (roiInfoObject[roi].post * 1.0) / totalPost;
           } else {
             subLevelRois.add(roi);
           }
@@ -239,13 +232,13 @@ class FindSimilarNeurons extends React.Component {
 
         // add this after the other rois have been summed.
         // records # pre and post that are not in rois
-        roiInfoObject['none'] = {
+        roiInfoObject.none = {
           pre: totalPre - preInSuperRois,
           post: totalPost - postInSuperRois
         };
         const noneIndex = roiList.indexOf('none');
-        vector[noneIndex] = (roiInfoObject['none']['pre'] * 1.0) / totalPre;
-        vector[noneIndex + numberOfRois] = (roiInfoObject['none']['post'] * 1.0) / totalPost;
+        vector[noneIndex] = (roiInfoObject.none.pre * 1.0) / totalPre;
+        vector[noneIndex + numberOfRois] = (roiInfoObject.none.post * 1.0) / totalPost;
 
         const barGraph = (
           <RoiBarGraph
@@ -267,7 +260,7 @@ class FindSimilarNeurons extends React.Component {
         );
         converted[6] = heatMap;
 
-        //store vector
+        // store vector
         converted[7] = vector;
       }
 
@@ -275,7 +268,7 @@ class FindSimilarNeurons extends React.Component {
     });
 
     // basic columns
-    columns = [
+    const columns = [
       'bodyId',
       'name',
       'status',
@@ -300,9 +293,9 @@ class FindSimilarNeurons extends React.Component {
         Object.keys(roiInfoObject).forEach(roi => {
           const roiIndex = subLevelRoiList.indexOf(roi);
           if (roiIndex !== -1) {
-            subLevelRoiVector[roiIndex] = (roiInfoObject[roi]['pre'] * 1.0) / totalPre;
+            subLevelRoiVector[roiIndex] = (roiInfoObject[roi].pre * 1.0) / totalPre;
             subLevelRoiVector[roiIndex + subLevelRoiList.length] =
-              (roiInfoObject[roi]['post'] * 1.0) / totalPost;
+              (roiInfoObject[roi].post * 1.0) / totalPost;
           }
         });
         data[index][11] = subLevelRoiVector;
@@ -347,12 +340,10 @@ class FindSimilarNeurons extends React.Component {
             data[index][8] = row[7];
             columns[8] = 'cluster name';
           }
-        } else {
+        } else if (shouldShowClusterName()) {
           // add cluster name only
-          if (shouldShowClusterName()) {
-            data[index][7] = row[7];
-            columns[7] = 'cluster name';
-          }
+          data[index][7] = row[7];
+          columns[7] = 'cluster name';
         }
       });
     }
@@ -410,7 +401,7 @@ class FindSimilarNeurons extends React.Component {
             math.sum(math.abs(math.subtract(queriedBodySubLevelVector, row[11]))) / 4.0,
             4
           );
-          //incorporate sub-level rois into total score
+          // incorporate sub-level rois into total score
           row[7] = (row[7] + row[11]) / 2.0;
 
           // update columns
@@ -426,7 +417,7 @@ class FindSimilarNeurons extends React.Component {
     }
 
     return {
-      columns: columns,
+      columns,
       data,
       debug: apiResponse.debug
     };
@@ -444,19 +435,16 @@ class FindSimilarNeurons extends React.Component {
     const data = apiResponse.data.map(row => {
       const clusterName = row[0];
 
-      const clusterQueryString =
-        "MATCH (m:Meta{dataset:'" +
-        parameters.dataset +
-        "'}) WITH m.superLevelRois AS rois MATCH (n:`" +
-        parameters.dataset +
-        "-Neuron`{clusterName:'" +
-        clusterName +
-        "'}) RETURN n.bodyId, n.name, n.status, n.pre, n.post, n.roiInfo, rois, n.clusterName, exists((n)-[:Contains]->(:Skeleton)) AS hasSkeleton";
+      const clusterQueryString = `MATCH (m:Meta{dataset:'${
+        parameters.dataset
+      }'}) WITH m.superLevelRois AS rois MATCH (n:\`${
+        parameters.dataset
+      }-Neuron\`{clusterName:'${clusterName}'}) RETURN n.bodyId, n.name, n.status, n.pre, n.post, n.roiInfo, rois, n.clusterName, exists((n)-[:Contains]->(:Skeleton)) AS hasSkeleton`;
 
       parameters.clusterName = clusterName;
       parameters.emptyDataErrorMessage = 'Cluster name does not exist in the dataset.';
 
-      const title = 'Neurons with classification ' + clusterName;
+      const title = `Neurons with classification ${clusterName}`;
 
       const clusterQuery = {
         dataSet: parameters.dataset,
@@ -464,8 +452,8 @@ class FindSimilarNeurons extends React.Component {
         visType: 'SimpleTable',
         visProps: { rowsPerPage: 25 },
         plugin: pluginName,
-        parameters: parameters,
-        title: title,
+        parameters,
+        title,
         menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
         processResults: this.processSimilarResults
       };
@@ -493,23 +481,14 @@ class FindSimilarNeurons extends React.Component {
     const findSimilarNeuron = bodyId => {
       const parameters = {
         dataset: dataSet,
-        bodyId: bodyId,
+        bodyId,
         emptyDataErrorMessage: 'Body ID not found in dataset.'
       };
 
-      const similarQuery =
-        "MATCH (m:Meta{dataset:'" +
-        dataSet +
-        "'}) WITH m.superLevelRois AS rois MATCH (n:`" +
-        dataSet +
-        '-Neuron`{bodyId:' +
-        bodyId +
-        '}) WITH n.clusterName AS cn, rois MATCH (n:`' +
-        dataSet +
-        '-Neuron`{clusterName:cn}) RETURN n.bodyId, n.name, n.status, n.pre, n.post, n.roiInfo, rois, n.clusterName, exists((n)-[:Contains]->(:Skeleton)) AS hasSkeleton';
+      const similarQuery = `MATCH (m:Meta{dataset:'${dataSet}'}) WITH m.superLevelRois AS rois MATCH (n:\`${dataSet}-Neuron\`{bodyId:${bodyId}}) WITH n.clusterName AS cn, rois MATCH (n:\`${dataSet}-Neuron\`{clusterName:cn}) RETURN n.bodyId, n.name, n.status, n.pre, n.post, n.roiInfo, rois, n.clusterName, exists((n)-[:Contains]->(:Skeleton)) AS hasSkeleton`;
 
       // TODO: change title based on results
-      const title = 'Neurons similar to ' + bodyId;
+      const title = `Neurons similar to ${bodyId}`;
 
       return {
         dataSet,
@@ -518,22 +497,20 @@ class FindSimilarNeurons extends React.Component {
         visProps: { rowsPerPage: 25 },
         plugin: pluginName,
         parameters,
-        title: title,
+        title,
         menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
         processResults: this.processSimilarResults
       };
     };
 
-    const data = apiResponse.data.map(row => {
-      return [
-        {
-          value: row[2],
-          action: () => actions.submit(findSimilarNeuron(row[2]))
-        },
-        row[1],
-        row[3]
-      ];
-    });
+    const data = apiResponse.data.map(row => [
+      {
+        value: row[2],
+        action: () => actions.submit(findSimilarNeuron(row[2]))
+      },
+      row[1],
+      row[3]
+    ]);
 
     return {
       columns: ['body id (click to find similar neurons)', 'name', '# connections'],
@@ -545,27 +522,19 @@ class FindSimilarNeurons extends React.Component {
   // processing intital request
   processIDRequest = () => {
     const { dataSet, actions, history } = this.props;
-    const { bodyId } = this.state.qsParams;
+    const { qsParams } = this.state;
+    const { bodyId } = qsParams;
 
     const parameters = {
       dataset: dataSet,
-      bodyId: bodyId,
+      bodyId,
       emptyDataErrorMessage: 'Body ID not found in dataset.'
     };
 
-    const similarQuery =
-      "MATCH (m:Meta{dataset:'" +
-      dataSet +
-      "'}) WITH m.superLevelRois AS rois MATCH (n:`" +
-      dataSet +
-      '-Neuron`{bodyId:' +
-      bodyId +
-      '}) WITH n.clusterName AS cn, rois MATCH (n:`' +
-      dataSet +
-      '-Neuron`{clusterName:cn}) RETURN n.bodyId, n.name, n.status, n.pre, n.post, n.roiInfo, rois, n.clusterName, exists((n)-[:Contains]->(:Skeleton)) AS hasSkeleton';
+    const similarQuery = `MATCH (m:Meta{dataset:'${dataSet}'}) WITH m.superLevelRois AS rois MATCH (n:\`${dataSet}-Neuron\`{bodyId:${bodyId}}) WITH n.clusterName AS cn, rois MATCH (n:\`${dataSet}-Neuron\`{clusterName:cn}) RETURN n.bodyId, n.name, n.status, n.pre, n.post, n.roiInfo, rois, n.clusterName, exists((n)-[:Contains]->(:Skeleton)) AS hasSkeleton`;
 
     // TODO: change title based on results
-    const title = 'Neurons similar to ' + bodyId;
+    const title = `Neurons similar to ${bodyId}`;
 
     const query = {
       dataSet,
@@ -574,7 +543,7 @@ class FindSimilarNeurons extends React.Component {
       visProps: { rowsPerPage: 25 },
       plugin: pluginName,
       parameters,
-      title: title,
+      title,
       menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
       processResults: this.processSimilarResults
     };
@@ -594,9 +563,9 @@ class FindSimilarNeurons extends React.Component {
       dataset: dataSet
     };
 
-    const groupsQuery = 'MATCH (n:`' + dataSet + '-Neuron`) RETURN DISTINCT n.clusterName';
+    const groupsQuery = `MATCH (n:\`${dataSet}-Neuron\`) RETURN DISTINCT n.clusterName`;
 
-    const title = 'Cluster names for ' + dataSet + ' dataset';
+    const title = `Cluster names for ${dataSet} dataset`;
 
     const query = {
       dataSet,
@@ -605,7 +574,7 @@ class FindSimilarNeurons extends React.Component {
       visProps: { rowsPerPage: 25 },
       plugin: pluginName,
       parameters,
-      title: title,
+      title,
       menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
       processResults: this.processGroupResults
     };
@@ -620,29 +589,26 @@ class FindSimilarNeurons extends React.Component {
 
   processRoiRequest = () => {
     const { dataSet, actions, history } = this.props;
-    const { rois } = this.state.qsParams;
+    const { qsParams } = this.state;
+    const { rois } = qsParams;
 
     const parameters = {
       dataset: dataSet,
-      rois: rois,
-      emptyDataErrorMessage: 'No neurons located in all selected rois: ' + rois
+      rois,
+      emptyDataErrorMessage: `No neurons located in all selected rois: ${rois}`
     };
 
     let roiPredicate = '';
     rois.forEach(roi => {
-      roiPredicate += 'exists(n.`' + roi + '`) AND ';
+      roiPredicate += `exists(n.\`${roi}\`) AND `;
     });
-    const roiQuery =
-      "MATCH (m:Meta{dataset:'" +
-      dataSet +
-      "'}) WITH m.superLevelRois AS rois MATCH (n:`" +
-      dataSet +
-      '-Neuron`) WHERE (' +
-      roiPredicate.slice(0, -4) +
-      ') RETURN n.bodyId, n.name, n.status, n.pre, n.post, n.roiInfo, rois, n.clusterName, exists((n)-[:Contains]->(:Skeleton)) AS hasSkeleton';
+    const roiQuery = `MATCH (m:Meta{dataset:'${dataSet}'}) WITH m.superLevelRois AS rois MATCH (n:\`${dataSet}-Neuron\`) WHERE (${roiPredicate.slice(
+      0,
+      -4
+    )}) RETURN n.bodyId, n.name, n.status, n.pre, n.post, n.roiInfo, rois, n.clusterName, exists((n)-[:Contains]->(:Skeleton)) AS hasSkeleton`;
 
     // TODO: change title based on results
-    const title = 'Neurons in ' + rois;
+    const title = `Neurons in ${rois}`;
 
     const query = {
       dataSet,
@@ -651,7 +617,7 @@ class FindSimilarNeurons extends React.Component {
       visProps: { rowsPerPage: 25 },
       plugin: pluginName,
       parameters,
-      title: title,
+      title,
       menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
       processResults: this.processSimilarResults
     };
@@ -665,28 +631,34 @@ class FindSimilarNeurons extends React.Component {
   };
 
   addNeuronBodyId = event => {
-    const oldParams = this.state.qsParams;
+    const { actions } = this.props;
+    const { qsParams } = this.state;
+    const oldParams = qsParams;
     oldParams.bodyId = event.target.value;
-    this.props.actions.setURLQs(SaveQueryString('Query:' + this.constructor.queryName, oldParams));
+    actions.setURLQs(SaveQueryString(`Query:${this.constructor.queryName}`, oldParams));
     this.setState({
       qsParams: oldParams
     });
   };
 
   addNeuronName = event => {
-    const oldParams = this.state.qsParams;
+    const { actions } = this.props;
+    const { qsParams } = this.state;
+    const oldParams = qsParams;
     oldParams.name = event.target.value;
-    this.props.actions.setURLQs(SaveQueryString('Query:' + this.constructor.queryName, oldParams));
+    actions.setURLQs(SaveQueryString(`Query:${this.constructor.queryName}`, oldParams));
     this.setState({
       qsParams: oldParams
     });
   };
 
   handleChangeRois = selected => {
-    const oldParams = this.state.qsParams;
+    const { actions } = this.props;
+    const { qsParams } = this.state;
+    const oldParams = qsParams;
     const rois = selected.map(item => item.value);
     oldParams.rois = rois;
-    this.props.actions.setURLQs(SaveQueryString('Query:' + this.constructor.queryName, oldParams));
+    actions.setURLQs(SaveQueryString(`Query:${this.constructor.queryName}`, oldParams));
     this.setState({
       qsParams: oldParams
     });
@@ -701,22 +673,19 @@ class FindSimilarNeurons extends React.Component {
   };
 
   render() {
-    const { classes, availableROIs } = this.props;
-    const rois = this.state.qsParams.rois;
+    const { classes, availableROIs, isQuerying } = this.props;
+    const { qsParams } = this.state;
+    const { rois } = qsParams;
 
-    const roiOptions = availableROIs.map(name => {
-      return {
-        label: name,
-        value: name
-      };
-    });
+    const roiOptions = availableROIs.map(name => ({
+      label: name,
+      value: name
+    }));
 
-    const roiValues = rois.map(roi => {
-      return {
-        label: roi,
-        value: roi
-      };
-    });
+    const roiValues = rois.map(roi => ({
+      label: roi,
+      value: roi
+    }));
 
     return (
       <div>
@@ -726,7 +695,7 @@ class FindSimilarNeurons extends React.Component {
             multiline
             fullWidth
             rows={1}
-            value={this.state.qsParams.bodyId}
+            value={qsParams.bodyId}
             rowsMax={2}
             className={classes.textField}
             onChange={this.addNeuronBodyId}
@@ -738,7 +707,7 @@ class FindSimilarNeurons extends React.Component {
           color="primary"
           className={classes.button}
           onClick={this.processIDRequest}
-          disabled={!(this.state.qsParams.bodyId.length > 0)}
+          disabled={!(qsParams.bodyId.length > 0)}
         >
           Search By Body ID
         </Button>
@@ -764,6 +733,7 @@ class FindSimilarNeurons extends React.Component {
         <Button
           variant="contained"
           color="primary"
+          disabled={isQuerying}
           className={classes.button}
           onClick={this.processGroupRequest}
         >
@@ -784,19 +754,17 @@ FindSimilarNeurons.propTypes = {
   isQuerying: PropTypes.bool.isRequired
 };
 
-const FindSimilarNeuronsState = function(state) {
-  return {
-    urlQueryString: state.app.get('urlQueryString'),
-    isQuerying: state.query.isQuerying
-  };
-};
+const FindSimilarNeuronsState = state => ({
+  urlQueryString: state.app.get('urlQueryString'),
+  isQuerying: state.query.isQuerying
+});
 
 const FindSimilarNeuronsDispatch = dispatch => ({
   actions: {
     submit: query => {
       dispatch(submit(query));
     },
-    setURLQs: function(querystring) {
+    setURLQs(querystring) {
       dispatch(setUrlQS(querystring));
     },
     pluginResponseError: error => {

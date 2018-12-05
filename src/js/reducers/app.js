@@ -1,11 +1,11 @@
 /*
  * Store high-level app state.
 */
-import C from './constants';
 import Immutable from 'immutable';
+import C from './constants';
 
 const appState = Immutable.Map({
-  pluginList: [],
+  pluginList: Immutable.List([]),
   reconIndex: 9999999,
   urlQueryString: window.location.search.substring(1),
   appDB: '',

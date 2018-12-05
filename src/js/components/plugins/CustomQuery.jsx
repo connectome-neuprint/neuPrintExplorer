@@ -19,7 +19,8 @@ import { setUrlQS } from '../../actions/app';
 
 const styles = () => ({
   textField: {
-    width: 300
+    width: 300,
+    margin: '0 0 1em 0'
   },
   button: {
     margin: 4,
@@ -41,16 +42,16 @@ class CustomQuery extends React.Component {
 
   constructor(props) {
     super(props);
-    var initqsParams = {
+    const initqsParams = {
       textValue: ''
     };
-    var qsParams = LoadQueryString(
-      'Query:' + this.constructor.queryName,
+    const qsParams = LoadQueryString(
+      `Query:${  this.constructor.queryName}`,
       initqsParams,
-      this.props.urlQueryString
+      props.urlQueryString
     );
     this.state = {
-      qsParams: qsParams
+      qsParams
     };
   }
 
@@ -61,18 +62,19 @@ class CustomQuery extends React.Component {
         data: apiResponse.data,
         debug: apiResponse.debug
       };
-    } else {
+    }
       return {
         columns: [],
         data: [],
         debug: ''
       };
-    }
+
   };
 
   processRequest = () => {
     const { dataSet, actions, history } = this.props;
-    const { textValue } = this.state.qsParams;
+    const { qsParams } = this.state;
+    const { textValue } = qsParams;
 
     const query = {
       dataSet,
@@ -93,9 +95,11 @@ class CustomQuery extends React.Component {
   };
 
   handleChange = event => {
-    const oldParams = this.state.qsParams;
+    const { actions } = this.props;
+    const { qsParams } = this.state;
+    const oldParams = qsParams;
     oldParams.textValue = event.target.value;
-    this.props.actions.setURLQs(SaveQueryString('Query:' + this.constructor.queryName, oldParams));
+    actions.setURLQs(SaveQueryString(`Query:${  this.constructor.queryName}`, oldParams));
     this.setState({
       qsParams: oldParams
     });
@@ -110,13 +114,14 @@ class CustomQuery extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { qsParams } = this.state;
+    const { classes, isQuerying } = this.props;
     return (
       <FormControl className={classes.formControl}>
         <TextField
           label="Custom Cypher Query"
           multiline
-          value={this.state.qsParams.textValue}
+          value={qsParams.textValue}
           rows={1}
           rowsMax={4}
           className={classes.textField}
@@ -127,8 +132,8 @@ class CustomQuery extends React.Component {
           variant="contained"
           className={classes.button}
           onClick={this.processRequest}
-          disabled={!(this.state.qsParams.textValue.length > 0)}
           color="primary"
+          disabled={isQuerying}
         >
           Submit
         </Button>
@@ -140,22 +145,23 @@ class CustomQuery extends React.Component {
 CustomQuery.propTypes = {
   urlQueryString: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired,
-  actions: PropTypes.object.isRequired
+  actions: PropTypes.object.isRequired,
+  dataSet: PropTypes.string.isRequired,
+  history: PropTypes.object.isRequired,
+  isQuerying: PropTypes.bool.isRequired
 };
 
-var CustomQueryState = function(state) {
-  return {
-    urlQueryString: state.app.get('urlQueryString'),
-    isQuerying: state.query.isQuerying
-  };
-};
+const CustomQueryState = state => ({
+  urlQueryString: state.app.get('urlQueryString'),
+  isQuerying: state.query.isQuerying
+});
 
-var CustomQueryDispatch = dispatch => ({
+const CustomQueryDispatch = dispatch => ({
   actions: {
     submit: query => {
       dispatch(submit(query));
     },
-    setURLQs: function(querystring) {
+    setURLQs(querystring) {
       dispatch(setUrlQS(querystring));
     }
   }

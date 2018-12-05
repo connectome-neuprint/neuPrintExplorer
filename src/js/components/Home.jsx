@@ -4,10 +4,8 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Redirect } from 'react-router-dom';
-import _ from 'underscore';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
@@ -78,10 +76,18 @@ class Home extends React.Component {
     this.state = { activeStep: 0 };
   }
 
-  // if only query string has updated, prevent re-render
+  // only update if the available datasets changed.
+  // or the activeStep changed
   shouldComponentUpdate(nextProps, nextState) {
-    nextProps.location['search'] = this.props.location['search'];
-    return !_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state);
+    const { availableDatasets } = this.props;
+    const { activeStep } = this.state;
+    if ( availableDatasets !== nextProps.availableDatasets) {
+      return true;
+    }
+    if ( activeStep !== nextState.activeStep ) {
+      return true;
+    }
+    return false;
   }
 
   handleNext = () => {
@@ -97,8 +103,9 @@ class Home extends React.Component {
   };
 
   render() {
-    const { classes, theme } = this.props;
-    var redirectHome = false;
+    const { classes, theme, neoServer, availableDatasets, datasetInfo } = this.props;
+    const { activeStep } = this.state;
+    let redirectHome = false;
     if (window.location.pathname !== '/') {
       redirectHome = true;
     }
@@ -126,25 +133,23 @@ class Home extends React.Component {
                 </Typography>
                 <Divider className={classes.divider} />
                 <Typography component="p">
-                  server: {this.props.neoServer} <br />
+                  server: {neoServer} <br />
                 </Typography>
                 <Typography component="p">available datasets:</Typography>
                 <div className={classes.padLeft}>
-                  {this.props.availableDatasets.map(item => {
-                    return (
-                      <div key={item}>
+                  {availableDatasets.map(item => (
+                    <div key={item}>
+                      <Typography>
+                        <b>{item}</b>
+                      </Typography>
+                      <div className={classes.padLeft}>
                         <Typography>
-                          <b>{item}</b>
+                          modified: {datasetInfo[item].lastmod} <br />
+                          version: {datasetInfo[item].uuid}
                         </Typography>
-                        <div className={classes.padLeft}>
-                          <Typography>
-                            modified: {this.props.datasetInfo[item].lastmod} <br />
-                            version: {this.props.datasetInfo[item].uuid}
-                          </Typography>
-                        </div>
                       </div>
-                    );
-                  })}
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
@@ -154,33 +159,29 @@ class Home extends React.Component {
               <CardContent>
                 <Typography className={classes.title} color="textSecondary">
                   Helpful Hints
-                  <SvgIcon nativeColor={'orange'}>
+                  <SvgIcon nativeColor="orange">
                     <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z" />
                   </SvgIcon>
                 </Typography>
                 <Divider className={classes.divider} />
 
-                <div className={classes.hint}>{HintText[this.state.activeStep]}</div>
+                <div className={classes.hint}>{HintText[activeStep]}</div>
                 <MobileStepper
                   steps={HintText.length}
                   position="static"
-                  activeStep={this.state.activeStep}
+                  activeStep={activeStep}
                   nextButton={
                     <Button
                       size="small"
                       onClick={this.handleNext}
-                      disabled={this.state.activeStep === HintText.length - 1}
+                      disabled={activeStep === HintText.length - 1}
                     >
                       Next
                       {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
                     </Button>
                   }
                   backButton={
-                    <Button
-                      size="small"
-                      onClick={this.handleBack}
-                      disabled={this.state.activeStep === 0}
-                    >
+                    <Button size="small" onClick={this.handleBack} disabled={activeStep === 0}>
                       {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
                       Back
                     </Button>
@@ -195,21 +196,19 @@ class Home extends React.Component {
   }
 }
 
-var HomeState = function(state) {
-  return {
-    neoServer: state.neo4jsettings.get('neoServer'),
-    availableDatasets: state.neo4jsettings.get('availableDatasets'),
-    datasetInfo: state.neo4jsettings.get('datasetInfo')
-  };
-};
+const HomeState = state => ({
+  neoServer: state.neo4jsettings.get('neoServer'),
+  availableDatasets: state.neo4jsettings.get('availableDatasets'),
+  datasetInfo: state.neo4jsettings.get('datasetInfo')
+});
 
 Home.propTypes = {
   location: PropTypes.shape({
     search: PropTypes.string.isRequired
-  }),
-  classes: PropTypes.object,
-  theme: PropTypes.object,
-  availableDatasets: PropTypes.array.isRequired,
+  }).isRequired,
+  classes: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired,
+  availableDatasets: PropTypes.arrayOf(PropTypes.string).isRequired,
   datasetInfo: PropTypes.object.isRequired,
   neoServer: PropTypes.string.isRequired
 };

@@ -21,8 +21,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Chip from '@material-ui/core/Chip';
 import MenuItem from '@material-ui/core/MenuItem';
 import Tooltip from '@material-ui/core/Tooltip';
-import { setUrlQS } from '../actions/app';
-import NeuPrintResult from '../helpers/NeuPrintResult';
+import { setUrlQS, metaInfoError } from '../actions/app';
 import { getQueryObject, setQueryString } from '../helpers/queryString';
 
 const styles = theme => ({
@@ -71,22 +70,24 @@ class NeuronFilter extends React.Component {
     };
 
     if (combinedParams) {
-      this.props.callback(combinedParams);
+      props.callback(combinedParams);
     }
 
-    this.queryStatuses(this.props.neoServer, this.props.datasetstr);
+    this.queryStatuses(props.neoServer, props.datasetstr);
   }
 
   componentWillReceiveProps(nextProps) {
+    const { neoServer, datasetstr } = this.props;
     if (
-      nextProps.neoServer !== this.props.neoServer ||
-      nextProps.datasetstr !== this.props.datasetstr
+      nextProps.neoServer !== neoServer ||
+      nextProps.datasetstr !== datasetstr
     ) {
       this.queryStatuses(nextProps.neoServer, nextProps.datasetstr);
     }
   }
 
   queryStatuses = (neoServer, datasetstr) => {
+    const { actions } = this.props;
     if (neoServer === '') {
       return;
     }
@@ -100,50 +101,51 @@ class NeuronFilter extends React.Component {
       method: 'POST',
       credentials: 'include'
     })
-      .then(result => result.json())
-      .then(resp => {
-        let statuslist = [];
-        // parse query
-        let result = new NeuPrintResult(resp);
-        result.records.forEach(function(record) {
-          let val = record.get('val');
-          if (val !== null) {
-            statuslist.push(val);
-          }
-        });
-        setState({ statuses: statuslist });
+      .then(result => {
+        if (result.ok) {
+          return result.json();
+        }
+        throw new Error('Unable to fetch status list, try reloading the page. If this error persists, please contact support.');
       })
-      .catch(function(error) {
-        alert(error);
+      .then(resp => {
+        const statusList = resp.data.map(status => status[0]);
+        setState({ statuses: statusList });
+      })
+      .catch((error) => {
+        actions.metaInfoError(error);
       });
   };
 
   toggleBig = () => {
-    let val = !this.state.qsParams.limitBig;
+    const { qsParams } = this.state;
+    const { callback } = this.props;
+    const val = !qsParams.limitBig;
 
-    let newparams = Object.assign({}, this.state.qsParams, { limitBig: val });
+    const newparams = Object.assign({}, qsParams, { limitBig: val });
 
-    this.props.callback(newparams);
+    callback(newparams);
     setQueryString({ NFilter: { limitBig: val } });
     this.setState({ qsParams: newparams });
   };
 
   handleStatus = event => {
+    const { qsParams } = this.state;
+    const { callback } = this.props;
     let statuses = event.target.value;
     if (event === undefined) {
       statuses = [];
     }
-    let newparams = Object.assign({}, this.state.qsParams, { statusFilters: statuses });
+    const newparams = Object.assign({}, qsParams, { statusFilters: statuses });
 
     // save back status selections
-    this.props.callback(newparams);
+    callback(newparams);
     setQueryString({ NFilter: { statusFilters: statuses } });
     this.setState({ qsParams: newparams });
   };
 
   render() {
     const { classes, theme } = this.props;
-    const { qsParams } = this.state;
+    const { qsParams, statuses } = this.state;
     let checkboxStatus = true;
     if (qsParams) {
       checkboxStatus = qsParams.limitBig;
@@ -189,7 +191,7 @@ class NeuronFilter extends React.Component {
                 )}
                 MenuProps={MenuProps}
               >
-                {this.state.statuses.map(name => (
+                {statuses.map(name => (
                   <MenuItem
                     key={name}
                     value={name}
@@ -214,28 +216,28 @@ class NeuronFilter extends React.Component {
 
 NeuronFilter.propTypes = {
   callback: PropTypes.func.isRequired,
-  setURLQs: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
+  actions: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
-  urlQueryString: PropTypes.string.isRequired,
   datasetstr: PropTypes.string.isRequired,
   neoServer: PropTypes.string.isRequired
 };
 
-var NeuronFilterState = function(state) {
-  return {
-    urlQueryString: state.app.get('urlQueryString'),
-    neoServer: state.neo4jsettings.get('neoServer')
-  };
-};
+const NeuronFilterState = state => ({
+  urlQueryString: state.app.get('urlQueryString'),
+  neoServer: state.neo4jsettings.get('neoServer')
+});
 
-var NeuronFilterDispatch = function(dispatch) {
-  return {
-    setURLQs: function(querystring) {
+const NeuronFilterDispatch = dispatch => ({
+  actions: {
+    setURLQs(querystring) {
       dispatch(setUrlQS(querystring));
+    },
+    metaInfoError(error) {
+      dispatch(metaInfoError(error));
     }
-  };
-};
+  }
+});
 
 export default withStyles(styles, { withTheme: true })(
   connect(

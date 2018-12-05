@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import Chip from '@material-ui/core/Chip';
 import { skeletonNeuronToggle, skeletonRemove } from 'actions/skeleton';
 
-var GlbShark = null;
+let GlbShark = null;
 
 const styles = theme => ({
   root: {
@@ -45,23 +45,22 @@ const styles = theme => ({
 class Skeleton extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      hideIndices: new Set()
-    };
+    this.skelRef = React.createRef();
   }
 
   // load skeleton after render takes place
   componentDidMount() {
-    let swc = this.fetchSWC(this.props.neurons);
+    const { neurons } = this.props;
+    const swc = this.fetchSWC(neurons);
     this.createShark(swc);
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.neurons !== this.props.neurons) {
-      let swc = this.fetchSWC(this.props.neurons);
+    const { neurons } = this.props;
+    if (prevProps.neurons !== neurons) {
+      const swc = this.fetchSWC(neurons);
       this.createShark(swc);
     }
-    return;
   }
 
   handleDelete = id => () => {
@@ -93,12 +92,13 @@ class Skeleton extends React.Component {
     };
   };
 
+  // can we do this better with recursion?
   concatSkel = (newswc, neuron, offset, colorIndex) => {
     let maxRowId = 0;
     const swc = neuron.get('swc');
-    for (let rowId in swc) {
-      let newId = parseInt(rowId) + offset;
-      let val = swc[rowId];
+    for (const rowId in swc) {
+      const newId = parseInt(rowId, 10) + offset;
+      const val = swc[rowId];
       if (newId > maxRowId) {
         maxRowId = newId;
       }
@@ -122,7 +122,7 @@ class Skeleton extends React.Component {
       GlbShark.geometry.dispose();
 
       GlbShark = null;
-      let pardiv = this.refs['skeletonviewer'];
+      const pardiv = this.skelRef.current;
       if (pardiv.childNodes.length > 0) {
         pardiv.removeChild(pardiv.childNodes[0]);
       }
@@ -133,8 +133,8 @@ class Skeleton extends React.Component {
         swc: swc.swc,
         dom_element: 'skeletonviewer',
         center_node: -1,
-        WIDTH: this.refs['skeletonviewer'].clientWidth,
-        HEIGHT: this.refs['skeletonviewer'].clientHeight,
+        WIDTH: this.skelRef.current.clientWidth,
+        HEIGHT: this.skelRef.current.clientHeight,
         colors: swc.colors
       });
 
@@ -144,13 +144,13 @@ class Skeleton extends React.Component {
   };
 
   render() {
-    const { classes, display } = this.props;
+    const { classes, display, neurons } = this.props;
 
     if (!display) {
       return null;
     }
 
-    let chips = this.props.neurons
+    const chips = neurons
       .map(neuron => {
         // gray out the chip if it is not active.
         let currcolor = neuron.get('color');
@@ -176,7 +176,7 @@ class Skeleton extends React.Component {
     return (
       <div className={classes.root}>
         <div className={classes.floater}>{chips}</div>
-        <div className={classes.skel} ref={'skeletonviewer'} id={'skeletonviewer'} />
+        <div className={classes.skel} ref={this.skelRef} id="skeletonviewer" />
       </div>
     );
   }
@@ -184,17 +184,17 @@ class Skeleton extends React.Component {
 
 Skeleton.propTypes = {
   display: PropTypes.bool.isRequired,
-  actions: PropTypes.object.isRequired
+  actions: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired,
+  neurons: PropTypes.object.isRequired
 };
 
-var SkeletonState = function(state) {
-  return {
-    neurons: state.skeleton.get('neurons'),
-    display: state.skeleton.get('display')
-  };
-};
+const SkeletonState = state => ({
+  neurons: state.skeleton.get('neurons'),
+  display: state.skeleton.get('display')
+});
 
-var SkeletonDispatch = dispatch => ({
+const SkeletonDispatch = dispatch => ({
   actions: {
     skeletonNeuronToggle: id => {
       dispatch(skeletonNeuronToggle(id));

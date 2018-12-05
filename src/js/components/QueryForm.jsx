@@ -26,12 +26,13 @@ class QueryForm extends React.Component {
     super(props);
     this.state = {
       openSnack: false
-      //redirectResults: false
+      // redirectResults: false
     };
   }
 
   submitQuery = query => {
-    if (this.props.userInfo === null || this.props.userInfo.AuthLevel === 'noauth') {
+    const { userInfo, urlQueryString, history, setURLQs, updateQuery } = this.props;
+    if (userInfo === null || userInfo.AuthLevel === 'noauth') {
       this.setState({ openSnack: true });
       return;
     }
@@ -39,27 +40,22 @@ class QueryForm extends React.Component {
       return;
     }
 
-    let currqs = qs.parse(this.props.urlQueryString);
-    currqs['openQuery'] = 'false';
-    let urlqs = qs.stringify(currqs);
-    this.props.setURLQs(urlqs);
+    const currqs = qs.parse(urlQueryString);
+    currqs.openQuery = 'false';
+    const urlqs = qs.stringify(currqs);
+    setURLQs(urlqs);
 
-    this.props.history.push('/results' + window.location.search);
+    history.push(`/results${window.location.search}`);
 
     // flush all other results
-    query['isChild'] = false;
-    this.props.updateQuery(query);
+    updateQuery(query);
   };
 
   findCurrentPlugin = () => {
+    const { pluginList, queryType } = this.props;
     // find matching query type
-    var CurrentQuery = this.props.pluginList[0];
-    for (var i in this.props.pluginList) {
-      if (this.props.pluginList[i].queryName === this.props.queryType) {
-        CurrentQuery = this.props.pluginList[i];
-        break;
-      }
-    }
+    const CurrentQuery =
+      pluginList.find(plugin => plugin.queryName === queryType) || pluginList[0];
     return CurrentQuery;
   };
 
@@ -69,27 +65,27 @@ class QueryForm extends React.Component {
 
   render() {
     // assume the first query is the default
-    var CurrentQuery = this.findCurrentPlugin();
-    const { classes } = this.props;
-
+    const CurrentQuery = this.findCurrentPlugin();
+    const { userInfo, classes, dataSet, availableROIs, isQuerying } = this.props;
+    const { openSnack } = this.state;
     let currROIs = [];
 
-    if (this.props.dataSet in this.props.availableROIs) {
-      currROIs = this.props.availableROIs[this.props.dataSet];
+    if (dataSet in availableROIs) {
+      currROIs = availableROIs[dataSet];
     }
 
     return (
       <div>
         <Snackbar
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-          open={this.state.openSnack}
+          open={openSnack}
           onClose={this.handleClose}
           SnackbarContentProps={{
             'aria-describedby': 'message-id'
           }}
           message={
             <span id="message-id">
-              {this.props.userInfo === null
+              {userInfo === null
                 ? 'User must log in'
                 : 'User not authorized for this server (please contact admin)'}
             </span>
@@ -98,62 +94,51 @@ class QueryForm extends React.Component {
         <Typography>{CurrentQuery.queryDescription}</Typography>
         <Divider className={classes.divider} />
         <CurrentQuery
-          datasetstr={this.props.datasetstr}
-          dataSet={this.props.dataSet}
+          datasetstr={dataSet}
+          dataSet={dataSet}
           availableROIs={currROIs}
           callback={this.submitQuery}
-          disable={this.props.isQuerying}
+          disable={isQuerying}
         />
       </div>
     );
   }
 }
 
-QueryForm.defaultProps = {
-  queryType: ''
-};
-
 QueryForm.propTypes = {
   queryType: PropTypes.string.isRequired,
-  userInfo: PropTypes.object,
+  userInfo: PropTypes.object.isRequired,
   updateQuery: PropTypes.func.isRequired,
-  pluginList: PropTypes.array.isRequired,
-  datasetstr: PropTypes.string.isRequired,
+  pluginList: PropTypes.arrayOf(PropTypes.func).isRequired,
   dataSet: PropTypes.string.isRequired,
   isQuerying: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired,
   setURLQs: PropTypes.func.isRequired,
   urlQueryString: PropTypes.string.isRequired,
   history: PropTypes.object.isRequired,
-  neoResults: PropTypes.object,
   availableROIs: PropTypes.object.isRequired
 };
 
-var QueryFormState = function(state) {
-  return {
-    pluginList: state.app.get('pluginList'),
-    isQuerying: state.query.isQuerying,
-    neoResults: state.query.neoResults,
-    neoError: state.query.neoError,
-    userInfo: state.user.get('userInfo'),
-    urlQueryString: state.app.get('urlQueryString'),
-    availableROIs: state.neo4jsettings.get('availableROIs')
-  };
-};
+const QueryFormState = state => ({
+  pluginList: state.app.get('pluginList'),
+  isQuerying: state.query.isQuerying,
+  neoError: state.query.neoError,
+  userInfo: state.user.get('userInfo'),
+  urlQueryString: state.app.get('urlQueryString'),
+  availableROIs: state.neo4jsettings.availableROIs
+});
 
-var QueryFormDispatch = function(dispatch) {
-  return {
-    updateQuery: function(query) {
-      dispatch({
-        type: C.UPDATE_QUERY,
-        neoQueryObj: query
-      });
-    },
-    setURLQs: function(querystring) {
-      dispatch(setUrlQS(querystring));
-    }
-  };
-};
+const QueryFormDispatch = dispatch => ({
+  updateQuery(query) {
+    dispatch({
+      type: C.UPDATE_QUERY,
+      neoQueryObj: query
+    });
+  },
+  setURLQs(querystring) {
+    dispatch(setUrlQS(querystring));
+  }
+});
 
 export default withRouter(
   withStyles(styles)(

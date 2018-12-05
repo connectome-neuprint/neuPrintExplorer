@@ -45,7 +45,7 @@ export function setUrlQS(urlQueryString) {
     return settingUrlQS(urlQueryString);
 }
 export function activatePlugin(data, query, viz) {
-    //generate uuid
+    // generate uuid
     const uuid = v4();
     return activatingPlugin(data, query, viz, uuid);
 }
@@ -53,7 +53,7 @@ export function setAppDb(appDb) {
     return settingAppDb(appDb);
 }
 
-export function clearErrors(query) {
+export function clearErrors() {
   return {
     type: C.CLEAR_ERRORS,
   };
@@ -69,5 +69,19 @@ export function setFullScreen(viewer) {
 export function clearFullScreen() {
   return {
     type: C.CLEAR_FULLSCREEN_VIEWER,
+  };
+}
+
+export function metaInfoError(error) {
+  return {
+    type: C.META_INFO_ERROR,
+    error
+  };
+}
+
+export function apiError(error) {
+  return {
+    type: C.API_ERROR,
+    error
   };
 }

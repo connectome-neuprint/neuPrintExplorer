@@ -18,7 +18,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 import { submit, formError } from 'actions/plugins';
 import { getQueryString } from 'helpers/queryString';
-import NeuronHelp from '../NeuronHelp.react';
+import NeuronHelp from '../NeuronHelp';
 
 const styles = () => ({
   textField: {},

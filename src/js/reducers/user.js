@@ -2,10 +2,10 @@
  * Store user state / login.
 */
 
-import C from './constants';
 import Immutable from 'immutable';
+import C from './constants';
 
-var userState = Immutable.Map({
+const userState = Immutable.Map({
   userInfo: null,
   token: ''
 });

@@ -74,6 +74,7 @@ class ROIsIntersectingNeurons extends React.Component {
           const [roi, value] = entry;
           const { pre, post } = value;
 
+          /* eslint-disable prefer-destructuring */
           if (pre > 0) {
             if ( pre > largestPre[0][1]) {
               largestPre[1] = largestPre[0];
@@ -92,6 +93,7 @@ class ROIsIntersectingNeurons extends React.Component {
             }
           }
 
+          /* eslint-enable prefer-destructuring */
 
           return [roi, post, pre];
         });

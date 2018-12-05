@@ -36,14 +36,39 @@ class About extends React.Component {
     this.state = {
       data: 'Loading user issues from GitHub...'
     };
+<<<<<<< HEAD
   }
+=======
+  }
+
+  componentDidMount() {
+    const { token } = this.props;
+    if (token === '') {
+      return;
+    }
+    this.loadIssues();
+  }
+
+  componentDidUpdate(nextProps) {
+    const { token } = this.props;
+    if (nextProps.token === token) {
+      return;
+    }
+    this.loadIssues();
+  }
+
+>>>>>>> Major refactoring to work with airbnb eslint
   loadIssues() {
     const { token } = this.props;
     /* Call to Google API function */
     fetch('https://us-east1-dvid-em.cloudfunctions.net/neuprint-janelia/gitinfo', {
       method: 'POST',
       headers: {
+<<<<<<< HEAD
         Authorization: 'token ' + token,
+=======
+        Authorization: `token ${token}`,
+>>>>>>> Major refactoring to work with airbnb eslint
         Accept: 'application/json',
         'Content-Type': 'application/json'
       },
@@ -53,6 +78,7 @@ class About extends React.Component {
     })
       .then(result => result.json())
       .then(result => {
+<<<<<<< HEAD
         let fulllist = [];
         let repoedges = result.data.organization.repositories.edges;
         repoedges.forEach(function(repoedge) {
@@ -60,6 +86,13 @@ class About extends React.Component {
           let issuelist = [];
           let edges = repoedge.node.issues.edges;
           edges.forEach(function(issue) {
+=======
+        const issuelist = [];
+        const repoedges = result.data.organization.repositories.edges;
+        repoedges.forEach(repoedge => {
+          const { edges } = repoedge.node.issues;
+          edges.forEach(issue => {
+>>>>>>> Major refactoring to work with airbnb eslint
             issuelist.push([issue.node.title, issue.node.url, issue.node.number, issue.node.body]);
           });
           if (issuelist.length > 0) {
@@ -86,12 +119,31 @@ class About extends React.Component {
             fulllist.push(listing);
           }
         });
+<<<<<<< HEAD
         if (fulllist.length === 0) {
+=======
+        const listItems = issuelist.map(iss => (
+          <li key={iss[2].toString() + iss[0]}>
+            <Tooltip title={iss[3]} placement="bottom" enterDelay={100}>
+              <a
+                href={iss[1]}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: 'darkblue' }}
+              >
+                {iss[0]}
+              </a>
+            </Tooltip>
+          </li>
+        ));
+        if (issuelist.length === 0) {
+>>>>>>> Major refactoring to work with airbnb eslint
           this.setState({
             data: 'No user issues found'
           });
         } else {
           this.setState({
+<<<<<<< HEAD
             data: <span>{fulllist}</span>
           });
         }
@@ -117,9 +169,20 @@ class About extends React.Component {
     }
     this.loadIssues();
   }
+=======
+            data: <ul>{listItems}</ul>
+          });
+        }
+      })
+      .catch(error => {
+        this.setState({ data: error });
+      });
+  }
+>>>>>>> Major refactoring to work with airbnb eslint
 
   render() {
     const { classes } = this.props;
+    const { data } = this.state;
 
     return (
       <div className={classes.root}>
@@ -129,7 +192,7 @@ class About extends React.Component {
         <Typography variant="body1" className={classes.centered}>
           Version: {VERSION}
         </Typography>
-        <Divider light={true} className={classes.spaced} />
+        <Divider light className={classes.spaced} />
         <Typography variant="h6">About:</Typography>
         <Typography variant="body1" className={classes.spaced}>
           neuPrint Explorer is web based tool to query and visualize connectomic data stored in
@@ -145,8 +208,13 @@ class About extends React.Component {
           </Button>
         </Typography>
 
+<<<<<<< HEAD
         <Typography variant="h6">Open issue list</Typography>
         {this.state.data}
+=======
+        <Typography variant="h6">Issue list</Typography>
+        {data}
+>>>>>>> Major refactoring to work with airbnb eslint
 
         <Typography variant="h6">Contact us:</Typography>
         <Typography variant="body1" className={classes.spaced}>
@@ -158,6 +226,7 @@ class About extends React.Component {
   }
 }
 
+<<<<<<< HEAD
 var AboutState = function(state) {
   return {
     token: state.user.get('token')
@@ -167,6 +236,15 @@ var AboutState = function(state) {
 About.propTypes = {
   classes: PropTypes.object.isRequired,
   token: PropTypes.string
+=======
+const AboutState = state => ({
+  token: state.user.token
+});
+
+About.propTypes = {
+  classes: PropTypes.object.isRequired,
+  token: PropTypes.string.isRequired
+>>>>>>> Major refactoring to work with airbnb eslint
 };
 
 export default withStyles(styles)(
