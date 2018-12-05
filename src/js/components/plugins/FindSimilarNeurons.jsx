@@ -27,6 +27,7 @@ import { setUrlQS } from '../../actions/app';
 import RoiHeatMap, { ColorLegend } from '../visualization/MiniRoiHeatMap';
 import RoiBarGraph from '../visualization/MiniRoiBarGraph';
 import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
+import findSimilarNeurons from '../queries/findSimilarNeurons';
 
 const styles = theme => ({
   textField: {
@@ -94,6 +95,12 @@ class FindSimilarNeurons extends React.Component {
     const { actions } = this.props;
     const { parameters } = query;
 
+    // store sub-level rois
+    const subLevelRois = new Set();
+
+    // store processed data
+    let data;
+
     const shouldShowSubLevelRoiSimilarity = () =>
       // produce sub-level roi information if present, there is more than one body id in the group, and a body id was queried
       subLevelRois.size > 0 && data.length > 1 && parameters.bodyId;
@@ -123,41 +130,8 @@ class FindSimilarNeurons extends React.Component {
     roiList.push('none');
     const numberOfRois = roiList.length;
 
-    // store sub-level rois
-    let subLevelRois = new Set();
-
-    // queries for getting neuron connections
-    const postQuery = bodyId => ({
-      dataSet: parameters.dataset,
-      queryString: '/npexplorer/simpleconnections',
-      visType: 'SimpleTable',
-      plugin: pluginName,
-      parameters: {
-        dataset: parameters.dataset,
-        find_inputs: true,
-        neuron_id: bodyId
-      },
-      title: `Connections to bodyID=${bodyId}`,
-      menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
-      processResults: this.processConnections
-    });
-
-    const preQuery = bodyId => ({
-      dataSet: parameters.dataset,
-      queryString: '/npexplorer/simpleconnections',
-      visType: 'SimpleTable',
-      plugin: pluginName,
-      parameters: {
-        dataset: parameters.dataset,
-        find_inputs: false,
-        neuron_id: bodyId
-      },
-      title: `Connections from bodyID=${bodyId}`,
-      menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
-      processResults: this.processConnections
-    });
-
-    let data = apiResponse.data.map((row, index) => {
+    // produce basic table
+    data = apiResponse.data.map((row, index) => {
       const bodyId = row[0];
       const name = row[1];
       const status = row[2];
@@ -199,11 +173,17 @@ class FindSimilarNeurons extends React.Component {
         status,
         {
           value: totalPre,
-          action: () => actions.submit(preQuery(bodyId))
+          action: () =>
+            actions.submit(
+              findSimilarNeurons.producePreQueryObject(bodyId, parameters.dataset, pluginName)
+            )
         },
         {
           value: totalPost,
-          action: () => actions.submit(postQuery(bodyId))
+          action: () =>
+            actions.submit(
+              findSimilarNeurons.producePostQueryObject(bodyId, parameters.dataset, pluginName)
+            )
         },
         '', // empty unless roiInfoObject present
         ''
@@ -261,7 +241,11 @@ class FindSimilarNeurons extends React.Component {
         converted[6] = heatMap;
 
         // store vector
-        converted[7] = vector;
+        if (shouldShowClusterName()) {
+          converted[9] = vector;
+        } else {
+          converted[7] = vector;
+        }
       }
 
       return converted;
@@ -337,12 +321,13 @@ class FindSimilarNeurons extends React.Component {
 
           if (shouldShowClusterName()) {
             // add cluster name
-            data[index][8] = row[7];
+
+            [, , , , , , , data[index][8]] = row;
             columns[8] = 'cluster name';
           }
         } else if (shouldShowClusterName()) {
           // add cluster name only
-          data[index][7] = row[7];
+          [, , , , , , , data[index][7]] = row;
           columns[7] = 'cluster name';
         }
       });
@@ -350,70 +335,81 @@ class FindSimilarNeurons extends React.Component {
 
     if (shouldShowClusterName()) {
       const clusterNameColumn = columns[8] === 'cluster name' ? 8 : 7;
+      const totalScoreColumn = clusterNameColumn + 1;
+      const inputScoreColumn = clusterNameColumn + 2;
+      const outputScoreColumn = clusterNameColumn + 3;
+      // if no queried body id just use first result similarity to sort
+      const queriedBodyVector = data[0][9];
+      const alteredData = data.forEach(row => {
+        const newRow = row[9];
+        const { inputScore, outputScore, totalScore } = findSimilarNeurons.computeSimilarity(
+          newRow,
+          queriedBodyVector,
+          numberOfRois
+        );
+        newRow[totalScoreColumn] = totalScore;
+        newRow[inputScoreColumn] = inputScore;
+        newRow[outputScoreColumn] = outputScore;
+      });
+      data = alteredData;
+
       data.sort((a, b) => {
-        if (a[clusterNameColumn] < b[clusterNameColumn]) return -1;
-        if (a[clusterNameColumn] > b[clusterNameColumn]) return 1;
+        if (a[totalScoreColumn] < b[totalScoreColumn]) return -1;
+        if (a[totalScoreColumn] > b[totalScoreColumn]) return 1;
         return 0;
       });
+
+      // update columns
+      columns[totalScoreColumn] = 'total similiarity score';
+      columns[inputScoreColumn] = 'input similiarity score';
+      columns[outputScoreColumn] = 'output similarity score';
     }
 
     if (shouldShowSimilarityScores()) {
       // sort by similarity
       const queriedBodyVector = data[queriedBodyIdIndex][7];
       const queriedBodySubLevelVector = data[queriedBodyIdIndex][11];
-      data.forEach(row => {
+      const alteredData = data.forEach(row => {
+        const newRow = row;
         const rawVector = row[7];
+        const { inputScore, outputScore, totalScore } = findSimilarNeurons.computeSimilarity(
+          rawVector,
+          queriedBodyVector,
+          numberOfRois
+        );
         // input score (pre)
-        row[8] = math.round(
-          math.sum(
-            math.abs(
-              math.subtract(queriedBodyVector.slice(numberOfRois), rawVector.slice(numberOfRois))
-            )
-          ) / 2.0,
-          4
-        );
+        newRow[8] = inputScore;
         // output score (post)
-        row[9] = math.round(
-          math.sum(
-            math.abs(
-              math.subtract(
-                queriedBodyVector.slice(0, numberOfRois),
-                rawVector.slice(0, numberOfRois)
-              )
-            )
-          ) / 2.0,
-          4
-        );
+        newRow[9] = outputScore;
         // total score
-        row[7] = math.round(
-          math.sum(math.abs(math.subtract(queriedBodyVector, rawVector))) / 4.0,
-          4
-        );
-
-        // update columns
-        columns[7] = 'total similiarity score';
-        columns[8] = 'input similiarity score';
-        columns[9] = 'output similarity score';
+        newRow[7] = totalScore;
 
         // sub-level rois
         if (shouldShowSubLevelRoiSimilarity()) {
-          row[11] = math.round(
+          newRow[11] = math.round(
             math.sum(math.abs(math.subtract(queriedBodySubLevelVector, row[11]))) / 4.0,
             4
           );
           // incorporate sub-level rois into total score
-          row[7] = (row[7] + row[11]) / 2.0;
+          newRow[7] = (row[7] + row[11]) / 2.0;
 
           // update columns
           columns[11] = 'sub-level roi similarity score';
         }
       });
+      data = alteredData;
+
       // sort by total similarity score; queried body id will be 0 so should be at top
       data.sort((a, b) => {
         if (a[7] < b[7]) return -1;
         if (a[7] > b[7]) return 1;
         return 0;
       });
+
+      // update columns
+      columns[7] = 'total similiarity score';
+      columns[8] = 'input similiarity score';
+      columns[9] = 'output similarity score';
     }
 
     return {
@@ -746,7 +742,7 @@ class FindSimilarNeurons extends React.Component {
 
 FindSimilarNeurons.propTypes = {
   actions: PropTypes.object.isRequired,
-  availableROIs: PropTypes.array.isRequired,
+  availableROIs: PropTypes.arrayOf(PropTypes.string).isRequired,
   dataSet: PropTypes.string.isRequired,
   urlQueryString: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired,
