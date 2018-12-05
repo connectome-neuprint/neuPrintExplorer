@@ -73,17 +73,17 @@ class ROIConnectivity extends React.Component {
       const bodyId = row[0];
       const roiInfoObject = JSON.parse(row[1]);
 
-      for (const roi in roiInfoObject) {
-        roisInQuery.add(roi);
-        // add numpost to provide size distribution
-        if (roiInfoObject[roi].post > 0) {
+      Object.entries(roiInfoObject).forEach(roi => {
+        const [ name, data ] = roi;
+        roisInQuery.add(name);
+        if (data.post > 0) {
           if (!(bodyId in bodyInputCountsPerRoi)) {
-            bodyInputCountsPerRoi[bodyId] = [[roi, roiInfoObject[roi].post]];
+            bodyInputCountsPerRoi[bodyId] = [[name, data.post]];
           } else {
-            bodyInputCountsPerRoi[bodyId].push([roi, roiInfoObject[roi].post]);
+            bodyInputCountsPerRoi[bodyId].push([name, data.post]);
           }
         }
-      }
+      });
     });
 
     const roiRoiWeight = {};
@@ -95,9 +95,10 @@ class ROIConnectivity extends React.Component {
       const bodyId = row[0];
       const roiInfoObject = JSON.parse(row[1]);
 
-      for (const outputRoi in roiInfoObject) {
+      Object.entries(roiInfoObject).forEach(roi => {
+        const [outputRoi, data] = roi;
         // create roi2roi based on input distribution
-        const numOutputsInRoi = roiInfoObject[outputRoi].pre;
+        const numOutputsInRoi = data.pre;
         // if body has pre in this roi and has post in any roi
         if (numOutputsInRoi > 0 && bodyId in bodyInputCountsPerRoi) {
           let totalInputs = 0;
@@ -107,26 +108,25 @@ class ROIConnectivity extends React.Component {
 
           for (let i = 0; i < bodyInputCountsPerRoi[bodyId].length; i += 1) {
             const inputRoi = bodyInputCountsPerRoi[bodyId][i][0];
-            if (inputRoi === '' || totalInputs === 0) {
-              continue;
-            }
-            const connectivityValueForBody =
-              (numOutputsInRoi * bodyInputCountsPerRoi[bodyId][i][1] * 1.0) / totalInputs;
-            const connectionName = `${inputRoi}=>${outputRoi}`;
-            if (connectionName in roiRoiWeight) {
-              roiRoiWeight[connectionName] += connectivityValueForBody;
-              roiRoiCount[connectionName] += 1;
-            } else {
-              roiRoiWeight[connectionName] = connectivityValueForBody;
-              roiRoiCount[connectionName] = 1;
-            }
-            const currentValue = roiRoiWeight[connectionName];
-            if (currentValue > maxValue) {
-              maxValue = currentValue;
+            if (inputRoi !== '' && totalInputs !== 0) {
+              const connectivityValueForBody =
+                (numOutputsInRoi * bodyInputCountsPerRoi[bodyId][i][1] * 1.0) / totalInputs;
+              const connectionName = `${inputRoi}=>${outputRoi}`;
+              if (connectionName in roiRoiWeight) {
+                roiRoiWeight[connectionName] += connectivityValueForBody;
+                roiRoiCount[connectionName] += 1;
+              } else {
+                roiRoiWeight[connectionName] = connectivityValueForBody;
+                roiRoiCount[connectionName] = 1;
+              }
+              const currentValue = roiRoiWeight[connectionName];
+              if (currentValue > maxValue) {
+                maxValue = currentValue;
+              }
             }
           }
         }
-      }
+      });
     });
 
     // make data table
