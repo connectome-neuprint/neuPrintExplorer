@@ -21,6 +21,7 @@ import RoiBarGraph from '../../components/visualization/MiniRoiBarGraph.react';
 import NeuronHelp from '../NeuronHelp.react';
 import NeuronFilter from '../NeuronFilter.react';
 import { getQueryString } from 'helpers/queryString';
+import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 
 const styles = theme => ({
   select: {
@@ -38,13 +39,22 @@ const pluginName = 'FindNeurons';
 class FindNeurons extends React.Component {
   constructor(props) {
     super(props);
-    // set the default state for the query input.
-    this.state = {
+    const initqsParams = {
       inputROIs: [],
       outputROIs: [],
-      neuronsrc: '',
+      neuronName: ''
+    };
+    const qsParams = LoadQueryString(
+      'Query:' + this.constructor.queryName,
+      initqsParams,
+      this.props.urlQueryString
+    );
+
+    // set the default state for the query input.
+    this.state = {
       limitBig: true,
-      statusFilters: []
+      statusFilters: [],
+      qsParams
     };
   }
   static get queryName() {
@@ -257,7 +267,8 @@ class FindNeurons extends React.Component {
   // and generate the query object.
   processRequest = () => {
     const { dataSet, actions, history } = this.props;
-    const { inputROIs, outputROIs, neuronsrc, statusFilters, limitBig } = this.state;
+    const { statusFilters, limitBig } = this.state;
+    const { inputROIs, outputROIs, neuronName } = this.state.qsParams;
 
     const parameters = {
       dataset: dataSet,
@@ -266,11 +277,11 @@ class FindNeurons extends React.Component {
       statuses: statusFilters
     };
 
-    if (neuronsrc !== '') {
-      if (isNaN(neuronsrc)) {
-        parameters['neuron_name'] = neuronsrc;
+    if (neuronName !== '') {
+      if (isNaN(neuronName)) {
+        parameters['neuron_name'] = neuronName;
       } else {
-        parameters['neuron_id'] = parseInt(neuronsrc);
+        parameters['neuron_id'] = parseInt(neuronName);
       }
     }
 
@@ -296,21 +307,37 @@ class FindNeurons extends React.Component {
       pathname: '/results',
       search: getQueryString()
     });
+    return query;
   };
 
   handleChangeROIsIn = selected => {
-    var rois = selected.map(item => item.value);
-    this.setState({ inputROIs: rois });
+    const oldParams = this.state.qsParams;
+    const rois = selected.map(item => item.value);
+    oldParams.inputROIs = rois;
+    this.props.actions.setURLQs(SaveQueryString('Query:' + this.constructor.queryName, oldParams));
+    this.setState({
+      qsParams: oldParams
+    });
   };
 
   handleChangeROIsOut = selected => {
+    const oldParams = this.state.qsParams;
     var rois = selected.map(item => item.value);
-    this.setState({ outputROIs: rois });
+    oldParams.outputROIs = rois;
+    this.props.actions.setURLQs(SaveQueryString('Query:' + this.constructor.queryName, oldParams));
+    this.setState({
+      qsParams: oldParams
+    });
   };
 
   addNeuron = event => {
-    const neuronsrc = event.target.value;
-    this.setState({ neuronsrc });
+    const oldParams = this.state.qsParams;
+    const neuronName = event.target.value;
+    oldParams.neuronName = neuronName;
+    this.props.actions.setURLQs(SaveQueryString('Query:' + this.constructor.queryName, oldParams));
+    this.setState({
+      qsParams: oldParams
+    });
   };
 
   loadNeuronFilters = params => {
@@ -329,7 +356,6 @@ class FindNeurons extends React.Component {
   // validate the variables for your Neo4j query.
   render() {
     const { classes, isQuerying, availableROIs } = this.props;
-    const { inputROIs, outputROIs, neuronsrc } = this.state;
 
     const inputOptions = availableROIs.map(name => {
       return {
@@ -338,7 +364,7 @@ class FindNeurons extends React.Component {
       };
     });
 
-    const inputValue = inputROIs.map(roi => {
+    const inputValue = this.state.qsParams.inputROIs.map(roi => {
       return {
         label: roi,
         value: roi
@@ -352,7 +378,7 @@ class FindNeurons extends React.Component {
       };
     });
 
-    const outputValue = outputROIs.map(roi => {
+    const outputValue = this.state.qsParams.outputROIs.map(roi => {
       return {
         label: roi,
         value: roi
@@ -385,7 +411,7 @@ class FindNeurons extends React.Component {
               label="Neuron name (optional)"
               multiline
               rows={1}
-              value={neuronsrc}
+              value={this.state.qsParams.neuronName}
               rowsMax={4}
               className={classes.textField}
               onChange={this.addNeuron}
@@ -420,7 +446,8 @@ FindNeurons.propTypes = {
 
 var FindNeuronsState = function(state) {
   return {
-    isQuerying: state.query.isQuerying
+    isQuerying: state.query.isQuerying,
+    urlQueryString: state.app.get('urlQueryString')
   };
 };
 
