@@ -12,8 +12,8 @@ import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
 import { withStyles } from '@material-ui/core/styles';
 
-import { submit } from '../../actions/plugins';
-import { getQueryString } from '../../helpers/queryString';
+import { submit } from 'actions/plugins';
+import { getQueryString } from 'helpers/queryString';
 import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 import { setUrlQS } from '../../actions/app';
 
