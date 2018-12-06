@@ -91,6 +91,12 @@
     "automock": false,
     "setupFiles": [
       "./setupJest.js"
-    ]
+    ],
+    "moduleNameMapper": {
+      "^helpers(.*)$": "<rootDir>/src/js/helpers$1",
+      "^plugins(.*)$": "<rootDir>/src/js/components/plugins$1",
+      "^views(.*)$": "<rootDir>/src/js/components/view-plugins$1",
+      "^actions(.*)$": "<rootDir>/src/js/actions$1"
+    }
   }
 }
