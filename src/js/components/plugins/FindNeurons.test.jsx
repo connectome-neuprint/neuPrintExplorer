@@ -1,5 +1,3 @@
-import FindNeurons from './FindNeurons';
-import AppReducers from '../../reducers';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
@@ -8,9 +6,11 @@ import renderer from 'react-test-renderer';
 import { Router } from 'react-router-dom';
 import thunk from 'redux-thunk';
 import { createMemoryHistory } from 'history';
-import { ColorLegend } from '../../components/visualization/MiniRoiHeatMap.react';
+import FindNeurons from './FindNeurons';
+import AppReducers from '../../reducers';
+import { ColorLegend } from '../visualization/MiniRoiHeatMap';
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const composeEnhancers = compose;
 
 const store = createStore(AppReducers, {}, composeEnhancers(applyMiddleware(thunk)));
 const history = createMemoryHistory('/');
@@ -25,7 +25,7 @@ let outputSelect;
 const component = (
   <Provider store={store}>
     <Router history={history}>
-      <FindNeurons availableROIs={['roiA', 'roiB', 'roiC']} dataSet={'test'} datasetstr={'test'} />
+      <FindNeurons availableROIs={['roiA', 'roiB', 'roiC']} dataSet="test" datasetstr="test" />
     </Router>
   </Provider>
 );
@@ -51,7 +51,7 @@ describe('find neurons Plugin', () => {
     expect(pluginView).toMatchInlineSnapshot(`
 <div>
   <label
-    className="MuiFormLabel-root-10 MuiInputLabel-root-3 MuiInputLabel-animated-7"
+    className="MuiFormLabel-root-14 MuiInputLabel-root-3 MuiInputLabel-animated-11"
     htmlFor="select-multiple-chip"
   >
     Input ROIs
@@ -159,7 +159,7 @@ describe('find neurons Plugin', () => {
     </div>
   </div>
   <label
-    className="MuiFormLabel-root-10 MuiInputLabel-root-3 MuiInputLabel-animated-7"
+    className="MuiFormLabel-root-14 MuiInputLabel-root-3 MuiInputLabel-animated-11"
     htmlFor="select-multiple-chip"
   >
     Output ROIs
@@ -267,29 +267,29 @@ describe('find neurons Plugin', () => {
     </div>
   </div>
   <div
-    className="MuiFormControl-root-17"
+    className="MuiFormControl-root-21"
   >
     <div>
       <div
-        className="MuiFormControl-root-17"
+        className="MuiFormControl-root-21"
         onKeyDown={[Function]}
       >
         <label
-          className="MuiFormLabel-root-10 MuiInputLabel-root-3 MuiInputLabel-formControl-4 MuiInputLabel-animated-7"
+          className="MuiFormLabel-root-14 MuiInputLabel-root-3 MuiInputLabel-formControl-8 MuiInputLabel-animated-11"
           data-shrink={false}
         >
           Neuron name (optional)
         </label>
         <div
-          className="MuiInputBase-root-35 MuiInput-root-22 MuiInput-underline-26 MuiInputBase-formControl-36 MuiInput-formControl-23 MuiInputBase-multiline-43 MuiInput-multiline-28"
+          className="MuiInputBase-root-39 MuiInput-root-26 MuiInput-underline-30 MuiInputBase-formControl-40 MuiInput-formControl-27 MuiInputBase-multiline-47 MuiInput-multiline-32"
           onClick={[Function]}
         >
           <div
-            className="MuiPrivateTextarea-root-52"
+            className="MuiPrivateTextarea-root-56"
           >
             <textarea
               aria-hidden="true"
-              className="MuiPrivateTextarea-textarea-53 MuiPrivateTextarea-shadow-54"
+              className="MuiPrivateTextarea-textarea-57 MuiPrivateTextarea-shadow-58"
               readOnly={true}
               rows="1"
               tabIndex={-1}
@@ -297,7 +297,7 @@ describe('find neurons Plugin', () => {
             />
             <textarea
               aria-hidden="true"
-              className="MuiPrivateTextarea-textarea-53 MuiPrivateTextarea-shadow-54"
+              className="MuiPrivateTextarea-textarea-57 MuiPrivateTextarea-shadow-58"
               readOnly={true}
               rows={1}
               tabIndex={-1}
@@ -305,7 +305,7 @@ describe('find neurons Plugin', () => {
             />
             <textarea
               aria-invalid={false}
-              className="MuiPrivateTextarea-textarea-53 MuiInputBase-input-45 MuiInput-input-30 MuiInputBase-inputMultiline-47 MuiInput-inputMultiline-32"
+              className="MuiPrivateTextarea-textarea-57 MuiInputBase-input-49 MuiInput-input-34 MuiInputBase-inputMultiline-51 MuiInput-inputMultiline-36"
               disabled={false}
               onBlur={[Function]}
               onChange={[Function]}
@@ -324,7 +324,7 @@ describe('find neurons Plugin', () => {
       </div>
       <p
         aria-describedby={null}
-        className="MuiTypography-root-62 MuiTypography-body1-71 MuiTypography-colorError-96 NeuronHelp-badge-21"
+        className="MuiTypography-root-66 MuiTypography-body1-75 MuiTypography-colorError-100 NeuronHelp-badge-25"
         onBlur={[Function]}
         onFocus={[Function]}
         onMouseLeave={[Function]}
@@ -337,11 +337,11 @@ describe('find neurons Plugin', () => {
       </p>
     </div>
     <div
-      className="MuiPaper-root-104 MuiPaper-elevation1-107 MuiExpansionPanel-root-101 Connect-NeuronFilter--expandablePanel-98"
+      className="MuiPaper-root-108 MuiPaper-elevation1-111 MuiExpansionPanel-root-105 Connect-NeuronFilter--expandablePanel-102"
     >
       <div
         aria-expanded={false}
-        className="MuiButtonBase-root-137 MuiExpansionPanelSummary-root-131"
+        className="MuiButtonBase-root-141 MuiExpansionPanelSummary-root-135"
         onBlur={[Function]}
         onClick={[Function]}
         onFocus={[Function]}
@@ -357,17 +357,17 @@ describe('find neurons Plugin', () => {
         tabIndex="0"
       >
         <div
-          className="MuiExpansionPanelSummary-content-135"
+          className="MuiExpansionPanelSummary-content-139"
         >
           <p
-            className="MuiTypography-root-62 MuiTypography-body1-71"
+            className="MuiTypography-root-66 MuiTypography-body1-75"
           >
             Optional neuron/segment filters
           </p>
         </div>
         <div
           aria-hidden="true"
-          className="MuiButtonBase-root-137 MuiIconButton-root-140 MuiExpansionPanelSummary-expandIcon-136"
+          className="MuiButtonBase-root-141 MuiIconButton-root-144 MuiExpansionPanelSummary-expandIcon-140"
           onBlur={[Function]}
           onFocus={[Function]}
           onKeyDown={[Function]}
@@ -382,11 +382,11 @@ describe('find neurons Plugin', () => {
           tabIndex={-1}
         >
           <span
-            className="MuiIconButton-label-145"
+            className="MuiIconButton-label-149"
           >
             <svg
               aria-hidden="true"
-              className="MuiSvgIcon-root-146"
+              className="MuiSvgIcon-root-150"
               focusable="false"
               role="presentation"
               viewBox="0 0 24 24"
@@ -401,13 +401,13 @@ describe('find neurons Plugin', () => {
             </svg>
           </span>
           <span
-            className="MuiTouchRipple-root-211"
+            className="MuiTouchRipple-root-217"
           />
         </div>
       </div>
       <div
         aria-hidden="true"
-        className="MuiCollapse-container-155"
+        className="MuiCollapse-container-159"
         style={
           Object {
             "minHeight": "0px",
@@ -415,23 +415,23 @@ describe('find neurons Plugin', () => {
         }
       >
         <div
-          className="MuiCollapse-wrapper-157"
+          className="MuiCollapse-wrapper-161"
         >
           <div
-            className="MuiCollapse-wrapperInner-158"
+            className="MuiCollapse-wrapperInner-162"
           >
             <div
-              className="MuiExpansionPanelDetails-root-159 Connect-NeuronFilter--nopad-99"
+              className="MuiExpansionPanelDetails-root-163 Connect-NeuronFilter--nopad-103"
             >
               <div
-                className="MuiFormControl-root-17 Connect-NeuronFilter--formControl-97"
+                className="MuiFormControl-root-21 Connect-NeuronFilter--formControl-101"
               >
                 <div
-                  className="MuiFormControl-root-17 Connect-NeuronFilter--formControl-97"
+                  className="MuiFormControl-root-21 Connect-NeuronFilter--formControl-101"
                 >
                   <label
                     aria-describedby={null}
-                    className="MuiFormControlLabel-root-160"
+                    className="MuiFormControlLabel-root-164"
                     onBlur={[Function]}
                     onFocus={[Function]}
                     onMouseLeave={[Function]}
@@ -441,7 +441,7 @@ describe('find neurons Plugin', () => {
                     title="Limit to big neurons (>10 pre or post synapses)"
                   >
                     <span
-                      className="MuiButtonBase-root-137 MuiIconButton-root-140 MuiPrivateSwitchBase-root-170 MuiCheckbox-root-164 MuiCheckbox-colorSecondary-169 MuiPrivateSwitchBase-checked-171 MuiCheckbox-checked-165"
+                      className="MuiButtonBase-root-141 MuiIconButton-root-144 MuiPrivateSwitchBase-root-176 MuiCheckbox-root-170 MuiCheckbox-colorSecondary-175 MuiPrivateSwitchBase-checked-177 MuiCheckbox-checked-171"
                       onBlur={[Function]}
                       onFocus={[Function]}
                       onKeyDown={[Function]}
@@ -455,11 +455,11 @@ describe('find neurons Plugin', () => {
                       tabIndex={null}
                     >
                       <span
-                        className="MuiIconButton-label-145"
+                        className="MuiIconButton-label-149"
                       >
                         <svg
                           aria-hidden="true"
-                          className="MuiSvgIcon-root-146"
+                          className="MuiSvgIcon-root-150"
                           focusable="false"
                           role="presentation"
                           viewBox="0 0 24 24"
@@ -470,7 +470,7 @@ describe('find neurons Plugin', () => {
                         </svg>
                         <input
                           checked={true}
-                          className="MuiPrivateSwitchBase-input-173"
+                          className="MuiPrivateSwitchBase-input-179"
                           data-indeterminate={false}
                           disabled={false}
                           onChange={[Function]}
@@ -479,37 +479,37 @@ describe('find neurons Plugin', () => {
                         />
                       </span>
                       <span
-                        className="MuiTouchRipple-root-211"
+                        className="MuiTouchRipple-root-217"
                       />
                     </span>
                     <span
-                      className="MuiTypography-root-62 MuiTypography-body1-71 MuiFormControlLabel-label-163"
+                      className="MuiTypography-root-66 MuiTypography-body1-75 MuiFormControlLabel-label-169"
                     >
                       Limit to big segments
                     </span>
                   </label>
                 </div>
                 <div
-                  className="MuiFormControl-root-17 Connect-NeuronFilter--formControl-97"
+                  className="MuiFormControl-root-21 Connect-NeuronFilter--formControl-101"
                 >
                   <label
-                    className="MuiFormLabel-root-10 MuiInputLabel-root-3 MuiInputLabel-formControl-4 MuiInputLabel-animated-7"
+                    className="MuiFormLabel-root-14 MuiInputLabel-root-3 MuiInputLabel-formControl-8 MuiInputLabel-animated-11"
                     data-shrink={false}
                     htmlFor="select-multiple-chip-status"
                   >
                     Neuron status
                   </label>
                   <div
-                    className="MuiInputBase-root-35 MuiInput-root-22 MuiInput-underline-26 MuiInputBase-formControl-36 MuiInput-formControl-23"
+                    className="MuiInputBase-root-39 MuiInput-root-26 MuiInput-underline-30 MuiInputBase-formControl-40 MuiInput-formControl-27"
                     onClick={[Function]}
                   >
                     <div
-                      className="MuiSelect-root-174"
+                      className="MuiSelect-root-180"
                     >
                       <div
                         aria-haspopup="true"
                         aria-pressed="false"
-                        className="MuiSelect-select-175 MuiSelect-selectMenu-178 MuiInputBase-input-45 MuiInput-input-30"
+                        className="MuiSelect-select-181 MuiSelect-selectMenu-184 MuiInputBase-input-49 MuiInput-input-34"
                         onBlur={[Function]}
                         onClick={[Function]}
                         onFocus={[Function]}
@@ -532,7 +532,7 @@ describe('find neurons Plugin', () => {
                       />
                       <svg
                         aria-hidden="true"
-                        className="MuiSvgIcon-root-146 MuiSelect-icon-180"
+                        className="MuiSvgIcon-root-150 MuiSelect-icon-186"
                         focusable="false"
                         role="presentation"
                         viewBox="0 0 24 24"
@@ -552,7 +552,7 @@ describe('find neurons Plugin', () => {
     </div>
   </div>
   <button
-    className="MuiButtonBase-root-137 MuiButton-root-185 MuiButton-contained-196 MuiButton-containedPrimary-197 MuiButton-raised-199 MuiButton-raisedPrimary-200"
+    className="MuiButtonBase-root-141 MuiButton-root-191 MuiButton-contained-202 MuiButton-containedPrimary-203 MuiButton-raised-205 MuiButton-raisedPrimary-206"
     disabled={false}
     onBlur={[Function]}
     onClick={[Function]}
@@ -569,12 +569,12 @@ describe('find neurons Plugin', () => {
     type="button"
   >
     <span
-      className="MuiButton-label-186"
+      className="MuiButton-label-192"
     >
       Submit
     </span>
     <span
-      className="MuiTouchRipple-root-211"
+      className="MuiTouchRipple-root-217"
     />
   </button>
 </div>
@@ -758,7 +758,7 @@ describe('find neurons Plugin', () => {
     it('should submit request', () => {
       const processRequest = jest.spyOn(wrapper.find('FindNeurons').instance(), 'processRequest');
       const preventDefault = jest.fn();
-      textField.props().onKeyDown({ keyCode: 13, preventDefault: preventDefault });
+      textField.props().onKeyDown({ keyCode: 13, preventDefault });
       expect(preventDefault).toHaveBeenCalledTimes(1);
       expect(processRequest).toHaveBeenCalledTimes(1);
       expect(submit).toHaveBeenCalledTimes(1);
