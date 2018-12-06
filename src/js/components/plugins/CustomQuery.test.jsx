@@ -10,8 +10,7 @@ import { createMemoryHistory } from 'history';
 import CustomQuery from './CustomQuery';
 import AppReducers from '../../reducers';
 
-// eslint-disable-next-line  no-underscore-dangle
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const composeEnhancers = compose;
 
 const store = createStore(AppReducers, {}, composeEnhancers(applyMiddleware(thunk)));
 const history = createMemoryHistory('/');
