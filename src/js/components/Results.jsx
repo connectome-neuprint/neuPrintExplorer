@@ -57,6 +57,17 @@ const styles = theme => ({
 });
 
 class Results extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      hovered: false
+    };
+  }
+
+  componentDidMount() {
+    document.addEventListener("keydown", this.triggerKeyboard);
+  }
+
   componentDidUpdate(prevProps) {
     const { urlQueryString, showSkel } = this.props;
     const query = qs.parse(prevProps.urlQueryString);
@@ -75,20 +86,36 @@ class Results extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this.triggerKeyboard);
+  }
+
   triggerKeyboard = event => {
     const { actions, skeletonCount } = this.props;
-    if (event.which === 32) {
-      if (skeletonCount > 0) {
-        actions.toggleSkeleton();
+    const { hovered } = this.state;
+
+    if (hovered) {
+      if (event.which === 32) {
+        if (skeletonCount > 0) {
+          actions.toggleSkeleton();
+        }
+      } else if (event.which === 43) {
+        if (skeletonCount > 0) {
+          actions.setFullScreen('skeleton');
+        }
+      } else if (event.which === 95) {
+        actions.clearFullScreen();
       }
-    } else if (event.which === 43) {
-      if (skeletonCount > 0) {
-        actions.setFullScreen('skeleton');
-      }
-    } else if (event.which === 95) {
-      actions.clearFullScreen();
     }
   };
+
+  handleMouseEnter = () => {
+    this.setState({'hovered': true});
+  }
+
+  handleMouseLeave = () => {
+    this.setState({'hovered': false});
+  }
 
   downloadFile = index => {
     const { allResults } = this.props;
@@ -118,7 +145,7 @@ class Results extends React.Component {
 
     if (fullscreen && showSkel) {
       return (
-        <div tabIndex="0" onKeyPress={this.triggerKeyboard} className={classes.full}>
+        <div onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} className={classes.full}>
           <NeuronViz />
         </div>
       );
@@ -143,7 +170,7 @@ class Results extends React.Component {
     });
 
     return (
-      <div tabIndex="0" onKeyPress={this.triggerKeyboard} className={classes.root}>
+      <div onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} className={classes.root}>
         {!isQuerying &&
           resArray.length === 0 &&
           results.size === 0 && (
