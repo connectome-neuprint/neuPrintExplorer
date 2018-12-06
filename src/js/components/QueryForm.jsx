@@ -125,7 +125,7 @@ const QueryFormState = state => ({
   neoError: state.query.neoError,
   userInfo: state.user.get('userInfo'),
   urlQueryString: state.app.get('urlQueryString'),
-  availableROIs: state.neo4jsettings.availableROIs
+  availableROIs: state.neo4jsettings.get('availableROIs')
 });
 
 const QueryFormDispatch = dispatch => ({

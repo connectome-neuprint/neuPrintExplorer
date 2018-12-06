@@ -147,7 +147,7 @@ class Favorites extends React.Component {
 }
 
 const FavoritesState = state => ({
-  token: state.user.token,
+  token: state.user.get('token'),
   appDB: state.app.get('appDB')
 });
 
