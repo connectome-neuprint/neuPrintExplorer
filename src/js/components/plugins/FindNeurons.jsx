@@ -54,7 +54,9 @@ class FindNeurons extends React.Component {
     this.state = {
       limitBig: true,
       statusFilters: [],
-      qsParams
+      qsParams,
+      dataSet: this.props.dataSet,
+      queryName: this.constructor.queryName
     };
   }
   static get queryName() {
@@ -68,6 +70,19 @@ class FindNeurons extends React.Component {
     // inputs for this plugin.
     return 'Find neurons that have inputs or outputs in ROIs';
   }
+
+  static getDerivedStateFromProps = (props, state) => {
+    // if dataset changes, clear the selected rois
+    if (props.dataSet !== state.dataSet) {
+      const oldParams = state.qsParams;
+      oldParams.inputROIs = [];
+      oldParams.outputROIs = [];
+      props.actions.setURLQs(SaveQueryString('Query:' + state.queryName, oldParams));
+      state.dataSet = props.dataSet;
+      return state;
+    }
+    return null;
+  };
 
   handleShowSkeleton = (id, dataSet) => event => {
     const { actions } = this.props;

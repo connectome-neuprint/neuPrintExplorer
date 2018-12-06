@@ -787,4 +787,25 @@ describe('find neurons Plugin', () => {
       expect(setUrlQs).toHaveBeenCalledTimes(3);
     });
   });
+  describe('when selected dataset changes', () => {
+    it('should clear selected rois', () => {
+      inputSelect.props().onChange([{ value: 'roiA' }, { value: 'roiB' }]);
+      outputSelect.props().onChange([{ value: 'roiB' }, { value: 'roiC' }]);
+      textField.props().onChange({ target: { value: 'abc' } });
+
+      wrapper.setProps({
+        children: React.cloneElement(wrapper.props().children, {
+          children: React.cloneElement(wrapper.props().children.props.children, {
+            dataSet: 'new'
+          })
+        })
+      });
+      const findNeuronsWrapper = wrapper.children().find('FindNeurons');
+      expect(findNeuronsWrapper.props().dataSet).toBe('new');
+      expect(findNeuronsWrapper.state('qsParams').inputROIs.length).toBe(0);
+      expect(findNeuronsWrapper.state('qsParams').outputROIs.length).toBe(0);
+      // input text does not change
+      expect(findNeuronsWrapper.state('qsParams').neuronName).toBe('abc');
+    });
+  });
 });
