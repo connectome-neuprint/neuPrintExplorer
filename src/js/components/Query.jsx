@@ -109,7 +109,7 @@ class Query extends React.Component {
 
     // if query is selected, pass query along
     if (qsParams) {
-      if (qsParams.queryType !== '') {
+      if (qsParams.queryType && qsParams.queryType !== '') {
         // check if query is in the list of plugins
         let found = false;
         pluginList.forEach(plugin => {
@@ -125,9 +125,11 @@ class Query extends React.Component {
 
         // why is this for loop here? It just sets datsetstr to be
         // the value of the last item in the list.
-        qsParams.datasets.forEach(dataset => {
-          datasetstr = dataset;
-        });
+        if (qsParams.datasets) {
+          qsParams.datasets.forEach(dataset => {
+            datasetstr = dataset;
+          });
+        }
       }
     }
 

@@ -54,21 +54,21 @@ describe('custom query Plugin', () => {
     onKeyDown={[Function]}
   >
     <label
-      className="MuiFormLabel-root-15 MuiInputLabel-root-8 MuiInputLabel-formControl-9 MuiInputLabel-animated-12"
+      className="MuiFormLabel-root-19 MuiInputLabel-root-8 MuiInputLabel-formControl-13 MuiInputLabel-animated-16"
       data-shrink={false}
     >
       Custom Cypher Query
     </label>
     <div
-      className="MuiInputBase-root-35 MuiInput-root-22 MuiInput-underline-26 MuiInputBase-formControl-36 MuiInput-formControl-23 MuiInputBase-multiline-43 MuiInput-multiline-28"
+      className="MuiInputBase-root-39 MuiInput-root-26 MuiInput-underline-30 MuiInputBase-formControl-40 MuiInput-formControl-27 MuiInputBase-multiline-47 MuiInput-multiline-32"
       onClick={[Function]}
     >
       <div
-        className="MuiPrivateTextarea-root-52"
+        className="MuiPrivateTextarea-root-56"
       >
         <textarea
           aria-hidden="true"
-          className="MuiPrivateTextarea-textarea-53 MuiPrivateTextarea-shadow-54"
+          className="MuiPrivateTextarea-textarea-57 MuiPrivateTextarea-shadow-58"
           readOnly={true}
           rows="1"
           tabIndex={-1}
@@ -76,7 +76,7 @@ describe('custom query Plugin', () => {
         />
         <textarea
           aria-hidden="true"
-          className="MuiPrivateTextarea-textarea-53 MuiPrivateTextarea-shadow-54"
+          className="MuiPrivateTextarea-textarea-57 MuiPrivateTextarea-shadow-58"
           readOnly={true}
           rows={1}
           tabIndex={-1}
@@ -84,7 +84,7 @@ describe('custom query Plugin', () => {
         />
         <textarea
           aria-invalid={false}
-          className="MuiPrivateTextarea-textarea-53 MuiInputBase-input-45 MuiInput-input-30 MuiInputBase-inputMultiline-47 MuiInput-inputMultiline-32"
+          className="MuiPrivateTextarea-textarea-57 MuiInputBase-input-49 MuiInput-input-34 MuiInputBase-inputMultiline-51 MuiInput-inputMultiline-36"
           disabled={false}
           onBlur={[Function]}
           onChange={[Function]}
@@ -102,7 +102,7 @@ describe('custom query Plugin', () => {
     </div>
   </div>
   <button
-    className="MuiButtonBase-root-81 MuiButton-root-55 MuiButton-contained-66 MuiButton-containedPrimary-67 MuiButton-raised-69 MuiButton-raisedPrimary-70 withRouter-Connect-CustomQuery---button-2"
+    className="MuiButtonBase-root-85 MuiButton-root-59 MuiButton-contained-70 MuiButton-containedPrimary-71 MuiButton-raised-73 MuiButton-raisedPrimary-74 withRouter-Connect-CustomQuery---button-2"
     disabled={false}
     onBlur={[Function]}
     onClick={[Function]}
@@ -119,12 +119,12 @@ describe('custom query Plugin', () => {
     type="button"
   >
     <span
-      className="MuiButton-label-56"
+      className="MuiButton-label-60"
     >
       Submit
     </span>
     <span
-      className="MuiTouchRipple-root-84"
+      className="MuiTouchRipple-root-88"
     />
   </button>
 </div>
