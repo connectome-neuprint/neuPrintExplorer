@@ -110,11 +110,11 @@ class Results extends React.Component {
   };
 
   handleMouseEnter = () => {
-    this.setState({'hovered': true});
+    // this.setState({'hovered': true});
   }
 
   handleMouseLeave = () => {
-    this.setState({'hovered': false});
+    // this.setState({'hovered': false});
   }
 
   downloadFile = index => {
