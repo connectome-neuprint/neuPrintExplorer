@@ -16,10 +16,10 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import TextField from '@material-ui/core/TextField';
 
 import { submit } from 'actions/plugins';
-import NeuronFilter from '../NeuronFilter.react';
 import { setUrlQS } from 'actions/app';
-import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 import { getQueryString } from 'helpers/queryString';
+import NeuronFilter from '../NeuronFilter';
+import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 
 const styles = theme => ({
   textField: {
@@ -55,13 +55,13 @@ class CommonConnectivity extends React.Component {
       names: ''
     };
     const qsParams = LoadQueryString(
-      'Query:' + this.constructor.queryName,
+      `Query:${this.constructor.queryName}`,
       initqsParams,
-      this.props.urlQueryString
+      props.urlQueryString
     );
 
     this.state = {
-      qsParams: qsParams,
+      qsParams,
       limitBig: true
     };
   }
@@ -73,19 +73,19 @@ class CommonConnectivity extends React.Component {
     const connectionArray = apiResponse.data[0][0];
 
     const columns = [
-      queryKey[0].toUpperCase() + queryKey.substring(1) + ' BodyId',
-      queryKey[0].toUpperCase() + queryKey.substring(1) + ' Name'
+      `${queryKey[0].toUpperCase() + queryKey.substring(1)} BodyId`,
+      `${queryKey[0].toUpperCase() + queryKey.substring(1)} Name`
     ];
 
-    const groupBy = function(inputJson, key) {
-      return inputJson.reduce(function(accumulator, currentValue) {
-        //name of the common input/output
-        const name = currentValue['name'];
-        //first element of the keys array is X_weight where X is the body id of a queried neuron
+    const groupBy = (inputJson, key) =>
+      inputJson.reduce((accumulator, currentValue) => {
+        // name of the common input/output
+        const { name } = currentValue;
+        // first element of the keys array is X_weight where X is the body id of a queried neuron
         let weights = Object.keys(currentValue)[0];
         // in case order of keys changes check that this is true and if not find the correct key
         if (!weights.endsWith('weight')) {
-          for (let i = 1; i < Object.keys(currentValue).length; i++) {
+          for (let i = 1; i < Object.keys(currentValue).length; i += 1) {
             if (Object.keys(currentValue)[i].endsWith('weight')) {
               weights = Object.keys(currentValue)[i];
               break;
@@ -94,10 +94,9 @@ class CommonConnectivity extends React.Component {
         }
         (accumulator[currentValue[key]] = accumulator[currentValue[key]] || {})[weights] =
           currentValue[weights];
-        accumulator[currentValue[key]]['name'] = name;
+        accumulator[currentValue[key]].name = name;
         return accumulator;
       }, {});
-    };
 
     const groupedByInputOrOutputId = groupBy(connectionArray, queryKey);
 
@@ -108,24 +107,24 @@ class CommonConnectivity extends React.Component {
       selectedNeurons = parameters.neuron_names;
     }
 
-    const selectedWeightHeadings = selectedNeurons.map(neuron => neuron + '_weight');
-    selectedWeightHeadings.forEach(function(neuronWeightHeading) {
+    const selectedWeightHeadings = selectedNeurons.map(neuron => `${neuron}_weight`);
+    selectedWeightHeadings.forEach(neuronWeightHeading => {
       columns.push(neuronWeightHeading);
     });
 
     const data = [];
     Object.keys(groupedByInputOrOutputId).forEach(inputOrOutput => {
-      let singleRow = [parseInt(inputOrOutput), groupedByInputOrOutputId[inputOrOutput]['name']];
-      selectedWeightHeadings.forEach(function(selectedWeightHeading) {
+      const singleRow = [parseInt(inputOrOutput, 10), groupedByInputOrOutputId[inputOrOutput].name];
+      selectedWeightHeadings.forEach(selectedWeightHeading => {
         const selectedWeightValue =
           groupedByInputOrOutputId[inputOrOutput][selectedWeightHeading] || 0;
-        singleRow.push(parseInt(selectedWeightValue));
+        singleRow.push(parseInt(selectedWeightValue, 10));
       });
       data.push(singleRow);
     });
 
     return {
-      columns: columns,
+      columns,
       data,
       debug: apiResponse.debug
     };
@@ -156,7 +155,7 @@ class CommonConnectivity extends React.Component {
       visType: 'SimpleTable',
       plugin: pluginName,
       parameters,
-      title: 'Common ' + qsParams.typeValue + 's for ' + selectedNeurons + ' in ' + dataSet,
+      title: `Common ${qsParams.typeValue}s for ${selectedNeurons} in ${dataSet}`,
       menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
       processResults: this.processResults
     };
@@ -177,27 +176,33 @@ class CommonConnectivity extends React.Component {
   };
 
   addNeuronBodyIds = event => {
-    const oldParams = this.state.qsParams;
+    const { qsParams } = this.state;
+    const { actions } = this.props;
+    const oldParams = qsParams;
     oldParams.bodyIds = event.target.value;
-    this.props.actions.setURLQs(SaveQueryString('Query:' + this.constructor.queryName, oldParams));
+    actions.setURLQs(SaveQueryString(`Query:${this.constructor.queryName}`, oldParams));
     this.setState({
       qsParams: oldParams
     });
   };
 
   addNeuronNames = event => {
-    const oldParams = this.state.qsParams;
+    const { qsParams } = this.state;
+    const { actions } = this.props;
+    const oldParams = qsParams;
     oldParams.names = event.target.value;
-    this.props.actions.setURLQs(SaveQueryString('Query:' + this.constructor.queryName, oldParams));
+    actions.setURLQs(SaveQueryString(`Query:${this.constructor.queryName}`, oldParams));
     this.setState({
       qsParams: oldParams
     });
   };
 
   setInputOrOutput = event => {
-    const oldParams = this.state.qsParams;
+    const { qsParams } = this.state;
+    const { actions } = this.props;
+    const oldParams = qsParams;
     oldParams.typeValue = event.target.value;
-    this.props.actions.setURLQs(SaveQueryString('Query:' + this.constructor.queryName, oldParams));
+    actions.setURLQs(SaveQueryString(`Query:${this.constructor.queryName}`, oldParams));
     this.setState({
       qsParams: oldParams
     });
@@ -212,7 +217,8 @@ class CommonConnectivity extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, dataSet } = this.props;
+    const { qsParams } = this.state;
     return (
       <div>
         <FormControl className={classes.formControl}>
@@ -221,8 +227,8 @@ class CommonConnectivity extends React.Component {
             multiline
             fullWidth
             rows={1}
-            value={this.state.qsParams.bodyIds}
-            disabled={this.state.qsParams.names.length > 0}
+            value={qsParams.bodyIds}
+            disabled={qsParams.names.length > 0}
             rowsMax={4}
             className={classes.textField}
             helperText="Separate ids with commas."
@@ -246,14 +252,14 @@ class CommonConnectivity extends React.Component {
           <RadioGroup
             aria-label="Type Of Connections"
             name="type"
-            value={this.state.qsParams.typeValue}
+            value={qsParams.typeValue}
             onChange={this.setInputOrOutput}
           >
-            <FormControlLabel value="input" control={<Radio />} label="Inputs" />
-            <FormControlLabel value="output" control={<Radio />} label="Outputs" />
+            <FormControlLabel value="input" control={<Radio color="primary" />} label="Inputs" />
+            <FormControlLabel value="output" control={<Radio color="primary" />} label="Outputs" />
           </RadioGroup>
         </FormControl>
-        <NeuronFilter callback={this.loadNeuronFilters} datasetstr={this.props.datasetstr} />
+        <NeuronFilter callback={this.loadNeuronFilters} datasetstr={dataSet} />
         <Button variant="contained" onClick={this.processRequest}>
           Submit
         </Button>
@@ -270,15 +276,13 @@ CommonConnectivity.propTypes = {
   history: PropTypes.object.isRequired
 };
 
-const CommonConnectivityState = function(state) {
-  return {
-    urlQueryString: state.app.get('urlQueryString')
-  };
-};
+const CommonConnectivityState = state => ({
+  urlQueryString: state.app.get('urlQueryString')
+});
 
 const CommonConnectivityDispatch = dispatch => ({
   actions: {
-    setURLQs: function(querystring) {
+    setURLQs(querystring) {
       dispatch(setUrlQS(querystring));
     },
     submit: query => {

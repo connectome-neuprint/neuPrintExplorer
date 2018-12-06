@@ -10,8 +10,8 @@ import { withRouter } from 'react-router';
 import Button from '@material-ui/core/Button';
 
 import { submit } from 'actions/plugins';
-import NeuronFilter from '../NeuronFilter.react';
 import { getQueryString } from 'helpers/queryString';
+import NeuronFilter from '../NeuronFilter';
 
 const pluginName = 'Completeness';
 
@@ -38,15 +38,13 @@ class Completeness extends React.Component {
   };
 
   processResults = (query, apiResponse) => {
-    const data = apiResponse.data.map(row => {
-      return [
-        row[0], // roiname
-        ((row[1]/row[3])*100), // % pre
-        row[3], // total pre
-        ((row[2]/row[4])*100), // % post
-        row[4]  // total post
-      ];
-    });
+    const data = apiResponse.data.map(row => [
+      row[0], // roiname
+      ((row[1]/row[3])*100), // % pre
+      row[3], // total pre
+      ((row[2]/row[4])*100), // % post
+      row[4]  // total post
+    ]);
 
     return {
       columns: ['ROI', '%presyn', 'total presyn', '%postsyn', 'total postsyn'],
@@ -87,10 +85,10 @@ class Completeness extends React.Component {
   };
 
   render() {
-    const { isQuerying } = this.props;
+    const { isQuerying, dataSet } = this.props;
     return (
       <div>
-        <NeuronFilter callback={this.loadNeuronFilters} datasetstr={this.props.datasetstr} />
+        <NeuronFilter callback={this.loadNeuronFilters} datasetstr={dataSet} />
         <Button
           disabled={isQuerying}
           color="primary"
@@ -105,16 +103,15 @@ class Completeness extends React.Component {
 }
 
 Completeness.propTypes = {
-  callback: PropTypes.func.isRequired,
-  datasetstr: PropTypes.string.isRequired,
-  availableROIs: PropTypes.array.isRequired
+  isQuerying: PropTypes.bool.isRequired,
+  dataSet: PropTypes.string.isRequired,
+  actions: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired
 };
 
-const CompletenessState = function(state) {
-  return {
-    isQuerying: state.query.isQuerying
-  };
-};
+const CompletenessState = state => ({
+  isQuerying: state.query.isQuerying
+});
 
 const CompletenessDispatch = dispatch => ({
   actions: {

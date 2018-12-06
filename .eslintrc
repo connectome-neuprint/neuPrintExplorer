@@ -1,4 +1,8 @@
-extends: "react-app"
+extends:
+    - "react-app"
+    - "airbnb"
+    - "prettier"
+    - "prettier/react"
 env:
     browser: true
     node: true
@@ -12,3 +16,11 @@ parser:
     babel-eslint
 plugins:
     - "react"
+settings:
+    import/resolver: webpack
+rules:
+    "react/forbid-prop-types":
+        - 1
+        - forbid:
+            - 'any'
+            - 'array'

@@ -1,7 +1,7 @@
-import C from './constants';
 import Immutable from 'immutable';
+import C from './constants';
 
-var neuroglancerState = Immutable.Map({
+const neuroglancerState = Immutable.Map({
   display: false,
   neurons: Immutable.Map({}),
   layers: Immutable.Map({}),

@@ -13,7 +13,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { submit } from 'actions/plugins';
 import { getQueryString } from 'helpers/queryString';
 
-const styles = theme => ({});
+const styles = () => ({});
 
 const pluginName = 'NeuronMeta';
 
@@ -27,9 +27,7 @@ class NeuronMeta extends React.Component {
   }
 
   processMetaValues = (query, apiResponse) => {
-    const data = apiResponse.data.map(row => {
-      return [row[0]];
-    });
+    const data = apiResponse.data.map(row => [row[0]]);
 
     return {
       columns: ['Property Value'],
@@ -114,11 +112,9 @@ NeuronMeta.propTypes = {
   isQuerying: PropTypes.bool.isRequired
 };
 
-const NeuronMetaState = function(state) {
-  return {
-    isQuerying: state.query.isQuerying
-  };
-};
+const NeuronMetaState = state => ({
+  isQuerying: state.query.isQuerying
+});
 
 // The submit action which will accept your query, execute it and
 // store the results for view plugins to display.

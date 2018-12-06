@@ -2,11 +2,11 @@
  * Store user state / login.
 */
 
-import C from './constants';
 import Immutable from 'immutable';
+import C from './constants';
 
-var userState = Immutable.Map({
-  userInfo: null,
+const userState = Immutable.Map({
+  userInfo: {},
   token: ''
 });
 
@@ -16,7 +16,7 @@ export default function userReducer(state = userState, action) {
       return state.set('userInfo', action.userInfo);
     }
     case C.LOGOUT_USER: {
-      return state.set('userInfo', null).set('token', '');
+      return state.set('userInfo', {}).set('token', '');
     }
     case C.SET_USER_TOKEN: {
       return state.set('token', action.token);

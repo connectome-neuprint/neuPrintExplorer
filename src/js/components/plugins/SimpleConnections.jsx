@@ -16,11 +16,11 @@ import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { withStyles } from '@material-ui/core/styles';
 
-import NeuronHelp from '../NeuronHelp.react';
 import { submit, formError } from 'actions/plugins';
 import { getQueryString } from 'helpers/queryString';
+import NeuronHelp from '../NeuronHelp';
 
-const styles = theme => ({
+const styles = () => ({
   textField: {},
   formControl: {
     margin: '0.5em 0 1em 0',
@@ -55,7 +55,7 @@ class SimpleConnections extends React.Component {
 
   processResults = (query, apiResponse) => {
     const tables = [];
-    const columnNames = [ 'ID', 'Name', 'Weight'];
+    const columnNames = ['ID', 'Name', 'Weight'];
 
     let currentTable = [];
     let lastBody = -1;
@@ -63,12 +63,12 @@ class SimpleConnections extends React.Component {
 
     apiResponse.data.forEach(row => {
       const neuron1Id = row[4];
-       if (lastBody !== -1 && neuron1Id !== lastBody) {
+      if (lastBody !== -1 && neuron1Id !== lastBody) {
         let tableName = `${lastName} id=(${String(lastBody)})`;
         if (query.parameters.find_inputs === false) {
-          tableName = tableName + ' => ...';
+          tableName = `${tableName} => ...`;
         } else {
-          tableName = '... => ' + tableName;
+          tableName = `... => ${tableName}`;
         }
 
         tables.push({
@@ -79,25 +79,21 @@ class SimpleConnections extends React.Component {
         currentTable = [];
       }
       lastBody = neuron1Id;
-      lastName = row[0];
+      [lastName] = row;
 
       let neuron2Name = row[1];
       if (neuron2Name === null) {
         neuron2Name = '';
       }
-      currentTable.push([
-        row[2],
-        neuron2Name,
-        row[3]
-      ]);
+      currentTable.push([row[2], neuron2Name, row[3]]);
     });
 
     if (lastBody !== -1) {
-      let tableName = lastName + ' id=(' + String(lastBody) + ')';
+      let tableName = `${lastName} id=(${String(lastBody)})`;
       if (query.parameters.find_inputs === false) {
-        tableName = tableName + ' => ...';
+        tableName = `${tableName} => ...`;
       } else {
-        tableName = '... => ' + tableName;
+        tableName = `... => ${tableName}`;
       }
 
       tables.push({
@@ -116,19 +112,19 @@ class SimpleConnections extends React.Component {
   processRequest = () => {
     const { dataSet, actions, history } = this.props;
     const { neuronName, preOrPost } = this.state;
-    if (this.state.neuronName !== '') {
-      let parameters = { dataset: dataSet };
-      if (isNaN(neuronName)) {
-        parameters['neuron_name'] = neuronName;
+    if (neuronName !== '') {
+      const parameters = { dataset: dataSet };
+      if (/^\d+$/.test(neuronName)) {
+        parameters.neuron_id = parseInt(neuronName, 10);
       } else {
-        parameters['neuron_id'] = parseInt(neuronName);
+        parameters.neuron_name = neuronName;
       }
       if (preOrPost === 'pre') {
-        parameters['find_inputs'] = false;
+        parameters.find_inputs = false;
       } else {
-        parameters['find_inputs'] = true;
+        parameters.find_inputs = true;
       }
-      let query = {
+      const query = {
         dataSet,
         queryString: '/npexplorer/simpleconnections',
         visType: 'CollapsibleTable',
@@ -167,6 +163,7 @@ class SimpleConnections extends React.Component {
 
   render() {
     const { classes, isQuerying } = this.props;
+    const { preOrPost, neuronName } = this.state;
     return (
       <div>
         <FormControl className={classes.formControl}>
@@ -176,7 +173,7 @@ class SimpleConnections extends React.Component {
               multiline
               fullWidth
               rows={1}
-              value={this.state.neuronName}
+              value={neuronName}
               rowsMax={4}
               className={classes.textField}
               onChange={this.handleNeuronName}
@@ -190,7 +187,7 @@ class SimpleConnections extends React.Component {
             aria-label="preOrPost"
             name="preOrPost"
             className={classes.group}
-            value={this.state.preOrPost}
+            value={preOrPost}
             onChange={this.handleDirection}
           >
             <FormControlLabel
@@ -220,14 +217,15 @@ class SimpleConnections extends React.Component {
 
 SimpleConnections.propTypes = {
   classes: PropTypes.object.isRequired,
-  datasetstr: PropTypes.string.isRequired,
+  actions: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
+  isQuerying: PropTypes.bool.isRequired,
+  dataSet: PropTypes.string.isRequired
 };
 
-const SimpleConnectionsState = function(state) {
-  return {
-    isQuerying: state.query.isQuerying
-  };
-};
+const SimpleConnectionsState = state => ({
+  isQuerying: state.query.isQuerying
+});
 
 const SimpleConnectionsDispatch = dispatch => ({
   actions: {

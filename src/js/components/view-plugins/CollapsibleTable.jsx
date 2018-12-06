@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import Typography from '@material-ui/core/Typography';
 import Table from '@material-ui/core/Table';
@@ -39,25 +40,11 @@ class CollapsibleTable extends React.Component {
   constructor(props) {
     super(props);
     const { properties } = this.props;
-    //default values
-    let rowsPerPage = 5;
-    let paginate = true;
-    // check for user-specified props
-    if (properties) {
-      if (properties.rowsPerPage) {
-        rowsPerPage = properties.rowsPerPage;
-      }
-      if (properties.paginate) {
-        paginate = properties.paginate;
-      }
-    }
+    const { rowsPerPage } = properties;
 
     this.state = {
-      selected: [],
-      data: [],
       page: 0,
-      rowsPerPage: rowsPerPage,
-      paginate: paginate
+      rowsPerPage
     };
   }
 
@@ -69,7 +56,7 @@ class CollapsibleTable extends React.Component {
     this.setState({ rowsPerPage: event.target.value });
   };
 
-  handleCellClick = action => event => {
+  handleCellClick = action => () => {
     action();
   };
 
@@ -84,10 +71,7 @@ class CollapsibleTable extends React.Component {
       paginate = false;
     }
 
-    let highlightIndex = {};
-    if ('highlightIndex' in query.result) {
-      highlightIndex = query.result.highlightIndex;
-    }
+    const { highlightIndex } = query.result;
 
     return (
       <div className={classes.root}>
@@ -98,12 +82,13 @@ class CollapsibleTable extends React.Component {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   let rowStyle = {};
-                  let currspot = page * rowsPerPage + index;
-                  if (currspot.toString() in highlightIndex) {
+                  const currspot = page * rowsPerPage + index;
+                  const rowIndex = `${row.name}${index}`;
+                  if (highlightIndex && currspot.toString() in highlightIndex) {
                     rowStyle = { backgroundColor: highlightIndex[currspot.toString()] };
                   }
                   return (
-                    <TableRow hover key={index} style={rowStyle}>
+                    <TableRow hover key={rowIndex} style={rowStyle}>
                       <TableCell className={classes.cellborder} padding="none">
                         <ExpansionPanel>
                           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
@@ -141,5 +126,17 @@ class CollapsibleTable extends React.Component {
     );
   }
 }
+
+CollapsibleTable.propTypes = {
+  query: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired,
+  properties: PropTypes.object
+};
+
+CollapsibleTable.defaultProps = {
+  properties: {
+    rowsPerPage: 5
+  }
+};
 
 export default withStyles(styles)(CollapsibleTable);

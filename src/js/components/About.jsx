@@ -37,13 +37,30 @@ class About extends React.Component {
       data: 'Loading user issues from GitHub...'
     };
   }
+
+  componentDidMount() {
+    const { token } = this.props;
+    if (token === '') {
+      return;
+    }
+    this.loadIssues();
+  }
+
+  componentDidUpdate(nextProps) {
+    const { token } = this.props;
+    if (nextProps.token === token) {
+      return;
+    }
+    this.loadIssues();
+  }
+
   loadIssues() {
     const { token } = this.props;
     /* Call to Google API function */
     fetch('https://us-east1-dvid-em.cloudfunctions.net/neuprint-janelia/gitinfo', {
       method: 'POST',
       headers: {
-        Authorization: 'token ' + token,
+        Authorization: `token ${token}`,
         Accept: 'application/json',
         'Content-Type': 'application/json'
       },
@@ -53,19 +70,19 @@ class About extends React.Component {
     })
       .then(result => result.json())
       .then(result => {
-        let fulllist = [];
-        let repoedges = result.data.organization.repositories.edges;
-        repoedges.forEach(function(repoedge) {
-          let name = repoedge.node.name;
-          let issuelist = [];
-          let edges = repoedge.node.issues.edges;
-          edges.forEach(function(issue) {
+        const fulllist = [];
+        const repoedges = result.data.organization.repositories.edges;
+        repoedges.forEach(repoedge => {
+          const { name } = repoedge.node;
+          const issuelist = [];
+          const { edges } = repoedge.node.issues;
+          edges.forEach(issue => {
             issuelist.push([issue.node.title, issue.node.url, issue.node.number, issue.node.body]);
           });
           if (issuelist.length > 0) {
-            let listItems = issuelist.map(iss => (
+            const listItems = issuelist.map(iss => (
               <li key={iss[2].toString() + iss[0]}>
-                <Tooltip title={iss[3]} placement={'bottom'} enterDelay={100}>
+                <Tooltip title={iss[3]} placement='bottom' enterDelay={100}>
                   <a
                     href={iss[1]}
                     target="_blank"
@@ -77,7 +94,7 @@ class About extends React.Component {
                 </Tooltip>
               </li>
             ));
-            let listing = (
+            const listing = (
               <span key={name}>
                 {name}
                 <ul>{listItems}</ul>
@@ -96,30 +113,14 @@ class About extends React.Component {
           });
         }
       })
-      .catch(function(error) {
-        this.setState({
-          data: error
-        });
+      .catch(error =>  {
+        this.setState({ data: error });
       });
-  }
-
-  componentDidMount() {
-    const { token } = this.props;
-    if (token === '') {
-      return;
-    }
-    this.loadIssues();
-  }
-  componentDidUpdate(nextProps) {
-    const { token } = this.props;
-    if (nextProps.token === token) {
-      return;
-    }
-    this.loadIssues();
   }
 
   render() {
     const { classes } = this.props;
+    const { data } = this.state;
 
     return (
       <div className={classes.root}>
@@ -129,7 +130,7 @@ class About extends React.Component {
         <Typography variant="body1" className={classes.centered}>
           Version: {VERSION}
         </Typography>
-        <Divider light={true} className={classes.spaced} />
+        <Divider light className={classes.spaced} />
         <Typography variant="h6">About:</Typography>
         <Typography variant="body1" className={classes.spaced}>
           neuPrint Explorer is web based tool to query and visualize connectomic data stored in
@@ -146,7 +147,7 @@ class About extends React.Component {
         </Typography>
 
         <Typography variant="h6">Open issue list</Typography>
-        {this.state.data}
+        {data}
 
         <Typography variant="h6">Contact us:</Typography>
         <Typography variant="body1" className={classes.spaced}>
@@ -158,15 +159,13 @@ class About extends React.Component {
   }
 }
 
-var AboutState = function(state) {
-  return {
-    token: state.user.get('token')
-  };
-};
+const AboutState = state => ({
+  token: state.user.get('token')
+});
 
 About.propTypes = {
   classes: PropTypes.object.isRequired,
-  token: PropTypes.string
+  token: PropTypes.string.isRequired,
 };
 
 export default withStyles(styles)(

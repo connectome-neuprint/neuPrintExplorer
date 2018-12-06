@@ -8,7 +8,6 @@ import randomColor from 'randomcolor';
 import { connect } from 'react-redux';
 
 import Button from '@material-ui/core/Button';
-import ColorBox from '../visualization/ColorBox.react';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Icon from '@material-ui/core/Icon';
@@ -17,20 +16,26 @@ import { submit } from 'actions/plugins';
 import { skeletonAddandOpen } from 'actions/skeleton';
 import { neuroglancerAddandOpen } from 'actions/neuroglancer';
 import { getQueryString } from 'helpers/queryString';
-import { sortRois } from '../MetaInfo.react';
-import RoiHeatMap, { ColorLegend } from '../visualization/MiniRoiHeatMap.react';
-import RoiBarGraph from '../visualization/MiniRoiBarGraph.react';
+import ColorBox from '../visualization/ColorBox';
+import { sortRois } from '../MetaInfo';
+import RoiHeatMap, { ColorLegend } from '../visualization/MiniRoiHeatMap';
+import RoiBarGraph from '../visualization/MiniRoiBarGraph';
 
 const pluginName = 'ROIConnectivity';
 
-const styles = theme => ({
+const styles = () => ({
   clickable: {
+    cursor: 'pointer'
+  },
+  button: {
+    padding: 0,
+    border: 0,
     cursor: 'pointer'
   }
 });
 
 // default color for max connection
-var WEIGHTCOLOR = '255,100,100,';
+const WEIGHTCOLOR = '255,100,100,';
 
 class ROIConnectivity extends React.Component {
   static get queryName() {
@@ -56,7 +61,7 @@ class ROIConnectivity extends React.Component {
       },
       visType: 'SimpleTable',
       plugin: pluginName,
-      title: 'Neurons with inputs in: ' + inputRoi + ' and outputs in: ' + outputRoi,
+      title: `Neurons with inputs in: ${inputRoi} and outputs in: ${outputRoi}`,
       menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
       processResults: this.processRoiResults
     });
@@ -68,17 +73,17 @@ class ROIConnectivity extends React.Component {
       const bodyId = row[0];
       const roiInfoObject = JSON.parse(row[1]);
 
-      for (const roi in roiInfoObject) {
-        roisInQuery.add(roi);
-        // add numpost to provide size distribution
-        if (roiInfoObject[roi].post > 0) {
+      Object.entries(roiInfoObject).forEach(roi => {
+        const [ name, data ] = roi;
+        roisInQuery.add(name);
+        if (data.post > 0) {
           if (!(bodyId in bodyInputCountsPerRoi)) {
-            bodyInputCountsPerRoi[bodyId] = [[roi, roiInfoObject[roi].post]];
+            bodyInputCountsPerRoi[bodyId] = [[name, data.post]];
           } else {
-            bodyInputCountsPerRoi[bodyId].push([roi, roiInfoObject[roi].post]);
+            bodyInputCountsPerRoi[bodyId].push([name, data.post]);
           }
         }
-      }
+      });
     });
 
     const roiRoiWeight = {};
@@ -90,56 +95,56 @@ class ROIConnectivity extends React.Component {
       const bodyId = row[0];
       const roiInfoObject = JSON.parse(row[1]);
 
-      for (const outputRoi in roiInfoObject) {
+      Object.entries(roiInfoObject).forEach(roi => {
+        const [outputRoi, data] = roi;
         // create roi2roi based on input distribution
-        const numOutputsInRoi = roiInfoObject[outputRoi].pre;
+        const numOutputsInRoi = data.pre;
         // if body has pre in this roi and has post in any roi
         if (numOutputsInRoi > 0 && bodyId in bodyInputCountsPerRoi) {
           let totalInputs = 0;
-          for (let i = 0; i < bodyInputCountsPerRoi[bodyId].length; i++) {
+          for (let i = 0; i < bodyInputCountsPerRoi[bodyId].length; i += 1) {
             totalInputs += bodyInputCountsPerRoi[bodyId][i][1];
           }
 
-          for (let i = 0; i < bodyInputCountsPerRoi[bodyId].length; i++) {
+          for (let i = 0; i < bodyInputCountsPerRoi[bodyId].length; i += 1) {
             const inputRoi = bodyInputCountsPerRoi[bodyId][i][0];
-            if (inputRoi === '' || totalInputs === 0) {
-              continue;
-            }
-            const connectivityValueForBody =
-              (numOutputsInRoi * bodyInputCountsPerRoi[bodyId][i][1] * 1.0) / totalInputs;
-            const connectionName = inputRoi + '=>' + outputRoi;
-            if (connectionName in roiRoiWeight) {
-              roiRoiWeight[connectionName] += connectivityValueForBody;
-              roiRoiCount[connectionName] += 1;
-            } else {
-              roiRoiWeight[connectionName] = connectivityValueForBody;
-              roiRoiCount[connectionName] = 1;
-            }
-            const currentValue = roiRoiWeight[connectionName];
-            if (currentValue > maxValue) {
-              maxValue = currentValue;
+            if (inputRoi !== '' && totalInputs !== 0) {
+              const connectivityValueForBody =
+                (numOutputsInRoi * bodyInputCountsPerRoi[bodyId][i][1] * 1.0) / totalInputs;
+              const connectionName = `${inputRoi}=>${outputRoi}`;
+              if (connectionName in roiRoiWeight) {
+                roiRoiWeight[connectionName] += connectivityValueForBody;
+                roiRoiCount[connectionName] += 1;
+              } else {
+                roiRoiWeight[connectionName] = connectivityValueForBody;
+                roiRoiCount[connectionName] = 1;
+              }
+              const currentValue = roiRoiWeight[connectionName];
+              if (currentValue > maxValue) {
+                maxValue = currentValue;
+              }
             }
           }
         }
-      }
+      });
     });
 
     // make data table
-    let data = [];
+    const data = [];
 
     const sortedRoisInQuery = Array.from(roisInQuery).sort(sortRois);
 
-    for (let i = 0; i < sortedRoisInQuery.length; i++) {
-      let inputRoiName = sortedRoisInQuery[i];
-      let row = [];
+    for (let i = 0; i < sortedRoisInQuery.length; i += 1) {
+      const inputRoiName = sortedRoisInQuery[i];
+      const row = [];
       row.push(inputRoiName);
-      for (let j = 0; j < sortedRoisInQuery.length; j++) {
-        let outputRoiName = sortedRoisInQuery[j];
+      for (let j = 0; j < sortedRoisInQuery.length; j += 1) {
+        const outputRoiName = sortedRoisInQuery[j];
         let connectivityValue = 0;
         let connectivityCount = 0;
-        let connectionName = inputRoiName + '=>' + outputRoiName;
+        const connectionName = `${inputRoiName}=>${outputRoiName}`;
         if (connectionName in roiRoiWeight) {
-          connectivityValue = parseInt(roiRoiWeight[connectionName].toFixed());
+          connectivityValue = parseInt(roiRoiWeight[connectionName].toFixed(), 10);
           connectivityCount = roiRoiCount[connectionName];
         }
 
@@ -147,19 +152,19 @@ class ROIConnectivity extends React.Component {
         if (connectivityValue > 0) {
           scaleFactor = Math.log(connectivityValue) / Math.log(maxValue);
         }
-        const weightColor = 'rgba(' + WEIGHTCOLOR + scaleFactor.toString() + ')';
+        const weightColor = `rgba(${WEIGHTCOLOR}${scaleFactor.toString()})`;
 
         const neuronsQuery = neuronsInRoisQuery(inputRoiName, outputRoiName);
 
         row.push({
           value: (
-            <div className={classes.clickable} onClick={() => actions.submit(neuronsQuery)}>
+            <button type="button" className={classes.button} onClick={() => actions.submit(neuronsQuery)}>
               <ColorBox
                 margin={0}
                 width={squareSize}
                 height={squareSize}
                 backgroundColor={weightColor}
-                title={''}
+                title=""
                 key={connectionName}
                 text={
                   <div>
@@ -168,7 +173,7 @@ class ROIConnectivity extends React.Component {
                   </div>
                 }
               />
-            </div>
+            </button>
           ),
           sortBy: { rowValue: inputRoiName, columeValue: outputRoiName },
           csvValue: connectivityValue,
@@ -185,7 +190,7 @@ class ROIConnectivity extends React.Component {
     };
   };
 
-  handleShowSkeleton = (id, dataSet) => event => {
+  handleShowSkeleton = (id, dataSet) => () => {
     const { actions } = this.props;
     actions.skeletonAddandOpen(id, dataSet);
     actions.neuroglancerAddandOpen(id, dataSet);
@@ -206,22 +211,20 @@ class ROIConnectivity extends React.Component {
         visType: 'SimpleTable', // <string> which visualization plugin to use. Default is 'table'
         plugin: pluginName, // <string> the name of this plugin.
         parameters, // <object>
-        title: `Neuron with id ` + bodyId,
+        title: `Neuron with id ${bodyId}`,
         menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
         processResults: this.processResults
       };
     };
 
-    const data = apiResponse.data.map(row => {
-      return [
-        {
-          value: row[2],
-          action: () => actions.submit(findNeuronQuery(row[2]))
-        },
-        row[1],
-        row[3]
-      ];
-    });
+    const data = apiResponse.data.map(row => [
+      {
+        value: row[2],
+        action: () => actions.submit(findNeuronQuery(row[2]))
+      },
+      row[1],
+      row[3]
+    ]);
 
     return {
       columns: ['Neuron ID', 'Neuron', '#connections'],
@@ -288,14 +291,14 @@ class ROIConnectivity extends React.Component {
         let preInSuperRois = 0;
         Object.keys(roiInfoObject).forEach(roi => {
           if (roiList.includes(roi)) {
-            preInSuperRois += roiInfoObject[roi]['pre'];
-            postInSuperRois += roiInfoObject[roi]['post'];
+            preInSuperRois += roiInfoObject[roi].pre;
+            postInSuperRois += roiInfoObject[roi].post;
           }
         });
 
         // add this after the other rois have been summed.
         // records # pre and post that are not in rois
-        roiInfoObject['none'] = {
+        roiInfoObject.none = {
           pre: row[5] - preInSuperRois,
           post: row[6] - postInSuperRois
         };
@@ -370,8 +373,8 @@ class ROIConnectivity extends React.Component {
         'status',
         '#post (inputs)',
         '#pre (outputs)',
-        '#post in ' + parameters.input_ROIs[0],
-        '#pre in ' + parameters.output_ROIs[0],
+        `#post in ${parameters.input_ROIs[0]}`,
+        `#pre in ${parameters.output_ROIs[0]}`,
         '#voxels',
         <div>
           roi heatmap <ColorLegend />
@@ -383,53 +386,8 @@ class ROIConnectivity extends React.Component {
     };
   };
 
-  // use this method to cleanup your form data, perform validation
-  // and generate the query object.
   processRequest = () => {
-    const { dataSet, actions, history } = this.props;
-    const { inputROIs, outputROIs, neuronsrc, statusFilters, limitBig } = this.state;
-
-    const parameters = {
-      dataset: dataSet,
-      input_ROIs: inputROIs,
-      output_ROIs: outputROIs,
-      statuses: statusFilters
-    };
-
-    if (neuronsrc !== '') {
-      if (isNaN(neuronsrc)) {
-        parameters['neuron_name'] = neuronsrc;
-      } else {
-        parameters['neuron_id'] = parseInt(neuronsrc);
-      }
-    }
-
-    if (limitBig) {
-      parameters['pre_threshold'] = 2;
-    }
-
-    const query = {
-      dataSet, // <string> for the data set selected
-      queryString: '/npexplorer/findneurons', // <neo4jquery string>
-      // cypherQuery: <string> if this is passed then use generic /api/custom/custom endpoint
-      visType: 'SimpleTable', // <string> which visualization plugin to use. Default is 'table'
-      visProps: { rowsPerPage: 25 },
-      plugin: pluginName, // <string> the name of this plugin.
-      parameters, // <object>
-      title: `Neurons with inputs in [${inputROIs}] and outputs in [${outputROIs}]`,
-      menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
-      processResults: this.processResults
-    };
-    actions.submit(query);
-    // redirect to the results page.
-    history.push({
-      pathname: '/results',
-      search: getQueryString()
-    });
-  };
-
-  processRequest = () => {
-    const { dataSet, actions, history } = this.props;
+    const { dataSet, actions, history, availableROIs } = this.props;
 
     const query = {
       dataSet,
@@ -439,7 +397,7 @@ class ROIConnectivity extends React.Component {
       plugin: pluginName,
       parameters: {
         dataset: dataSet,
-        rois: this.props.availableROIs
+        rois: availableROIs
       },
       title: 'ROI Connectivity (column: inputs, row: outputs)',
       menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
@@ -454,8 +412,9 @@ class ROIConnectivity extends React.Component {
   };
 
   render() {
+    const { isQuerying } = this.props;
     return (
-      <Button variant="contained" onClick={this.processRequest}>
+      <Button variant="contained" color="primary" disabled={isQuerying} onClick={this.processRequest}>
         Submit
       </Button>
     );
@@ -463,15 +422,17 @@ class ROIConnectivity extends React.Component {
 }
 
 ROIConnectivity.propTypes = {
-  datasetstr: PropTypes.string.isRequired,
-  availableROIs: PropTypes.array.isRequired
+  dataSet: PropTypes.string.isRequired,
+  availableROIs: PropTypes.arrayOf(PropTypes.string).isRequired,
+  actions: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired,
+  isQuerying: PropTypes.bool.isRequired,
+  history: PropTypes.object.isRequired
 };
 
-const ROIConnectivityState = state => {
-  return {
-    isQuerying: state.query.isQuerying
-  };
-};
+const ROIConnectivityState = state => ({
+  isQuerying: state.query.isQuerying
+});
 
 const ROIConnectivityDispatch = dispatch => ({
   actions: {

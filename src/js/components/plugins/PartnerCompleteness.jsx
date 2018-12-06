@@ -42,8 +42,7 @@ class PartnerCompleteness extends React.Component {
   }
 
   processResults = (dataSet, apiResponse) => {
-    const data = apiResponse.data.map(row => {
-      return [
+    const data = apiResponse.data.map(row => [
         row[0],
         row[1],
         row[2],
@@ -55,8 +54,7 @@ class PartnerCompleteness extends React.Component {
         row[8],
         row[9],
         row[10]
-      ];
-    });
+      ]);
 
     return {
       columns: ['id', 'name', 'isinput', '#connections', 'status', '#pre', '#post'],
@@ -69,25 +67,26 @@ class PartnerCompleteness extends React.Component {
   // creates query object and sends to callback
   processRequest = () => {
     const { dataSet, actions, history } = this.props;
-    let cypher =
-      'MATCH (n :`' +
-      dataSet +
-      '-Segment` {bodyId: ' +
-      this.state.bodyId +
-      '})-[x:ConnectsTo]-(m) RETURN m.bodyId, m.name, CASE WHEN startnode(x).bodyId = ' +
-      this.state.bodyId +
-      ' THEN false ELSE true END, x.weight, m.status, m.pre, m.post, n.name, n.pre, n.post, n.status ORDER BY x.weight DESC';
+    const { bodyId } = this.state;
+    const cypher =
+      `MATCH (n :\`${
+      dataSet
+      }-Segment\` {bodyId: ${
+      bodyId
+      }})-[x:ConnectsTo]-(m) RETURN m.bodyId, m.name, CASE WHEN startnode(x).bodyId = ${
+      bodyId
+      } THEN false ELSE true END, x.weight, m.status, m.pre, m.post, n.name, n.pre, n.post, n.status ORDER BY x.weight DESC`;
 
     const query = {
       dataSet,
       queryString: '/custom/custom',
       visType: 'PartnerCompletenessView',
       plugin: pluginName,
-      parameters: { cypher: cypher },
-      title: 'Tracing completeenss of connections to/from ' + this.state.bodyId,
+      parameters: { cypher },
+      title: `Tracing completeenss of connections to/from ${bodyId}`,
       menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
       processResults: this.processResults,
-      bodyId: this.state.bodyId
+      bodyId
     };
     actions.submit(query);
     history.push({
@@ -132,20 +131,20 @@ class PartnerCompleteness extends React.Component {
 }
 
 PartnerCompleteness.propTypes = {
-  callback: PropTypes.func.isRequired,
-  datasetstr: PropTypes.string.isRequired,
+  dataSet: PropTypes.string.isRequired,
+  actions: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
+  isQuerying: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired
 };
 
-var PartnerCompletenessState = function(state) {
-  return {
-    isQuerying: state.query.isQuerying
-  };
-};
+const PartnerCompletenessState = state => ({
+  isQuerying: state.query.isQuerying
+});
 
 // The submit action which will accept your query, execute it and
 // store the results for view plugins to display.
-var PartnerCompletenessDispatch = dispatch => ({
+const PartnerCompletenessDispatch = dispatch => ({
   actions: {
     submit: query => {
       dispatch(submit(query));
