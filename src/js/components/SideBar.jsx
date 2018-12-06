@@ -19,6 +19,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Icon from '@material-ui/core/Icon';
 import Divider from '@material-ui/core/Divider';
 
+import Contact from './Contact';
 import { setUrlQS } from '../actions/app';
 
 const drawerWidth = 400;
@@ -154,6 +155,7 @@ class SideBar extends React.Component {
             <ListItemText primary="Help" />
           </MenuItem>
         </MenuList>
+        <Contact />
       </Drawer>
     );
   }

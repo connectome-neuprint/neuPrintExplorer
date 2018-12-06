@@ -15,7 +15,6 @@ import Help from './Help';
 import Favorites from './Favorites';
 import TopBar from './TopBar';
 import SideBar from './SideBar';
-import Contact from './Contact';
 import About from './About';
 import QueryDrawer from './QueryDrawer';
 import Errors from './Errors';
@@ -79,7 +78,6 @@ const Master = (props) => {
             />
           </Switch>
         </main>
-        <Contact />
         <Errors />
       </div>
     </Router>
