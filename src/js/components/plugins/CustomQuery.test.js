@@ -2,7 +2,7 @@ import CustomQuery from './CustomQuery';
 import AppReducers from '../../reducers';
 import React from 'react';
 import { Provider } from 'react-redux';
-import { shallow, mount } from 'enzyme';
+import { mount } from 'enzyme';
 import { createStore, applyMiddleware, compose } from 'redux';
 import renderer from 'react-test-renderer';
 import { Router } from 'react-router-dom';
