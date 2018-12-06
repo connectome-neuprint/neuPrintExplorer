@@ -1,6 +1,6 @@
-import C from '../../../src/js/reducers/constants';
-import neo4jsettings from '../../../src/js/reducers/neo4jsettings';
 import Immutable from 'immutable';
+import C from './constants';
+import neo4jsettings from './neo4jsettings';
 
 const state = Immutable.Map({
   availableDatasets: ['existingdataset'],

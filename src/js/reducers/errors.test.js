@@ -1,6 +1,6 @@
-import C from '../../../src/js/reducers/constants';
-import errors from './errors';
 import Immutable from 'immutable';
+import C from './constants';
+import errors from './errors';
 
 describe('errors Reducer', () => {
   it('*_ERROR success', () => {

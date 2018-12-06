@@ -5,7 +5,7 @@ import Immutable from 'immutable';
 import C from './constants';
 
 const appState = Immutable.Map({
-  pluginList: Immutable.List([]),
+  pluginList: [],
   reconIndex: 9999999,
   urlQueryString: window.location.search.substring(1),
   appDB: '',

@@ -1,6 +1,6 @@
-import C from '../../../src/js/reducers/constants';
-import reducer from '../../../src/js/reducers/app';
 import Immutable from 'immutable';
+import C from './constants';
+import reducer from './app';
 
 const state = Immutable.Map({
   pluginList: ['existingplugin'],
