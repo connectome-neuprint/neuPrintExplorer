@@ -1,5 +1,3 @@
-import CustomQuery from './CustomQuery';
-import AppReducers from '../../reducers';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
@@ -9,6 +7,10 @@ import { Router } from 'react-router-dom';
 import thunk from 'redux-thunk';
 import { createMemoryHistory } from 'history';
 
+import CustomQuery from './CustomQuery';
+import AppReducers from '../../reducers';
+
+// eslint-disable-next-line  no-underscore-dangle
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const store = createStore(AppReducers, {}, composeEnhancers(applyMiddleware(thunk)));
@@ -22,7 +24,7 @@ let submit;
 const component = (
   <Provider store={store}>
     <Router history={history}>
-      <CustomQuery />
+      <CustomQuery dataSet="test" />
     </Router>
   </Provider>
 );
@@ -100,8 +102,8 @@ describe('custom query Plugin', () => {
     </div>
   </div>
   <button
-    className="MuiButtonBase-root-81 MuiButtonBase-disabled-82 MuiButton-root-55 MuiButton-contained-66 MuiButton-containedPrimary-67 MuiButton-raised-69 MuiButton-raisedPrimary-70 MuiButton-disabled-75 withRouter-Connect-CustomQuery---button-2"
-    disabled={true}
+    className="MuiButtonBase-root-81 MuiButton-root-55 MuiButton-contained-66 MuiButton-containedPrimary-67 MuiButton-raised-69 MuiButton-raisedPrimary-70 withRouter-Connect-CustomQuery---button-2"
+    disabled={false}
     onBlur={[Function]}
     onClick={[Function]}
     onFocus={[Function]}
@@ -113,7 +115,7 @@ describe('custom query Plugin', () => {
     onTouchEnd={[Function]}
     onTouchMove={[Function]}
     onTouchStart={[Function]}
-    tabIndex="-1"
+    tabIndex="0"
     type="button"
   >
     <span
@@ -121,6 +123,9 @@ describe('custom query Plugin', () => {
     >
       Submit
     </span>
+    <span
+      className="MuiTouchRipple-root-84"
+    />
   </button>
 </div>
 `);
@@ -130,7 +135,7 @@ describe('custom query Plugin', () => {
       submit = jest.spyOn(wrapper.find('CustomQuery').props().actions, 'submit');
       expect(button.props().onClick()).toEqual(
         expect.objectContaining({
-          dataSet: undefined,
+          dataSet: 'test',
           cypherQuery: '',
           visType: 'SimpleTable',
           plugin: 'CustomQuery',
@@ -142,6 +147,7 @@ describe('custom query Plugin', () => {
       );
       expect(submit).toHaveBeenCalledTimes(1);
     });
+
     it('should process returned results into data object', () => {
       const query = {
         dataSet: 'test',
@@ -170,11 +176,12 @@ describe('custom query Plugin', () => {
       });
     });
   });
+
   describe('when user hits enter key', () => {
     it('should submit request', () => {
       const processRequest = jest.spyOn(wrapper.find('CustomQuery').instance(), 'processRequest');
       const preventDefault = jest.fn();
-      textField.props().onKeyDown({ keyCode: 13, preventDefault: preventDefault });
+      textField.props().onKeyDown({ keyCode: 13, preventDefault });
       expect(preventDefault).toHaveBeenCalledTimes(1);
       expect(processRequest).toHaveBeenCalledTimes(1);
       expect(submit).toHaveBeenCalledTimes(1);
