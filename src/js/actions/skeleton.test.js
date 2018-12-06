@@ -1,12 +1,10 @@
-import * as skeletonActions from './skeleton';
-import C from '../reducers/constants';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import Immutable from 'immutable';
+import * as skeletonActions from './skeleton';
+import C from '../reducers/constants';
 
-jest.mock('randomcolor', () => {
-  return jest.fn().mockImplementation(() => '#4286f4');
-});
+jest.mock('randomcolor', () => jest.fn().mockImplementation(() => '#4286f4'));
 
 const mockStore = configureStore([thunk]);
 let store;

@@ -1,7 +1,8 @@
-import * as pluginsActions from './plugins';
-import C from '../reducers/constants';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+
+import * as pluginsActions from './plugins';
+import C from '../reducers/constants';
 
 const mockStore = configureStore([thunk]);
 let store;
@@ -25,9 +26,9 @@ describe('plugins Actions', () => {
     const query = {
       queryStr: '/testcall',
       parameters: { p: 'test' },
-      processResults: jest.fn((query, response) => {
-        return { data: [['1:2:3']] };
-      })
+      processResults: jest.fn(() => ({
+        data: [['1:2:3']]
+      }))
     };
     const submitAsync = pluginsActions.submit(query);
     submitAsync(store.dispatch).then(() => {
@@ -57,9 +58,9 @@ describe('plugins Actions', () => {
     const customQuery = {
       cypherQuery: 'testCypherQuery',
       parameters: { p: 'test' },
-      processResults: jest.fn((query, response) => {
-        return { data: [['1:2:3']] };
-      })
+      processResults: jest.fn(() => ({
+        data: [['1:2:3']]
+      }))
     };
     const submitAsync = pluginsActions.submit(customQuery);
     submitAsync(store.dispatch).then(() => {

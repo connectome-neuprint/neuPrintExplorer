@@ -1,8 +1,9 @@
-import * as neuroglancerActions from './neuroglancer';
-import C from '../reducers/constants';
 import Immutable from 'immutable';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+
+import * as neuroglancerActions from './neuroglancer';
+import C from '../reducers/constants';
 
 const mockStore = configureStore([thunk]);
 let storeEmptyState;
