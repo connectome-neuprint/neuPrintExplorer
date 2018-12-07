@@ -65,7 +65,7 @@ class Results extends React.Component {
   }
 
   componentDidMount() {
-    document.addEventListener("keydown", this.triggerKeyboard);
+    document.addEventListener('keydown', this.triggerKeyboard);
   }
 
   componentDidUpdate(prevProps) {
@@ -87,7 +87,7 @@ class Results extends React.Component {
   }
 
   componentWillUnmount() {
-    document.removeEventListener("keydown", this.triggerKeyboard);
+    document.removeEventListener('keydown', this.triggerKeyboard);
   }
 
   triggerKeyboard = event => {
@@ -111,11 +111,11 @@ class Results extends React.Component {
 
   handleMouseEnter = () => {
     // this.setState({'hovered': true});
-  }
+  };
 
   handleMouseLeave = () => {
     // this.setState({'hovered': false});
-  }
+  };
 
   downloadFile = index => {
     const { allResults } = this.props;
@@ -145,7 +145,11 @@ class Results extends React.Component {
 
     if (fullscreen && showSkel) {
       return (
-        <div onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} className={classes.full}>
+        <div
+          onMouseEnter={this.handleMouseEnter}
+          onMouseLeave={this.handleMouseLeave}
+          className={classes.full}
+        >
           <NeuronViz />
         </div>
       );
@@ -153,7 +157,7 @@ class Results extends React.Component {
 
     const results = allResults.map((query, index) => {
       const View = viewPlugins.get(query.visType);
-      const key = `${query.pluginName}${index}`;
+      const key = `${query.plugin}${index}`;
       return (
         <div key={key}>
           <ResultsTopBar
@@ -170,7 +174,11 @@ class Results extends React.Component {
     });
 
     return (
-      <div onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} className={classes.root}>
+      <div
+        onMouseEnter={this.handleMouseEnter}
+        onMouseLeave={this.handleMouseLeave}
+        className={classes.root}
+      >
         {!isQuerying &&
           resArray.length === 0 &&
           results.size === 0 && (
