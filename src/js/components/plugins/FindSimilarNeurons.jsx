@@ -27,7 +27,6 @@ import { setUrlQS } from '../../actions/app';
 import RoiHeatMap, { ColorLegend } from '../visualization/MiniRoiHeatMap';
 import RoiBarGraph from '../visualization/MiniRoiBarGraph';
 import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
-import findSimilarNeurons from '../queries/findSimilarNeurons';
 
 const styles = theme => ({
   textField: {
@@ -90,6 +89,77 @@ class FindSimilarNeurons extends React.Component {
     actions.neuroglancerAddandOpen(id, dataSet);
   };
 
+  computeSimilarity = (inputVector, queriedBodyVector, totalNumberOfRois) => {
+    // input score (pre)
+    const inputScore = math.round(
+      math.sum(
+        math.abs(
+          math.subtract(
+            queriedBodyVector.slice(totalNumberOfRois),
+            inputVector.slice(totalNumberOfRois)
+          )
+        )
+      ) / 2.0,
+      4
+    );
+    // output score (post)
+    const outputScore = math.round(
+      math.sum(
+        math.abs(
+          math.subtract(
+            queriedBodyVector.slice(0, totalNumberOfRois),
+            inputVector.slice(0, totalNumberOfRois)
+          )
+        )
+      ) / 2.0,
+      4
+    );
+    // total score
+    let totalScore = math.round(
+      math.sum(math.abs(math.subtract(queriedBodyVector, inputVector))) / 4.0,
+      4
+    );
+
+    if (Number.isNaN(inputScore) && !Number.isNaN(outputScore)) {
+      totalScore = outputScore;
+    } else if (Number.isNaN(outputScore) && !Number.isNaN(inputScore)) {
+      totalScore = inputScore;
+    }
+
+    return { inputScore, outputScore, totalScore };
+  };
+
+  // queries for getting neuron connections
+  producePostQueryObject = (bodyId, dataset) => ({
+    dataSet: dataset,
+    queryString: '/npexplorer/simpleconnections',
+    visType: 'SimpleTable',
+    plugin: pluginName,
+    parameters: {
+      dataset,
+      find_inputs: true,
+      neuron_id: bodyId
+    },
+    title: `Connections to bodyID=${bodyId}`,
+    menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
+    processResults: this.processConnections
+  });
+
+  producePreQueryObject = (bodyId, dataset) => ({
+    dataSet: dataset,
+    queryString: '/npexplorer/simpleconnections',
+    visType: 'SimpleTable',
+    plugin: pluginName,
+    parameters: {
+      dataset,
+      find_inputs: false,
+      neuron_id: bodyId
+    },
+    title: `Connections from bodyID=${bodyId}`,
+    menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
+    processResults: this.processConnections
+  });
+
   // functions for processing results
   processSimilarResults = (query, apiResponse) => {
     const { actions } = this.props;
@@ -105,8 +175,7 @@ class FindSimilarNeurons extends React.Component {
       // produce sub-level roi information if present, there is more than one body id in the group, and a body id was queried
       subLevelRois.size > 0 && data.length > 1 && parameters.bodyId;
 
-    const shouldShowSubLevelRoiHeatMapOnly = () =>
-      !parameters.bodyId || (data.length === 1 && parameters.bodyId);
+    const shouldShowSubLevelRoiHeatMapOnly = () => data.length === 1 && parameters.bodyId;
 
     const shouldShowClusterName = () => !parameters.bodyId;
 
@@ -174,16 +243,12 @@ class FindSimilarNeurons extends React.Component {
         {
           value: totalPre,
           action: () =>
-            actions.submit(
-              findSimilarNeurons.producePreQueryObject(bodyId, parameters.dataset, pluginName)
-            )
+            actions.submit(this.producePreQueryObject(bodyId, parameters.dataset, pluginName))
         },
         {
           value: totalPost,
           action: () =>
-            actions.submit(
-              findSimilarNeurons.producePostQueryObject(bodyId, parameters.dataset, pluginName)
-            )
+            actions.submit(this.producePostQueryObject(bodyId, parameters.dataset, pluginName))
         },
         '', // empty unless roiInfoObject present
         ''
@@ -340,18 +405,19 @@ class FindSimilarNeurons extends React.Component {
       const outputScoreColumn = clusterNameColumn + 3;
       // if no queried body id just use first result similarity to sort
       const queriedBodyVector = data[0][9];
-      const alteredData = data.forEach(row => {
-        const newRow = row[9];
-        const { inputScore, outputScore, totalScore } = findSimilarNeurons.computeSimilarity(
-          newRow,
+      const processedData = data.map(row => {
+        const newRow = row;
+        const { inputScore, outputScore, totalScore } = this.computeSimilarity(
+          newRow[9],
           queriedBodyVector,
           numberOfRois
         );
         newRow[totalScoreColumn] = totalScore;
         newRow[inputScoreColumn] = inputScore;
         newRow[outputScoreColumn] = outputScore;
+        return newRow;
       });
-      data = alteredData;
+      data = processedData;
 
       data.sort((a, b) => {
         if (a[totalScoreColumn] < b[totalScoreColumn]) return -1;
@@ -369,10 +435,10 @@ class FindSimilarNeurons extends React.Component {
       // sort by similarity
       const queriedBodyVector = data[queriedBodyIdIndex][7];
       const queriedBodySubLevelVector = data[queriedBodyIdIndex][11];
-      const alteredData = data.forEach(row => {
+      const dataWithSimilarityScores = data.map(row => {
         const newRow = row;
         const rawVector = row[7];
-        const { inputScore, outputScore, totalScore } = findSimilarNeurons.computeSimilarity(
+        const { inputScore, outputScore, totalScore } = this.computeSimilarity(
           rawVector,
           queriedBodyVector,
           numberOfRois
@@ -385,7 +451,7 @@ class FindSimilarNeurons extends React.Component {
         newRow[7] = totalScore;
 
         // sub-level rois
-        if (shouldShowSubLevelRoiSimilarity()) {
+        if (queriedBodySubLevelVector) {
           newRow[11] = math.round(
             math.sum(math.abs(math.subtract(queriedBodySubLevelVector, row[11]))) / 4.0,
             4
@@ -396,8 +462,9 @@ class FindSimilarNeurons extends React.Component {
           // update columns
           columns[11] = 'sub-level roi similarity score';
         }
+        return newRow;
       });
-      data = alteredData;
+      data = dataWithSimilarityScores;
 
       // sort by total similarity score; queried body id will be 0 so should be at top
       data.sort((a, b) => {
