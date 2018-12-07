@@ -43,31 +43,31 @@ class Distribution extends React.Component {
   processResults = (query, apiResponse) => {
     const data = [];
 
-    const dist = [.2, .3, .4, .5, .6, .7, .8, .9, .95, 1.0];
+    const dist = [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 1.0];
     let currdist = 0;
 
-    let distCount = [];
-    let distTotal = [];
+    const distCount = [];
+    const distTotal = [];
     let currSize = 0;
     let numSeg = 0;
 
     apiResponse.data.forEach(record => {
-        let size = parseInt(record[1]);
-        let total = parseInt(record[2]);
-        currSize += size;
-        numSeg++;
+      const size = parseInt(record[1], 10);
+      const total = parseInt(record[2], 10);
+      currSize += size;
+      numSeg += 1;
 
-        while ((currdist < dist.length) && ((currSize)/total >= dist[currdist])) {
-            distCount.push(numSeg);
-            distTotal.push(currSize);
+      while (currdist < dist.length && currSize / total >= dist[currdist]) {
+        distCount.push(numSeg);
+        distTotal.push(currSize);
 
-            data.push([
-                JSON.stringify(dist[currdist]),
-                JSON.stringify(distCount[currdist]),
-                JSON.stringify(distTotal[currdist]),
-            ]);
-            currdist++;
-        }
+        data.push([
+          JSON.stringify(dist[currdist]),
+          JSON.stringify(distCount[currdist]),
+          JSON.stringify(distTotal[currdist])
+        ]);
+        currdist += 1;
+      }
     });
 
     const typeHeader = query.parameters.is_pre
@@ -108,14 +108,14 @@ class Distribution extends React.Component {
   };
 
   setROI = event => {
-    let roiname = event.target.value;
+    const roiname = event.target.value;
     // let newparams = Object.assign({}, this.state.qsParams, { roi: roiname });
     // this.props.setURLQs(SaveQueryString('Query:' + this.constructor.queryName, newparams));
     this.setState({ roi: roiname });
   };
 
   setType = event => {
-    let type = event.target.value;
+    const type = event.target.value;
     // let newparams = Object.assign({}, this.state.qsParams, { type: type });
     // this.props.setURLQs(SaveQueryString('Query:' + this.constructor.queryName, newparams));
     this.setState({ isPre: type });
@@ -123,7 +123,7 @@ class Distribution extends React.Component {
 
   render() {
     const { isQuerying, classes, availableROIs } = this.props;
-    const { roi } = this.state;
+    const { roi, isPre } = this.state;
     return (
       <form>
         <FormControl className={classes.selects}>
@@ -136,29 +136,27 @@ class Distribution extends React.Component {
               id: 'roi'
             }}
           >
-            {availableROIs.map(val => {
-              return (
-                <MenuItem key={val} value={val}>
-                  {val}
-                </MenuItem>
-              );
-            })}
+            {availableROIs.map(val => (
+              <MenuItem key={val} value={val}>
+                {val}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         <FormControl className={classes.selects}>
-        <InputLabel htmlFor="isPre">Pre or Post Synaptic</InputLabel>
+          <InputLabel htmlFor="isPre">Pre or Post Synaptic</InputLabel>
           <Select
-            value={this.state.isPre}
+            value={isPre}
             onChange={this.setType}
             inputProps={{
               name: 'isPre',
               id: 'isPre'
             }}
           >
-            <MenuItem key={'presyn'} value={true}>
+            <MenuItem key="presyn" value>
               Pre-synaptic
             </MenuItem>
-            <MenuItem key={'postsyn'} value={false}>
+            <MenuItem key="postsyn" value={false}>
               Post-synaptic
             </MenuItem>
           </Select>
@@ -178,21 +176,21 @@ class Distribution extends React.Component {
 }
 
 Distribution.propTypes = {
-  callback: PropTypes.func.isRequired,
-  datasetstr: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired,
-  availableROIs: PropTypes.array.isRequired,
+  isQuerying: PropTypes.bool.isRequired,
+  availableROIs: PropTypes.arrayOf(PropTypes.string).isRequired,
+  dataSet: PropTypes.string.isRequired,
+  actions: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired
 };
 
-var DistributionState = function(state) {
-  return {
-    isQuerying: state.query.isQuerying
-  };
-};
+const DistributionState = state => ({
+  isQuerying: state.query.isQuerying
+});
 
 // The submit action which will accept your query, execute it and
 // store the results for view plugins to display.
-var DistributionDispatch = dispatch => ({
+const DistributionDispatch = dispatch => ({
   actions: {
     submit: query => {
       dispatch(submit(query));

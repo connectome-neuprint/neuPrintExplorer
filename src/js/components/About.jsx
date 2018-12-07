@@ -56,13 +56,30 @@ class About extends React.Component {
       data: 'Loading user issues from GitHub...'
     };
   }
+
+  componentDidMount() {
+    const { token } = this.props;
+    if (token === '') {
+      return;
+    }
+    this.loadIssues();
+  }
+
+  componentDidUpdate(nextProps) {
+    const { token } = this.props;
+    if (nextProps.token === token) {
+      return;
+    }
+    this.loadIssues();
+  }
+
   loadIssues() {
     const { token } = this.props;
     /* Call to Google API function */
     fetch('https://us-east1-dvid-em.cloudfunctions.net/neuprint-janelia/gitinfo', {
       method: 'POST',
       headers: {
-        Authorization: 'token ' + token,
+        Authorization: `token ${token}`,
         Accept: 'application/json',
         'Content-Type': 'application/json'
       },
@@ -78,7 +95,6 @@ class About extends React.Component {
           let name = repoedge.node.name;
           let issuelist = [];
           let edges = repoedge.node.issues.edges;
-          let labelstring = '';
           edges.forEach(function(issue) {
             let labelList = [];
             let tagList = [];
@@ -102,13 +118,11 @@ class About extends React.Component {
                                 backgroundColor: labelcolor[name]};
                 tagList.push(<div key={divid} style={tagstyle}>{labeledge.label.name}</div>);
               });
-              labelstring = labelList.join(', ');
-              labelstring = ' (' + labelstring + ')';
             }
-            issuelist.push([issue.node.title, issue.node.url, issue.node.number, issue.node.body, labelstring, tagList]);
+            issuelist.push([issue.node.title, issue.node.url, issue.node.number, issue.node.body, tagList]);
           });
           if (issuelist.length > 0) {
-            let listItems = issuelist.map(iss => (
+            const listItems = issuelist.map(iss => (
               <li key={iss[2].toString() + iss[0]}>
                 <div style={{float: 'left'}}>
                 <Tooltip title={iss[3]} placement={'bottom'} enterDelay={100}>
@@ -123,12 +137,12 @@ class About extends React.Component {
                 </Tooltip>
                 </div>
                 <div style={{float: 'left'}}>
-                  {iss[5]}
+                  {iss[4]}
                 </div>
                 <div style={{clear: 'both'}}></div>
               </li>
             ));
-            let listing = (
+            const listing = (
               <span key={name}>
                 {name}
                 <ul>{listItems}</ul>
@@ -147,30 +161,14 @@ class About extends React.Component {
           });
         }
       })
-      .catch(function(error) {
-        this.setState({
-          data: error
-        });
+      .catch(error =>  {
+        this.setState({ data: error });
       });
-  }
-
-  componentDidMount() {
-    const { token } = this.props;
-    if (token === '') {
-      return;
-    }
-    this.loadIssues();
-  }
-  componentDidUpdate(nextProps) {
-    const { token } = this.props;
-    if (nextProps.token === token) {
-      return;
-    }
-    this.loadIssues();
   }
 
   render() {
     const { classes } = this.props;
+    const { data } = this.state;
 
     return (
       <div className={classes.root}>
@@ -180,7 +178,7 @@ class About extends React.Component {
         <Typography variant="body1" className={classes.centered}>
           Version: {VERSION}
         </Typography>
-        <Divider light={true} className={classes.spaced} />
+        <Divider light className={classes.spaced} />
         <Typography variant="h6">About:</Typography>
         <Typography variant="body1" className={classes.spaced}>
           neuPrint Explorer is web based tool to query and visualize connectomic data stored in
@@ -197,7 +195,7 @@ class About extends React.Component {
         </Typography>
 
         <Typography variant="h6">Open issue list</Typography>
-        {this.state.data}
+        {data}
 
         <Typography variant="h6">Contact us:</Typography>
         <Typography variant="body1" className={classes.spaced}>
@@ -209,15 +207,13 @@ class About extends React.Component {
   }
 }
 
-var AboutState = function(state) {
-  return {
-    token: state.user.get('token')
-  };
-};
+const AboutState = state => ({
+  token: state.user.get('token')
+});
 
 About.propTypes = {
   classes: PropTypes.object.isRequired,
-  token: PropTypes.string
+  token: PropTypes.string.isRequired,
 };
 
 export default withStyles(styles)(

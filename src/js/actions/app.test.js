@@ -1,6 +1,7 @@
+import uuid from 'uuid';
+
 import * as appActions from './app';
 import C from '../reducers/constants';
-import uuid from 'uuid';
 
 describe('app Actions', () => {
   it('should create action to initialize plugins', () => {

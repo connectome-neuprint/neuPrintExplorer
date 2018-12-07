@@ -161,7 +161,7 @@ export function neuroglancerNeuronHide(id) {
   };
 }
 export function neuroglancerNeuronToggle(id) {
-  return function(dispatch, getState) {
+  return function neuroglancerNeuronToggleAsync(dispatch, getState) {
     if (getState().neuroglancer.getIn(['neurons', id, 'visible'])) {
       dispatch(neuroglancerNeuronHide(id));
     } else {

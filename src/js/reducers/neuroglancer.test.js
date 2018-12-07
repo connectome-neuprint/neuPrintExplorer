@@ -1,6 +1,6 @@
-import C from '../../../src/js/reducers/constants';
-import neuroglancer from './neuroglancer';
 import Immutable from 'immutable';
+import C from './constants';
+import neuroglancer from './neuroglancer';
 
 const initialState = Immutable.Map({
   display: false,

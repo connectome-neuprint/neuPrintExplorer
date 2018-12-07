@@ -1,10 +1,13 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import Select from 'react-select';
+
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
-import SimpleTable from './SimpleTable';
-import Select from 'react-select';
 import InputLabel from '@material-ui/core/InputLabel';
 import TextField from '@material-ui/core/TextField';
+
+import SimpleTable from './SimpleTable';
 
 const styles = theme => ({
   root: {},
@@ -22,55 +25,58 @@ const styles = theme => ({
 class PartnerCompletenessView extends React.Component {
   constructor(props) {
     super(props);
-    let inputTable = {
+    const inputTable = {
       result: {
         columns: ['id', 'name', '#connections', 'status', '#pre', '#post'],
         data: []
       }
     };
-    let outputTable = {
+    const outputTable = {
       result: {
         columns: ['id', 'name', '#connections', 'status', '#pre', '#post'],
         data: []
       }
     };
 
-    let allStatus = new Set();
-    let highlightIndexInput = {};
-    let highlightIndexOutput = {};
+    const { result } = props.query;
 
-    let bodyStats = {
-      bodyId: props.query.result.bodyId,
+    const allStatus = new Set();
+    const highlightIndexInput = {};
+    const highlightIndexOutput = {};
+
+    const bodyStats = {
+      bodyId: result.bodyId,
       name: '',
       pre: 0,
       post: 0,
       status: ''
     };
 
-    for (let i = 0; i < props.query.result.data.length; i++) {
-      let arr = [];
-      let status = props.query.result.data[i][4];
+    for (let i = 0; i < result.data.length; i += 1) {
+      const arr = [];
+      const status = result.data[i][4];
       let highlight = false;
       if (status !== null && status !== '') {
         highlight = true;
         allStatus.add(status);
       }
 
+      /* eslint-disable prefer-destructuring */
       if (i === 0) {
-        bodyStats.name = props.query.result.data[i][7];
-        bodyStats.pre = props.query.result.data[i][8];
-        bodyStats.post = props.query.result.data[i][9];
-        bodyStats.status = props.query.result.data[i][10];
+        bodyStats.name = result.data[i][7];
+        bodyStats.pre = result.data[i][8];
+        bodyStats.post = result.data[i][9];
+        bodyStats.status = result.data[i][10];
       }
+      /* eslint-enable prefer-destructuring */
 
-      for (let j = 0; j < 7; j++) {
-        if (j === 2) {
-          continue;
+      for (let j = 0; j < 7; j += 1) {
+        if (j !== 2) {
+          arr.push(result.data[i][j]);
         }
-        arr.push(props.query.result.data[i][j]);
       }
       // check if isinput
-      if (props.query.result.data[i][2]) {
+      if (result.data[i][2]) {
         if (highlight) {
           highlightIndexInput[inputTable.result.data.length] = 'lightblue';
         }
@@ -83,20 +89,20 @@ class PartnerCompletenessView extends React.Component {
       }
     }
 
-    outputTable.result['disableSort'] = new Set([0, 1, 2, 3, 4, 5]);
-    inputTable.result['disableSort'] = new Set([0, 1, 2, 3, 4, 5]);
-    inputTable.result['highlightIndex'] = highlightIndexInput;
-    outputTable.result['highlightIndex'] = highlightIndexOutput;
+    outputTable.result.disableSort = new Set([0, 1, 2, 3, 4, 5]);
+    inputTable.result.disableSort = new Set([0, 1, 2, 3, 4, 5]);
+    inputTable.result.highlightIndex = highlightIndexInput;
+    outputTable.result.highlightIndex = highlightIndexOutput;
 
-    let inputStats = this.highlightStats(inputTable.result.data, highlightIndexInput, 0);
-    let outputStats = this.highlightStats(outputTable.result.data, highlightIndexOutput, 0);
+    const inputStats = this.highlightStats(inputTable.result.data, highlightIndexInput, 0);
+    const outputStats = this.highlightStats(outputTable.result.data, highlightIndexOutput, 0);
 
     this.state = {
-      inputTable: inputTable,
-      outputTable: outputTable,
+      inputTable,
+      outputTable,
       allStatus: [...allStatus],
       selectedStatus: [...allStatus],
-      bodyStats: bodyStats,
+      bodyStats,
       inputStats,
       outputStats,
       orphanFilter: 0
@@ -108,7 +114,7 @@ class PartnerCompletenessView extends React.Component {
     let highconn = 0;
     let numbodies = 0;
     let numhigh = 0;
-    for (let i = 0; i < table.length; i++) {
+    for (let i = 0; i < table.length; i += 1) {
       if (table[i][2] <= filter) {
         break;
       }
@@ -130,42 +136,38 @@ class PartnerCompletenessView extends React.Component {
   };
 
   highlightRows = filter => selected => {
-    let inputTable = this.state.inputTable;
-    let outputTable = this.state.outputTable;
-    let currSelected = selected.map(item => item.value);
-    let currSelectedSet = new Set(currSelected);
+    const { inputTable, outputTable } = this.state;
+    const currSelected = selected.map(item => item.value);
+    const currSelectedSet = new Set(currSelected);
+    const filterLimit = (filter === '') ? 0 : filter;
 
-    if (filter === '') {
-      filter = 0;
-    }
-
-    let inputHighlight = {};
-    let outputHighlight = {};
-    for (let i = 0; i < inputTable.result.data.length; i++) {
-      if (inputTable.result.data[i][2] <= filter) {
+    const inputHighlight = {};
+    const outputHighlight = {};
+    for (let i = 0; i < inputTable.result.data.length; i += 1) {
+      if (inputTable.result.data[i][2] <= filterLimit) {
         inputHighlight[i] = 'pink';
       } else if (currSelectedSet.has(inputTable.result.data[i][3])) {
         inputHighlight[i] = 'lightblue';
       }
     }
 
-    for (let i = 0; i < outputTable.result.data.length; i++) {
-      if (outputTable.result.data[i][2] <= filter) {
+    for (let i = 0; i < outputTable.result.data.length; i += 1) {
+      if (outputTable.result.data[i][2] <= filterLimit) {
         outputHighlight[i] = 'pink';
       } else if (currSelectedSet.has(outputTable.result.data[i][3])) {
         outputHighlight[i] = 'lightblue';
       }
     }
 
-    inputTable.result['highlightIndex'] = inputHighlight;
-    outputTable.result['highlightIndex'] = outputHighlight;
+    inputTable.result.highlightIndex = inputHighlight;
+    outputTable.result.highlightIndex = outputHighlight;
 
-    let inputStats = this.highlightStats(inputTable.result.data, inputHighlight, filter);
-    let outputStats = this.highlightStats(outputTable.result.data, outputHighlight, filter);
+    const inputStats = this.highlightStats(inputTable.result.data, inputHighlight, filterLimit);
+    const outputStats = this.highlightStats(outputTable.result.data, outputHighlight, filterLimit);
 
     this.setState({
-      inputTable: inputTable,
-      outputTable: outputTable,
+      inputTable,
+      outputTable,
       selectedStatus: currSelected,
       inputStats,
       outputStats
@@ -173,21 +175,20 @@ class PartnerCompletenessView extends React.Component {
   };
 
   handleChange = event => {
-    let val = parseInt(event.target.value);
+    const { selectedStatus } = this.state;
+    let val = parseInt(event.target.value, 10);
     if (event.target.value === '' || event.target.value === null) {
       val = '';
     }
-    if (!isNaN(val) || val === '') {
+    if (/^\d+$/.test(val) || val === '') {
       this.setState({
         orphanFilter: val
       });
 
-      const currSelected = this.state.selectedStatus.map(name => {
-        return {
+      const currSelected = selectedStatus.map(name => ({
           label: name,
           value: name
-        };
-      });
+        }));
       this.highlightRows(val)(currSelected);
     }
   };
@@ -201,21 +202,18 @@ class PartnerCompletenessView extends React.Component {
       outputTable,
       bodyStats,
       inputStats,
-      outputStats
+      outputStats,
+      orphanFilter
     } = this.state;
 
-    const options = allStatus.map(name => {
-      return {
+    const options = allStatus.map(name => ({
         label: name,
         value: name
-      };
-    });
-    const currSelected = selectedStatus.map(name => {
-      return {
+      }));
+    const currSelected = selectedStatus.map(name => ({
         label: name,
         value: name
-      };
-    });
+      }));
 
     const visProperties = { rowsPerPage: 10 };
 
@@ -232,7 +230,7 @@ class PartnerCompletenessView extends React.Component {
           className={classes.select}
           isMulti
           value={currSelected}
-          onChange={this.highlightRows(this.state.orphanFilter)}
+          onChange={this.highlightRows(orphanFilter)}
           options={options}
           closeMenuOnSelect={false}
         />
@@ -240,7 +238,7 @@ class PartnerCompletenessView extends React.Component {
           id="orphanfilter"
           label="Filter (ignore #conn <=)"
           className={classes.textField}
-          value={this.state.orphanFilter}
+          value={orphanFilter}
           onChange={this.handleChange}
           margin="normal"
         />
@@ -261,5 +259,10 @@ class PartnerCompletenessView extends React.Component {
     );
   }
 }
+
+PartnerCompletenessView.propTypes = {
+  query: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired,
+};
 
 export default withStyles(styles)(PartnerCompletenessView);

@@ -1,7 +1,7 @@
-import C from './constants';
 import Immutable from 'immutable';
+import C from './constants';
 
-var skeletonState = Immutable.Map({
+const skeletonState = Immutable.Map({
   display: false,
   neurons: Immutable.Map({}),
   loading: false,

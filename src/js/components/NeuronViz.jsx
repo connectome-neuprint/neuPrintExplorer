@@ -12,7 +12,7 @@ import { setFullScreen, clearFullScreen } from 'actions/app';
 import Skeleton from './Skeleton';
 import NeuroGlancer from './NeuroGlancer';
 
-const styles = theme => ({
+const styles = () => ({
   full: {
     position: 'relative',
     width: '100%',
@@ -38,6 +38,7 @@ class NeuronViz extends React.Component {
 
   render() {
     const { classes, fullscreen, actions } = this.props;
+    const { selectedViewer } = this.state;
 
     return (
       <div className={classes.full}>
@@ -63,7 +64,7 @@ class NeuronViz extends React.Component {
 
         <Tabs
           centered
-          value={this.state.selectedViewer}
+          value={selectedViewer}
           onChange={this.handleViewerSelect}
           textColor="primary"
           indicatorColor="primary"
@@ -71,7 +72,7 @@ class NeuronViz extends React.Component {
           <Tab label="Neuroglancer" />
           <Tab label="Skeleton" />
         </Tabs>
-        {this.state.selectedViewer === 0 ? (
+        {selectedViewer === 0 ? (
           <NeuroGlancer />
         ) : (
           <Skeleton />
@@ -83,14 +84,13 @@ class NeuronViz extends React.Component {
 
 NeuronViz.propTypes = {
   fullscreen: PropTypes.bool.isRequired,
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  actions: PropTypes.object.isRequired
 };
 
-const NeuronVizState = state => {
-  return {
+const NeuronVizState = state => ({
     fullscreen: state.app.get('fullscreen')
-  };
-};
+  });
 
 const NeuronVizDispatch = dispatch => ({
   actions: {

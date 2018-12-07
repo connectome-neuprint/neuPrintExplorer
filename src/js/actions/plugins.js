@@ -45,9 +45,10 @@ export function submit(query) {
       queryUrl = `/api${query.queryString}`;
     }
 
+    const { parameters } = query;
     // if cypherQuery is passed in, then add it to the parameters.
     if (query.cypherQuery) {
-      query.parameters.cypher = query.cypherQuery;
+      parameters.cypher = query.cypherQuery;
     }
 
     // async action here to fetch the results and format them.
@@ -56,7 +57,7 @@ export function submit(query) {
         'content-type': 'application/json',
         Accept: 'application/json'
       },
-      body: JSON.stringify(query.parameters),
+      body: JSON.stringify(parameters),
       method: 'POST',
       credentials: 'include'
     })
@@ -64,11 +65,11 @@ export function submit(query) {
       .then(result => result.json())
       .then(resp => {
         // make new result object
-        let data = query.processResults(query, resp);
+        const data = query.processResults(query, resp);
         const combined = Object.assign(query, { result: data });
         dispatch(saveQueryResponse(combined));
       })
-      .catch(function(error) {
+      .catch((error) => {
         dispatch(submissionError(error));
       });
   };

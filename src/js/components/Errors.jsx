@@ -60,17 +60,15 @@ Errors.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-Errors.defaultTypes = {
+Errors.defaultProps = {
   errorMessage: null
 };
 
-var ErrorsState = function(state) {
-  return {
-    errorMessage: state.errors.get('message')
-  };
-};
+const ErrorsState = state => ({
+  errorMessage: state.errors.get('message')
+});
 
-var ErrorsDispatch = dispatch => ({
+const ErrorsDispatch = dispatch => ({
   actions: {
     clearErrors: () => {
       dispatch(clearErrors());

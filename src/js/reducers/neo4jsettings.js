@@ -1,8 +1,8 @@
 /*
  * Stores configuration and other basic information for neo4j datasets.
 */
-import C from './constants';
 import Immutable from 'immutable';
+import C from './constants';
 
 const neo4jsettingsState = Immutable.Map({
   availableDatasets: [],

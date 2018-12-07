@@ -19,14 +19,19 @@ import { setUrlQS } from '../../actions/app';
 
 const styles = () => ({
   textField: {
-    width: 300
+    width: 300,
+    margin: '0 0 1em 0'
+  },
+  button: {
+    margin: 4,
+    display: 'block'
   },
   formControl: {}
 });
 
 const pluginName = 'CustomQuery';
 
-class FreeForm extends React.Component {
+class CustomQuery extends React.Component {
   static get queryName() {
     return 'Custom';
   }
@@ -37,16 +42,16 @@ class FreeForm extends React.Component {
 
   constructor(props) {
     super(props);
-    var initqsParams = {
+    const initqsParams = {
       textValue: ''
     };
-    var qsParams = LoadQueryString(
-      'Query:' + this.constructor.queryName,
+    const qsParams = LoadQueryString(
+      `Query:${  this.constructor.queryName}`,
       initqsParams,
-      this.props.urlQueryString
+      props.urlQueryString
     );
     this.state = {
-      qsParams: qsParams
+      qsParams
     };
   }
 
@@ -57,18 +62,19 @@ class FreeForm extends React.Component {
         data: apiResponse.data,
         debug: apiResponse.debug
       };
-    } else {
+    }
       return {
         columns: [],
         data: [],
         debug: ''
       };
-    }
+
   };
 
   processRequest = () => {
     const { dataSet, actions, history } = this.props;
-    const { textValue } = this.state.qsParams;
+    const { qsParams } = this.state;
+    const { textValue } = qsParams;
 
     const query = {
       dataSet,
@@ -89,9 +95,11 @@ class FreeForm extends React.Component {
   };
 
   handleChange = event => {
-    const oldParams = this.state.qsParams;
+    const { actions } = this.props;
+    const { qsParams } = this.state;
+    const oldParams = qsParams;
     oldParams.textValue = event.target.value;
-    this.props.actions.setURLQs(SaveQueryString('Query:' + this.constructor.queryName, oldParams));
+    actions.setURLQs(SaveQueryString(`Query:${  this.constructor.queryName}`, oldParams));
     this.setState({
       qsParams: oldParams
     });
@@ -106,53 +114,54 @@ class FreeForm extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { qsParams } = this.state;
+    const { classes, isQuerying } = this.props;
     return (
       <FormControl className={classes.formControl}>
         <TextField
           label="Custom Cypher Query"
           multiline
-          value={this.state.qsParams.textValue}
+          value={qsParams.textValue}
           rows={1}
           rowsMax={4}
           className={classes.textField}
           onChange={this.handleChange}
           onKeyDown={this.catchReturn}
         />
-        {this.props.disable ? (
-          <Button variant="contained" onClick={this.processRequest} disabled>
-            Submit
-          </Button>
-        ) : (
-          <Button variant="contained" onClick={this.processRequest}>
-            Submit
-          </Button>
-        )}
+        <Button
+          variant="contained"
+          className={classes.button}
+          onClick={this.processRequest}
+          color="primary"
+          disabled={isQuerying}
+        >
+          Submit
+        </Button>
       </FormControl>
     );
   }
 }
 
-FreeForm.propTypes = {
-  disable: PropTypes.bool,
+CustomQuery.propTypes = {
   urlQueryString: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired,
-  actions: PropTypes.object.isRequired
+  actions: PropTypes.object.isRequired,
+  dataSet: PropTypes.string.isRequired,
+  history: PropTypes.object.isRequired,
+  isQuerying: PropTypes.bool.isRequired
 };
 
-var FreeFormState = function(state) {
-  return {
-    urlQueryString: state.app.get('urlQueryString'),
-    isQuerying: state.query.isQuerying
-  };
-};
+const CustomQueryState = state => ({
+  urlQueryString: state.app.get('urlQueryString'),
+  isQuerying: state.query.isQuerying
+});
 
-var FreeFormDispatch = dispatch => ({
+const CustomQueryDispatch = dispatch => ({
   actions: {
     submit: query => {
       dispatch(submit(query));
     },
-    setURLQs: function(querystring) {
+    setURLQs(querystring) {
       dispatch(setUrlQS(querystring));
     }
   }
@@ -161,8 +170,8 @@ var FreeFormDispatch = dispatch => ({
 export default withStyles(styles)(
   withRouter(
     connect(
-      FreeFormState,
-      FreeFormDispatch
-    )(FreeForm)
+      CustomQueryState,
+      CustomQueryDispatch
+    )(CustomQuery)
   )
 );

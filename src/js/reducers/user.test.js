@@ -1,6 +1,7 @@
-import C from '../../../src/js/reducers/constants';
-import reducer from '../../../src/js/reducers/user';
 import Immutable from 'immutable';
+
+import C from './constants';
+import reducer from './user';
 
 const state = Immutable.Map({
   userInfo: 'existinguserinfo',
@@ -8,7 +9,7 @@ const state = Immutable.Map({
 });
 
 const initialState = Immutable.Map({
-  userInfo: null,
+  userInfo: {},
   token: ''
 });
 

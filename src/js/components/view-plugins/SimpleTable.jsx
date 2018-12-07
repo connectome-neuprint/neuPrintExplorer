@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -81,27 +83,24 @@ class SimpleTable extends React.Component {
   constructor(props) {
     super(props);
     const { properties } = this.props;
-    //default values
-    let rowsPerPage = 5;
-    let paginate = true;
-    // check for user-specified props
-    if (properties) {
-      if (properties.rowsPerPage) {
-        rowsPerPage = properties.rowsPerPage;
-      }
-      if (properties.paginate) {
-        paginate = properties.paginate;
-      }
+    // default values
+    let { paginate, rowsPerPage } = properties;
+
+    // set defaults if not specified by user
+    if (!rowsPerPage) {
+      rowsPerPage = 5;
+    }
+
+    if (!paginate) {
+      paginate = true;
     }
 
     this.state = {
       order: 'asc',
       orderBy: '',
-      selected: [],
-      data: [],
       page: 0,
-      rowsPerPage: rowsPerPage,
-      paginate: paginate
+      rowsPerPage,
+      paginate,
     };
   }
 
@@ -113,37 +112,35 @@ class SimpleTable extends React.Component {
     this.setState({ rowsPerPage: event.target.value });
   };
 
-  handleCellClick = action => event => {
+  handleCellClick = action => () => {
     action();
   };
 
-  handleRequestSort = property => event => {
-    const orderBy = property;
-    let order = 'desc';
+  handleRequestSort = property => () => {
+    const { orderBy, order } = this.state;
+    const newOrderBy = property;
+    let newOrder = 'desc';
 
-    if (this.state.orderBy === property && this.state.order === 'desc') {
-      order = 'asc';
+    if (orderBy === property && order === 'desc') {
+      newOrder = 'asc';
     }
 
-    this.setState({ order, orderBy });
+    this.setState({ order: newOrder, orderBy: newOrderBy });
   };
 
   render() {
     const { query, classes } = this.props;
     const { page, rowsPerPage, orderBy, order } = this.state;
+    let { paginate } = this.state;
     const emptyRows =
       rowsPerPage - Math.min(rowsPerPage, query.result.data.length - page * rowsPerPage);
 
     // TODO: use visProps when roi connectivity plugin has been refactored.
-    let paginate = true;
     if ('paginate' in query.result && query.result.paginate === 0) {
       paginate = false;
     }
 
-    let highlightIndex = {};
-    if ('highlightIndex' in query.result) {
-      highlightIndex = query.result.highlightIndex;
-    }
+    const { highlightIndex } = query.result;
 
     return (
       <div className={classes.root}>
@@ -152,11 +149,12 @@ class SimpleTable extends React.Component {
             <TableHead>
               <TableRow>
                 {query.result.columns.map((header, index) => {
+                  const headerKey = `${header}${index}`;
                   if ('disableSort' in query.result && query.result.disableSort.has(index)) {
-                    return <TableCell key={index}>{header}</TableCell>;
-                  } else {
+                    return <TableCell key={headerKey}>{header}</TableCell>;
+                  }
                     return (
-                      <TableCell key={index} sortDirection={orderBy === index ? order : false}>
+                      <TableCell key={headerKey} sortDirection={orderBy === index ? order : false}>
                         <TableSortLabel
                           active={orderBy === index}
                           direction={order}
@@ -166,7 +164,6 @@ class SimpleTable extends React.Component {
                         </TableSortLabel>
                       </TableCell>
                     );
-                  }
                 })}
               </TableRow>
             </TableHead>
@@ -175,28 +172,31 @@ class SimpleTable extends React.Component {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   let rowStyle = {};
-                  let currspot = page * rowsPerPage + index;
-                  if (currspot.toString() in highlightIndex) {
+                  const currspot = page * rowsPerPage + index;
+                  if (highlightIndex && currspot.toString() in highlightIndex) {
                     rowStyle = { backgroundColor: highlightIndex[currspot.toString()] };
                   }
+                  const key = index;
                   return (
-                    <TableRow hover key={index} style={rowStyle}>
+                    <TableRow hover key={key} style={rowStyle}>
                       {row.map((cell, i) => {
                         if (cell && typeof cell === 'object' && 'value' in cell) {
+                          const cellKey = `${i}${cell.value}`;
                           if ('action' in cell) {
                             return (
                               <TableCell
                                 className={classes.clickable}
-                                key={i}
+                                key={cellKey}
                                 onClick={this.handleCellClick(cell.action)}
                               >
                                 {cell.value}
                               </TableCell>
                             );
                           }
-                          return <TableCell key={i}>{cell.value}</TableCell>;
+                          return <TableCell key={cellKey}>{cell.value}</TableCell>;
                         }
-                        return <TableCell key={i}>{cell}</TableCell>;
+                        const cellKey = `${i}${cell}`;
+                        return <TableCell key={cellKey}>{cell}</TableCell>;
                       })}
                     </TableRow>
                   );
@@ -225,5 +225,15 @@ class SimpleTable extends React.Component {
     );
   }
 }
+
+SimpleTable.propTypes = {
+  query: PropTypes.object.isRequired,
+  properties: PropTypes.object,
+  classes: PropTypes.object.isRequired,
+};
+
+SimpleTable.defaultProps = {
+  properties: {}
+};
 
 export default withStyles(styles)(SimpleTable);

@@ -1,3 +1,5 @@
+import { createStore } from 'redux';
+
 import appReducers from './index';
 import errors from './errors';
 import app from './app';
@@ -8,8 +10,6 @@ import user from './user';
 import skeleton from './skeleton';
 import neuroglancer from './neuroglancer';
 import C from './constants';
-
-import { createStore } from 'redux';
 
 let store;
 
@@ -118,10 +118,10 @@ describe('store Creation', () => {
     testReducerAction('app', app, { type: C.CLEAR_FULLSCREEN_VIEWER });
   });
   // TODO: add rest of actions
-  //query
-  //neo4jsettings
-  //results
-  //user
-  //errors
-  //neuroglancer
+  // query
+  // neo4jsettings
+  // results
+  // user
+  // errors
+  // neuroglancer
 });

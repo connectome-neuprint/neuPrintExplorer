@@ -1,11 +1,10 @@
-import C from '../../../src/js/reducers/constants';
-import query from '../../../src/js/reducers/query';
+import C from './constants';
+import query from './query';
 
 // TODO: rewrite using Immutable once we get rid of callback function in neoQueryObj
 const state = {
   neoQueryObj: {
     queryStr: 'existingquerystring',
-    callback: function() {},
     state: 'existingstate'
   },
   isQuerying: false,
