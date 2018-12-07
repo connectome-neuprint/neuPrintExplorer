@@ -85,3 +85,10 @@ export function apiError(error) {
     error
   };
 }
+
+export function setSelectedResult(index) {
+  return {
+    type: C.APP_SET_SELECTED_RESULT,
+    index
+  };
+}

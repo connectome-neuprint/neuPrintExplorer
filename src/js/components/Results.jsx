@@ -14,9 +14,10 @@ import { withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Icon from '@material-ui/core/Icon';
+import AppBar from '@material-ui/core/AppBar';
 
 import { toggleSkeleton } from 'actions/skeleton';
-import { setFullScreen, clearFullScreen } from 'actions/app';
+import { setFullScreen, clearFullScreen, setSelectedResult } from 'actions/app';
 import ResultsTopBar from './ResultsTopBar';
 import Skeleton from './Skeleton';
 import NeuroGlancer from './NeuroGlancer';
@@ -60,17 +61,6 @@ const styles = theme => ({
 });
 
 class Results extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      selectedResult: 0
-    };
-  }
-
-  componentDidMount() {
-    document.addEventListener('keydown', this.triggerKeyboard);
-  }
-
   componentDidUpdate(prevProps) {
     const { urlQueryString, showSkel } = this.props;
     const query = qs.parse(prevProps.urlQueryString);
@@ -88,29 +78,6 @@ class Results extends React.Component {
       window.dispatchEvent(new Event('resize'));
     }
   }
-
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.triggerKeyboard);
-  }
-
-  triggerKeyboard = event => {
-    const { actions, skeletonCount } = this.props;
-    const { hovered } = this.state;
-
-    if (hovered) {
-      if (event.which === 32) {
-        if (skeletonCount > 0) {
-          actions.toggleSkeleton();
-        }
-      } else if (event.which === 43) {
-        if (skeletonCount > 0) {
-          actions.setFullScreen('skeleton');
-        }
-      } else if (event.which === 95) {
-        actions.clearFullScreen();
-      }
-    }
-  };
 
   downloadFile = index => {
     const { allResults } = this.props;
@@ -134,13 +101,13 @@ class Results extends React.Component {
   };
 
   handleResultSelection = (event, value) => {
-    this.setState({ selectedResult: value });
+    const { actions } = this.props;
+    actions.setSelectedResult(value);
   };
 
   render() {
     // TODO: show query runtime results
-    const { classes, isQuerying, allResults, viewPlugins, showSkel } = this.props;
-    const { selectedResult } = this.state;
+    const { classes, isQuerying, allResults, viewPlugins, showSkel, selectedResult } = this.props;
 
     if (!isQuerying && allResults.size === 0) {
       return (
@@ -157,17 +124,18 @@ class Results extends React.Component {
     const combinedResults = (showSkel) ? allResults.push({
       neuronViz: true,
       plugin: 'NeuroGlancer',
-      component: <NeuroGlancer />
+      component: <NeuroGlancer key="ng" />
     }).push({
       neuronViz: true,
       plugin: 'Skeleton',
-      component: <Skeleton />
+      component: <Skeleton key="skeleton" />
     }) : allResults;
 
     let results = '';
 
     if (combinedResults.size > 0) {
-      results = combinedResults.slice(selectedResult, selectedResult + 1).map((query, index) => {
+      const combinedIndex = (!combinedResults.get(selectedResult)) ? 0 : selectedResult;
+      results = combinedResults.slice(combinedIndex, combinedIndex + 1).map((query, index) => {
         if (query.neuronViz) {
           return query.component;
         }
@@ -189,10 +157,24 @@ class Results extends React.Component {
       });
     }
 
-    const tabs = combinedResults.map(query => ( <Tab label={query.plugin} /> ));
+    const tabs = combinedResults.map((query, index) => {
+      const key = `${query.plugin}${index}`;
+      return (
+        <Tab key={key} label={query.plugin} />
+      );
+    });
+    // when opening neuroglancer or skeleton viewer we set the selected index to -1 or -2.
+    // This is not a valid option for the Tab component so we need to convert it to the
+    // index in the array.
+    let tabValue = (selectedResult < 0) ? tabs.size + selectedResult : selectedResult;
+
+    // if the tabValue is out of range, then just set it to the first tab.
+    if (!tabs.get(tabValue)) {
+      tabValue = 0;
+    }
 
     return (
-      <div>
+      <div className={classes.full}>
         <Fade
           in={isQuerying}
           style={{
@@ -202,16 +184,18 @@ class Results extends React.Component {
         >
           <CircularProgress />
         </Fade>
-
-        <Tabs
-          centered
-          value={selectedResult}
-          onChange={this.handleResultSelection}
-          textColor="primary"
-          indicatorColor="primary"
-        >
-          {tabs}
-        </Tabs>
+        <AppBar position="static" color="default">
+          <Tabs
+            value={tabValue}
+            onChange={this.handleResultSelection}
+            textColor="primary"
+            indicatorColor="primary"
+            scrollable
+            scrollButtons="auto"
+          >
+            {tabs}
+          </Tabs>
+        </AppBar>
         <div className={classes.scroll}>
           {results}
         </div>
@@ -230,8 +214,8 @@ Results.propTypes = {
   urlQueryString: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired,
   showSkel: PropTypes.bool.isRequired,
-  skeletonCount: PropTypes.number.isRequired,
   actions: PropTypes.object.isRequired,
+  selectedResult: PropTypes.number.isRequired
 };
 
 // result data [{name: "table name", header: [headers...], body: [rows...]
@@ -244,9 +228,9 @@ const ResultsState = state => ({
   clearIndices: state.results.clearIndices,
   numClear: state.results.numClear,
   showSkel: state.skeleton.get('display'),
-  skeletonCount: state.skeleton.get('neurons').size,
   userInfo: state.user.get('userInfo'),
   urlQueryString: state.app.get('urlQueryString'),
+  selectedResult: state.app.get('selectedResult'),
   queryObj: state.query.neoQueryObj,
   fullscreen: state.app.get('fullscreen')
 });
@@ -261,6 +245,9 @@ const ResultDispatch = dispatch => ({
     },
     clearFullScreen: () => {
       dispatch(clearFullScreen());
+    },
+    setSelectedResult: (index) => {
+      dispatch(setSelectedResult(index));
     }
   }
 });

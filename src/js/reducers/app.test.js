@@ -14,7 +14,8 @@ const state = Immutable.Map({
       viz: 'viz',
       query: 'query'
     })
-  })
+  }),
+  selectedResult: 0
 });
 
 describe('app Reducer', () => {
@@ -32,7 +33,8 @@ describe('app Reducer', () => {
         appDB: '',
         fullscreen: false,
         activePlugins: Immutable.Map({}),
-        viewPlugins: Immutable.Map({})
+        viewPlugins: Immutable.Map({}),
+        selectedResult: 0
       })
     );
     expect(reducer(state, action)).toEqual(
@@ -48,7 +50,8 @@ describe('app Reducer', () => {
             viz: 'viz',
             query: 'query'
           })
-        })
+        }),
+        selectedResult: 0
       })
     );
   });
@@ -66,7 +69,8 @@ describe('app Reducer', () => {
         appDB: '',
         fullscreen: false,
         activePlugins: Immutable.Map({}),
-        viewPlugins: Immutable.Map({})
+        viewPlugins: Immutable.Map({}),
+        selectedResult: 0
       })
     );
     expect(reducer(state, action)).toEqual(
@@ -82,7 +86,8 @@ describe('app Reducer', () => {
             viz: 'viz',
             query: 'query'
           })
-        })
+        }),
+        selectedResult: 0
       })
     );
   });
@@ -110,7 +115,8 @@ describe('app Reducer', () => {
         activePlugins: Immutable.Map({
           a: newDataElement
         }),
-        viewPlugins: Immutable.Map({})
+        viewPlugins: Immutable.Map({}),
+        selectedResult: 0
       })
     );
     expect(reducer(state, action)).toEqual(
@@ -127,7 +133,8 @@ describe('app Reducer', () => {
             query: 'query'
           }),
           a: newDataElement
-        })
+        }),
+        selectedResult: 0
       })
     );
   });
@@ -144,7 +151,8 @@ describe('app Reducer', () => {
         urlQueryString: 'existingstring',
         appDB: 'existingDB',
         fullscreen: false,
-        activePlugins: Immutable.Map({})
+        activePlugins: Immutable.Map({}),
+        selectedResult: 0
       })
     );
   });

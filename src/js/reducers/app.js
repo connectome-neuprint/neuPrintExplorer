@@ -11,7 +11,8 @@ const appState = Immutable.Map({
   appDB: '',
   fullscreen: false,
   activePlugins: Immutable.Map({}),
-  viewPlugins: Immutable.Map({})
+  viewPlugins: Immutable.Map({}),
+  selectedResult: 0
 });
 
 export default function appReducer(state = appState, action) {
@@ -39,6 +40,10 @@ export default function appReducer(state = appState, action) {
       return state.set('fullscreen', true);
     case C.CLEAR_FULLSCREEN_VIEWER:
       return state.set('fullscreen', false);
+    case C.APP_SET_SELECTED_RESULT:
+      return state.set('selectedResult', action.index);
+    case C.SKELETON_OPEN:
+      return state.set('selectedResult', -2);
     default:
       return state;
   }
