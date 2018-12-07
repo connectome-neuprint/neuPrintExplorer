@@ -75,7 +75,7 @@ const styles = theme => ({
   scroll: {
     marginTop: theme.spacing.unit * 1,
     overflowY: 'auto',
-    overflowX: 'auto',
+    overflowX: 'auto'
   }
 });
 
@@ -100,7 +100,7 @@ class SimpleTable extends React.Component {
       orderBy: '',
       page: 0,
       rowsPerPage,
-      paginate,
+      paginate
     };
   }
 
@@ -130,8 +130,13 @@ class SimpleTable extends React.Component {
 
   render() {
     const { query, classes } = this.props;
-    const { page, rowsPerPage, orderBy, order } = this.state;
+    const { page, orderBy, order } = this.state;
+    let { rowsPerPage } = this.state;
     let { paginate } = this.state;
+    // fit table to data
+    if (query.result.data.length < rowsPerPage) {
+      rowsPerPage = query.result.data.length;
+    }
     const emptyRows =
       rowsPerPage - Math.min(rowsPerPage, query.result.data.length - page * rowsPerPage);
 
@@ -153,17 +158,17 @@ class SimpleTable extends React.Component {
                   if ('disableSort' in query.result && query.result.disableSort.has(index)) {
                     return <TableCell key={headerKey}>{header}</TableCell>;
                   }
-                    return (
-                      <TableCell key={headerKey} sortDirection={orderBy === index ? order : false}>
-                        <TableSortLabel
-                          active={orderBy === index}
-                          direction={order}
-                          onClick={this.handleRequestSort(index)}
-                        >
-                          {header}
-                        </TableSortLabel>
-                      </TableCell>
-                    );
+                  return (
+                    <TableCell key={headerKey} sortDirection={orderBy === index ? order : false}>
+                      <TableSortLabel
+                        active={orderBy === index}
+                        direction={order}
+                        onClick={this.handleRequestSort(index)}
+                      >
+                        {header}
+                      </TableSortLabel>
+                    </TableCell>
+                  );
                 })}
               </TableRow>
             </TableHead>
@@ -229,7 +234,7 @@ class SimpleTable extends React.Component {
 SimpleTable.propTypes = {
   query: PropTypes.object.isRequired,
   properties: PropTypes.object,
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
 SimpleTable.defaultProps = {
