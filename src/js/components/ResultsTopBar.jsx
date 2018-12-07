@@ -86,7 +86,6 @@ class ResultsTopBar extends React.Component {
       name,
       index,
       queryStr,
-      version,
       downloadCallback,
       actions
     } = this.props;
@@ -156,11 +155,7 @@ class ResultsTopBar extends React.Component {
             className={classes.button}
             aria-label="Close Window"
             onClick={() => {
-              if (version === 2) {
-                actions.clearNewResult(index);
-              } else {
-                actions.clearResult(index);
-              }
+              actions.clearNewResult(index);
             }}
           >
             <Icon style={{ fontSize: 18 }}>close</Icon>
@@ -208,12 +203,10 @@ ResultsTopBar.propTypes = {
   name: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
   token: PropTypes.string.isRequired,
-  appDB: PropTypes.string.isRequired,
-  version: PropTypes.number
+  appDB: PropTypes.string.isRequired
 };
 
 ResultsTopBar.defaultProps = {
-  version: 1,
   color: '#cccccc'
 };
 

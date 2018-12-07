@@ -11,12 +11,15 @@ import Typography from '@material-ui/core/Typography';
 import Fade from '@material-ui/core/Fade';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { withStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Icon from '@material-ui/core/Icon';
 
 import { toggleSkeleton } from 'actions/skeleton';
 import { setFullScreen, clearFullScreen } from 'actions/app';
 import ResultsTopBar from './ResultsTopBar';
-import NeuronViz from './NeuronViz';
+import Skeleton from './Skeleton';
+import NeuroGlancer from './NeuroGlancer';
 
 import './Results.css';
 
@@ -60,7 +63,7 @@ class Results extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      hovered: false
+      selectedResult: 0
     };
   }
 
@@ -109,14 +112,6 @@ class Results extends React.Component {
     }
   };
 
-  handleMouseEnter = () => {
-    // this.setState({'hovered': true});
-  };
-
-  handleMouseLeave = () => {
-    // this.setState({'hovered': false});
-  };
-
   downloadFile = index => {
     const { allResults } = this.props;
     const results = allResults.get(index);
@@ -138,55 +133,66 @@ class Results extends React.Component {
     element.click();
   };
 
+  handleResultSelection = (event, value) => {
+    this.setState({ selectedResult: value });
+  };
+
   render() {
     // TODO: show query runtime results
-    const { classes, isQuerying, allResults, viewPlugins, showSkel, fullscreen } = this.props;
-    const resArray = [];
+    const { classes, isQuerying, allResults, viewPlugins, showSkel } = this.props;
+    const { selectedResult } = this.state;
 
-    if (fullscreen && showSkel) {
+    if (!isQuerying && allResults.size === 0) {
       return (
-        <div
-          onMouseEnter={this.handleMouseEnter}
-          onMouseLeave={this.handleMouseLeave}
-          className={classes.full}
-        >
-          <NeuronViz />
+        <div className={classes.root}>
+          <div className={classes.empty}>
+            <Typography variant="h6">No Search Results</Typography>
+            <Typography>Please use the Menu to the left or the <Icon>search</Icon> icon to start a search.</Typography>
+          </div>
         </div>
       );
     }
 
-    const results = allResults.map((query, index) => {
-      const View = viewPlugins.get(query.visType);
-      const key = `${query.plugin}${index}`;
-      return (
-        <div key={key}>
-          <ResultsTopBar
-            version={2}
-            downloadCallback={this.downloadFile}
-            name={query.title}
-            index={index}
-            queryStr={query.result.debug}
-            color={query.menuColor}
-          />
-          <View query={query} properties={query.visProps} />
-        </div>
-      );
-    });
+    // if the skeleton should be shown, add it to the results list.
+    const combinedResults = (showSkel) ? allResults.push({
+      neuronViz: true,
+      plugin: 'NeuroGlancer',
+      component: <NeuroGlancer />
+    }).push({
+      neuronViz: true,
+      plugin: 'Skeleton',
+      component: <Skeleton />
+    }) : allResults;
+
+    let results = '';
+
+    if (combinedResults.size > 0) {
+      results = combinedResults.slice(selectedResult, selectedResult + 1).map((query, index) => {
+        if (query.neuronViz) {
+          return query.component;
+        }
+
+        const View = viewPlugins.get(query.visType);
+        const key = `${query.plugin}${index}`;
+        return (
+          <div key={key}>
+            <ResultsTopBar
+              downloadCallback={this.downloadFile}
+              name={query.title}
+              index={index}
+              queryStr={query.result.debug}
+              color={query.menuColor}
+            />
+            <View query={query} properties={query.visProps} />
+          </div>
+        );
+      });
+    }
+
+    const tabs = combinedResults.map(query => ( <Tab label={query.plugin} /> ));
 
     return (
-      <div
-        onMouseEnter={this.handleMouseEnter}
-        onMouseLeave={this.handleMouseLeave}
-        className={classes.root}
-      >
-        {!isQuerying &&
-          resArray.length === 0 &&
-          results.size === 0 && (
-            <div className={classes.empty}>
-              <Typography variant="h6">No Search Results</Typography>
-              <Typography>Please use the Menu to the left to start a search.</Typography>
-            </div>
-          )}
+      <div>
         <Fade
           in={isQuerying}
           style={{
@@ -196,21 +202,19 @@ class Results extends React.Component {
         >
           <CircularProgress />
         </Fade>
-        <Grid container spacing={0}>
-          <Grid item xs={12} sm={showSkel ? 6 : 12}>
-            <div className={classes.scroll}>
-              {results}
-              {resArray.map(result => result)}
-            </div>
-          </Grid>
-          {showSkel ? (
-            <Grid item xs={12} sm={6} h={2}>
-              <NeuronViz />
-            </Grid>
-          ) : (
-            <div />
-          )}
-        </Grid>
+
+        <Tabs
+          centered
+          value={selectedResult}
+          onChange={this.handleResultSelection}
+          textColor="primary"
+          indicatorColor="primary"
+        >
+          {tabs}
+        </Tabs>
+        <div className={classes.scroll}>
+          {results}
+        </div>
       </div>
     );
   }
@@ -228,7 +232,6 @@ Results.propTypes = {
   showSkel: PropTypes.bool.isRequired,
   skeletonCount: PropTypes.number.isRequired,
   actions: PropTypes.object.isRequired,
-  fullscreen: PropTypes.bool.isRequired
 };
 
 // result data [{name: "table name", header: [headers...], body: [rows...]
