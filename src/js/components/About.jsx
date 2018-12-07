@@ -89,33 +89,33 @@ class About extends React.Component {
     })
       .then(result => result.json())
       .then(result => {
-        let fulllist = [];
-        let repoedges = result.data.organization.repositories.edges;
-        repoedges.forEach(function(repoedge) {
-          let name = repoedge.node.name;
-          let issuelist = [];
-          let edges = repoedge.node.issues.edges;
-          edges.forEach(function(issue) {
-            let labelList = [];
-            let tagList = [];
+        const fulllist = [];
+        const repoedges = result.data.organization.repositories.edges;
+        repoedges.forEach((repoedge) => {
+          const reponame = repoedge.node.name;
+          const issuelist = [];
+          const { edges } = repoedge.node.issues;
+          edges.forEach((issue) => {
+            const labelList = [];
+            const tagList = [];
             if (issue.node.labels.edges.length > 0) {
-              let labels = issue.node.labels.edges;
-              labels.forEach(function(labeledge) {
-                labelList.push(labeledge.label.name);
-                var name = labeledge.label.name;
-                var divid = name + issue.node.number;
-                var txtcolor = 'black';
+              const labels = issue.node.labels.edges;
+              labels.forEach((labeledge) => {
+                const {name} = labeledge.label;
+                labelList.push(name);
+                const divid = name + issue.node.number;
+                let txtcolor = 'black';
                 if (darkLabels.includes(name)) {
                   txtcolor = 'white';
                 }
-                var tagstyle = {borderRadius: '10px',
-                                paddingLeft: '4px',
-                                paddingRight: '4px',
-                                marginLeft: '5px',
-                                float: 'left',
-                                fontFamily: 'sans-serif',
-                                color: txtcolor,
-                                backgroundColor: labelcolor[name]};
+                const tagstyle = {borderRadius: '10px',
+                                  paddingLeft: '4px',
+                                  paddingRight: '4px',
+                                  marginLeft: '5px',
+                                  float: 'left',
+                                  fontFamily: 'sans-serif',
+                                  color: txtcolor,
+                                  backgroundColor: labelcolor[name]};
                 tagList.push(<div key={divid} style={tagstyle}>{labeledge.label.name}</div>);
               });
             }
@@ -125,7 +125,7 @@ class About extends React.Component {
             const listItems = issuelist.map(iss => (
               <li key={iss[2].toString() + iss[0]}>
                 <div style={{float: 'left'}}>
-                <Tooltip title={iss[3]} placement={'bottom'} enterDelay={100}>
+                <Tooltip title={iss[3]} placement='bottom' enterDelay={100}>
                   <a
                     href={iss[1]}
                     target="_blank"
@@ -139,12 +139,12 @@ class About extends React.Component {
                 <div style={{float: 'left'}}>
                   {iss[4]}
                 </div>
-                <div style={{clear: 'both'}}></div>
+                <div style={{clear: 'both'}} />
               </li>
             ));
             const listing = (
-              <span key={name}>
-                {name}
+              <span key={reponame}>
+                {reponame}
                 <ul>{listItems}</ul>
               </span>
             );
