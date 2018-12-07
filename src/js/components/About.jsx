@@ -22,6 +22,25 @@ const styles = theme => ({
     margin: '1em 0'
   }
 });
+const labelcolor = {architecture: '#e888e6',
+                    bug: '#d73a4a',
+                    complex: '#e6e6e6',
+                    documentation: '#2852ed',
+                    duplicate: '#cfd3d7',
+                    enhancement: '#a2eeef',
+                    future: '#61ed6a',
+                    'good first issue': '#7057ff',
+                    'help wanted': '#008672',
+                    invalid: '#e4e669',
+                    'in progress': '#ededed',
+                    nicetohave: '#f298c2',
+                    question: '#d876e3',
+                    small: '#e6e6e6',
+                    style: '#8f95e8',
+                    'to do': '#ededed',
+                    user: '#4264bc'
+                   };
+const darkLabels = ['bug', 'documentation', 'good first issue', 'help wanted', 'user'];
 
 function newIssue(e) {
   e.preventDefault();
@@ -59,12 +78,39 @@ class About extends React.Component {
           let name = repoedge.node.name;
           let issuelist = [];
           let edges = repoedge.node.issues.edges;
+          let labelstring = '';
           edges.forEach(function(issue) {
-            issuelist.push([issue.node.title, issue.node.url, issue.node.number, issue.node.body]);
+            let labelList = [];
+            let tagList = [];
+            if (issue.node.labels.edges.length > 0) {
+              let labels = issue.node.labels.edges;
+              labels.forEach(function(labeledge) {
+                labelList.push(labeledge.label.name);
+                var name = labeledge.label.name;
+                var divid = name + issue.node.number;
+                var txtcolor = 'black';
+                if (darkLabels.includes(name)) {
+                  txtcolor = 'white';
+                }
+                var tagstyle = {borderRadius: '10px',
+                                paddingLeft: '4px',
+                                paddingRight: '4px',
+                                marginLeft: '5px',
+                                float: 'left',
+                                fontFamily: 'sans-serif',
+                                color: txtcolor,
+                                backgroundColor: labelcolor[name]};
+                tagList.push(<div key={divid} style={tagstyle}>{labeledge.label.name}</div>);
+              });
+              labelstring = labelList.join(', ');
+              labelstring = ' (' + labelstring + ')';
+            }
+            issuelist.push([issue.node.title, issue.node.url, issue.node.number, issue.node.body, labelstring, tagList]);
           });
           if (issuelist.length > 0) {
             let listItems = issuelist.map(iss => (
               <li key={iss[2].toString() + iss[0]}>
+                <div style={{float: 'left'}}>
                 <Tooltip title={iss[3]} placement={'bottom'} enterDelay={100}>
                   <a
                     href={iss[1]}
@@ -75,6 +121,11 @@ class About extends React.Component {
                     {iss[0]}
                   </a>
                 </Tooltip>
+                </div>
+                <div style={{float: 'left'}}>
+                  {iss[5]}
+                </div>
+                <div style={{clear: 'both'}}></div>
               </li>
             ));
             let listing = (
