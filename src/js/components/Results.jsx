@@ -29,33 +29,19 @@ const styles = theme => ({
     padding: theme.spacing.unit,
     outline: 0
   },
-  flex: {
-    flex: 1
-  },
-  tablesDiv: {
-    height: '80%'
-  },
   full: {
     width: '100%',
     height: '100%',
-    scroll: 'auto'
-  },
-  halftable: {
-    width: '50%',
-    height: '100%',
-    float: 'left',
-    scroll: 'auto'
-  },
-  halfskel: {
-    width: '50%',
-    height: '100%',
-    float: 'right'
+    overflow: 'auto'
   },
   empty: {
     padding: theme.spacing.unit * 3
   },
   scroll: {
     overflow: 'auto',
+    height: '100%'
+  },
+  fill: {
     height: '100%'
   }
 });
@@ -196,8 +182,10 @@ class Results extends React.Component {
             {tabs}
           </Tabs>
         </AppBar>
-        <div className={classes.scroll}>
-          {results}
+        <div className={classes.fill}>
+          <div className={classes.scroll}>
+            {results}
+          </div>
         </div>
       </div>
     );

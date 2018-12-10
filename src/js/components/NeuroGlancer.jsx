@@ -40,11 +40,7 @@ const NeuroGlancer = (props) => {
   viewerState.navigation.pose.position.voxelCoordinates = ngCoordinates.toJS();
 
   return (
-    <Grid container>
-      <Grid item xs={12}>
-        <Neuroglancer perspectiveZoom={80} viewerState={viewerState} />
-      </Grid>
-    </Grid>
+    <Neuroglancer perspectiveZoom={80} viewerState={viewerState} />
   );
 }
 
