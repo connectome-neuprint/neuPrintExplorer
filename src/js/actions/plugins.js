@@ -28,9 +28,11 @@ function saveQueryResponse(combined) {
   };
 }
 
-const handleError = (response, dispatch) => {
+const handleError = response => {
   if (!response.ok) {
-    dispatch(submissionError('Error processing query'));
+    if (response.status !== 400) {
+      throw new Error(`Failed to process query. [Status Code: ${response.status}]`);
+    }
   }
   return response;
 };
@@ -61,15 +63,19 @@ export function submit(query) {
       method: 'POST',
       credentials: 'include'
     })
-      .then(result => handleError(result, dispatch))
+      .then(result => handleError(result))
       .then(result => result.json())
       .then(resp => {
+        // sends error message provided by neuprinthttp
+        if (resp.error) {
+          throw new Error(resp.error);
+        }
         // make new result object
         const data = query.processResults(query, resp);
         const combined = Object.assign(query, { result: data });
         dispatch(saveQueryResponse(combined));
       })
-      .catch((error) => {
+      .catch(error => {
         dispatch(submissionError(error));
       });
   };
