@@ -1,6 +1,6 @@
 /*
  * Debug pop-up for neuron text fields.
-*/
+ */
 
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
@@ -14,16 +14,16 @@ const styles = () => ({
     top: '6px',
     right: '-10px',
     width: '2em',
-    height: '2em',
+    height: '2em'
   }
 });
 
-const NeuronHelp = (props) => {
+const NeuronHelp = props => {
   const { classes, children, text } = props;
 
   const tooltip = (
     <Tooltip id="tooltip-icon" title={text} placement="top">
-      <Typography color="error" className={classes.badge} >
+      <Typography color="error" className={classes.badge}>
         ?
       </Typography>
     </Tooltip>
@@ -34,7 +34,7 @@ const NeuronHelp = (props) => {
       {tooltip}
     </div>
   );
-}
+};
 
 NeuronHelp.propTypes = {
   children: PropTypes.element.isRequired,

@@ -1,6 +1,6 @@
 /*
  * Queries completeness of reconstruction with respect to neuron filters.
-*/
+ */
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -28,22 +28,29 @@ class Completeness extends React.Component {
     super(props);
 
     this.state = {
-      limitBig: true,
-      statusFilters: []
+      limitNeurons: true,
+      statusFilters: [],
+      preThreshold: 0,
+      postThreshold: 0
     };
   }
 
   loadNeuronFilters = params => {
-    this.setState({ limitBig: params.limitBig, statusFilters: params.statusFilters });
+    this.setState({
+      limitNeurons: params.limitNeurons,
+      statusFilters: params.statusFilters,
+      preThreshold: parseInt(params.preThreshold, 10),
+      postThreshold: parseInt(params.postThreshold, 10)
+    });
   };
 
   processResults = (query, apiResponse) => {
     const data = apiResponse.data.map(row => [
       row[0], // roiname
-      ((row[1]/row[3])*100), // % pre
+      (row[1] / row[3]) * 100, // % pre
       row[3], // total pre
-      ((row[2]/row[4])*100), // % post
-      row[4]  // total post
+      (row[2] / row[4]) * 100, // % post
+      row[4] // total post
     ]);
 
     return {
@@ -55,15 +62,20 @@ class Completeness extends React.Component {
 
   processRequest = () => {
     const { dataSet, actions, history } = this.props;
-    const { limitBig, statusFilters } = this.state;
+    const { limitNeurons, statusFilters, preThreshold, postThreshold } = this.state;
 
     const parameters = {
       dataset: dataSet,
       statuses: statusFilters,
+      all_segments: !limitNeurons
     };
 
-    if (limitBig) {
-      parameters.pre_threshold = 2;
+    if (preThreshold > 0) {
+      parameters.pre_threshold = preThreshold;
+    }
+
+    if (postThreshold > 0) {
+      parameters.post_threshold = postThreshold;
     }
 
     const query = {

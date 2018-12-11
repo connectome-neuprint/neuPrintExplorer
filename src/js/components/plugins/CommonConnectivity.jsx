@@ -1,6 +1,6 @@
 /*
- * Queries common inputs/outputs given list of bodyIds 
-*/
+ * Queries common inputs/outputs given list of bodyIds
+ */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -62,7 +62,10 @@ class CommonConnectivity extends React.Component {
 
     this.state = {
       qsParams,
-      limitBig: true
+      limitNeurons: true,
+      statusFilters: [],
+      preThreshold: 0,
+      postThreshold: 0
     };
   }
 
@@ -132,18 +135,24 @@ class CommonConnectivity extends React.Component {
 
   processRequest = () => {
     const { dataSet, actions, history } = this.props;
-    const { qsParams, statusFilters, limitBig } = this.state;
+    const { qsParams, limitNeurons, preThreshold, postThreshold, statusFilters } = this.state;
+    const { bodyIds, names, typeValue } = qsParams;
 
     const parameters = {
       dataset: dataSet,
       statuses: statusFilters,
-      find_inputs: qsParams.typeValue !== 'output',
-      neuron_ids: qsParams.bodyIds === '' ? [] : qsParams.bodyIds.split(',').map(Number),
-      neuron_names: qsParams.names === '' ? [] : qsParams.names.split(',')
+      find_inputs: typeValue !== 'output',
+      neuron_ids: bodyIds === '' ? [] : bodyIds.split(',').map(Number),
+      neuron_names: names === '' ? [] : names.split(','),
+      all_segments: !limitNeurons
     };
 
-    if (limitBig) {
-      parameters.pre_threshold = 2;
+    if (preThreshold > 0) {
+      parameters.pre_threshold = preThreshold;
+    }
+
+    if (postThreshold > 0) {
+      parameters.post_threshold = postThreshold;
     }
 
     const selectedNeurons =
@@ -170,8 +179,10 @@ class CommonConnectivity extends React.Component {
 
   loadNeuronFilters = params => {
     this.setState({
-      limitBig: params.limitBig,
-      statusFilters: params.statusFilters
+      limitNeurons: params.limitNeurons,
+      statusFilters: params.statusFilters,
+      preThreshold: parseInt(params.preThreshold, 10),
+      postThreshold: parseInt(params.postThreshold, 10)
     });
   };
 
@@ -260,7 +271,7 @@ class CommonConnectivity extends React.Component {
           </RadioGroup>
         </FormControl>
         <NeuronFilter callback={this.loadNeuronFilters} datasetstr={dataSet} />
-        <Button variant="contained" onClick={this.processRequest}>
+        <Button variant="contained" color="primary" onClick={this.processRequest}>
           Submit
         </Button>
       </div>

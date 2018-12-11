@@ -53,8 +53,10 @@ class FindNeurons extends React.Component {
 
     // set the default state for the query input.
     this.state = {
-      limitBig: true,
+      limitNeurons: true,
       statusFilters: [],
+      preThreshold: 0,
+      postThreshold: 0,
       qsParams,
       dataSet, // eslint-disable-line react/no-unused-state
       queryName: this.constructor.queryName // eslint-disable-line react/no-unused-state
@@ -284,14 +286,15 @@ class FindNeurons extends React.Component {
   // and generate the query object.
   processRequest = () => {
     const { dataSet, actions, history } = this.props;
-    const { statusFilters, limitBig, qsParams } = this.state;
+    const { statusFilters, limitNeurons, preThreshold, postThreshold, qsParams } = this.state;
     const { inputROIs, outputROIs, neuronName } = qsParams;
 
     const parameters = {
       dataset: dataSet,
       input_ROIs: inputROIs,
       output_ROIs: outputROIs,
-      statuses: statusFilters
+      statuses: statusFilters,
+      all_segments: !limitNeurons
     };
 
     if (neuronName !== '') {
@@ -302,8 +305,12 @@ class FindNeurons extends React.Component {
       }
     }
 
-    if (limitBig) {
-      parameters.pre_threshold = 2;
+    if (preThreshold > 0) {
+      parameters.pre_threshold = preThreshold;
+    }
+
+    if (postThreshold > 0) {
+      parameters.post_threshold = postThreshold;
     }
 
     const query = {
@@ -364,7 +371,12 @@ class FindNeurons extends React.Component {
   };
 
   loadNeuronFilters = params => {
-    this.setState({ limitBig: params.limitBig, statusFilters: params.statusFilters });
+    this.setState({
+      limitNeurons: params.limitNeurons,
+      statusFilters: params.statusFilters,
+      preThreshold: parseInt(params.preThreshold, 10),
+      postThreshold: parseInt(params.postThreshold, 10)
+    });
   };
 
   catchReturn = event => {

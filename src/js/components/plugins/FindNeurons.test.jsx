@@ -21,6 +21,9 @@ let textField;
 let submit;
 let inputSelect;
 let outputSelect;
+let limitNeuronsToggle;
+let preThresholdField;
+let postThresholdField;
 
 const component = (
   <Provider store={store}>
@@ -34,7 +37,19 @@ describe('find neurons Plugin', () => {
   beforeAll(() => {
     wrapper = mount(component);
     button = wrapper.find('FindNeurons').find('Button');
-    textField = wrapper.find('FindNeurons').find('TextField');
+    textField = wrapper
+      .find('FindNeurons')
+      .find('TextField')
+      .at(0);
+    limitNeuronsToggle = wrapper.find('FindNeurons').find('Switch');
+    preThresholdField = wrapper
+      .find('FindNeurons')
+      .find('TextField')
+      .at(1);
+    postThresholdField = wrapper
+      .find('FindNeurons')
+      .find('TextField')
+      .at(2);
     submit = jest.spyOn(wrapper.find('FindNeurons').props().actions, 'submit');
     inputSelect = wrapper.find('Select').at(0);
     outputSelect = wrapper.find('Select').at(1);
@@ -90,7 +105,7 @@ describe('find neurons Plugin', () => {
               autoComplete="off"
               autoCorrect="off"
               disabled={false}
-              id="react-select-4-input"
+              id="react-select-5-input"
               onBlur={[Function]}
               onChange={[Function]}
               onFocus={[Function]}
@@ -198,7 +213,7 @@ describe('find neurons Plugin', () => {
               autoComplete="off"
               autoCorrect="off"
               disabled={false}
-              id="react-select-5-input"
+              id="react-select-6-input"
               onBlur={[Function]}
               onChange={[Function]}
               onFocus={[Function]}
@@ -337,38 +352,16 @@ describe('find neurons Plugin', () => {
       </p>
     </div>
     <div
-      className="MuiPaper-root-108 MuiPaper-elevation1-111 MuiExpansionPanel-root-105 Connect-NeuronFilter--expandablePanel-102"
+      className="Connect-NeuronFilter--expandablePanel-102"
     >
       <div
-        aria-expanded={false}
-        className="MuiButtonBase-root-141 MuiExpansionPanelSummary-root-135"
-        onBlur={[Function]}
-        onClick={[Function]}
-        onFocus={[Function]}
-        onKeyDown={[Function]}
-        onKeyUp={[Function]}
-        onMouseDown={[Function]}
-        onMouseLeave={[Function]}
-        onMouseUp={[Function]}
-        onTouchEnd={[Function]}
-        onTouchMove={[Function]}
-        onTouchStart={[Function]}
-        role="button"
-        tabIndex="0"
+        className="MuiPaper-root-109 MuiPaper-elevation1-112 MuiExpansionPanel-root-106"
       >
         <div
-          className="MuiExpansionPanelSummary-content-139"
-        >
-          <p
-            className="MuiTypography-root-66 MuiTypography-body1-75"
-          >
-            Optional neuron/segment filters
-          </p>
-        </div>
-        <div
-          aria-hidden="true"
-          className="MuiButtonBase-root-141 MuiIconButton-root-144 MuiExpansionPanelSummary-expandIcon-140"
+          aria-expanded={false}
+          className="MuiButtonBase-root-142 MuiExpansionPanelSummary-root-136"
           onBlur={[Function]}
+          onClick={[Function]}
           onFocus={[Function]}
           onKeyDown={[Function]}
           onKeyUp={[Function]}
@@ -379,168 +372,357 @@ describe('find neurons Plugin', () => {
           onTouchMove={[Function]}
           onTouchStart={[Function]}
           role="button"
-          tabIndex={-1}
-        >
-          <span
-            className="MuiIconButton-label-149"
-          >
-            <svg
-              aria-hidden="true"
-              className="MuiSvgIcon-root-150"
-              focusable="false"
-              role="presentation"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"
-              />
-              <path
-                d="M0 0h24v24H0z"
-                fill="none"
-              />
-            </svg>
-          </span>
-          <span
-            className="MuiTouchRipple-root-217"
-          />
-        </div>
-      </div>
-      <div
-        aria-hidden="true"
-        className="MuiCollapse-container-159"
-        style={
-          Object {
-            "minHeight": "0px",
-          }
-        }
-      >
-        <div
-          className="MuiCollapse-wrapper-161"
+          tabIndex="0"
         >
           <div
-            className="MuiCollapse-wrapperInner-162"
+            className="MuiExpansionPanelSummary-content-140"
+          >
+            <h6
+              className="MuiTypography-root-66 MuiTypography-subtitle1-84"
+            >
+              Optional neuron/segment filters
+            </h6>
+          </div>
+          <div
+            aria-hidden="true"
+            className="MuiButtonBase-root-142 MuiIconButton-root-145 MuiExpansionPanelSummary-expandIcon-141"
+            onBlur={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            role="button"
+            tabIndex={-1}
+          >
+            <span
+              className="MuiIconButton-label-150"
+            >
+              <svg
+                aria-hidden="true"
+                className="MuiSvgIcon-root-151"
+                focusable="false"
+                role="presentation"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"
+                />
+                <path
+                  d="M0 0h24v24H0z"
+                  fill="none"
+                />
+              </svg>
+            </span>
+            <span
+              className="MuiTouchRipple-root-225"
+            />
+          </div>
+        </div>
+        <div
+          aria-hidden="true"
+          className="MuiCollapse-container-160"
+          style={
+            Object {
+              "minHeight": "0px",
+            }
+          }
+        >
+          <div
+            className="MuiCollapse-wrapper-162"
           >
             <div
-              className="MuiExpansionPanelDetails-root-163 Connect-NeuronFilter--nopad-103"
+              className="MuiCollapse-wrapperInner-163"
             >
               <div
-                className="MuiFormControl-root-21 Connect-NeuronFilter--formControl-101"
+                className="MuiExpansionPanelDetails-root-164 Connect-NeuronFilter--nopad-103"
               >
                 <div
                   className="MuiFormControl-root-21 Connect-NeuronFilter--formControl-101"
                 >
-                  <label
-                    aria-describedby={null}
-                    className="MuiFormControlLabel-root-164"
-                    onBlur={[Function]}
-                    onFocus={[Function]}
-                    onMouseLeave={[Function]}
-                    onMouseOver={[Function]}
-                    onTouchEnd={[Function]}
-                    onTouchStart={[Function]}
-                    title="Limit to big neurons (>10 pre or post synapses)"
+                  <div
+                    className="MuiFormControl-root-21 Connect-NeuronFilter--formControl-101"
                   >
-                    <span
-                      className="MuiButtonBase-root-141 MuiIconButton-root-144 MuiPrivateSwitchBase-root-176 MuiCheckbox-root-170 MuiCheckbox-colorSecondary-175 MuiPrivateSwitchBase-checked-177 MuiCheckbox-checked-171"
+                    <label
+                      aria-describedby={null}
+                      className="MuiFormControlLabel-root-165"
                       onBlur={[Function]}
                       onFocus={[Function]}
-                      onKeyDown={[Function]}
-                      onKeyUp={[Function]}
-                      onMouseDown={[Function]}
                       onMouseLeave={[Function]}
-                      onMouseUp={[Function]}
+                      onMouseOver={[Function]}
                       onTouchEnd={[Function]}
-                      onTouchMove={[Function]}
                       onTouchStart={[Function]}
-                      tabIndex={null}
+                      title="Limit to neurons (bodies with >=2 t-bars, >=10 psds, name, soma, or status)"
                     >
                       <span
-                        className="MuiIconButton-label-149"
+                        className="MuiSwitch-root-171"
                       >
-                        <svg
-                          aria-hidden="true"
-                          className="MuiSvgIcon-root-150"
-                          focusable="false"
-                          role="presentation"
-                          viewBox="0 0 24 24"
+                        <span
+                          className="MuiButtonBase-root-142 MuiIconButton-root-145 MuiPrivateSwitchBase-root-180 MuiSwitch-switchBase-174 MuiSwitch-colorPrimary-176 MuiPrivateSwitchBase-checked-181 MuiSwitch-checked-175"
+                          onBlur={[Function]}
+                          onFocus={[Function]}
+                          onKeyDown={[Function]}
+                          onKeyUp={[Function]}
+                          onMouseDown={[Function]}
+                          onMouseLeave={[Function]}
+                          onMouseUp={[Function]}
+                          onTouchEnd={[Function]}
+                          onTouchMove={[Function]}
+                          onTouchStart={[Function]}
+                          tabIndex={null}
                         >
-                          <path
-                            d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                          <span
+                            className="MuiIconButton-label-150"
+                          >
+                            <span
+                              className="MuiSwitch-icon-172 MuiSwitch-iconChecked-173"
+                            />
+                            <input
+                              checked={true}
+                              className="MuiPrivateSwitchBase-input-183"
+                              disabled={false}
+                              onChange={[Function]}
+                              type="checkbox"
+                            />
+                          </span>
+                          <span
+                            className="MuiTouchRipple-root-225"
                           />
-                        </svg>
-                        <input
-                          checked={true}
-                          className="MuiPrivateSwitchBase-input-179"
-                          data-indeterminate={false}
-                          disabled={false}
-                          onChange={[Function]}
-                          type="checkbox"
-                          value="checkedBig"
+                        </span>
+                        <span
+                          className="MuiSwitch-bar-179"
                         />
                       </span>
                       <span
-                        className="MuiTouchRipple-root-217"
-                      />
-                    </span>
-                    <span
-                      className="MuiTypography-root-66 MuiTypography-body1-75 MuiFormControlLabel-label-169"
-                    >
-                      Limit to big segments
-                    </span>
-                  </label>
-                </div>
-                <div
-                  className="MuiFormControl-root-21 Connect-NeuronFilter--formControl-101"
-                >
-                  <label
-                    className="MuiFormLabel-root-14 MuiInputLabel-root-3 MuiInputLabel-formControl-8 MuiInputLabel-animated-11"
-                    data-shrink={false}
-                    htmlFor="select-multiple-chip-status"
-                  >
-                    Neuron status
-                  </label>
-                  <div
-                    className="MuiInputBase-root-39 MuiInput-root-26 MuiInput-underline-30 MuiInputBase-formControl-40 MuiInput-formControl-27"
-                    onClick={[Function]}
-                  >
-                    <div
-                      className="MuiSelect-root-180"
-                    >
-                      <div
-                        aria-haspopup="true"
-                        aria-pressed="false"
-                        className="MuiSelect-select-181 MuiSelect-selectMenu-184 MuiInputBase-input-49 MuiInput-input-34"
-                        onBlur={[Function]}
-                        onClick={[Function]}
-                        onFocus={[Function]}
-                        onKeyDown={[Function]}
-                        role="button"
-                        tabIndex={0}
+                        className="MuiTypography-root-66 MuiTypography-body1-75 MuiFormControlLabel-label-170"
                       >
-                        <span
-                          dangerouslySetInnerHTML={
+                        <h6
+                          className="MuiTypography-root-66 MuiTypography-subtitle1-84"
+                        >
+                          Limit to neurons
+                        </h6>
+                      </span>
+                    </label>
+                  </div>
+                  <div
+                    className="MuiFormControl-root-21 MuiFormControl-marginDense-23 Connect-NeuronFilter--textField-105"
+                  >
+                    <label
+                      className="MuiFormLabel-root-14 MuiInputLabel-root-3 MuiInputLabel-formControl-8 MuiInputLabel-animated-11 MuiInputLabel-marginDense-9 MuiInputLabel-outlined-13"
+                      data-shrink={false}
+                    >
+                      minimum # pre (optional)
+                    </label>
+                    <div
+                      className="MuiInputBase-root-39 MuiOutlinedInput-root-184 MuiInputBase-formControl-40 MuiInputBase-marginDense-46"
+                      onClick={[Function]}
+                    >
+                      <fieldset
+                        aria-hidden={true}
+                        className="MuiPrivateNotchedOutline-root-197 MuiOutlinedInput-notchedOutline-191"
+                        style={
+                          Object {
+                            "paddingLeft": 8,
+                          }
+                        }
+                      >
+                        <legend
+                          className="MuiPrivateNotchedOutline-legend-198"
+                          style={
                             Object {
-                              "__html": "&#8203;",
+                              "width": 0.01,
                             }
                           }
-                        />
-                      </div>
+                        >
+                          <span
+                            dangerouslySetInnerHTML={
+                              Object {
+                                "__html": "&#8203;",
+                              }
+                            }
+                          />
+                        </legend>
+                      </fieldset>
                       <input
-                        id="select-multiple-chip-status"
-                        type="hidden"
+                        aria-invalid={false}
+                        className="MuiInputBase-input-49 MuiOutlinedInput-input-192 MuiInputBase-inputType-52 MuiInputBase-inputMarginDense-50 MuiOutlinedInput-inputMarginDense-193"
+                        disabled={false}
+                        onBlur={[Function]}
+                        onChange={[Function]}
+                        onFocus={[Function]}
+                        required={false}
+                        rows={1}
+                        type="number"
                         value=""
                       />
-                      <svg
-                        aria-hidden="true"
-                        className="MuiSvgIcon-root-150 MuiSelect-icon-186"
-                        focusable="false"
-                        role="presentation"
-                        viewBox="0 0 24 24"
+                    </div>
+                  </div>
+                  <div
+                    className="MuiFormControl-root-21 MuiFormControl-marginDense-23 Connect-NeuronFilter--textField-105"
+                  >
+                    <label
+                      className="MuiFormLabel-root-14 MuiInputLabel-root-3 MuiInputLabel-formControl-8 MuiInputLabel-animated-11 MuiInputLabel-marginDense-9 MuiInputLabel-outlined-13"
+                      data-shrink={false}
+                    >
+                      minimum # post (optional)
+                    </label>
+                    <div
+                      className="MuiInputBase-root-39 MuiOutlinedInput-root-184 MuiInputBase-formControl-40 MuiInputBase-marginDense-46"
+                      onClick={[Function]}
+                    >
+                      <fieldset
+                        aria-hidden={true}
+                        className="MuiPrivateNotchedOutline-root-197 MuiOutlinedInput-notchedOutline-191"
+                        style={
+                          Object {
+                            "paddingLeft": 8,
+                          }
+                        }
                       >
-                        <path
-                          d="M7 10l5 5 5-5z"
-                        />
-                      </svg>
+                        <legend
+                          className="MuiPrivateNotchedOutline-legend-198"
+                          style={
+                            Object {
+                              "width": 0.01,
+                            }
+                          }
+                        >
+                          <span
+                            dangerouslySetInnerHTML={
+                              Object {
+                                "__html": "&#8203;",
+                              }
+                            }
+                          />
+                        </legend>
+                      </fieldset>
+                      <input
+                        aria-invalid={false}
+                        className="MuiInputBase-input-49 MuiOutlinedInput-input-192 MuiInputBase-inputType-52 MuiInputBase-inputMarginDense-50 MuiOutlinedInput-inputMarginDense-193"
+                        disabled={false}
+                        onBlur={[Function]}
+                        onChange={[Function]}
+                        onFocus={[Function]}
+                        required={false}
+                        rows={1}
+                        type="number"
+                        value=""
+                      />
+                    </div>
+                  </div>
+                  <div
+                    className="MuiFormControl-root-21 Connect-NeuronFilter--formControl-101"
+                  >
+                    <label
+                      className="MuiFormLabel-root-14"
+                    >
+                      Filter by status (coming soon)
+                    </label>
+                    <div
+                      className="css-1sontr1 Connect-NeuronFilter--select-104"
+                      onKeyDown={[Function]}
+                    >
+                      <div
+                        className="css-162g8z5"
+                        onMouseDown={[Function]}
+                        onTouchEnd={[Function]}
+                      >
+                        <div
+                          className="css-1hwfws3"
+                        >
+                          <div
+                            className="css-1492t68"
+                          >
+                            Select...
+                          </div>
+                          <div
+                            className="css-1g6gooi"
+                          >
+                            <div
+                              className=""
+                              style={
+                                Object {
+                                  "display": "inline-block",
+                                }
+                              }
+                            >
+                              <input
+                                aria-autocomplete="list"
+                                autoCapitalize="none"
+                                autoComplete="off"
+                                autoCorrect="off"
+                                disabled={true}
+                                id="react-select-7-input"
+                                onBlur={[Function]}
+                                onChange={[Function]}
+                                onFocus={[Function]}
+                                spellCheck="false"
+                                style={
+                                  Object {
+                                    "background": 0,
+                                    "border": 0,
+                                    "boxSizing": "content-box",
+                                    "color": "inherit",
+                                    "fontSize": "inherit",
+                                    "opacity": 1,
+                                    "outline": 0,
+                                    "padding": 0,
+                                    "width": "1px",
+                                  }
+                                }
+                                tabIndex="0"
+                                type="text"
+                                value=""
+                              />
+                              <div
+                                style={
+                                  Object {
+                                    "height": 0,
+                                    "left": 0,
+                                    "overflow": "scroll",
+                                    "position": "absolute",
+                                    "top": 0,
+                                    "visibility": "hidden",
+                                    "whiteSpace": "pre",
+                                  }
+                                }
+                              >
+                                
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          className="css-1wy0on6"
+                        >
+                          <span
+                            className="css-ln5n5c"
+                          />
+                          <div
+                            aria-hidden="true"
+                            className="css-1ep9fjw"
+                            onMouseDown={[Function]}
+                            onTouchEnd={[Function]}
+                          >
+                            <svg
+                              aria-hidden="true"
+                              className="css-19bqh2r"
+                              focusable="false"
+                              height={20}
+                              viewBox="0 0 20 20"
+                              width={20}
+                            >
+                              <path
+                                d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                              />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -552,7 +734,7 @@ describe('find neurons Plugin', () => {
     </div>
   </div>
   <button
-    className="MuiButtonBase-root-141 MuiButton-root-191 MuiButton-contained-202 MuiButton-containedPrimary-203 MuiButton-raised-205 MuiButton-raisedPrimary-206"
+    className="MuiButtonBase-root-142 MuiButton-root-199 MuiButton-contained-210 MuiButton-containedPrimary-211 MuiButton-raised-213 MuiButton-raisedPrimary-214"
     disabled={false}
     onBlur={[Function]}
     onClick={[Function]}
@@ -569,12 +751,12 @@ describe('find neurons Plugin', () => {
     type="button"
   >
     <span
-      className="MuiButton-label-192"
+      className="MuiButton-label-200"
     >
       Submit
     </span>
     <span
-      className="MuiTouchRipple-root-217"
+      className="MuiTouchRipple-root-225"
     />
   </button>
 </div>
@@ -593,7 +775,7 @@ describe('find neurons Plugin', () => {
             dataset: 'test',
             input_ROIs: [],
             output_ROIs: [],
-            pre_threshold: 2,
+            all_segments: false,
             statuses: []
           },
           title: 'Neurons with inputs in [] and outputs in []',
@@ -614,7 +796,7 @@ describe('find neurons Plugin', () => {
             input_ROIs: [],
             neuron_name: 'abc',
             output_ROIs: [],
-            pre_threshold: 2,
+            all_segments: false,
             statuses: []
           },
           plugin: 'FindNeurons',
@@ -635,7 +817,7 @@ describe('find neurons Plugin', () => {
             input_ROIs: [],
             neuron_id: 123,
             output_ROIs: [],
-            pre_threshold: 2,
+            all_segments: false,
             statuses: []
           },
           plugin: 'FindNeurons',
@@ -659,7 +841,33 @@ describe('find neurons Plugin', () => {
             dataset: 'test',
             input_ROIs: ['roiA'],
             output_ROIs: ['roiB'],
-            pre_threshold: 2,
+            all_segments: false,
+            statuses: []
+          },
+          plugin: 'FindNeurons',
+          processResults: expect.any(Function),
+          queryString: '/npexplorer/findneurons',
+          title: 'Neurons with inputs in [roiA] and outputs in [roiB]',
+          visProps: { rowsPerPage: 25 },
+          visType: 'SimpleTable'
+        })
+      );
+
+      // if neuron/segment filters present add to parameters
+      limitNeuronsToggle.props().onChange();
+      preThresholdField.props().onChange({ target: { value: 12 } });
+      postThresholdField.props().onChange({ target: { value: 13 } });
+      expect(button.props().onClick()).toEqual(
+        expect.objectContaining({
+          dataSet: 'test',
+          menuColor: expect.any(String),
+          parameters: {
+            dataset: 'test',
+            input_ROIs: ['roiA'],
+            output_ROIs: ['roiB'],
+            all_segments: true,
+            pre_threshold: 12,
+            post_threshold: 13,
             statuses: []
           },
           plugin: 'FindNeurons',
@@ -682,7 +890,7 @@ describe('find neurons Plugin', () => {
           dataset: 'test',
           input_ROIs: [],
           output_ROIs: [],
-          pre_threshold: 2,
+          all_segments: false,
           statuses: []
         },
         title: 'Neurons with inputs in [] and outputs in []'
