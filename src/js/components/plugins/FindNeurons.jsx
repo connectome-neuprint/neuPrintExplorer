@@ -76,13 +76,14 @@ class FindNeurons extends React.Component {
   }
 
   static getDerivedStateFromProps = (props, state) => {
-    // if dataset changes, clear the selected rois
+    // if dataset changes, clear the selected rois and statuses
 
     // eslint issues: https://github.com/yannickcr/eslint-plugin-react/issues/1751
     if (props.dataSet !== state.dataSet) {
       const oldParams = state.qsParams;
       oldParams.inputROIs = [];
       oldParams.outputROIs = [];
+      state.statusFilters = []; // eslint-disable-line no-param-reassign
       props.actions.setURLQs(SaveQueryString(`Query:${state.queryName}`, oldParams));
       state.dataSet = props.dataSet; // eslint-disable-line no-param-reassign
       return state;

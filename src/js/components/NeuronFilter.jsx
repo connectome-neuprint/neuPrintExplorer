@@ -76,6 +76,11 @@ class NeuronFilter extends React.Component {
     const { neoServer, datasetstr } = this.props;
     if (nextProps.neoServer !== neoServer || nextProps.datasetstr !== datasetstr) {
       this.queryStatuses(nextProps.neoServer, nextProps.datasetstr);
+      const { qsParams } = this.state;
+      const statusFilters = [];
+      const newParams = Object.assign({}, qsParams, { statusFilters });
+      setQueryString({ NFilter: { statusFilters } });
+      this.setState({ qsParams: newParams });
     }
   }
 

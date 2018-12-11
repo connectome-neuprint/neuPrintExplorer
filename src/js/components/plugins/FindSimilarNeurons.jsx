@@ -1,6 +1,6 @@
 /*
  * Find similar neurons in a dataset.
-*/
+ */
 
 // TODO: create larger groups by merging similar groups
 
@@ -59,6 +59,7 @@ const pluginName = 'FindSimilarNeurons';
 class FindSimilarNeurons extends React.Component {
   constructor(props) {
     super(props);
+    const { urlQueryString, dataSet } = this.props;
     const initqsParams = {
       bodyId: '',
       name: '',
@@ -67,11 +68,13 @@ class FindSimilarNeurons extends React.Component {
     const qsParams = LoadQueryString(
       `Query:${this.constructor.queryName}`,
       initqsParams,
-      props.urlQueryString
+      urlQueryString
     );
 
     this.state = {
-      qsParams
+      qsParams,
+      dataSet, // eslint-disable-line react/no-unused-state
+      queryName: this.constructor.queryName // eslint-disable-line react/no-unused-state
     };
   }
 
@@ -82,6 +85,20 @@ class FindSimilarNeurons extends React.Component {
   static get queryDescription() {
     return 'Find neurons that are similar to a neuron of interest in terms of their input and output locations (ROIs).';
   }
+
+  static getDerivedStateFromProps = (props, state) => {
+    // if dataset changes, clear the selected rois
+
+    // eslint issues: https://github.com/yannickcr/eslint-plugin-react/issues/1751
+    if (props.dataSet !== state.dataSet) {
+      const oldParams = state.qsParams;
+      oldParams.rois = [];
+      props.actions.setURLQs(SaveQueryString(`Query:${state.queryName}`, oldParams));
+      state.dataSet = props.dataSet; // eslint-disable-line no-param-reassign
+      return state;
+    }
+    return null;
+  };
 
   handleShowSkeleton = (id, dataSet) => () => {
     const { actions } = this.props;
