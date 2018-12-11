@@ -4,50 +4,28 @@
 
 import { initPlugins, initViewPlugins } from 'actions/app';
 
-// import plugins (could probably write a pre-processing script)
-import CommonConnectivity from 'plugins/CommonConnectivity';
-import CustomQuery from 'plugins/CustomQuery';
-import SimpleConnections from 'plugins/SimpleConnections';
-import RankedTable from 'plugins/RankedTable';
-import FindNeurons from 'plugins/FindNeurons';
-import ROIsIntersectingNeurons from 'plugins/ROIsIntersectingNeurons';
-import ROIConnectivity from 'plugins/ROIConnectivity';
-import NeuronMeta from 'plugins/NeuronMeta';
-import Autapses from 'plugins/Autapses';
-import PartnerCompleteness from 'plugins/PartnerCompleteness';
-import Distribution from 'plugins/Distribution';
-import Completeness from 'plugins/Completeness';
-import FindSimilarNeurons from 'plugins/FindSimilarNeurons';
+// search the plugins directory and load all the files found there.
+const pluginList = [];
+const plugins = require.context('../components/plugins/', true, /^(?!.*\.test\.jsx$).*\.jsx$/);
+const viewPlugins = require.context('../components/view-plugins/', true, /^(?!.*\.test\.jsx$).*\.jsx$/);
 
-// view plugins
-import SimpleTable from 'views/SimpleTable';
-import CollapsibleTable from 'views/CollapsibleTable';
-import PartnerCompletenessView from 'views/PartnerCompletenessView';
-import HeatMapTable from 'views/HeatMapTable';
+plugins.keys().forEach(key => {
+  pluginList.push(plugins(key).default);
+});
 
-const pluginList = [
-  FindNeurons,
-  NeuronMeta,
-  ROIConnectivity,
-  RankedTable,
-  SimpleConnections,
-  ROIsIntersectingNeurons,
-  CommonConnectivity,
-  FindSimilarNeurons,
-  CustomQuery,
-  Autapses,
-  Distribution,
-  Completeness,
-  PartnerCompleteness
-];
+// search the views directory and load all the plugins there
+const viewPluginsMap = {}
 
-const viewPlugins = {
-  SimpleTable,
-  PartnerCompletenessView,
-  HeatMapTable,
-  CollapsibleTable,
-};
+viewPlugins.keys().forEach(key => {
+  // get plugin name from file name
+  const nameMatch = key.match(/^(?!.*\.test\.jsx$)\.\/(.*)\.jsx$/);
+  if (nameMatch) {
+    const pluginName = nameMatch[1];
+    viewPluginsMap[pluginName] = viewPlugins(key).default;
+  }
+});
+
 export default function loadPlugins(store) {
   store.dispatch(initPlugins(pluginList));
-  store.dispatch(initViewPlugins(viewPlugins));
+  store.dispatch(initViewPlugins(viewPluginsMap));
 }
