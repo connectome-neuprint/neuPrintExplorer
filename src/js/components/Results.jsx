@@ -133,7 +133,7 @@ class Results extends React.Component {
             <ResultsTopBar
               downloadCallback={this.downloadFile}
               name={query.title}
-              index={index}
+              index={combinedIndex}
               queryStr={query.result.debug}
               color={query.menuColor}
             />
