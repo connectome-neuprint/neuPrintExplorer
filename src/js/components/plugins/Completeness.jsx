@@ -20,6 +20,10 @@ class Completeness extends React.Component {
     return 'Completeness';
   }
 
+  static get queryType() {
+    return 'recon';
+  }
+
   static get queryDescription() {
     return 'Determines the reconstruction completeness of each ROI with respect to the neuron filters';
   }

@@ -19,6 +19,10 @@ class Autapses extends React.Component {
     return 'Autapses';
   }
 
+  static get queryType() {
+    return 'recon';
+  }
+
   static get queryDescription() {
     return 'Finds all the self connections (loops) in the dataset.';
   }

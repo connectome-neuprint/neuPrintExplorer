@@ -86,8 +86,7 @@ describe('store Creation', () => {
   it('should initialize plugins', () => {
     testReducerAction('app', app, {
       type: C.INIT_PLUGINS,
-      pluginList: ['pluginA', 'pluginB'],
-      reconIndex: 7
+      pluginList: ['pluginA', 'pluginB']
     });
   });
   it('should initialize view plugins', () => {

@@ -4,7 +4,6 @@ import reducer from './app';
 
 const state = Immutable.Map({
   pluginList: ['existingplugin'],
-  reconIndex: 2,
   urlQueryString: 'existingstring',
   appDB: 'existingDB',
   fullscreen: false,
@@ -23,12 +22,10 @@ describe('app Reducer', () => {
     const action = {
       type: C.INIT_PLUGINS,
       pluginList: ['test'],
-      reconIndex: 7
     };
     expect(reducer(undefined, action)).toEqual(
       Immutable.Map({
         pluginList: ['test'],
-        reconIndex: 7,
         urlQueryString: window.location.search.substring(1),
         appDB: '',
         fullscreen: false,
@@ -40,7 +37,6 @@ describe('app Reducer', () => {
     expect(reducer(state, action)).toEqual(
       Immutable.Map({
         pluginList: ['test'],
-        reconIndex: 7,
         urlQueryString: 'existingstring',
         appDB: 'existingDB',
         fullscreen: false,
@@ -64,7 +60,6 @@ describe('app Reducer', () => {
     expect(reducer(undefined, action)).toEqual(
       Immutable.Map({
         pluginList: [],
-        reconIndex: 9999999,
         urlQueryString: 'teststring',
         appDB: '',
         fullscreen: false,
@@ -76,7 +71,6 @@ describe('app Reducer', () => {
     expect(reducer(state, action)).toEqual(
       Immutable.Map({
         pluginList: ['existingplugin'],
-        reconIndex: 2,
         urlQueryString: 'teststring',
         appDB: 'existingDB',
         fullscreen: false,
@@ -108,7 +102,6 @@ describe('app Reducer', () => {
     expect(reducer(undefined, action)).toEqual(
       Immutable.Map({
         pluginList: [],
-        reconIndex: 9999999,
         urlQueryString: window.location.search.substring(1),
         appDB: '',
         fullscreen: false,
@@ -122,7 +115,6 @@ describe('app Reducer', () => {
     expect(reducer(state, action)).toEqual(
       Immutable.Map({
         pluginList: ['existingplugin'],
-        reconIndex: 2,
         urlQueryString: 'existingstring',
         appDB: 'existingDB',
         fullscreen: false,
@@ -147,7 +139,6 @@ describe('app Reducer', () => {
     expect(reducer(state, action)).toEqual(
       Immutable.Map({
         pluginList: ['existingplugin'],
-        reconIndex: 2,
         urlQueryString: 'existingstring',
         appDB: 'existingDB',
         fullscreen: false,

@@ -100,7 +100,7 @@ class Query extends React.Component {
   };
 
   render() {
-    const { classes, pluginList, reconIndex, availableDatasets } = this.props;
+    const { classes, pluginList, availableDatasets } = this.props;
     const { qsParams } = this.state;
 
     let queryname = 'Select Query';
@@ -133,12 +133,12 @@ class Query extends React.Component {
       }
     }
 
-    const generalOptions = pluginList.slice(0, reconIndex).map(val => ({
+    const generalOptions = pluginList.filter(plugin => plugin.queryType === undefined).map(val => ({
       value: val.queryName,
       label: val.queryName
     }));
 
-    const reconOptions = pluginList.slice(reconIndex, pluginList.length).map(val => ({
+    const reconOptions = pluginList.filter(plugin => plugin.queryType === 'recon').map(val => ({
       value: val.queryName,
       label: val.queryName
     }));
@@ -188,14 +188,12 @@ class Query extends React.Component {
 
 Query.propTypes = {
   pluginList: PropTypes.arrayOf(PropTypes.func).isRequired,
-  reconIndex: PropTypes.number.isRequired,
   classes: PropTypes.object.isRequired,
   availableDatasets: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
 const QueryState = state => ({
   pluginList: state.app.get('pluginList'),
-  reconIndex: state.app.get('reconIndex'),
   availableDatasets: state.neo4jsettings.get('availableDatasets')
 });
 

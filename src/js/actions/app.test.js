@@ -7,8 +7,7 @@ describe('app Actions', () => {
   it('should create action to initialize plugins', () => {
     const expectedAction = {
       type: C.INIT_PLUGINS,
-      pluginList: ['a', 'b'],
-      reconIndex: 9
+      pluginList: ['a', 'b']
     };
     expect(appActions.initPlugins(['a', 'b'])).toEqual(expectedAction);
   });

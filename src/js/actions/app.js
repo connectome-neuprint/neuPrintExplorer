@@ -1,11 +1,10 @@
 import { v4 } from 'uuid';
 import C from '../reducers/constants';
 
-function initializingPlugins(pluginList, reconIndex) {
+function initializingPlugins(pluginList) {
     return {
         type: C.INIT_PLUGINS,
-        pluginList,
-        reconIndex,
+        pluginList
     }
 }
 function settingUrlQS(urlQueryString) {
@@ -38,8 +37,7 @@ export function initViewPlugins(pluginsMap) {
 }
 
 export function initPlugins(pluginList) {
-    const reconIndex = 9;
-    return initializingPlugins(pluginList, reconIndex);
+    return initializingPlugins(pluginList);
 }
 export function setUrlQS(urlQueryString) {
     return settingUrlQS(urlQueryString);
