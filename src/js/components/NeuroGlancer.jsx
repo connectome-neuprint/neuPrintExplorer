@@ -3,9 +3,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import Neuroglancer from '@janelia-flyem/react-neuroglancer';
-import Grid from '@material-ui/core/Grid';
 
-const NeuroGlancer = (props) => {
+const NeuroGlancer = props => {
   const { ngLayers, ngNeurons, ngCoordinates } = props;
   const viewerState = {
     perspectiveOrientation: [0.1, -0.3, -0.3, 0.8],
@@ -39,10 +38,8 @@ const NeuroGlancer = (props) => {
   // set the x,y,z coordinates
   viewerState.navigation.pose.position.voxelCoordinates = ngCoordinates.toJS();
 
-  return (
-    <Neuroglancer perspectiveZoom={80} viewerState={viewerState} />
-  );
-}
+  return <Neuroglancer perspectiveZoom={80} viewerState={viewerState} />;
+};
 
 NeuroGlancer.propTypes = {
   ngLayers: PropTypes.object.isRequired,
@@ -51,12 +48,10 @@ NeuroGlancer.propTypes = {
 };
 
 const NeuroGlancerState = state => ({
-    ngState: state.neuroglancer,
-    ngLayers: state.neuroglancer.get('layers'),
-    ngNeurons: state.neuroglancer.get('neurons'),
-    ngCoordinates: state.neuroglancer.get('coordinates')
-  });
+  ngState: state.neuroglancer,
+  ngLayers: state.neuroglancer.get('layers'),
+  ngNeurons: state.neuroglancer.get('neurons'),
+  ngCoordinates: state.neuroglancer.get('coordinates')
+});
 
-export default connect(
-  NeuroGlancerState,
-)(NeuroGlancer);
+export default connect(NeuroGlancerState)(NeuroGlancer);
