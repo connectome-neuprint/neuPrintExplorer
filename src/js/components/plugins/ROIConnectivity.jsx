@@ -1,6 +1,6 @@
 /*
  * Supports simple, custom neo4j query.
-*/
+ */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
@@ -71,10 +71,10 @@ class ROIConnectivity extends React.Component {
 
     apiResponse.data.forEach(row => {
       const bodyId = row[0];
-      const roiInfoObject = JSON.parse(row[1]);
+      const roiInfoObject = row[1] ? JSON.parse(row[1]) : "{}";
 
       Object.entries(roiInfoObject).forEach(roi => {
-        const [ name, data ] = roi;
+        const [name, data] = roi;
         roisInQuery.add(name);
         if (data.post > 0) {
           if (!(bodyId in bodyInputCountsPerRoi)) {
@@ -93,7 +93,7 @@ class ROIConnectivity extends React.Component {
     // grab output and add table entry
     apiResponse.data.forEach(row => {
       const bodyId = row[0];
-      const roiInfoObject = JSON.parse(row[1]);
+      const roiInfoObject = row[1] ? JSON.parse(row[1]) : "{}";;
 
       Object.entries(roiInfoObject).forEach(roi => {
         const [outputRoi, data] = roi;
@@ -158,7 +158,11 @@ class ROIConnectivity extends React.Component {
 
         row.push({
           value: (
-            <button type="button" className={classes.button} onClick={() => actions.submit(neuronsQuery)}>
+            <button
+              type="button"
+              className={classes.button}
+              onClick={() => actions.submit(neuronsQuery)}
+            >
               <ColorBox
                 margin={0}
                 width={squareSize}
@@ -239,7 +243,7 @@ class ROIConnectivity extends React.Component {
 
     const data = apiResponse.data.map(row => {
       const hasSkeleton = row[8];
-      const roiInfoObject = JSON.parse(row[3]);
+      const roiInfoObject = row[3] ? JSON.parse(row[3]) : "{}";;
       const inputRoi = parameters.input_ROIs[0];
       const outputRoi = parameters.output_ROIs[0];
 
@@ -414,7 +418,12 @@ class ROIConnectivity extends React.Component {
   render() {
     const { isQuerying } = this.props;
     return (
-      <Button variant="contained" color="primary" disabled={isQuerying} onClick={this.processRequest}>
+      <Button
+        variant="contained"
+        color="primary"
+        disabled={isQuerying}
+        onClick={this.processRequest}
+      >
         Submit
       </Button>
     );
