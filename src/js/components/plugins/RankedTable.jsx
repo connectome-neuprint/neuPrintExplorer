@@ -2,7 +2,7 @@
  * Implements table view that shows ordered strongest connection to each neuron
  * and visually indicates the different classes of neurons.  (This is meant
  * to be similar to Lou's tables.)
-*/
+ */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -80,13 +80,12 @@ class RankedTable extends React.Component {
     let maxColumns = 0;
 
     apiResponse.data.forEach(row => {
-      const [, , weight, body2, , , mId, , preId, body1] = row;
+      const [, , weight, body2, , , mId, nId, preId, body1] = row;
 
       if (
-        (query.parameters.find_inputs === false && preId !== mId) ||
+        (query.parameters.find_inputs === false && (preId !== mId || nId === mId)) ||
         (query.parameters.find_inputs === true && preId === mId)
       ) {
-
         if (body2 in reverseCounts) {
           reverseCounts[String(body2)][String(body1)] = weight;
         } else {
@@ -97,11 +96,11 @@ class RankedTable extends React.Component {
     });
 
     apiResponse.data.forEach((row, index) => {
-      const [neuron1, neuron2, weight, body2, , neuron2Type, mId, , preId, body1] = row;
+      const [neuron1, neuron2, weight, body2, , neuron2Type, mId, nId, preId, body1] = row;
 
       if (
         (query.parameters.find_inputs === false && preId === mId) ||
-        (query.parameters.find_inputs === true && preId !== mId)
+        (query.parameters.find_inputs === true && (preId !== mId || nId === mId))
       ) {
         // check the colormap for the current type.
         // if present use the existing color.
@@ -156,7 +155,9 @@ class RankedTable extends React.Component {
     maxColumns = Math.max(columns.length, maxColumns);
     data.push(columns);
 
-    const headings = Array(maxColumns - 1).fill(0).map((e,i)=>`#${i+1}`);
+    const headings = Array(maxColumns - 1)
+      .fill(0)
+      .map((e, i) => `#${i + 1}`);
 
     return {
       columns: ['', ...headings],
