@@ -1,6 +1,6 @@
 /*
  * Query to find partners for a given body and the completeness of those tracings.
-*/
+ */
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -47,18 +47,18 @@ class PartnerCompleteness extends React.Component {
 
   processResults = (dataSet, apiResponse) => {
     const data = apiResponse.data.map(row => [
-        row[0],
-        row[1],
-        row[2],
-        row[3],
-        row[4],
-        row[5],
-        row[6],
-        row[7],
-        row[8],
-        row[9],
-        row[10]
-      ]);
+      row[0],
+      row[1],
+      row[2],
+      row[3],
+      row[4],
+      row[5],
+      row[6],
+      row[7],
+      row[8],
+      row[9],
+      row[10]
+    ]);
 
     return {
       columns: ['id', 'name', 'isinput', '#connections', 'status', '#pre', '#post'],
@@ -72,14 +72,7 @@ class PartnerCompleteness extends React.Component {
   processRequest = () => {
     const { dataSet, actions, history } = this.props;
     const { bodyId } = this.state;
-    const cypher =
-      `MATCH (n :\`${
-      dataSet
-      }-Segment\` {bodyId: ${
-      bodyId
-      }})-[x:ConnectsTo]-(m) RETURN m.bodyId, m.name, CASE WHEN startnode(x).bodyId = ${
-      bodyId
-      } THEN false ELSE true END, x.weight, m.status, m.pre, m.post, n.name, n.pre, n.post, n.status ORDER BY x.weight DESC`;
+    const cypher = `MATCH (n :\`${dataSet}-Segment\` {bodyId: ${bodyId}})-[x:ConnectsTo]-(m) RETURN m.bodyId, m.name, CASE WHEN startnode(x).bodyId = ${bodyId} THEN false ELSE true END, x.weight, m.status, m.pre, m.post, n.name, n.pre, n.post, n.status ORDER BY x.weight DESC`;
 
     const query = {
       dataSet,
@@ -87,7 +80,7 @@ class PartnerCompleteness extends React.Component {
       visType: 'PartnerCompletenessView',
       plugin: pluginName,
       parameters: { cypher },
-      title: `Tracing completeenss of connections to/from ${bodyId}`,
+      title: `Tracing completeness of connections to/from ${bodyId}`,
       menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
       processResults: this.processResults,
       bodyId
