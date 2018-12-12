@@ -1,19 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
+import { connect } from 'react-redux';
 
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
-import InputLabel from '@material-ui/core/InputLabel';
 import TextField from '@material-ui/core/TextField';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import SimpleTable from './SimpleTable';
+import { metaInfoError } from '../../actions/app';
 
 const styles = theme => ({
   root: {},
   select: {
-    fontFamily: theme.typography.fontFamily,
-    margin: '0.5em 0 1em 0'
+    fontFamily: theme.typography.fontFamily
   },
   textField: {
     marginLeft: theme.spacing.unit,
@@ -97,6 +98,8 @@ class PartnerCompletenessView extends React.Component {
     const inputStats = this.highlightStats(inputTable.result.data, highlightIndexInput, 0);
     const outputStats = this.highlightStats(outputTable.result.data, highlightIndexOutput, 0);
 
+    const statusDefinitions = this.queryStatusDefinitions(props.neoServer, props.query.dataSet);
+
     this.state = {
       inputTable,
       outputTable,
@@ -105,9 +108,52 @@ class PartnerCompletenessView extends React.Component {
       bodyStats,
       inputStats,
       outputStats,
-      orphanFilter: 0
+      orphanFilter: 0,
+      statusDefinitions
     };
   }
+
+  queryStatusDefinitions = (neoServer, dataset) => {
+    const { actions } = this.props;
+    if (neoServer === '') {
+      return;
+    }
+
+    fetch('/api/custom/custom', {
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        dataset,
+        cypher: `MATCH (n:Meta{dataset:"${dataset}"}) RETURN n.statusDefinitions`
+      }),
+      method: 'POST',
+      credentials: 'include'
+    })
+      .then(result => {
+        if (result.ok) {
+          return result.json();
+        }
+        throw new Error(
+          'Unable to fetch status definitions, try reloading the page. If this error persists, please contact support.'
+        );
+      })
+      .then(resp => {
+        let statusDefinitions = '';
+        const statusDefinitionsObject = JSON.parse(resp.data[0][0].replace(/'/g, '"'));
+        Object.keys(statusDefinitionsObject).forEach((status, index) => {
+          statusDefinitions += `${status}: ${statusDefinitionsObject[status]}`;
+          if (index < Object.keys(statusDefinitionsObject).length - 1) {
+            statusDefinitions += ', ';
+          }
+        });
+
+        this.setState({ statusDefinitions });
+      })
+      .catch(error => {
+        actions.metaInfoError(error);
+      });
+  };
 
   highlightStats = (table, selected, filter) => {
     let totalconn = 0;
@@ -139,7 +185,7 @@ class PartnerCompletenessView extends React.Component {
     const { inputTable, outputTable } = this.state;
     const currSelected = selected.map(item => item.value);
     const currSelectedSet = new Set(currSelected);
-    const filterLimit = (filter === '') ? 0 : filter;
+    const filterLimit = filter === '' ? 0 : filter;
 
     const inputHighlight = {};
     const outputHighlight = {};
@@ -186,9 +232,9 @@ class PartnerCompletenessView extends React.Component {
       });
 
       const currSelected = selectedStatus.map(name => ({
-          label: name,
-          value: name
-        }));
+        label: name,
+        value: name
+      }));
       this.highlightRows(val)(currSelected);
     }
   };
@@ -203,17 +249,18 @@ class PartnerCompletenessView extends React.Component {
       bodyStats,
       inputStats,
       outputStats,
-      orphanFilter
+      orphanFilter,
+      statusDefinitions
     } = this.state;
 
     const options = allStatus.map(name => ({
-        label: name,
-        value: name
-      }));
+      label: name,
+      value: name
+    }));
     const currSelected = selectedStatus.map(name => ({
-        label: name,
-        value: name
-      }));
+      label: name,
+      value: name
+    }));
 
     const visProperties = { rowsPerPage: 10 };
 
@@ -225,15 +272,24 @@ class PartnerCompletenessView extends React.Component {
         <Typography>
           #pre: {bodyStats.pre}, #post: {bodyStats.post}
         </Typography>
-        <InputLabel htmlFor="select-multiple-chip">Desired level of completeness</InputLabel>
-        <Select
-          className={classes.select}
-          isMulti
-          value={currSelected}
-          onChange={this.highlightRows(orphanFilter)}
-          options={options}
-          closeMenuOnSelect={false}
-        />
+        <div style={{ marginTop: '8px', marginBottom: '8px' }}>
+          <Typography variant="subtitle1" style={{ display: 'inline-flex' }}>
+            Desired level of completeness
+            <Tooltip id="tooltip-icon" title={statusDefinitions || ''}>
+              <Typography color="error" placement="right">
+                ?
+              </Typography>
+            </Tooltip>
+          </Typography>
+          <Select
+            className={classes.select}
+            isMulti
+            value={currSelected}
+            onChange={this.highlightRows(orphanFilter)}
+            options={options}
+            closeMenuOnSelect={false}
+          />
+        </div>
         <TextField
           id="orphanfilter"
           label="Filter (ignore #conn <=)"
@@ -242,7 +298,6 @@ class PartnerCompletenessView extends React.Component {
           onChange={this.handleChange}
           margin="normal"
         />
-
         <Typography variant="h6">Inputs</Typography>
         <Typography>
           {((inputStats.highconn / inputStats.totalconn) * 100).toFixed(2)} percent connections,{' '}
@@ -263,6 +318,25 @@ class PartnerCompletenessView extends React.Component {
 PartnerCompletenessView.propTypes = {
   query: PropTypes.object.isRequired,
   classes: PropTypes.object.isRequired,
+  actions: PropTypes.object.isRequired,
+  neoServer: PropTypes.string.isRequired
 };
 
-export default withStyles(styles)(PartnerCompletenessView);
+const PartnerCompletenessViewState = state => ({
+  neoServer: state.neo4jsettings.get('neoServer')
+});
+
+const PartnerCompletenessViewDispatch = dispatch => ({
+  actions: {
+    metaInfoError(error) {
+      dispatch(metaInfoError(error));
+    }
+  }
+});
+
+export default withStyles(styles)(
+  connect(
+    PartnerCompletenessViewState,
+    PartnerCompletenessViewDispatch
+  )(PartnerCompletenessView)
+);
