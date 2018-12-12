@@ -1,6 +1,6 @@
 /*
  * Help page provides documentation.
-*/
+ */
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import PropTypes from 'prop-types';
@@ -136,7 +136,7 @@ class Help extends React.Component {
             <div className={classes.flex}>
               <Button onClick={this.handleOpen}>
                 <img
-                  src="/public/overview.png"
+                  src="https://raw.githubusercontent.com/connectome-neuprint/neuPrint/master/pgmv1.png"
                   alt="Neo4j graph model diagram"
                   className={classes.img}
                 />
@@ -149,7 +149,10 @@ class Help extends React.Component {
               >
                 <div className={classes.overflow}>
                   <Button onClick={this.handleClose}>
-                    <img src="/public/overview.png" alt="Neo4j graph model diagram" />
+                    <img
+                      src="https://raw.githubusercontent.com/connectome-neuprint/neuPrint/master/pgmv1.png"
+                      alt="Neo4j graph model diagram"
+                    />
                   </Button>
                 </div>
               </Modal>
