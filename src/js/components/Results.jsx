@@ -109,12 +109,12 @@ class Results extends React.Component {
     // if the skeleton should be shown, add it to the results list.
     const combinedResults = (showSkel) ? allResults.push({
       neuronViz: true,
-      plugin: 'NeuroGlancer',
-      component: <NeuroGlancer key="ng" />
-    }).push({
-      neuronViz: true,
       plugin: 'Skeleton',
       component: <Skeleton key="skeleton" />
+    }).push({
+      neuronViz: true,
+      plugin: 'NeuroGlancer',
+      component: <NeuroGlancer key="ng" />
     }) : allResults;
 
     let results = '';
