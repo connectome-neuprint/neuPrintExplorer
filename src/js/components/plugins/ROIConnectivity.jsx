@@ -4,18 +4,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
+import Select from 'react-select';
 import randomColor from 'randomcolor';
 import { connect } from 'react-redux';
 
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import InputLabel from '@material-ui/core/InputLabel';
 import { withStyles } from '@material-ui/core/styles';
 import Icon from '@material-ui/core/Icon';
 
 import { submit } from 'actions/plugins';
 import { skeletonAddandOpen } from 'actions/skeleton';
+import { setUrlQS } from 'actions/app';
 import { neuroglancerAddandOpen } from 'actions/neuroglancer';
 import { getQueryString } from 'helpers/queryString';
+import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 import ColorBox from '../visualization/ColorBox';
 import { sortRois } from '../MetaInfo';
 import RoiHeatMap, { ColorLegend } from '../visualization/MiniRoiHeatMap';
@@ -23,9 +27,13 @@ import RoiBarGraph from '../visualization/MiniRoiBarGraph';
 
 const pluginName = 'ROIConnectivity';
 
-const styles = () => ({
+const styles = theme => ({
   clickable: {
     cursor: 'pointer'
+  },
+  select: {
+    fontFamily: theme.typography.fontFamily,
+    margin: '0.5em 0 1em 0'
   },
   button: {
     padding: 0,
@@ -38,6 +46,26 @@ const styles = () => ({
 const WEIGHTCOLOR = '255,100,100,';
 
 class ROIConnectivity extends React.Component {
+  constructor(props) {
+    super(props);
+    const { urlQueryString, dataSet } = this.props;
+    const initqsParams = {
+      rois: []
+    };
+    const qsParams = LoadQueryString(
+      `Query:${this.constructor.queryName}`,
+      initqsParams,
+      urlQueryString
+    );
+
+    // set the default state for the query input.
+    this.state = {
+      qsParams,
+      dataSet, // eslint-disable-line react/no-unused-state
+      queryName: this.constructor.queryName // eslint-disable-line react/no-unused-state
+    };
+  }
+
   static get queryName() {
     return 'ROI Connectivity';
   }
@@ -46,10 +74,25 @@ class ROIConnectivity extends React.Component {
     return 'Extract connectivity matrix for a dataset';
   }
 
+  static getDerivedStateFromProps = (props, state) => {
+    // if dataset changes, clear the selected rois and statuses
+
+    // eslint issues: https://github.com/yannickcr/eslint-plugin-react/issues/1751
+    if (props.dataSet !== state.dataSet) {
+      const oldParams = state.qsParams;
+      oldParams.rois = [];
+      props.actions.setURLQs(SaveQueryString(`Query:${state.queryName}`, oldParams));
+      state.dataSet = props.dataSet; // eslint-disable-line no-param-reassign
+      return state;
+    }
+    return null;
+  };
+
   processResults = (query, apiResponse) => {
     const { actions, classes } = this.props;
     const bodyInputCountsPerRoi = {};
     const { squareSize } = query.visProps;
+    const { rois } = query.parameters;
 
     const neuronsInRoisQuery = (inputRoi, outputRoi) => ({
       dataSet: query.parameters.dataset,
@@ -71,7 +114,7 @@ class ROIConnectivity extends React.Component {
 
     apiResponse.data.forEach(row => {
       const bodyId = row[0];
-      const roiInfoObject = row[1] ? JSON.parse(row[1]) : "{}";
+      const roiInfoObject = row[1] ? JSON.parse(row[1]) : '{}';
 
       Object.entries(roiInfoObject).forEach(roi => {
         const [name, data] = roi;
@@ -93,7 +136,7 @@ class ROIConnectivity extends React.Component {
     // grab output and add table entry
     apiResponse.data.forEach(row => {
       const bodyId = row[0];
-      const roiInfoObject = row[1] ? JSON.parse(row[1]) : "{}";;
+      const roiInfoObject = row[1] ? JSON.parse(row[1]) : '{}';
 
       Object.entries(roiInfoObject).forEach(roi => {
         const [outputRoi, data] = roi;
@@ -132,7 +175,9 @@ class ROIConnectivity extends React.Component {
     // make data table
     const data = [];
 
-    const sortedRoisInQuery = Array.from(roisInQuery).sort(sortRois);
+    const sortedRoisInQuery = Array.from(roisInQuery)
+      .sort(sortRois)
+      .filter(roi => rois.includes(roi));
 
     for (let i = 0; i < sortedRoisInQuery.length; i += 1) {
       const inputRoiName = sortedRoisInQuery[i];
@@ -243,7 +288,7 @@ class ROIConnectivity extends React.Component {
 
     const data = apiResponse.data.map(row => {
       const hasSkeleton = row[8];
-      const roiInfoObject = row[3] ? JSON.parse(row[3]) : "{}";;
+      const roiInfoObject = row[3] ? JSON.parse(row[3]) : '{}';
       const inputRoi = parameters.input_ROIs[0];
       const outputRoi = parameters.output_ROIs[0];
 
@@ -391,7 +436,9 @@ class ROIConnectivity extends React.Component {
   };
 
   processRequest = () => {
-    const { dataSet, actions, history, availableROIs } = this.props;
+    const { dataSet, actions, history } = this.props;
+    const { qsParams } = this.state;
+    const { rois } = qsParams;
 
     const query = {
       dataSet,
@@ -401,7 +448,7 @@ class ROIConnectivity extends React.Component {
       plugin: pluginName,
       parameters: {
         dataset: dataSet,
-        rois: availableROIs
+        rois
       },
       title: 'ROI Connectivity (column: inputs, row: outputs)',
       menuColor: randomColor({ luminosity: 'light', hue: 'random' }),
@@ -415,17 +462,53 @@ class ROIConnectivity extends React.Component {
     return query;
   };
 
+  handleChangeROIs = selected => {
+    const { qsParams } = this.state;
+    const { actions } = this.props;
+    const oldParams = qsParams;
+    const rois = selected.map(item => item.value);
+    oldParams.rois = rois;
+    actions.setURLQs(SaveQueryString(`Query:${this.constructor.queryName}`, oldParams));
+    this.setState({
+      qsParams: oldParams
+    });
+  };
+
   render() {
-    const { isQuerying } = this.props;
+    const { isQuerying, availableROIs, classes } = this.props;
+    const { qsParams } = this.state;
+    const { rois } = qsParams;
+
+    const roiOptions = availableROIs.map(name => ({
+      label: name,
+      value: name
+    }));
+
+    const roiValue = rois.map(roi => ({
+      label: roi,
+      value: roi
+    }));
+
     return (
-      <Button
-        variant="contained"
-        color="primary"
-        disabled={isQuerying}
-        onClick={this.processRequest}
-      >
-        Submit
-      </Button>
+      <div>
+        <InputLabel htmlFor="select-multiple-chip">ROIs (optional)</InputLabel>
+        <Select
+          className={classes.select}
+          isMulti
+          value={roiValue}
+          onChange={this.handleChangeROIs}
+          options={roiOptions}
+          closeMenuOnSelect={false}
+        />
+        <Button
+          variant="contained"
+          color="primary"
+          disabled={isQuerying}
+          onClick={this.processRequest}
+        >
+          Submit
+        </Button>
+      </div>
     );
   }
 }
@@ -436,11 +519,13 @@ ROIConnectivity.propTypes = {
   actions: PropTypes.object.isRequired,
   classes: PropTypes.object.isRequired,
   isQuerying: PropTypes.bool.isRequired,
-  history: PropTypes.object.isRequired
+  history: PropTypes.object.isRequired,
+  urlQueryString: PropTypes.string.isRequired
 };
 
 const ROIConnectivityState = state => ({
-  isQuerying: state.query.isQuerying
+  isQuerying: state.query.isQuerying,
+  urlQueryString: state.app.get('urlQueryString')
 });
 
 const ROIConnectivityDispatch = dispatch => ({
@@ -453,6 +538,9 @@ const ROIConnectivityDispatch = dispatch => ({
     },
     neuroglancerAddandOpen: (id, dataSet) => {
       dispatch(neuroglancerAddandOpen(id, dataSet));
+    },
+    setURLQs(querystring) {
+      dispatch(setUrlQS(querystring));
     }
   }
 });
