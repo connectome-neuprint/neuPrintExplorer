@@ -110,7 +110,6 @@ class TopBar extends React.Component {
           </Tooltip>
           <Select
             className={classes.search}
-            classNamePrefix="react-select"
             styles={selectStyles}
             value={{ value: datasetstr, label: datasetstr }}
             onChange={this.handleChange}
