@@ -6,6 +6,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import Select from 'react-select';
+import { withRouter } from 'react-router';
 
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -16,14 +18,15 @@ import Tooltip from '@material-ui/core/Tooltip';
 
 import MetaInfo from './MetaInfo';
 import Login from './Login';
+import {getSiteParams, setQueryString } from '../helpers/queryString';
 
 // adapted from material ui example
 const styles = theme => ({
   appBar: {
     zIndex: theme.zIndex.drawer + 1
   },
-  flex: {
-    flex: 1
+  grow: {
+    flexGrow: 1
   },
   buttonBasic: {
     padding: `0 ${theme.spacing.unit}px`,
@@ -42,50 +45,110 @@ const styles = theme => ({
     backgroundColor: theme.palette.common.white,
     padding: theme.spacing.unit,
     color: 'red'
+  },
+  search: {
+    fontFamily: theme.typography.fontFamily,
+    width: '15em',
+    marginLeft: '2em'
   }
 });
 
-const TopBar = ({ classes }) => (
-  <AppBar position="absolute" className={classes.appBar}>
-    <Toolbar>
-      <div className={classes.flex}>
-        <Tooltip title={VERSION} placement="bottom" enterDelay={300}>
-          <Link to="/">
-            <img
-              alt="neuprintexplorer logo - home link"
-              src="/public/neuprintexplorerw.png"
-              className={classes.img}
-            />
-          </Link>
-        </Tooltip>
-      </div>
-      <Login />
-      <Tooltip title="View Source" placement="bottom" enterDelay={100}>
-        <Button
-          className={classes.buttonBasic}
-          href="https://github.com/janelia-flyem/neuPrintExplorer"
-        >
-          <SvgIcon nativeColor="white">
-            <path d="M12.007 0C6.12 0 1.1 4.27.157 10.08c-.944 5.813 2.468 11.45 8.054 13.312.19.064.397.033.555-.084.16-.117.25-.304.244-.5v-2.042c-3.33.735-4.037-1.56-4.037-1.56-.22-.726-.694-1.35-1.334-1.756-1.096-.75.074-.735.074-.735.773.103 1.454.557 1.846 1.23.694 1.21 2.23 1.638 3.45.96.056-.61.327-1.178.766-1.605-2.67-.3-5.462-1.335-5.462-6.002-.02-1.193.42-2.35 1.23-3.226-.327-1.015-.27-2.116.166-3.09 0 0 1.006-.33 3.3 1.23 1.966-.538 4.04-.538 6.003 0 2.295-1.5 3.3-1.23 3.3-1.23.445 1.006.49 2.144.12 3.18.81.877 1.25 2.033 1.23 3.226 0 4.607-2.805 5.627-5.476 5.927.578.583.88 1.386.825 2.206v3.29c-.005.2.092.393.26.507.164.115.377.14.565.063 5.568-1.88 8.956-7.514 8.007-13.313C22.892 4.267 17.884.007 12.008 0z" />
-          </SvgIcon>
-        </Button>
-      </Tooltip>
-      <MetaInfo />
-    </Toolbar>
-  </AppBar>
-);
+const selectStyles = {
+  placeholder: () => ({
+    color: '#fff',
+  }),
+  singleValue: (provided) => ({
+    ...provided,
+    color: '#fff',
+  }),
+  menu: (provided) => ({
+    ...provided,
+    color: '#333'
+  }),
+  control: (provided) => ({
+    ...provided,
+    background: '#396a9f',
+    border: '1px solid #fff',
+  })
+};
 
-const TopBarState = state => ({
-  userInfo: state.user.userInfo
-});
+class TopBar extends React.Component {
+  handleChange = selectedDataSet => {
+    const { location } = this.props;
+
+    const qsParams = getSiteParams(location);
+    const newdatasets = [selectedDataSet.value];
+    const oldparams = qsParams;
+    oldparams.datasets = newdatasets;
+    setQueryString({
+      dataset: selectedDataSet.value
+    });
+  };
+
+  render() {
+    const { classes, availableDatasets, location } = this.props;
+    const qsParams = getSiteParams(location);
+
+    const dataSetOptions = availableDatasets.map(dataset => ({
+      value: dataset,
+      label: dataset
+    }));
+
+    const datasetstr = qsParams.get('dataset') || 'Select a dataset';
+
+    return (
+      <AppBar position="absolute" className={classes.appBar}>
+        <Toolbar>
+          <Tooltip title={VERSION} placement="bottom" enterDelay={300}>
+            <Link to="/">
+              <img
+                alt="neuprintexplorer logo - home link"
+                src="/public/neuprintexplorerw.png"
+                className={classes.img}
+              />
+            </Link>
+          </Tooltip>
+          <Select
+            className={classes.search}
+            classNamePrefix="react-select"
+            styles={selectStyles}
+            value={{ value: datasetstr, label: datasetstr }}
+            onChange={this.handleChange}
+            options={dataSetOptions}
+          />
+          <div className={classes.grow} />
+          <Login />
+          <Tooltip title="View Source" placement="bottom" enterDelay={100}>
+            <Button
+              className={classes.buttonBasic}
+              href="https://github.com/janelia-flyem/neuPrintExplorer"
+            >
+              <SvgIcon nativeColor="white">
+                <path d="M12.007 0C6.12 0 1.1 4.27.157 10.08c-.944 5.813 2.468 11.45 8.054 13.312.19.064.397.033.555-.084.16-.117.25-.304.244-.5v-2.042c-3.33.735-4.037-1.56-4.037-1.56-.22-.726-.694-1.35-1.334-1.756-1.096-.75.074-.735.074-.735.773.103 1.454.557 1.846 1.23.694 1.21 2.23 1.638 3.45.96.056-.61.327-1.178.766-1.605-2.67-.3-5.462-1.335-5.462-6.002-.02-1.193.42-2.35 1.23-3.226-.327-1.015-.27-2.116.166-3.09 0 0 1.006-.33 3.3 1.23 1.966-.538 4.04-.538 6.003 0 2.295-1.5 3.3-1.23 3.3-1.23.445 1.006.49 2.144.12 3.18.81.877 1.25 2.033 1.23 3.226 0 4.607-2.805 5.627-5.476 5.927.578.583.88 1.386.825 2.206v3.29c-.005.2.092.393.26.507.164.115.377.14.565.063 5.568-1.88 8.956-7.514 8.007-13.313C22.892 4.267 17.884.007 12.008 0z" />
+              </SvgIcon>
+            </Button>
+          </Tooltip>
+          <MetaInfo />
+        </Toolbar>
+      </AppBar>
+    );
+  }
+}
 
 TopBar.propTypes = {
   classes: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired,
+  availableDatasets: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
-export default withStyles(styles)(
+const TopBarState = state => ({
+  userInfo: state.user.userInfo,
+  availableDatasets: state.neo4jsettings.get('availableDatasets')
+});
+
+export default withRouter(withStyles(styles)(
   connect(
     TopBarState,
     null
-  )(TopBar)
+  )(TopBar))
 );

@@ -1,14 +1,12 @@
 /*
- * Side bar that contains navigation items and search window anchor. 
-*/
+ * Side bar that contains navigation items and search window anchor.
+ */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { NavLink } from 'react-router-dom';
 import { withRouter } from 'react-router';
-import qs from 'qs';
-import { connect } from 'react-redux';
 
 import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';
@@ -20,7 +18,7 @@ import Icon from '@material-ui/core/Icon';
 import Divider from '@material-ui/core/Divider';
 
 import Contact from './Contact';
-import { setUrlQS } from '../actions/app';
+import {getSiteParams, setQueryString } from '../helpers/queryString';
 
 const drawerWidth = 400;
 
@@ -54,39 +52,24 @@ const styles = theme => ({
 });
 
 class SideBar extends React.Component {
-  isOpen = () => {
-    const { urlQueryString } = this.props;
-    const query = qs.parse(urlQueryString);
-    let openQuery = false;
-    if ('openQuery' in query && query.openQuery === 'true') {
-      openQuery = true;
-    }
-    return openQuery;
-  };
-
   toggleQuery = () => {
-    const { setURLQs, urlQueryString  } = this.props;
-    const openQuery = this.isOpen();
-    const query = qs.parse(urlQueryString);
+    const { location } = this.props;
+    const qsParams = getSiteParams(location);
 
+    const openQuery = qsParams.get('q');
     if (!openQuery) {
-      query.openQuery = 'true';
-      const urlqs = qs.stringify(query);
-      setURLQs(urlqs);
-
-      window.history.replaceState(null, null, `${window.location.pathname  }?${  urlqs}`);
+      setQueryString({ q : 1});
     } else {
-      query.openQuery = 'false';
-      const urlqs = qs.stringify(query);
-      setURLQs(urlqs);
-
-      window.history.replaceState(null, null, window.location.pathname);
+      setQueryString({ q : undefined});
     }
   };
 
   render() {
-    const { classes, location, urlQueryString } = this.props;
-    const openQuery = this.isOpen();
+    const { classes, location } = this.props;
+    const qsParams = getSiteParams(location);
+
+    const openQuery = Boolean(qsParams.get('q'));
+    const queryString = location.search;
 
     return (
       <Drawer
@@ -110,7 +93,7 @@ class SideBar extends React.Component {
           <MenuItem
             selected={/^\/$/.test(location.pathname)}
             component={NavLink}
-            to={{ pathname: '/', search: openQuery ? urlQueryString : '' }}
+            to={{ pathname: '/', search: queryString }}
             button
           >
             <ListItemIcon>
@@ -122,7 +105,7 @@ class SideBar extends React.Component {
           <MenuItem
             selected={/^\/results/.test(location.pathname)}
             component={NavLink}
-            to={{ pathname: '/results', search: openQuery ? urlQueryString : '' }}
+            to={{ pathname: '/results', search: queryString }}
             button
           >
             <ListItemIcon>
@@ -134,7 +117,7 @@ class SideBar extends React.Component {
           <MenuItem
             selected={/^\/favorites/.test(location.pathname)}
             component={NavLink}
-            to={{ pathname: '/favorites', search: openQuery ? urlQueryString : '' }}
+            to={{ pathname: '/favorites', search: queryString }}
             button
           >
             <ListItemIcon>
@@ -146,7 +129,7 @@ class SideBar extends React.Component {
           <MenuItem
             selected={/^\/help/.test(location.pathname)}
             component={NavLink}
-            to={{ pathname: '/help', search: openQuery ? urlQueryString : '' }}
+            to={{ pathname: '/help', search: queryString }}
             button
           >
             <ListItemIcon>
@@ -161,29 +144,9 @@ class SideBar extends React.Component {
   }
 }
 
-const SideBarState = state => ({
-  userInfo: state.user.get('userInfo'),
-  urlQueryString: state.app.get('urlQueryString')
-});
-
-const SideBarDispatch = dispatch => ({
-  setURLQs(querystring) {
-    dispatch(setUrlQS(querystring));
-  }
-});
-
 SideBar.propTypes = {
   classes: PropTypes.object.isRequired,
-  location: PropTypes.object.isRequired,
-  urlQueryString: PropTypes.string.isRequired,
-  setURLQs: PropTypes.func.isRequired
+  location: PropTypes.object.isRequired
 };
 
-export default withRouter(
-  withStyles(styles)(
-    connect(
-      SideBarState,
-      SideBarDispatch
-    )(SideBar)
-  )
-);
+export default withRouter(withStyles(styles)(SideBar));

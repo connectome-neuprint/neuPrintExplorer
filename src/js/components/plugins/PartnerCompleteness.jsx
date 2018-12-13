@@ -37,7 +37,7 @@ class PartnerCompleteness extends React.Component {
     return pluginName;
   }
 
-  static get queryType() {
+  static get queryCategory() {
     return 'recon';
   }
 

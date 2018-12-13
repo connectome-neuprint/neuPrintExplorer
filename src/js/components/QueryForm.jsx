@@ -5,14 +5,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import slug from 'slugg';
+
 import Snackbar from '@material-ui/core/Snackbar';
 import { withRouter } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
-import qs from 'qs';
-import C from '../reducers/constants';
-import { setUrlQS } from '../actions/app';
 
 const styles = theme => ({
   divider: {
@@ -26,36 +25,14 @@ class QueryForm extends React.Component {
     super(props);
     this.state = {
       openSnack: false
-      // redirectResults: false
     };
   }
-
-  submitQuery = query => {
-    const { userInfo, urlQueryString, history, setURLQs, updateQuery } = this.props;
-    if (userInfo === null || userInfo.AuthLevel === 'noauth') {
-      this.setState({ openSnack: true });
-      return;
-    }
-    if (query.queryStr === '') {
-      return;
-    }
-
-    const currqs = qs.parse(urlQueryString);
-    currqs.openQuery = 'false';
-    const urlqs = qs.stringify(currqs);
-    setURLQs(urlqs);
-
-    history.push(`/results${window.location.search}`);
-
-    // flush all other results
-    updateQuery(query);
-  };
 
   findCurrentPlugin = () => {
     const { pluginList, queryType } = this.props;
     // find matching query type
     const CurrentQuery =
-      pluginList.find(plugin => plugin.queryName === queryType) || pluginList[0];
+      pluginList.find(plugin => slug(plugin.queryName) === queryType) || pluginList[0];
     return CurrentQuery;
   };
 
@@ -97,7 +74,6 @@ class QueryForm extends React.Component {
           datasetstr={dataSet}
           dataSet={dataSet}
           availableROIs={currROIs}
-          callback={this.submitQuery}
           disable={isQuerying}
         />
       </div>
@@ -108,14 +84,10 @@ class QueryForm extends React.Component {
 QueryForm.propTypes = {
   queryType: PropTypes.string.isRequired,
   userInfo: PropTypes.object.isRequired,
-  updateQuery: PropTypes.func.isRequired,
   pluginList: PropTypes.arrayOf(PropTypes.func).isRequired,
   dataSet: PropTypes.string.isRequired,
   isQuerying: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired,
-  setURLQs: PropTypes.func.isRequired,
-  urlQueryString: PropTypes.string.isRequired,
-  history: PropTypes.object.isRequired,
   availableROIs: PropTypes.object.isRequired
 };
 
@@ -128,17 +100,7 @@ const QueryFormState = state => ({
   availableROIs: state.neo4jsettings.get('availableROIs')
 });
 
-const QueryFormDispatch = dispatch => ({
-  updateQuery(query) {
-    dispatch({
-      type: C.UPDATE_QUERY,
-      neoQueryObj: query
-    });
-  },
-  setURLQs(querystring) {
-    dispatch(setUrlQS(querystring));
-  }
-});
+const QueryFormDispatch = () => ({});
 
 export default withRouter(
   withStyles(styles)(

@@ -10,6 +10,7 @@ const queryState = {
         state: null,
         params: undefined,
     },
+    dataSet: null,
     isQuerying: false,
     neoResults: null,
     neoError: null,

@@ -20,7 +20,7 @@ class Completeness extends React.Component {
     return 'Completeness';
   }
 
-  static get queryType() {
+  static get queryCategory() {
     return 'recon';
   }
 

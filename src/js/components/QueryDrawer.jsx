@@ -1,14 +1,16 @@
 /*
- * Side drawer pop out for queries. 
-*/
+ * Side drawer pop out for queries.
+ */
 
 import React from 'react';
+import { withRouter } from 'react-router';
+import PropTypes from 'prop-types';
+
 import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';
-import qs from 'qs';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+
 import Query from './Query';
+import { getSiteParams } from '../helpers/queryString';
 
 const drawerWidth = 400;
 
@@ -22,15 +24,11 @@ const styles = theme => ({
   toolbar: theme.mixins.toolbar
 });
 
-// const MyLink = props => <NavLink to="/results" {...props} />
+const QueryDrawer = props => {
+  const { classes, location } = props;
+  const qsParams = getSiteParams(location);
 
-const QueryDrawer = (props) => {
-  const { classes, urlQueryString } = props;
-  const query = qs.parse(urlQueryString);
-  let openQuery = false;
-  if ('openQuery' in query && query.openQuery === 'true') {
-    openQuery = true;
-  }
+  const openQuery = qsParams.get('q');
 
   if (openQuery) {
     return (
@@ -48,20 +46,11 @@ const QueryDrawer = (props) => {
     );
   }
   return null;
-}
-
-const QueryDrawerState = state => ({
-  urlQueryString: state.app.get('urlQueryString')
-});
+};
 
 QueryDrawer.propTypes = {
   classes: PropTypes.object.isRequired,
-  urlQueryString: PropTypes.string.isRequired
+  location: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(
-  connect(
-    QueryDrawerState,
-    null
-  )(QueryDrawer)
-);
+export default withRouter(withStyles(styles)(QueryDrawer));

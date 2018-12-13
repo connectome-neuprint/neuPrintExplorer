@@ -36,7 +36,7 @@ class Distribution extends React.Component {
     return 'Distribution';
   }
 
-  static get queryType() {
+  static get queryCategory() {
     return 'recon';
   }
 

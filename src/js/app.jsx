@@ -77,14 +77,14 @@ store.dispatch(setAppDb(appDB));
 */
 function loadInterface() {
   ReactDOM.render(
-    <div>
+    <React.Fragment>
       <CssBaseline />
       <MuiThemeProvider theme={theme}>
         <Provider store={store}>
           <Master />
         </Provider>
       </MuiThemeProvider>
-    </div>,
+    </React.Fragment>,
     document.getElementById('analyzer')
   );
 }

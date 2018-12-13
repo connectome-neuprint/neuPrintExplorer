@@ -19,7 +19,7 @@ class Autapses extends React.Component {
     return 'Autapses';
   }
 
-  static get queryType() {
+  static get queryCategory() {
     return 'recon';
   }
 

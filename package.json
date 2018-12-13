@@ -75,6 +75,7 @@
     "react-select": "^2.1.0",
     "redux": "^3.7.2",
     "redux-thunk": "^2.3.0",
+    "slugg": "^1.2.1",
     "spectacle": "^5.2.0",
     "swagger-ui": "^3.19.3",
     "underscore": "^1.8.3",
