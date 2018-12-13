@@ -52,6 +52,7 @@ export default function neuroglancerReducer(state = neuroglancerState, action) {
         visible: true
       })).set('coordinates', Immutable.List(action.coordinates)).set('loading', false);
     }
+    case C.SKELETON_REMOVE:
     case C.NEUROGLANCER_NEURON_REMOVE: {
      const updated = state.deleteIn(['neurons', action.id]);
 
