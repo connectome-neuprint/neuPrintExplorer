@@ -7,6 +7,7 @@ const state = {
     queryStr: 'existingquerystring',
     state: 'existingstate'
   },
+  dataSet: null,
   isQuerying: false,
   neoResults: 'existingneoresults',
   neoError: 'existingneoerror'
@@ -34,6 +35,7 @@ describe('query Reducer', () => {
           datasetstr: 'newdataset'
         }
       },
+      dataSet: null,
       isQuerying: true,
       neoResults: null,
       neoError: null
@@ -46,6 +48,7 @@ describe('query Reducer', () => {
           datasetstr: 'newdataset'
         }
       },
+      dataSet: null,
       isQuerying: true,
       neoResults: 'existingneoresults',
       neoError: 'existingneoerror'
@@ -62,6 +65,7 @@ describe('query Reducer', () => {
         queryStr: '',
         state: null
       },
+      dataSet: null,
       isQuerying: true,
       neoResults: null,
       neoError: null
@@ -71,6 +75,7 @@ describe('query Reducer', () => {
         queryStr: 'existingquerystring',
         state: 'existingstate'
       },
+      dataSet: null,
       isQuerying: true,
       neoResults: 'existingneoresults',
       neoError: 'existingneoerror'
@@ -87,6 +92,7 @@ describe('query Reducer', () => {
         queryStr: '',
         state: null
       },
+      dataSet: null,
       isQuerying: false,
       neoResults: null,
       neoError: 'newerror'
@@ -96,6 +102,7 @@ describe('query Reducer', () => {
         queryStr: 'existingquerystring',
         state: 'existingstate'
       },
+      dataSet: null,
       isQuerying: false,
       neoResults: null,
       neoError: 'newerror'
@@ -111,6 +118,7 @@ describe('query Reducer', () => {
         queryStr: '',
         state: null
       },
+      dataSet: null,
       isQuerying: false,
       neoResults: null,
       neoError: null
@@ -120,6 +128,7 @@ describe('query Reducer', () => {
         queryStr: 'existingquerystring',
         state: 'existingstate'
       },
+      dataSet: null,
       isQuerying: false,
       neoResults: 'existingneoresults',
       neoError: null
@@ -136,6 +145,7 @@ describe('query Reducer', () => {
         queryStr: '',
         state: null
       },
+      dataSet: null,
       isQuerying: false,
       neoResults: null,
       neoError: null,
@@ -146,6 +156,7 @@ describe('query Reducer', () => {
         queryStr: 'existingquerystring',
         state: 'existingstate'
       },
+      dataSet: null,
       isQuerying: false,
       neoResults: 'existingneoresults',
       neoError: 'existingneoerror',
@@ -162,6 +173,7 @@ describe('query Reducer', () => {
         queryStr: '',
         state: null
       },
+      dataSet: null,
       isQuerying: true,
       neoResults: null,
       neoError: null
@@ -171,6 +183,7 @@ describe('query Reducer', () => {
         queryStr: 'existingquerystring',
         state: 'existingstate'
       },
+      dataSet: null,
       isQuerying: true,
       neoResults: 'existingneoresults',
       neoError: 'existingneoerror'
@@ -186,6 +199,7 @@ describe('query Reducer', () => {
         queryStr: '',
         state: null
       },
+      dataSet: null,
       isQuerying: false,
       neoResults: null,
       neoError: null
@@ -195,6 +209,7 @@ describe('query Reducer', () => {
         queryStr: 'existingquerystring',
         state: 'existingstate'
       },
+      dataSet: null,
       isQuerying: false,
       neoResults: 'existingneoresults',
       neoError: 'existingneoerror'
@@ -210,6 +225,7 @@ describe('query Reducer', () => {
         queryStr: '',
         state: null
       },
+      dataSet: null,
       isQuerying: false,
       neoResults: null,
       neoError: null
@@ -219,6 +235,7 @@ describe('query Reducer', () => {
         queryStr: 'existingquerystring',
         state: 'existingstate'
       },
+      dataSet: null,
       isQuerying: false,
       neoResults: 'existingneoresults',
       neoError: 'existingneoerror'
