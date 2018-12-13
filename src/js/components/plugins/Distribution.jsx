@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import randomColor from 'randomcolor';
 import { withRouter } from 'react-router';
+import Immutable from 'immutable';
 
 import Button from '@material-ui/core/Button';
 import Select from '@material-ui/core/Select';
@@ -15,7 +16,7 @@ import FormControl from '@material-ui/core/FormControl';
 import { withStyles } from '@material-ui/core/styles';
 
 import { submit } from 'actions/plugins';
-import { getQueryString } from 'helpers/queryString';
+import {getQueryString, getSiteParams, setQueryString } from 'helpers/queryString';
 
 const styles = theme => ({
   selects: {
@@ -27,11 +28,6 @@ const styles = theme => ({
 const pluginName = 'Distribution';
 
 class Distribution extends React.Component {
-  state = {
-    isPre: true,
-    roi: ''
-  };
-
   static get queryName() {
     return 'Distribution';
   }
@@ -91,8 +87,9 @@ class Distribution extends React.Component {
 
   // creates query object and sends to callback
   processRequest = () => {
-    const { dataSet, actions, history } = this.props;
-    const { isPre, roi } = this.state;
+    const { dataSet, actions, history, location } = this.props;
+    const qsParams = getSiteParams(location);
+    const { roi, isPre } = qsParams.getIn(['input','distribution'], Immutable.Map({})).toJS();
     const query = {
       dataSet,
       queryString: '/npexplorer/distribution',
@@ -117,21 +114,45 @@ class Distribution extends React.Component {
 
   setROI = event => {
     const roiname = event.target.value;
-    // let newparams = Object.assign({}, this.state.qsParams, { roi: roiname });
-    // this.props.setURLQs(SaveQueryString('Query:' + this.constructor.queryName, newparams));
-    this.setState({ roi: roiname });
+    setQueryString({
+      'input': {
+        distribution: {
+          roi: roiname
+        }
+      }
+    });
   };
 
   setType = event => {
     const type = event.target.value;
-    // let newparams = Object.assign({}, this.state.qsParams, { type: type });
-    // this.props.setURLQs(SaveQueryString('Query:' + this.constructor.queryName, newparams));
-    this.setState({ isPre: type });
+     setQueryString({
+      'input': {
+        distribution: {
+          isPre: type
+        }
+      }
+    });
   };
 
   render() {
-    const { isQuerying, classes, availableROIs } = this.props;
-    const { roi, isPre } = this.state;
+    const { isQuerying, classes, availableROIs, location } = this.props;
+    const qsParams = getSiteParams(location);
+    // oh boy, this is ugly. There needs to be a better way to set defaults.
+    // I think we should be able to change getSiteParams to accept defaults
+    // and merge the values from the url with the defaults.
+    // eg:
+    //    const qsParams = getSiteParams(location, defaults);
+    //    const { roi, isPre } = qsParams.getIn(['input','distribution']).toJS();
+    let { roi, isPre } = qsParams.getIn(['input','distribution'], Immutable.Map({})).toJS();
+
+    if (roi === undefined) {
+      roi = '';
+    }
+
+    if (isPre === undefined) {
+      isPre = true;
+    }
+
     return (
       <form>
         <FormControl className={classes.selects}>
@@ -189,7 +210,8 @@ Distribution.propTypes = {
   availableROIs: PropTypes.arrayOf(PropTypes.string).isRequired,
   dataSet: PropTypes.string.isRequired,
   actions: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired
+  history: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired
 };
 
 const DistributionState = state => ({
