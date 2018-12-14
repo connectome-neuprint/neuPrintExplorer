@@ -346,7 +346,7 @@ describe('find neurons Plugin', () => {
         onMouseOver={[Function]}
         onTouchEnd={[Function]}
         onTouchStart={[Function]}
-        title="Enter body ID, neuron name, or wildcard names using period+star (e.g., MBON.*)"
+        title="Enter body ID, neuron name, or wildcard names using period+star (e.g., MBON.*). Warning: if using regular expressions, special characters like parentheses must be escaped (e.g. Delta6g\\\\\\\\(preQ7\\\\\\\\).*)"
       >
         ?
       </p>
@@ -620,14 +620,14 @@ describe('find neurons Plugin', () => {
                     <label
                       className="MuiFormLabel-root-14"
                     >
-                      Filter by status (coming soon)
+                      Filter by status
                     </label>
                     <div
-                      className="css-1sontr1 Connect-NeuronFilter--select-104"
+                      className="css-10nd86i Connect-NeuronFilter--select-104"
                       onKeyDown={[Function]}
                     >
                       <div
-                        className="css-162g8z5"
+                        className="css-vj8t7z"
                         onMouseDown={[Function]}
                         onTouchEnd={[Function]}
                       >
@@ -655,7 +655,7 @@ describe('find neurons Plugin', () => {
                                 autoCapitalize="none"
                                 autoComplete="off"
                                 autoCorrect="off"
-                                disabled={true}
+                                disabled={false}
                                 id="react-select-7-input"
                                 onBlur={[Function]}
                                 onChange={[Function]}
@@ -700,7 +700,7 @@ describe('find neurons Plugin', () => {
                           className="css-1wy0on6"
                         >
                           <span
-                            className="css-ln5n5c"
+                            className="css-d8oujb"
                           />
                           <div
                             aria-hidden="true"
