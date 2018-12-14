@@ -223,14 +223,13 @@ class NeuronFilter extends React.Component {
                 onChange={this.handlePostChange}
               />
               <FormControl className={classes.formControl}>
-                <FormLabel>Filter by status (coming soon)</FormLabel>
+                <FormLabel>Filter by status</FormLabel>
                 <Select
                   className={classes.select}
                   isMulti
                   value={statusValue}
                   onChange={this.handleStatus}
                   options={statusOptions}
-                  isDisabled
                   closeMenuOnSelect={false}
                 />
               </FormControl>
