@@ -43,7 +43,8 @@ NeuronHelp.propTypes = {
 };
 
 NeuronHelp.defaultProps = {
-  text: 'Enter body ID, neuron name, or wildcard names using period+star (e.g., MBON.*)'
+  text:
+    'Enter body ID, neuron name, or wildcard names using period+star (e.g., MBON.*). Warning: if using regular expressions, special characters like parentheses must be escaped (e.g. Delta6g\\\\(preQ7\\\\).*)'
 };
 
 export default withStyles(styles)(NeuronHelp);
