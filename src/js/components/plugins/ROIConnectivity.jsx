@@ -89,10 +89,15 @@ class ROIConnectivity extends React.Component {
   };
 
   processResults = (query, apiResponse) => {
-    const { actions, classes } = this.props;
+    const { actions, classes, availableROIs } = this.props;
     const bodyInputCountsPerRoi = {};
     const { squareSize } = query.visProps;
-    const { rois } = query.parameters;
+    let { rois } = query.parameters;
+
+    // if no selected rois, should include all rois
+    if (!rois || rois.length === 0) {
+      rois = availableROIs;
+    }
 
     const neuronsInRoisQuery = (inputRoi, outputRoi) => ({
       dataSet: query.parameters.dataset,
