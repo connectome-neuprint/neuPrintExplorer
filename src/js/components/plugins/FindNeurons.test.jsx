@@ -355,11 +355,11 @@ describe('find neurons Plugin', () => {
       className="Connect-NeuronFilter--expandablePanel-102"
     >
       <div
-        className="MuiPaper-root-109 MuiPaper-elevation1-112 MuiExpansionPanel-root-106"
+        className="MuiPaper-root-110 MuiPaper-elevation1-113 MuiExpansionPanel-root-107"
       >
         <div
           aria-expanded={false}
-          className="MuiButtonBase-root-142 MuiExpansionPanelSummary-root-136"
+          className="MuiButtonBase-root-143 MuiExpansionPanelSummary-root-137"
           onBlur={[Function]}
           onClick={[Function]}
           onFocus={[Function]}
@@ -375,7 +375,7 @@ describe('find neurons Plugin', () => {
           tabIndex="0"
         >
           <div
-            className="MuiExpansionPanelSummary-content-140"
+            className="MuiExpansionPanelSummary-content-141"
           >
             <h6
               className="MuiTypography-root-66 MuiTypography-subtitle1-84"
@@ -385,7 +385,7 @@ describe('find neurons Plugin', () => {
           </div>
           <div
             aria-hidden="true"
-            className="MuiButtonBase-root-142 MuiIconButton-root-145 MuiExpansionPanelSummary-expandIcon-141"
+            className="MuiButtonBase-root-143 MuiIconButton-root-146 MuiExpansionPanelSummary-expandIcon-142"
             onBlur={[Function]}
             onFocus={[Function]}
             onKeyDown={[Function]}
@@ -400,11 +400,11 @@ describe('find neurons Plugin', () => {
             tabIndex={-1}
           >
             <span
-              className="MuiIconButton-label-150"
+              className="MuiIconButton-label-151"
             >
               <svg
                 aria-hidden="true"
-                className="MuiSvgIcon-root-151"
+                className="MuiSvgIcon-root-152"
                 focusable="false"
                 role="presentation"
                 viewBox="0 0 24 24"
@@ -419,13 +419,13 @@ describe('find neurons Plugin', () => {
               </svg>
             </span>
             <span
-              className="MuiTouchRipple-root-225"
+              className="MuiTouchRipple-root-226"
             />
           </div>
         </div>
         <div
           aria-hidden="true"
-          className="MuiCollapse-container-160"
+          className="MuiCollapse-container-161"
           style={
             Object {
               "minHeight": "0px",
@@ -433,13 +433,13 @@ describe('find neurons Plugin', () => {
           }
         >
           <div
-            className="MuiCollapse-wrapper-162"
+            className="MuiCollapse-wrapper-163"
           >
             <div
-              className="MuiCollapse-wrapperInner-163"
+              className="MuiCollapse-wrapperInner-164"
             >
               <div
-                className="MuiExpansionPanelDetails-root-164 Connect-NeuronFilter--nopad-103"
+                className="MuiExpansionPanelDetails-root-165 Connect-NeuronFilter--nopad-103"
               >
                 <div
                   className="MuiFormControl-root-21 Connect-NeuronFilter--formControl-101"
@@ -448,21 +448,13 @@ describe('find neurons Plugin', () => {
                     className="MuiFormControl-root-21 Connect-NeuronFilter--formControl-101"
                   >
                     <label
-                      aria-describedby={null}
-                      className="MuiFormControlLabel-root-165"
-                      onBlur={[Function]}
-                      onFocus={[Function]}
-                      onMouseLeave={[Function]}
-                      onMouseOver={[Function]}
-                      onTouchEnd={[Function]}
-                      onTouchStart={[Function]}
-                      title="Limit to neurons (bodies with >=2 t-bars, >=10 psds, name, soma, or status)"
+                      className="MuiFormControlLabel-root-166"
                     >
                       <span
-                        className="MuiSwitch-root-171"
+                        className="MuiSwitch-root-172"
                       >
                         <span
-                          className="MuiButtonBase-root-142 MuiIconButton-root-145 MuiPrivateSwitchBase-root-180 MuiSwitch-switchBase-174 MuiSwitch-colorPrimary-176 MuiPrivateSwitchBase-checked-181 MuiSwitch-checked-175"
+                          className="MuiButtonBase-root-143 MuiIconButton-root-146 MuiPrivateSwitchBase-root-181 MuiSwitch-switchBase-175 MuiSwitch-colorPrimary-177 MuiPrivateSwitchBase-checked-182 MuiSwitch-checked-176"
                           onBlur={[Function]}
                           onFocus={[Function]}
                           onKeyDown={[Function]}
@@ -476,34 +468,52 @@ describe('find neurons Plugin', () => {
                           tabIndex={null}
                         >
                           <span
-                            className="MuiIconButton-label-150"
+                            className="MuiIconButton-label-151"
                           >
                             <span
-                              className="MuiSwitch-icon-172 MuiSwitch-iconChecked-173"
+                              className="MuiSwitch-icon-173 MuiSwitch-iconChecked-174"
                             />
                             <input
                               checked={true}
-                              className="MuiPrivateSwitchBase-input-183"
+                              className="MuiPrivateSwitchBase-input-184"
                               disabled={false}
                               onChange={[Function]}
                               type="checkbox"
                             />
                           </span>
                           <span
-                            className="MuiTouchRipple-root-225"
+                            className="MuiTouchRipple-root-226"
                           />
                         </span>
                         <span
-                          className="MuiSwitch-bar-179"
+                          className="MuiSwitch-bar-180"
                         />
                       </span>
                       <span
-                        className="MuiTypography-root-66 MuiTypography-body1-75 MuiFormControlLabel-label-170"
+                        className="MuiTypography-root-66 MuiTypography-body1-75 MuiFormControlLabel-label-171"
                       >
                         <h6
                           className="MuiTypography-root-66 MuiTypography-subtitle1-84"
+                          style={
+                            Object {
+                              "display": "inline-flex",
+                            }
+                          }
                         >
                           Limit to neurons
+                          <div
+                            aria-describedby={null}
+                            className="Connect-NeuronFilter--tooltip-106"
+                            onBlur={[Function]}
+                            onFocus={[Function]}
+                            onMouseLeave={[Function]}
+                            onMouseOver={[Function]}
+                            onTouchEnd={[Function]}
+                            onTouchStart={[Function]}
+                            title="Limit to neurons (bodies with >=2 t-bars, >=10 psds, name, soma, or status)"
+                          >
+                            ?
+                          </div>
                         </h6>
                       </span>
                     </label>
@@ -518,12 +528,12 @@ describe('find neurons Plugin', () => {
                       minimum # pre (optional)
                     </label>
                     <div
-                      className="MuiInputBase-root-39 MuiOutlinedInput-root-184 MuiInputBase-formControl-40 MuiInputBase-marginDense-46"
+                      className="MuiInputBase-root-39 MuiOutlinedInput-root-185 MuiInputBase-formControl-40 MuiInputBase-marginDense-46"
                       onClick={[Function]}
                     >
                       <fieldset
                         aria-hidden={true}
-                        className="MuiPrivateNotchedOutline-root-197 MuiOutlinedInput-notchedOutline-191"
+                        className="MuiPrivateNotchedOutline-root-198 MuiOutlinedInput-notchedOutline-192"
                         style={
                           Object {
                             "paddingLeft": 8,
@@ -531,7 +541,7 @@ describe('find neurons Plugin', () => {
                         }
                       >
                         <legend
-                          className="MuiPrivateNotchedOutline-legend-198"
+                          className="MuiPrivateNotchedOutline-legend-199"
                           style={
                             Object {
                               "width": 0.01,
@@ -549,7 +559,7 @@ describe('find neurons Plugin', () => {
                       </fieldset>
                       <input
                         aria-invalid={false}
-                        className="MuiInputBase-input-49 MuiOutlinedInput-input-192 MuiInputBase-inputType-52 MuiInputBase-inputMarginDense-50 MuiOutlinedInput-inputMarginDense-193"
+                        className="MuiInputBase-input-49 MuiOutlinedInput-input-193 MuiInputBase-inputType-52 MuiInputBase-inputMarginDense-50 MuiOutlinedInput-inputMarginDense-194"
                         disabled={false}
                         onBlur={[Function]}
                         onChange={[Function]}
@@ -571,12 +581,12 @@ describe('find neurons Plugin', () => {
                       minimum # post (optional)
                     </label>
                     <div
-                      className="MuiInputBase-root-39 MuiOutlinedInput-root-184 MuiInputBase-formControl-40 MuiInputBase-marginDense-46"
+                      className="MuiInputBase-root-39 MuiOutlinedInput-root-185 MuiInputBase-formControl-40 MuiInputBase-marginDense-46"
                       onClick={[Function]}
                     >
                       <fieldset
                         aria-hidden={true}
-                        className="MuiPrivateNotchedOutline-root-197 MuiOutlinedInput-notchedOutline-191"
+                        className="MuiPrivateNotchedOutline-root-198 MuiOutlinedInput-notchedOutline-192"
                         style={
                           Object {
                             "paddingLeft": 8,
@@ -584,7 +594,7 @@ describe('find neurons Plugin', () => {
                         }
                       >
                         <legend
-                          className="MuiPrivateNotchedOutline-legend-198"
+                          className="MuiPrivateNotchedOutline-legend-199"
                           style={
                             Object {
                               "width": 0.01,
@@ -602,7 +612,7 @@ describe('find neurons Plugin', () => {
                       </fieldset>
                       <input
                         aria-invalid={false}
-                        className="MuiInputBase-input-49 MuiOutlinedInput-input-192 MuiInputBase-inputType-52 MuiInputBase-inputMarginDense-50 MuiOutlinedInput-inputMarginDense-193"
+                        className="MuiInputBase-input-49 MuiOutlinedInput-input-193 MuiInputBase-inputType-52 MuiInputBase-inputMarginDense-50 MuiOutlinedInput-inputMarginDense-194"
                         disabled={false}
                         onBlur={[Function]}
                         onChange={[Function]}
@@ -619,8 +629,26 @@ describe('find neurons Plugin', () => {
                   >
                     <label
                       className="MuiFormLabel-root-14"
+                      style={
+                        Object {
+                          "display": "inline-flex",
+                        }
+                      }
                     >
                       Filter by status
+                      <div
+                        aria-describedby={null}
+                        className="Connect-NeuronFilter--tooltip-106"
+                        onBlur={[Function]}
+                        onFocus={[Function]}
+                        onMouseLeave={[Function]}
+                        onMouseOver={[Function]}
+                        onTouchEnd={[Function]}
+                        onTouchStart={[Function]}
+                        title=""
+                      >
+                        ?
+                      </div>
                     </label>
                     <div
                       className="css-10nd86i Connect-NeuronFilter--select-104"
@@ -734,7 +762,7 @@ describe('find neurons Plugin', () => {
     </div>
   </div>
   <button
-    className="MuiButtonBase-root-142 MuiButton-root-199 MuiButton-contained-210 MuiButton-containedPrimary-211 MuiButton-raised-213 MuiButton-raisedPrimary-214"
+    className="MuiButtonBase-root-143 MuiButton-root-200 MuiButton-contained-211 MuiButton-containedPrimary-212 MuiButton-raised-214 MuiButton-raisedPrimary-215"
     disabled={false}
     onBlur={[Function]}
     onClick={[Function]}
@@ -751,12 +779,12 @@ describe('find neurons Plugin', () => {
     type="button"
   >
     <span
-      className="MuiButton-label-200"
+      className="MuiButton-label-201"
     >
       Submit
     </span>
     <span
-      className="MuiTouchRipple-root-225"
+      className="MuiTouchRipple-root-226"
     />
   </button>
 </div>
