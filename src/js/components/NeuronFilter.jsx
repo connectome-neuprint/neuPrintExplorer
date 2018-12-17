@@ -26,7 +26,7 @@ const styles = theme => ({
   formControl: {
     margin: theme.spacing.unit,
     minWidth: 250,
-    maxWidth: 300
+    maxWidth: 350
   },
   expandablePanel: {
     margin: theme.spacing.unit
@@ -43,6 +43,12 @@ const styles = theme => ({
     maxWidth: 230,
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit
+  },
+  tooltip: {
+    color: 'red',
+    verticalAlign: 'super',
+    fontSize: '80%',
+    marginLeft: theme.spacing.unit / 2
   }
 });
 
@@ -70,12 +76,14 @@ class NeuronFilter extends React.Component {
     }
 
     this.queryStatuses(props.neoServer, props.datasetstr);
+    this.queryStatusDefinitions(props.neoServer, props.datasetstr);
   }
 
   componentWillReceiveProps(nextProps) {
     const { neoServer, datasetstr } = this.props;
     if (nextProps.neoServer !== neoServer || nextProps.datasetstr !== datasetstr) {
       this.queryStatuses(nextProps.neoServer, nextProps.datasetstr);
+      this.queryStatusDefinitions(nextProps.neoServer, nextProps.datasetstr);
       const { qsParams } = this.state;
       const statusFilters = [];
       const newParams = Object.assign({}, qsParams, { statusFilters });
@@ -110,6 +118,49 @@ class NeuronFilter extends React.Component {
       .then(resp => {
         const statusList = resp.data.map(status => status[0]).filter(status => status !== null);
         setState({ statuses: statusList });
+      })
+      .catch(error => {
+        actions.metaInfoError(error);
+      });
+  };
+
+  queryStatusDefinitions = (neoServer, dataset) => {
+    const { actions } = this.props;
+    if (neoServer === '' || dataset === '') {
+      return;
+    }
+
+    fetch('/api/custom/custom', {
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        dataset,
+        cypher: `MATCH (n:Meta{dataset:"${dataset}"}) RETURN n.statusDefinitions`
+      }),
+      method: 'POST',
+      credentials: 'include'
+    })
+      .then(result => {
+        if (result.ok) {
+          return result.json();
+        }
+        throw new Error(
+          'Unable to fetch status definitions, try reloading the page. If this error persists, please contact support.'
+        );
+      })
+      .then(resp => {
+        let statusDefinitions = '';
+        if (resp.data[0][0]) {
+          const statusDefinitionsObject = JSON.parse(resp.data[0][0].replace(/'/g, '"'));
+          Object.keys(statusDefinitionsObject).forEach((status, index) => {
+            statusDefinitions += `${status}: ${statusDefinitionsObject[status]}`;
+            if (index < Object.keys(statusDefinitionsObject).length - 1) {
+              statusDefinitions += ', ';
+            }
+          });
+        }
+        this.setState({ statusDefinitions });
       })
       .catch(error => {
         actions.metaInfoError(error);
@@ -161,7 +212,7 @@ class NeuronFilter extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { qsParams, statuses } = this.state;
+    const { qsParams, statuses, statusDefinitions } = this.state;
     const checkboxStatus = qsParams.limitNeurons;
 
     const statusOptions = statuses.map(name => ({
@@ -183,22 +234,23 @@ class NeuronFilter extends React.Component {
           <ExpansionPanelDetails className={classes.nopad}>
             <FormControl className={classes.formControl}>
               <FormControl className={classes.formControl}>
-                <Tooltip
-                  id="tooltip-big"
-                  title="Limit to neurons (bodies with >=2 t-bars, >=10 psds, name, soma, or status)"
-                  placement="bottom-start"
-                >
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={checkboxStatus}
-                        onChange={this.toggleNeuron}
-                        color="primary"
-                      />
-                    }
-                    label={<Typography variant="subtitle1">Limit to neurons</Typography>}
-                  />
-                </Tooltip>
+                <FormControlLabel
+                  control={
+                    <Switch checked={checkboxStatus} onChange={this.toggleNeuron} color="primary" />
+                  }
+                  label={
+                    <Typography variant="subtitle1" style={{ display: 'inline-flex' }}>
+                      Limit to neurons
+                      <Tooltip
+                        id="tooltip-icon"
+                        title="Limit to neurons (bodies with >=2 t-bars, >=10 psds, name, soma, or status)"
+                        placement="right"
+                      >
+                        <div className={classes.tooltip}>?</div>
+                      </Tooltip>
+                    </Typography>
+                  }
+                />
               </FormControl>
               <TextField
                 label="minimum # pre (optional)"
@@ -223,7 +275,12 @@ class NeuronFilter extends React.Component {
                 onChange={this.handlePostChange}
               />
               <FormControl className={classes.formControl}>
-                <FormLabel>Filter by status</FormLabel>
+                <FormLabel style={{ display: 'inline-flex' }}>
+                  Filter by status
+                  <Tooltip id="tooltip-icon" title={statusDefinitions || ''} placement="right">
+                    <div className={classes.tooltip}>?</div>
+                  </Tooltip>
+                </FormLabel>
                 <Select
                   className={classes.select}
                   isMulti
