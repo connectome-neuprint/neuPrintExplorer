@@ -20,6 +20,12 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
     width: 200
+  },
+  tooltip: {
+    color: 'red',
+    verticalAlign: 'super',
+    fontSize: '80%',
+    marginLeft: theme.spacing.unit / 2
   }
 });
 
@@ -98,7 +104,7 @@ class PartnerCompletenessView extends React.Component {
     const inputStats = this.highlightStats(inputTable.result.data, highlightIndexInput, 0);
     const outputStats = this.highlightStats(outputTable.result.data, highlightIndexOutput, 0);
 
-    const statusDefinitions = this.queryStatusDefinitions(props.neoServer, props.query.dataSet);
+    this.queryStatusDefinitions(props.neoServer, props.query.dataSet);
 
     this.state = {
       inputTable,
@@ -108,8 +114,7 @@ class PartnerCompletenessView extends React.Component {
       bodyStats,
       inputStats,
       outputStats,
-      orphanFilter: 0,
-      statusDefinitions
+      orphanFilter: 0
     };
   }
 
@@ -140,14 +145,15 @@ class PartnerCompletenessView extends React.Component {
       })
       .then(resp => {
         let statusDefinitions = '';
-        const statusDefinitionsObject = JSON.parse(resp.data[0][0].replace(/'/g, '"'));
-        Object.keys(statusDefinitionsObject).forEach((status, index) => {
-          statusDefinitions += `${status}: ${statusDefinitionsObject[status]}`;
-          if (index < Object.keys(statusDefinitionsObject).length - 1) {
-            statusDefinitions += ', ';
-          }
-        });
-
+        if (resp.data[0][0]) {
+          const statusDefinitionsObject = JSON.parse(resp.data[0][0].replace(/'/g, '"'));
+          Object.keys(statusDefinitionsObject).forEach((status, index) => {
+            statusDefinitions += `${status}: ${statusDefinitionsObject[status]}`;
+            if (index < Object.keys(statusDefinitionsObject).length - 1) {
+              statusDefinitions += ', ';
+            }
+          });
+        }
         this.setState({ statusDefinitions });
       })
       .catch(error => {
@@ -275,10 +281,8 @@ class PartnerCompletenessView extends React.Component {
         <div style={{ marginTop: '8px', marginBottom: '8px' }}>
           <Typography variant="subtitle1" style={{ display: 'inline-flex' }}>
             Desired level of completeness
-            <Tooltip id="tooltip-icon" title={statusDefinitions || ''}>
-              <Typography color="error" placement="right">
-                ?
-              </Typography>
+            <Tooltip id="tooltip-icon" title={statusDefinitions || ''} placement="right">
+              <div className={classes.tooltip}>?</div>
             </Tooltip>
           </Typography>
           <Select
