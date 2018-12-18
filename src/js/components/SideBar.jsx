@@ -18,7 +18,7 @@ import Icon from '@material-ui/core/Icon';
 import Divider from '@material-ui/core/Divider';
 
 import Contact from './Contact';
-import {getSiteParams, setQueryString } from '../helpers/queryString';
+import { getSiteParams, setQueryString } from '../helpers/queryString';
 
 const drawerWidth = 400;
 
@@ -43,10 +43,7 @@ const styles = theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
     }),
-    width: theme.spacing.unit * 7,
-    [theme.breakpoints.up('sm')]: {
-      width: theme.spacing.unit * 9
-    }
+    width: theme.spacing.unit * 7
   },
   toolbar: theme.mixins.toolbar
 });
@@ -58,9 +55,9 @@ class SideBar extends React.Component {
 
     const openQuery = qsParams.get('q');
     if (!openQuery) {
-      setQueryString({ q : 1});
+      setQueryString({ q: 1 });
     } else {
-      setQueryString({ q : undefined});
+      setQueryString({ q: undefined });
     }
   };
 
