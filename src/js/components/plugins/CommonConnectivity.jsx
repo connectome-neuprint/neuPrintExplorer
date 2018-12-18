@@ -47,6 +47,10 @@ class CommonConnectivity extends React.Component {
     return 'Finds common inputs/outputs for a group of bodies and weights of their connections to these inputs/outputs.';
   }
 
+  static get isExperimental() {
+    return true;
+  }
+
   constructor(props) {
     super(props);
     const initqsParams = {

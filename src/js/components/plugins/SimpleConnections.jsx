@@ -1,6 +1,6 @@
 /*
  * Supports simple, custom neo4j query.
-*/
+ */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -51,6 +51,10 @@ class SimpleConnections extends React.Component {
 
   static get queryDescription() {
     return 'List inputs or outputs to selected neuron(s)';
+  }
+
+  static get isExperimental() {
+    return true;
   }
 
   processResults = (query, apiResponse) => {

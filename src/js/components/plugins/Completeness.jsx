@@ -28,6 +28,10 @@ class Completeness extends React.Component {
     return 'Determines the reconstruction completeness of each ROI with respect to the neuron filters';
   }
 
+  static get isExperimental() {
+    return true;
+  }
+
   constructor(props) {
     super(props);
 

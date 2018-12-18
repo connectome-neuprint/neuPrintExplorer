@@ -68,6 +68,10 @@ class RankedTable extends React.Component {
     return 'Show connections to neuron(s) ranked in order and colored by neuron class';
   }
 
+  static get isExperimental() {
+    return true;
+  }
+
   processResults = (query, apiResponse) => {
     const { dataSet } = query;
 

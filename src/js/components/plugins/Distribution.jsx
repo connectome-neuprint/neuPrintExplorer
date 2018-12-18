@@ -1,6 +1,6 @@
 /*
  * Plugin for body size distribution.
-*/
+ */
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -42,6 +42,10 @@ class Distribution extends React.Component {
 
   static get queryDescription() {
     return 'Shows segment size distribution for segments in a given region.';
+  }
+
+  static get isExperimental() {
+    return true;
   }
 
   processResults = (query, apiResponse) => {

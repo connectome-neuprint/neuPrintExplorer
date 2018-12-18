@@ -1,6 +1,6 @@
 /*
  * Main page holding query selector and query forms.
-*/
+ */
 
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -8,10 +8,12 @@ import { connect } from 'react-redux';
 import Select from 'react-select';
 import { withRouter } from 'react-router-dom';
 import slug from 'slugg';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import InputLabel from '@material-ui/core/InputLabel';
 import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
+import Icon from '@material-ui/core/Icon';
 
 import QueryForm from './QueryForm';
 import { getSiteParams, setQueryString } from '../helpers/queryString';
@@ -47,6 +49,10 @@ const styles = theme => ({
   select: {
     fontFamily: theme.typography.fontFamily,
     margin: '0.5em 0 1em 0'
+  },
+  experimentalPlugin: {
+    display: 'inline-flex',
+    verticalAlign: 'center'
   }
 });
 
@@ -60,17 +66,42 @@ class Query extends React.Component {
     const qsParams = getSiteParams(location);
 
     const queryType = qsParams.get('qt') || 'not selected';
-    const queryName = pluginList.filter(plugin => slug(plugin.queryName) === queryType).map(plugin => plugin.queryName)[0] || 'Select Query';
+    const queryName =
+      pluginList
+        .filter(plugin => slug(plugin.queryName) === queryType)
+        .map(plugin => plugin.queryName)[0] || 'Select Query';
 
-    const generalOptions = pluginList.filter(plugin => plugin.queryCategory === undefined).map(val => ({
-      value: slug(val.queryName),
-      label: val.queryName
-    }));
+    const generalOptions = pluginList
+      .filter(plugin => plugin.queryCategory === undefined)
+      .map(val => ({
+        value: slug(val.queryName),
+        label: val.isExperimental ? (
+          <div className={classes.experimentalPlugin}>
+            {val.queryName}
+            <Tooltip title="under development" placement="right">
+              <Icon style={{ margin: '4px', fontSize: '12px' }}>build</Icon>
+            </Tooltip>
+          </div>
+        ) : (
+          val.queryName
+        )
+      }));
 
-    const reconOptions = pluginList.filter(plugin => plugin.queryCategory === 'recon').map(val => ({
-      value: slug(val.queryName),
-      label: val.queryName
-    }));
+    const reconOptions = pluginList
+      .filter(plugin => plugin.queryCategory === 'recon')
+      .map(val => ({
+        value: slug(val.queryName),
+        label: val.isExperimental ? (
+          <div className={classes.experimentalPlugin}>
+            {val.queryName}
+            <Tooltip title="under development" placement="right">
+              <Icon style={{ margin: '4px', fontSize: '12px' }}>build</Icon>
+            </Tooltip>
+          </div>
+        ) : (
+          val.queryName
+        )
+      }));
 
     const queryOptions = [
       {
@@ -107,7 +138,7 @@ class Query extends React.Component {
 Query.propTypes = {
   pluginList: PropTypes.arrayOf(PropTypes.func).isRequired,
   classes: PropTypes.object.isRequired,
-  location: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired
 };
 
 const QueryState = state => ({

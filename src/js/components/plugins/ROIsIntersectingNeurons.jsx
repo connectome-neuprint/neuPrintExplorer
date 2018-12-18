@@ -1,6 +1,6 @@
 /*
  * Supports simple, custom neo4j query.
-*/
+ */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -56,6 +56,10 @@ class ROIsIntersectingNeurons extends React.Component {
     return 'Find ROIs that intersect a given neuron(s).  A putative name is given based on top two ROI inputs and outputs';
   }
 
+  static get isExperimental() {
+    return true;
+  }
+
   processResults = (query, apiResponse) => {
     const columnNames = ['ROI name', 'inputs', 'outputs'];
     const tables = [];
@@ -76,19 +80,19 @@ class ROIsIntersectingNeurons extends React.Component {
 
           /* eslint-disable prefer-destructuring */
           if (pre > 0) {
-            if ( pre > largestPre[0][1]) {
+            if (pre > largestPre[0][1]) {
               largestPre[1] = largestPre[0];
               largestPre[0] = [roi, pre];
-            } else if ( pre < largestPre[0][1] && pre > largestPre[1][1]) {
+            } else if (pre < largestPre[0][1] && pre > largestPre[1][1]) {
               largestPre[1] = [roi, pre];
             }
           }
 
-          if ( post > 0) {
-            if ( post > largestPost[0][1]) {
+          if (post > 0) {
+            if (post > largestPost[0][1]) {
               largestPost[1] = largestPost[0];
               largestPost[0] = [roi, post];
-            } else if ( post < largestPost[0][1] && post > largestPost[1][1]) {
+            } else if (post < largestPost[0][1] && post > largestPost[1][1]) {
               largestPost[1] = [roi, post];
             }
           }

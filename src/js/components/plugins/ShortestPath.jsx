@@ -74,6 +74,10 @@ class ShortestPath extends React.Component {
     return 'Find all neurons along the shortest path between two neurons.';
   }
 
+  static get isExperimental() {
+    return true;
+  }
+
   processResults = (query, apiResponse) => {
     const data = apiResponse.data.map(row => [row[0], row[1], row[2], row[3], row[4]]);
 
