@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
+import Icon from '@material-ui/core/Icon';
 // import { Deck, Slide, Image } from 'spectacle';
 // import {SwaggerUI} from 'react-swagger-ui'
 // import 'react-swagger-ui/dist/swagger-ui.css'
@@ -141,8 +142,10 @@ class Help extends React.Component {
                 See the{' '}
                 <a href="https://github.com/connectome-neuprint/neuPrint/blob/master/pgmspecs.md">
                   documentation
-                </a>
-                or <a href="public/neuprintuserguide_121818.pdf">user guide</a>.
+                </a>{' '}
+                or <a href="public/neuprintuserguide_121818.pdf">user guide</a>. Note that Cypher
+                queries for all plugin results can be viewed by clicking the{' '}
+                <Icon fontSize="inherit">info</Icon> icon in the top bar.
               </Typography>
             </div>
             <div className={classes.flex}>
