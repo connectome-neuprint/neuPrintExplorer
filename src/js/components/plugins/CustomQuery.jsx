@@ -1,6 +1,6 @@
 /*
  * Supports simple, custom neo4j query.
-*/
+ */
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -46,7 +46,7 @@ class CustomQuery extends React.Component {
       textValue: ''
     };
     const qsParams = LoadQueryString(
-      `Query:${  this.constructor.queryName}`,
+      `Query:${this.constructor.queryName}`,
       initqsParams,
       props.urlQueryString
     );
@@ -57,18 +57,20 @@ class CustomQuery extends React.Component {
 
   processResults = (query, apiResponse) => {
     if (apiResponse.data) {
+      const data = apiResponse.data.map(row =>
+        row.map(item => (typeof item === 'object' ? JSON.stringify(item) : item))
+      );
       return {
         columns: apiResponse.columns,
-        data: apiResponse.data,
+        data,
         debug: apiResponse.debug
       };
     }
-      return {
-        columns: [],
-        data: [],
-        debug: ''
-      };
-
+    return {
+      columns: [],
+      data: [],
+      debug: ''
+    };
   };
 
   processRequest = () => {
@@ -99,7 +101,7 @@ class CustomQuery extends React.Component {
     const { qsParams } = this.state;
     const oldParams = qsParams;
     oldParams.textValue = event.target.value;
-    actions.setURLQs(SaveQueryString(`Query:${  this.constructor.queryName}`, oldParams));
+    actions.setURLQs(SaveQueryString(`Query:${this.constructor.queryName}`, oldParams));
     this.setState({
       qsParams: oldParams
     });
