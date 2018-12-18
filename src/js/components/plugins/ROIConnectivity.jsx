@@ -518,7 +518,7 @@ class ROIConnectivity extends React.Component {
         <Typography style={{ fontWeight: 'bold' }}>Description</Typography>
         <Typography variant="body2">
           Within each cell of the matrix, the top number represents connections from ROI X to ROI Y
-          defined as the number of synapes from neurons that have inputs in X and outputs in Y. The
+          defined as the number of synapses from neurons that have inputs in X and outputs in Y. The
           number represents the number of outputs from these neurons in Y weighted by the proportion
           of inputs that are in X. The bottom number is the number of neurons with at least one
           input in X and one output in Y. In some cases, the bottom number can be larger than the
