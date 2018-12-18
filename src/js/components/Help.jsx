@@ -55,7 +55,8 @@ const styles = theme => ({
   img: {
     maxWidth: '100%',
     minWidth: '500px'
-  }
+  },
+  bold: { fontWeight: 'bold', display: 'inline' }
 });
 
 class Help extends React.Component {
@@ -116,21 +117,32 @@ class Help extends React.Component {
               </Typography>
               <br />
               <Typography>
-                The primary entry point into the graph model is the neuron node type. Neurons (each
-                which could be a subset or superset of an actual neuron due to errors in automatic
-                image segmentation) are connected to other neurons via synapse connections. To
-                provide more granularity into the connectomic dataset, these nodes point to a set of
-                synapses that give the exact locations of all synaptic connections for a given
-                neuron. In a similar way, the morphology of the neuron is encoded by a link to set
-                of skeleton nodes with size and shape values. Each neuron and synapse is labeled
-                with the given region(s) that they belong to for fast region-based queries. Finally,
-                the probability that two neurons should be merged (due to oversegmentation errors)
-                is encoded by a relationship between nodes.
+                The primary entry point into the graph model is the{' '}
+                <div className={classes.bold}>Neuron</div> node type. Neurons (each which could be a
+                subset or superset of an actual neuron due to errors in automatic image
+                segmentation) are connected to other neurons via synaptic connections. To provide
+                more granularity into the connectomic dataset, the{' '}
+                <div className={classes.bold}>SynapseSet</div> nodes point to a set of{' '}
+                <div className={classes.bold}>Synapse</div> nodes that give the exact locations of
+                all synaptic connections for a given neuron. In a similar way, the morphology of the
+                neuron is encoded by a link (<div className={classes.bold}>Skeleton</div> nodes) to
+                a set of skeleton nodes (<div className={classes.bold}>SkelNodes</div>) with size
+                and shape values. Each neuron and synapse is labeled with the given region(s) that
+                they belong to for fast region-based queries.
               </Typography>
               <br />
               <Typography>
                 Specific properties can be easily added to Neo4j as needed. More details of the
                 graph model are shown in the accompanying illustration.
+              </Typography>
+              <br />
+              <Typography variant="h6">Navigating the Data</Typography>
+              <Typography>
+                See the{' '}
+                <a href="https://github.com/connectome-neuprint/neuPrint/blob/master/pgmspecs.md">
+                  documentation
+                </a>
+                or <a href="public/neuprintuserguide_121818.pdf">user guide</a>.
               </Typography>
             </div>
             <div className={classes.flex}>
