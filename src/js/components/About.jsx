@@ -20,6 +20,9 @@ const styles = theme => ({
   },
   spaced: {
     margin: '1em 0'
+  },
+  contactIcon: {
+    verticalAlign: 'middle'
   }
 });
 
@@ -123,7 +126,7 @@ class About extends React.Component {
                 };
                 tagList.push(
                   <div key={divid} style={tagstyle}>
-                    {labeledge.label.name}
+                    <Typography variant="body1">{labeledge.label.name}</Typography>
                   </div>
                 );
               });
@@ -137,29 +140,34 @@ class About extends React.Component {
             ]);
           });
           if (issuelist.length > 0) {
-            const listItems = issuelist.map(iss => (
-              <li key={iss[2].toString() + iss[0]}>
-                <div style={{ float: 'left' }}>
-                  <Tooltip title={iss[3]} placement="bottom" enterDelay={100}>
-                    <a
-                      href={iss[1]}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ color: 'darkblue' }}
-                    >
-                      {iss[0]}
-                    </a>
-                  </Tooltip>
-                </div>
-                <div style={{ float: 'left' }}>{iss[4]}</div>
-                <div style={{ clear: 'both' }} />
-              </li>
-            ));
+            const listItems = issuelist.map(issue => {
+              const [title, url, number, body, tags] = issue;
+              return (
+                <li key={number.toString() + title}>
+                  <div style={{ float: 'left' }}>
+                    <Tooltip title={body} placement="bottom" enterDelay={100}>
+                      <a
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: 'darkblue' }}
+                      >
+                        <Typography variant="body1">{title}</Typography>
+                      </a>
+                    </Tooltip>
+                  </div>
+                  <div style={{ float: 'left' }}>{tags}</div>
+                  <div style={{ clear: 'both' }} />
+                </li>
+              );
+            });
             const listing = (
-              <span key={reponame}>
-                {reponame}
+              <div key={reponame}>
+                <Typography variant="body1">
+                  {reponame}
+                </Typography>
                 <ul>{listItems}</ul>
-              </span>
+              </div>
             );
             fulllist.push(listing);
           }
@@ -208,14 +216,12 @@ class About extends React.Component {
         </Typography>
 
         <Typography variant="h6">Open issue list</Typography>
-        <Typography variant="body1">{data}</Typography>
+        {data}
 
         <Typography variant="h6">Contact us</Typography>
         <Typography variant="body1" className={classes.spaced}>
-          <div style={{ display: 'inline-flex', verticalAlign: 'middle' }}>
-            <Icon>mail_outline</Icon>
-            <a href="mailto:neuprint@janelia.hhmi.org">neuprint@janelia.hhmi.org</a>
-          </div>
+          <Icon className={classes.contactIcon}>mail_outline</Icon>
+          <a href="mailto:neuprint@janelia.hhmi.org">neuprint@janelia.hhmi.org</a>
         </Typography>
       </div>
     );
