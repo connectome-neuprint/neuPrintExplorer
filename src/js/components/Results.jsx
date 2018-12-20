@@ -161,17 +161,9 @@ class Results extends React.Component {
 
     return (
       <div className={classes.full}>
-        <Fade
-          in={isQuerying}
-          style={{
-            transitionDelay: isQuerying ? '800ms' : '0ms'
-          }}
-          unmountOnExit
-        >
-          <CircularProgress />
-        </Fade>
+
         <AppBar position="static" color="default">
-          <Tabs
+           <Tabs
             value={tabValue}
             onChange={this.handleResultSelection}
             textColor="primary"
@@ -184,7 +176,16 @@ class Results extends React.Component {
         </AppBar>
         <div className={classes.fill}>
           <div className={classes.scroll}>
-            {results}
+            <Fade
+              in={isQuerying}
+              style={{
+                transitionDelay: isQuerying ? '800ms' : '0ms'
+              }}
+              unmountOnExit
+            >
+              <CircularProgress />
+            </Fade>
+              {results}
           </div>
         </div>
       </div>
