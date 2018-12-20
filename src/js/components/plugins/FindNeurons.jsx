@@ -434,12 +434,13 @@ class FindNeurons extends React.Component {
           options={outputOptions}
           closeMenuOnSelect={false}
         />
-        <FormControl className={classes.formControl}>
+        <FormControl fullWidth className={classes.formControl}>
           <NeuronHelp>
             <TextField
               label="Neuron name (optional)"
               multiline
               rows={1}
+              fullWidth
               value={qsParams.neuronName}
               rowsMax={4}
               className={classes.textField}
@@ -447,8 +448,8 @@ class FindNeurons extends React.Component {
               onKeyDown={this.catchReturn}
             />
           </NeuronHelp>
-          <NeuronFilter callback={this.loadNeuronFilters} datasetstr={dataSet} />
         </FormControl>
+        <NeuronFilter callback={this.loadNeuronFilters} datasetstr={dataSet} />
         <Button
           disabled={isQuerying}
           color="primary"

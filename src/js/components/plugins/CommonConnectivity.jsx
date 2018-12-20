@@ -22,14 +22,8 @@ import NeuronFilter from '../NeuronFilter';
 import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 
 const styles = theme => ({
-  textField: {
-    minWidth: 250,
-    maxWidth: 300
-  },
   formControl: {
     margin: theme.spacing.unit,
-    minWidth: 250,
-    maxWidth: 300
   },
   chips: {
     display: 'flex',
@@ -236,7 +230,7 @@ class CommonConnectivity extends React.Component {
     const { qsParams } = this.state;
     return (
       <div>
-        <FormControl className={classes.formControl}>
+        <FormControl fullWidth className={classes.formControl}>
           <TextField
             label="Neuron bodyIds"
             multiline
@@ -245,11 +239,11 @@ class CommonConnectivity extends React.Component {
             value={qsParams.bodyIds}
             disabled={qsParams.names.length > 0}
             rowsMax={4}
-            className={classes.textField}
             helperText="Separate ids with commas."
             onChange={this.addNeuronBodyIds}
             onKeyDown={this.catchReturn}
           />
+        </FormControl>
           {/* // removing for now  */}
           {/* <TextField
             label="Neuron names"
@@ -273,7 +267,6 @@ class CommonConnectivity extends React.Component {
             <FormControlLabel value="input" control={<Radio color="primary" />} label="Inputs" />
             <FormControlLabel value="output" control={<Radio color="primary" />} label="Outputs" />
           </RadioGroup>
-        </FormControl>
         <NeuronFilter callback={this.loadNeuronFilters} datasetstr={dataSet} />
         <Button variant="contained" color="primary" onClick={this.processRequest}>
           Submit

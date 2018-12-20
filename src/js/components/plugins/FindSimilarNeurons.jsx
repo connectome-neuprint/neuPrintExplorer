@@ -30,8 +30,6 @@ import { LoadQueryString, SaveQueryString } from '../../helpers/qsparser';
 
 const styles = theme => ({
   textField: {
-    minWidth: 250,
-    maxWidth: 300,
     margin: 4,
     display: 'block',
     marginLeft: 'auto',
@@ -39,8 +37,6 @@ const styles = theme => ({
   },
   formControl: {
     margin: theme.spacing.unit,
-    minWidth: 250,
-    maxWidth: 300
   },
   select: {
     fontFamily: theme.typography.fontFamily,
@@ -773,7 +769,7 @@ class FindSimilarNeurons extends React.Component {
 
     return (
       <div>
-        <FormControl className={classes.formControl}>
+        <FormControl fullWidth className={classes.formControl}>
           <TextField
             label="Neuron bodyId"
             multiline
