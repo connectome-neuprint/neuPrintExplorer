@@ -8,7 +8,6 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import history from '../history';
 
-
 import Results from './Results';
 import Home from './Home';
 import Help from './Help';
@@ -18,6 +17,8 @@ import SideBar from './SideBar';
 import About from './About';
 import QueryDrawer from './QueryDrawer';
 import Errors from './Errors';
+
+import './Master.css';
 
 
 // adapted from material ui example

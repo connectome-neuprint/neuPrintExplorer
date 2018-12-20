@@ -126,7 +126,7 @@ class About extends React.Component {
                 };
                 tagList.push(
                   <div key={divid} style={tagstyle}>
-                    <Typography variant="body1">{labeledge.label.name}</Typography>
+                    <span>{labeledge.label.name}</span>
                   </div>
                 );
               });
