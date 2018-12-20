@@ -6,13 +6,14 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
 import randomColor from 'randomcolor';
+import Immutable from 'immutable';
 
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 
 import { submit } from 'actions/plugins';
-import { getQueryObject, getQueryString, setQueryString } from 'helpers/queryString';
+import { getSiteParams, getQueryString, setQueryString } from 'helpers/queryString';
 
 const pluginName = 'Partner Completeness';
 
@@ -20,19 +21,13 @@ const styles = theme => ({
   select: {
     fontFamily: theme.typography.fontFamily,
     margin: '0.5em 0 1em 0'
+  },
+  textField: {
+    marginBottom: '1em'
   }
 });
 
 class PartnerCompleteness extends React.Component {
-  constructor(props) {
-    super(props);
-    const qsParams = getQueryObject();
-    // set the default state for the query input.
-    this.state = {
-      bodyId: qsParams.bodyId || ''
-    };
-  }
-
   static get queryName() {
     return pluginName;
   }
@@ -74,8 +69,9 @@ class PartnerCompleteness extends React.Component {
 
   // creates query object and sends to callback
   processRequest = () => {
-    const { dataSet, actions, history } = this.props;
-    const { bodyId } = this.state;
+    const { dataSet, actions, history, location } = this.props;
+    const qsParams = getSiteParams(location);
+    const { bodyId } = qsParams.getIn(['input', 'pc'], Immutable.Map({})).toJS();
     const cypher = `MATCH (n :\`${dataSet}-Segment\` {bodyId: ${bodyId}})-[x:ConnectsTo]-(m) RETURN m.bodyId, m.name, CASE WHEN startnode(x).bodyId = ${bodyId} THEN false ELSE true END, x.weight, m.status, m.pre, m.post, n.name, n.pre, n.post, n.status ORDER BY x.weight DESC`;
 
     const query = {
@@ -100,20 +96,24 @@ class PartnerCompleteness extends React.Component {
   addNeuron = event => {
     const bodyId = event.target.value;
     setQueryString({
-      bodyId
+      'input': {
+        pc: {
+          bodyId
+        }
+      }
     });
-
-    this.setState({ bodyId });
   };
 
   render() {
-    const { classes, isQuerying } = this.props;
-    const { bodyId } = this.state;
+    const { classes, isQuerying, location } = this.props;
+    const qsParams = getSiteParams(location);
+    const { bodyId } = qsParams.getIn(['input', 'pc'], Immutable.Map({})).toJS();
     return (
       <div>
         <TextField
           label="Body Id"
-          value={bodyId}
+          fullWidth
+          value={bodyId || ''}
           className={classes.textField}
           onChange={this.addNeuron}
         />
@@ -136,7 +136,8 @@ PartnerCompleteness.propTypes = {
   actions: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   isQuerying: PropTypes.bool.isRequired,
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired
 };
 
 const PartnerCompletenessState = state => ({
