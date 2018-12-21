@@ -68,6 +68,7 @@ module.exports = {
       views: path.resolve(__dirname, 'src/js/components/view-plugins'),
       actions: path.resolve(__dirname, 'src/js/actions')
     },
+    symlinks: false,
     extensions: ['.js', '.jsx', '.react.js']
   }
 };
