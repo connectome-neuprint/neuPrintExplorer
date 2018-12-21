@@ -5,21 +5,23 @@ import reducer from './user';
 
 const state = Immutable.Map({
   userInfo: 'existinguserinfo',
-  token: 'existingxyz'
+  token: 'existingxyz',
+  loggedIn: true
 });
 
 const initialState = Immutable.Map({
   userInfo: {},
-  token: ''
+  token: '',
+  loggedIn: false
 });
 
 describe('user Reducer', () => {
   it('LOGIN_USER success', () => {
     const action = {
       type: C.LOGIN_USER,
-      userInfo: 'newuserinfo'
+      userInfo: 'newuserinfo',
     };
-    expect(reducer(undefined, action)).toEqual(initialState.set('userInfo', 'newuserinfo'));
+    expect(reducer(undefined, action)).toEqual(initialState.set('userInfo', 'newuserinfo').set('loggedIn', true));
     expect(reducer(state, action)).toEqual(state.set('userInfo', 'newuserinfo'));
   });
 
