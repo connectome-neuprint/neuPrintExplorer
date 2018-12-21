@@ -1,6 +1,6 @@
 /*
  * Home page contains basic information for the page.
-*/
+ */
 
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -11,6 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
@@ -81,10 +82,10 @@ class Home extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
     const { availableDatasets } = this.props;
     const { activeStep } = this.state;
-    if ( availableDatasets !== nextProps.availableDatasets) {
+    if (availableDatasets !== nextProps.availableDatasets) {
       return true;
     }
-    if ( activeStep !== nextState.activeStep ) {
+    if (activeStep !== nextState.activeStep) {
       return true;
     }
     return false;
@@ -103,12 +104,52 @@ class Home extends React.Component {
   };
 
   render() {
-    const { classes, theme, neoServer, availableDatasets, datasetInfo } = this.props;
+    const { classes, theme, neoServer, availableDatasets, datasetInfo, loggedIn } = this.props;
     const { activeStep } = this.state;
     let redirectHome = false;
     if (window.location.pathname !== '/') {
       redirectHome = true;
     }
+
+    const serverInfo = loggedIn ? (
+      <Card className={classes.card}>
+        <CardContent>
+          <Typography className={classes.title} color="textSecondary">
+            neuPrint Server Information
+          </Typography>
+          <Divider className={classes.divider} />
+          <Typography component="p">
+            server: {neoServer} <br />
+          </Typography>
+          <Typography component="p">available datasets:</Typography>
+          <div className={classes.padLeft}>
+            {availableDatasets.map(item => (
+              <div key={item}>
+                <Typography>
+                  <b>{item}</b>
+                </Typography>
+                <div className={classes.padLeft}>
+                  <Typography>
+                    modified: {datasetInfo[item].lastmod} <br />
+                    version: {datasetInfo[item].uuid}
+                  </Typography>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    ) : (
+      <Card className={classes.card}>
+         <CardHeader title="Logged Out" />
+         <CardContent>
+           <Typography component="p">
+              Please log at the top of the page to access the data.
+           </Typography>
+         </CardContent>
+      </Card>
+    );
+
     return (
       <div className={classes.root}>
         {redirectHome ? <Redirect to="/" /> : <div />}
@@ -126,33 +167,7 @@ class Home extends React.Component {
             </div>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Card className={classes.card}>
-              <CardContent>
-                <Typography className={classes.title} color="textSecondary">
-                  neuPrint Server Information
-                </Typography>
-                <Divider className={classes.divider} />
-                <Typography component="p">
-                  server: {neoServer} <br />
-                </Typography>
-                <Typography component="p">available datasets:</Typography>
-                <div className={classes.padLeft}>
-                  {availableDatasets.map(item => (
-                    <div key={item}>
-                      <Typography>
-                        <b>{item}</b>
-                      </Typography>
-                      <div className={classes.padLeft}>
-                        <Typography>
-                          modified: {datasetInfo[item].lastmod} <br />
-                          version: {datasetInfo[item].uuid}
-                        </Typography>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            {serverInfo}
           </Grid>
           <Grid item xs={12} sm={6}>
             <Card className={classes.card2}>
@@ -199,7 +214,8 @@ class Home extends React.Component {
 const HomeState = state => ({
   neoServer: state.neo4jsettings.get('neoServer'),
   availableDatasets: state.neo4jsettings.get('availableDatasets'),
-  datasetInfo: state.neo4jsettings.get('datasetInfo')
+  datasetInfo: state.neo4jsettings.get('datasetInfo'),
+  loggedIn: state.user.get('loggedIn')
 });
 
 Home.propTypes = {
@@ -208,6 +224,7 @@ Home.propTypes = {
   }).isRequired,
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
+  loggedIn: PropTypes.bool.isRequired,
   availableDatasets: PropTypes.arrayOf(PropTypes.string).isRequired,
   datasetInfo: PropTypes.object.isRequired,
   neoServer: PropTypes.string.isRequired

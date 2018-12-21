@@ -6,6 +6,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import classNames from 'classnames';
 
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -14,10 +15,13 @@ import Menu from '@material-ui/core/Menu';
 
 import C from '../reducers/constants';
 
+import './Login.css';
+
 const styles = theme => ({
   buttonBasic: {
     padding: `0 ${theme.spacing.unit}px`,
-    minWidth: 1
+    minWidth: 1,
+    color: '#fff'
   },
   buttonWrap: {
     '&:hover': {
@@ -104,7 +108,7 @@ class Login extends React.Component {
     return (
       <div className={classes.buttonWrap}>
         {!isLoggedIn ? (
-          <Button className={classes.buttonBasic} onClick={this.login}>
+          <Button className={classNames(classes.buttonBasic, 'pulse')} onClick={this.login}>
             LOGIN
           </Button>
         ) : (

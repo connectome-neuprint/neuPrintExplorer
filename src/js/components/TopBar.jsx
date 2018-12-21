@@ -86,7 +86,7 @@ class TopBar extends React.Component {
   };
 
   render() {
-    const { classes, availableDatasets, location } = this.props;
+    const { classes, availableDatasets, loggedIn, location } = this.props;
     const qsParams = getSiteParams(location);
 
     const dataSetOptions = availableDatasets.map(dataset => ({
@@ -108,13 +108,15 @@ class TopBar extends React.Component {
               />
             </Link>
           </Tooltip>
-          <Select
-            className={classes.search}
-            styles={selectStyles}
-            value={{ value: datasetstr, label: datasetstr }}
-            onChange={this.handleChange}
-            options={dataSetOptions}
-          />
+          {loggedIn && (
+            <Select
+              className={classes.search}
+              styles={selectStyles}
+              value={{ value: datasetstr, label: datasetstr }}
+              onChange={this.handleChange}
+              options={dataSetOptions}
+            />
+          )}
           <div className={classes.grow} />
           <Login />
           <Tooltip title="View Source" placement="bottom" enterDelay={100}>
@@ -137,11 +139,13 @@ class TopBar extends React.Component {
 TopBar.propTypes = {
   classes: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
+  loggedIn: PropTypes.bool.isRequired,
   availableDatasets: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
 const TopBarState = state => ({
   userInfo: state.user.userInfo,
+  loggedIn: state.user.get('loggedIn'),
   availableDatasets: state.neo4jsettings.get('availableDatasets')
 });
 
