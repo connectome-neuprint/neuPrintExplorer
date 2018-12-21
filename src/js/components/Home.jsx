@@ -80,8 +80,12 @@ class Home extends React.Component {
   // only update if the available datasets changed.
   // or the activeStep changed
   shouldComponentUpdate(nextProps, nextState) {
-    const { availableDatasets } = this.props;
+    const { availableDatasets, loggedIn } = this.props;
     const { activeStep } = this.state;
+    if (loggedIn !== nextProps.loggedIn) {
+      return true;
+    }
+
     if (availableDatasets !== nextProps.availableDatasets) {
       return true;
     }
