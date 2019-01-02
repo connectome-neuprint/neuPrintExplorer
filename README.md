@@ -26,6 +26,20 @@ folder:
     % mkdir BUILD_DIR/external
     % cd BUILD_DIR/external
     % git clone https://github.com/JaneliaSciComp/SharkViewer.git
+    
+Finally, you will need plugins to perform the queries and display
+the results. Core plugins can be found in their own repository at:
+[neuPrintExplorerPlugins](https://github.com/connectome-neuprint/neuPrintExplorerPlugins). 
+Clone the repository and then link the plugins into the neuPrintExplorer
+repository at the following locations.
+       
+view-plugins should be linked into:
+       
+    src/js/components/view-plugins
+      
+query plugins should be linked into:
+
+    src/js/components/plugins      
 
 ## Running
 
