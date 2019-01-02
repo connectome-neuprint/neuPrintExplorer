@@ -39,7 +39,10 @@ view-plugins should be linked into:
       
 query plugins should be linked into:
 
-    src/js/components/plugins      
+    src/js/components/plugins
+
+See the [README](https://github.com/connectome-neuprint/neuPrintExplorerPlugins/blob/master/README.md) in the neuPrintExplorerPlugins repository for more information
+writing your own plugins.
 
 ## Running
 
