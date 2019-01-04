@@ -30,6 +30,14 @@ const theme = createMuiTheme({
       dark: '#67a900',
       contrastText: '#000000'
     }
+  },
+  overrides: {
+    MuiTableCell: {
+      paddingDense: {
+        paddingRight: '10px',
+        paddingLeft: '10px'
+      }
+    }
   }
 });
 
@@ -74,7 +82,7 @@ store.dispatch(setAppDb(appDB));
 
 /*
  * Load interface into a DIV anchored by analyzer.
-*/
+ */
 function loadInterface() {
   ReactDOM.render(
     <React.Fragment>
