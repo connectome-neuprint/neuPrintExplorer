@@ -15,8 +15,8 @@ import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 
-import TablePaginationActions from 'helpers/TablePaginationActions';
-import { apiError } from 'actions/app'; 
+import TablePaginationActions from '@neuprint/support';
+import { apiError } from 'actions/app';
 
 const styles = theme => ({
   root: {
