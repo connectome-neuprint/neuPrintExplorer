@@ -58,7 +58,8 @@ class QueryForm extends React.Component {
       availableROIs,
       isQuerying,
       urlQueryString,
-      neoServerSettings
+      neoServerSettings,
+      neoServer
     } = this.props;
     const { openSnack } = this.state;
     let currROIs = [];
@@ -95,6 +96,7 @@ class QueryForm extends React.Component {
           urlQueryString={urlQueryString}
           neoServerSettings={neoServerSettings}
           actions={actions}
+          neoServer={neoServer}
         />
       </div>
     );
@@ -111,7 +113,8 @@ QueryForm.propTypes = {
   actions: PropTypes.object.isRequired,
   urlQueryString: PropTypes.string.isRequired,
   neoServerSettings: PropTypes.object.isRequired,
-  availableROIs: PropTypes.object.isRequired
+  availableROIs: PropTypes.object.isRequired,
+  neoServer: PropTypes.object.isRequired
 };
 
 const QueryFormState = state => ({
@@ -121,7 +124,8 @@ const QueryFormState = state => ({
   userInfo: state.user.get('userInfo'),
   urlQueryString: state.app.get('urlQueryString'),
   neoServerSettings: state.neo4jsettings,
-  availableROIs: state.neo4jsettings.get('availableROIs')
+  availableROIs: state.neo4jsettings.get('availableROIs'),
+  neoServer: state.neo4jsettings.get('neoServer')
 });
 
 const QueryFormDispatch = dispatch => ({
