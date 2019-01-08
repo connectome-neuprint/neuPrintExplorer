@@ -1,6 +1,6 @@
 /*
  * Query form that calls specific plugins for form input an doutput processing.
-*/
+ */
 
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -12,6 +12,13 @@ import { withRouter } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
+
+import { submit, formError, pluginResponseError } from 'actions/plugins';
+import { setUrlQS, metaInfoError } from 'actions/app';
+import { skeletonAddandOpen } from 'actions/skeleton';
+import { neuroglancerAddandOpen } from 'actions/neuroglancer';
+import { getQueryString, getSiteParams, setQueryString } from 'helpers/queryString';
+import { LoadQueryString, SaveQueryString } from 'helpers/qsparser';
 
 const styles = theme => ({
   divider: {
@@ -43,7 +50,16 @@ class QueryForm extends React.Component {
   render() {
     // assume the first query is the default
     const CurrentQuery = this.findCurrentPlugin();
-    const { userInfo, classes, dataSet, availableROIs, isQuerying } = this.props;
+    const {
+      userInfo,
+      classes,
+      actions,
+      dataSet,
+      availableROIs,
+      isQuerying,
+      urlQueryString,
+      neoServerSettings
+    } = this.props;
     const { openSnack } = this.state;
     let currROIs = [];
 
@@ -75,6 +91,10 @@ class QueryForm extends React.Component {
           dataSet={dataSet}
           availableROIs={currROIs}
           disable={isQuerying}
+          isQuerying={isQuerying}
+          urlQueryString={urlQueryString}
+          neoServerSettings={neoServerSettings}
+          actions={actions}
         />
       </div>
     );
@@ -88,6 +108,9 @@ QueryForm.propTypes = {
   dataSet: PropTypes.string.isRequired,
   isQuerying: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired,
+  actions: PropTypes.object.isRequired,
+  urlQueryString: PropTypes.string.isRequired,
+  neoServerSettings: PropTypes.object.isRequired,
   availableROIs: PropTypes.object.isRequired
 };
 
@@ -97,10 +120,50 @@ const QueryFormState = state => ({
   neoError: state.query.neoError,
   userInfo: state.user.get('userInfo'),
   urlQueryString: state.app.get('urlQueryString'),
+  neoServerSettings: state.neo4jsettings,
   availableROIs: state.neo4jsettings.get('availableROIs')
 });
 
-const QueryFormDispatch = () => ({});
+const QueryFormDispatch = dispatch => ({
+  actions: {
+    submit: query => {
+      dispatch(submit(query));
+    },
+    setURLQs(querystring) {
+      dispatch(setUrlQS(querystring));
+    },
+    skeletonAddandOpen: (id, dataSet) => {
+      dispatch(skeletonAddandOpen(id, dataSet));
+    },
+    neuroglancerAddandOpen: (id, dataSet) => {
+      dispatch(neuroglancerAddandOpen(id, dataSet));
+    },
+    formError: query => {
+      dispatch(formError(query));
+    },
+    metaInfoError(error) {
+      dispatch(metaInfoError(error));
+    },
+    pluginResponseError: error => {
+      dispatch(pluginResponseError(error));
+    },
+    getQueryString: () => {
+      getQueryString();
+    },
+    SaveQueryString: () => {
+      SaveQueryString();
+    },
+    LoadQueryString: () => {
+      LoadQueryString();
+    },
+    getSiteParams: location => {
+      getSiteParams(location);
+    },
+    setQueryString: () => {
+      setQueryString();
+    }
+  }
+});
 
 export default withRouter(
   withStyles(styles)(

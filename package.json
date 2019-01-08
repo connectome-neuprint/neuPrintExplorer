@@ -63,8 +63,6 @@
     "deepmerge": "^2.2.1",
     "history": "^4.7.2",
     "immutable": "^3.8.2",
-    "jquery": "^3.3.1",
-    "mathjs": "^5.2.3",
     "prettier": "^1.14.3",
     "prop-types": "^15.6.2",
     "qs": "^6.5.2",
