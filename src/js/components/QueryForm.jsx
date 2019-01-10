@@ -17,7 +17,7 @@ import { submit, formError, pluginResponseError } from 'actions/plugins';
 import { metaInfoError } from 'actions/app';
 import { skeletonAddandOpen } from 'actions/skeleton';
 import { neuroglancerAddandOpen } from 'actions/neuroglancer';
-import { getQueryString, getSiteParams, setQueryString } from 'helpers/queryString';
+import { getQueryString, getSiteParams, setQueryString, getQueryObject } from 'helpers/queryString';
 import { LoadQueryString, SaveQueryString } from 'helpers/qsparser';
 
 const styles = theme => ({
@@ -58,7 +58,7 @@ class QueryForm extends React.Component {
       availableROIs,
       isQuerying,
       urlQueryString,
-      neoServerSettings,
+      neoServerSettings
     } = this.props;
     const { openSnack } = this.state;
     let currROIs = [];
@@ -111,7 +111,7 @@ QueryForm.propTypes = {
   actions: PropTypes.object.isRequired,
   urlQueryString: PropTypes.string.isRequired,
   neoServerSettings: PropTypes.object.isRequired,
-  availableROIs: PropTypes.object.isRequired,
+  availableROIs: PropTypes.object.isRequired
 };
 
 const QueryFormState = state => ({
@@ -121,7 +121,7 @@ const QueryFormState = state => ({
   userInfo: state.user.get('userInfo'),
   urlQueryString: state.app.get('urlQueryString'),
   neoServerSettings: state.neo4jsettings,
-  availableROIs: state.neo4jsettings.get('availableROIs'),
+  availableROIs: state.neo4jsettings.get('availableROIs')
 });
 
 const QueryFormDispatch = dispatch => ({
@@ -144,21 +144,13 @@ const QueryFormDispatch = dispatch => ({
     pluginResponseError: error => {
       dispatch(pluginResponseError(error));
     },
-    getQueryString: () => {
-      getQueryString();
-    },
-    SaveQueryString: () => {
-      SaveQueryString();
-    },
-    LoadQueryString: () => {
-      LoadQueryString();
-    },
-    getSiteParams: location => {
-      getSiteParams(location);
-    },
-    setQueryString: (newdata) => {
-      setQueryString(newdata);
-    }
+    getQueryString: () => getQueryString(),
+    SaveQueryString: (queryName, oldParams) => SaveQueryString(queryName, oldParams),
+    LoadQueryString: (queryName, initQsParams, urlQueryString) =>
+      LoadQueryString(queryName, initQsParams, urlQueryString),
+    getSiteParams: location => getSiteParams(location),
+    setQueryString: newData => setQueryString(newData),
+    getQueryObject: () => getQueryObject()
   }
 });
 
