@@ -62,6 +62,15 @@ module.exports = {
         use: ['babel-loader']
       },
       {
+        test: /\.jsx?$/,
+        use: ['source-map-loader'],
+        exclude: [
+          /node_modules\/@janelia-flyem\/neuroglancer/,
+          /node_modules\/swagger-client/
+        ],
+        enforce: 'pre'
+      },
+      {
         test: /\.css$/,
         use: [MiniCssExtractPlugin.loader, 'css-loader']
       }
