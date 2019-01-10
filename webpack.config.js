@@ -44,6 +44,12 @@ module.exports = {
   },
   mode: 'development',
   watch: true,
+  watchOptions: {
+    // https://stackoverflow.com/questions/41522721/how-to-watch-certain-node-modules-changes-with-webpack-dev-server
+    ignored: [
+      /node_modules([\\]+|\/)+(?!@neuprint)/
+    ]
+  },
   devtool: 'inline-source-map',
   devServer: {
     contentBase: './build'
