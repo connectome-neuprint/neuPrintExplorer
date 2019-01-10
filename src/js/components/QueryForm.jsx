@@ -17,7 +17,7 @@ import { submit, formError, pluginResponseError } from 'actions/plugins';
 import { setUrlQS, metaInfoError } from 'actions/app';
 import { skeletonAddandOpen } from 'actions/skeleton';
 import { neuroglancerAddandOpen } from 'actions/neuroglancer';
-import { getQueryString, getSiteParams, setQueryString } from 'helpers/queryString';
+import { getQueryString, getSiteParams, setQueryString, getQueryObject } from 'helpers/queryString';
 import { LoadQueryString, SaveQueryString } from 'helpers/qsparser';
 
 const styles = theme => ({
@@ -114,7 +114,7 @@ QueryForm.propTypes = {
   urlQueryString: PropTypes.string.isRequired,
   neoServerSettings: PropTypes.object.isRequired,
   availableROIs: PropTypes.object.isRequired,
-  neoServer: PropTypes.object.isRequired
+  neoServer: PropTypes.string.isRequired
 };
 
 const QueryFormState = state => ({
@@ -151,21 +151,13 @@ const QueryFormDispatch = dispatch => ({
     pluginResponseError: error => {
       dispatch(pluginResponseError(error));
     },
-    getQueryString: () => {
-      getQueryString();
-    },
-    SaveQueryString: () => {
-      SaveQueryString();
-    },
-    LoadQueryString: () => {
-      LoadQueryString();
-    },
-    getSiteParams: location => {
-      getSiteParams(location);
-    },
-    setQueryString: () => {
-      setQueryString();
-    }
+    getQueryString: () => getQueryString(),
+    SaveQueryString: (queryName, oldParams) => SaveQueryString(queryName, oldParams),
+    LoadQueryString: (queryName, initQsParams, urlQueryString) =>
+      LoadQueryString(queryName, initQsParams, urlQueryString),
+    getSiteParams: location => getSiteParams(location),
+    setQueryString: newData => setQueryString(newData),
+    getQueryObject: () => getQueryObject()
   }
 });
 
