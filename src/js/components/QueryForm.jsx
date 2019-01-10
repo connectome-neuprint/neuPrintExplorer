@@ -14,7 +14,7 @@ import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
 
 import { submit, formError, pluginResponseError } from 'actions/plugins';
-import { setUrlQS, metaInfoError } from 'actions/app';
+import { metaInfoError } from 'actions/app';
 import { skeletonAddandOpen } from 'actions/skeleton';
 import { neuroglancerAddandOpen } from 'actions/neuroglancer';
 import { getQueryString, getSiteParams, setQueryString } from 'helpers/queryString';
@@ -133,9 +133,6 @@ const QueryFormDispatch = dispatch => ({
     submit: query => {
       dispatch(submit(query));
     },
-    setURLQs(querystring) {
-      dispatch(setUrlQS(querystring));
-    },
     skeletonAddandOpen: (id, dataSet) => {
       dispatch(skeletonAddandOpen(id, dataSet));
     },
@@ -163,8 +160,8 @@ const QueryFormDispatch = dispatch => ({
     getSiteParams: location => {
       getSiteParams(location);
     },
-    setQueryString: () => {
-      setQueryString();
+    setQueryString: (newdata) => {
+      setQueryString(newdata);
     }
   }
 });
