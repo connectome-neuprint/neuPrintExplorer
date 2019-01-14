@@ -18,7 +18,6 @@ import { metaInfoError } from 'actions/app';
 import { skeletonAddandOpen } from 'actions/skeleton';
 import { neuroglancerAddandOpen } from 'actions/neuroglancer';
 import { getQueryString, getSiteParams, setQueryString, getQueryObject } from 'helpers/queryString';
-import { LoadQueryString, SaveQueryString } from 'helpers/qsparser';
 
 const styles = theme => ({
   divider: {
@@ -145,9 +144,6 @@ const QueryFormDispatch = dispatch => ({
       dispatch(pluginResponseError(error));
     },
     getQueryString: () => getQueryString(),
-    SaveQueryString: (queryName, oldParams) => SaveQueryString(queryName, oldParams),
-    LoadQueryString: (queryName, initQsParams, urlQueryString) =>
-      LoadQueryString(queryName, initQsParams, urlQueryString),
     getSiteParams: location => getSiteParams(location),
     setQueryString: newData => setQueryString(newData),
     getQueryObject: () => getQueryObject()
