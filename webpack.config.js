@@ -50,7 +50,7 @@ module.exports = {
       /node_modules([\\]+|\/)+(?!@neuprint)/
     ]
   },
-  devtool: 'inline-source-map',
+  devtool: 'eval-source-map',
   devServer: {
     contentBase: './build'
   },
