@@ -26,12 +26,28 @@ const styles = theme => ({
   }
 });
 
+const failureMessage =
+  'There was a problem rendering the plugin form. Please contact the developer of this continues.';
+
 class QueryForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      openSnack: false
+      openSnack: false,
+      hasError: false
     };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidUpdate(prevProps) {
+    const { queryType } = this.props;
+    if (queryType !== prevProps.queryType) {
+      // eslint-disable-next-line react/no-did-update-set-state
+      this.setState({ hasError: false });
+    }
   }
 
   findCurrentPlugin = () => {
@@ -59,7 +75,8 @@ class QueryForm extends React.Component {
       urlQueryString,
       neoServerSettings
     } = this.props;
-    const { openSnack } = this.state;
+    const { openSnack, hasError } = this.state;
+
     let currROIs = [];
 
     if (dataSet in availableROIs) {
@@ -85,16 +102,20 @@ class QueryForm extends React.Component {
         />
         <Typography>{CurrentQuery.queryDescription}</Typography>
         <Divider className={classes.divider} />
-        <CurrentQuery
-          datasetstr={dataSet}
-          dataSet={dataSet}
-          availableROIs={currROIs}
-          disable={isQuerying}
-          isQuerying={isQuerying}
-          urlQueryString={urlQueryString}
-          neoServerSettings={neoServerSettings}
-          actions={actions}
-        />
+        {hasError ? (
+          failureMessage
+        ) : (
+          <CurrentQuery
+            datasetstr={dataSet}
+            dataSet={dataSet}
+            availableROIs={currROIs}
+            disable={isQuerying}
+            isQuerying={isQuerying}
+            urlQueryString={urlQueryString}
+            neoServerSettings={neoServerSettings}
+            actions={actions}
+          />
+        )}
       </div>
     );
   }
