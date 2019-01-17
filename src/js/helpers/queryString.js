@@ -37,17 +37,19 @@ export function getQueryString() {
   return window.location.search.substring(1);
 }
 
-export function getQueryObject() {
-  return (
-    qs.parse(decodeURIComponent(getQueryString()), {
-      decoder(value) {
-        if (value in keywords) {
-          return keywords[value];
-        }
-        return value;
+export function getQueryObject(plugin) {
+  let queryObject = qs.parse(decodeURIComponent(getQueryString()), {
+    decoder(value) {
+      if (value in keywords) {
+        return keywords[value];
       }
-    }) || {}
-  );
+      return value;
+    }
+  });
+  if (plugin) {
+    queryObject = queryObject[plugin];
+  }
+  return queryObject || {};
 }
 
 export function setQueryString(newData) {
@@ -68,7 +70,8 @@ export function setQueryString(newData) {
 }
 
 export function getSiteParams(location) {
-  const decoded = qs.parse(decodeURIComponent(location.search.substring(1)), {
+  const decoded =
+    qs.parse(decodeURIComponent(location.search.substring(1)), {
       decoder(value) {
         if (value in keywords) {
           return keywords[value];
@@ -78,4 +81,3 @@ export function getSiteParams(location) {
     }) || {};
   return Immutable.fromJS(decoded);
 }
-

@@ -167,7 +167,7 @@ const QueryFormDispatch = dispatch => ({
     getQueryString: () => getQueryString(),
     getSiteParams: location => getSiteParams(location),
     setQueryString: newData => setQueryString(newData),
-    getQueryObject: () => getQueryObject()
+    getQueryObject: plugin => getQueryObject(plugin)
   }
 });
 
