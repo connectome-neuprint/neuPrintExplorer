@@ -9,6 +9,8 @@ const pluginList = [];
 const plugins = require('@neuprint/queries');
 const viewPlugins = require('@neuprint/views');
 
+// const alt_view_plugins = require.context("../../../node_modules/@neuprint/views/build", false, /.js$/);
+
 Object.keys(plugins).forEach(key => {
   pluginList.push(plugins[key]);
 });
