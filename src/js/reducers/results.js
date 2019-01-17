@@ -5,21 +5,19 @@
 import Immutable from 'immutable';
 import C from './constants';
 
-const resultsState = {
+const resultsState = Immutable.Map({
   clearIndices: new Set(),
   numClear: 0,
   allResults: Immutable.List([]),
-};
+});
 
 export default function resultsReducer(state = resultsState, action) {
   switch (action.type) {
     case C.CLEAR_NEW_RESULT: {
-      const updated = state.allResults.remove(action.index);
-      return Object.assign({}, state, { allResults: updated});
+      return state.removeIn(['allResults', action.index]);
     }
     case C.PLUGIN_SAVE_RESPONSE: {
-      const updated = state.allResults.unshift(action.combined);
-      return Object.assign({}, state, { allResults: updated});
+      return state.updateIn(['allResults'], results => results.unshift(action.combined));
     }
     default: {
       return state;

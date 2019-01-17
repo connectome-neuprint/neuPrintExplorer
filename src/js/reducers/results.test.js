@@ -3,11 +3,11 @@ import Immutable from 'immutable';
 import C from './constants';
 import reducer from './results';
 
-const state = {
+const state = Immutable.Map({
   allResults: Immutable.List([{ existingResult: 'testResult' }]),
   clearIndices: new Set(),
   numClear: 0
-};
+});
 
 describe('results Reducer', () => {
   it('CLEAR_NEW_RESULT success', () => {
@@ -15,16 +15,16 @@ describe('results Reducer', () => {
       type: C.CLEAR_NEW_RESULT,
       index: 0
     };
-    expect(reducer(undefined, action)).toEqual({
+    expect(reducer(undefined, action)).toEqual(Immutable.Map({
       allResults: Immutable.List([]),
       clearIndices: new Set(),
       numClear: 0
-    });
-    expect(reducer(state, action)).toEqual({
+    }));
+    expect(reducer(state, action)).toEqual(Immutable.Map({
       clearIndices: new Set(),
       allResults: Immutable.List([]),
       numClear: 0
-    });
+    }));
   });
 
   it('PLUGIN_SAVE_RESPONSE success', () => {
@@ -37,7 +37,7 @@ describe('results Reducer', () => {
         result: { columns: ['a', 'b'], data: [1, 2] }
       }
     };
-    expect(reducer(undefined, action)).toEqual({
+    expect(reducer(undefined, action)).toEqual(Immutable.Map({
       allResults: Immutable.List([
         {
           dataSet: 'hemibrain',
@@ -48,8 +48,8 @@ describe('results Reducer', () => {
       ]),
       clearIndices: new Set(),
       numClear: 0
-    });
-    expect(reducer(state, action)).toEqual({
+    }));
+    expect(reducer(state, action)).toEqual(Immutable.Map({
       clearIndices: new Set(),
       allResults: Immutable.List([
         {
@@ -61,6 +61,6 @@ describe('results Reducer', () => {
         { existingResult: 'testResult' }
       ]),
       numClear: 0
-    });
+    }));
   });
 });

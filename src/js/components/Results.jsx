@@ -211,11 +211,8 @@ Results.propTypes = {
 const ResultsState = state => ({
   isQuerying: state.query.isQuerying,
   neoError: state.query.neoError,
-  allTables: state.results.allTables,
-  allResults: state.results.allResults,
+  allResults: state.results.get('allResults'),
   viewPlugins: state.app.get('viewPlugins'),
-  clearIndices: state.results.clearIndices,
-  numClear: state.results.numClear,
   showSkel: state.skeleton.get('display'),
   userInfo: state.user.get('userInfo'),
   urlQueryString: state.app.get('urlQueryString'),
