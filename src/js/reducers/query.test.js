@@ -1,8 +1,9 @@
+import Immutable from 'immutable';
 import C from './constants';
 import query from './query';
 
 // TODO: rewrite using Immutable once we get rid of callback function in neoQueryObj
-const state = {
+const state = Immutable.Map({
   neoQueryObj: {
     queryStr: 'existingquerystring',
     state: 'existingstate'
@@ -10,8 +11,9 @@ const state = {
   dataSet: null,
   isQuerying: false,
   neoResults: 'existingneoresults',
-  neoError: 'existingneoerror'
-};
+  neoError: 'existingneoerror',
+  currentQuery: null
+});
 
 // note: can't test equality of functions
 describe('query Reducer', () => {
@@ -27,32 +29,38 @@ describe('query Reducer', () => {
       },
       isQuerying: true
     };
-    expect(query(undefined, JSON.parse(JSON.stringify(action)))).toEqual({
-      neoQueryObj: {
-        queryStr: 'newquery',
-        callback: '[Function callback]',
-        state: {
-          datasetstr: 'newdataset'
-        }
-      },
-      dataSet: null,
-      isQuerying: true,
-      neoResults: null,
-      neoError: null
-    });
-    expect(query(state, JSON.parse(JSON.stringify(action)))).toEqual({
-      neoQueryObj: {
-        queryStr: 'newquery',
-        callback: '[Function callback]',
-        state: {
-          datasetstr: 'newdataset'
-        }
-      },
-      dataSet: null,
-      isQuerying: true,
-      neoResults: 'existingneoresults',
-      neoError: 'existingneoerror'
-    });
+    expect(query(undefined, JSON.parse(JSON.stringify(action)))).toEqual(
+      Immutable.Map({
+        neoQueryObj: {
+          queryStr: 'newquery',
+          callback: '[Function callback]',
+          state: {
+            datasetstr: 'newdataset'
+          }
+        },
+        dataSet: null,
+        isQuerying: true,
+        neoResults: null,
+        neoError: null,
+        currentQuery: null
+      })
+    );
+    expect(query(state, JSON.parse(JSON.stringify(action)))).toEqual(
+      Immutable.Map({
+        neoQueryObj: {
+          queryStr: 'newquery',
+          callback: '[Function callback]',
+          state: {
+            datasetstr: 'newdataset'
+          }
+        },
+        dataSet: null,
+        isQuerying: true,
+        neoResults: 'existingneoresults',
+        neoError: 'existingneoerror',
+        currentQuery: null
+      })
+    );
   });
 
   it('SET_QUERY_STATUS success', () => {
@@ -68,7 +76,8 @@ describe('query Reducer', () => {
       dataSet: null,
       isQuerying: true,
       neoResults: null,
-      neoError: null
+      neoError: null,
+      currentQuery: null
     });
     expect(JSON.parse(JSON.stringify(query(state, action)))).toEqual({
       neoQueryObj: {
@@ -78,7 +87,8 @@ describe('query Reducer', () => {
       dataSet: null,
       isQuerying: true,
       neoResults: 'existingneoresults',
-      neoError: 'existingneoerror'
+      neoError: 'existingneoerror',
+      currentQuery: null
     });
   });
 
@@ -95,7 +105,8 @@ describe('query Reducer', () => {
       dataSet: null,
       isQuerying: false,
       neoResults: null,
-      neoError: 'newerror'
+      neoError: 'newerror',
+      currentQuery: null
     });
     expect(JSON.parse(JSON.stringify(query(state, action)))).toEqual({
       neoQueryObj: {
@@ -105,7 +116,8 @@ describe('query Reducer', () => {
       dataSet: null,
       isQuerying: false,
       neoResults: null,
-      neoError: 'newerror'
+      neoError: 'newerror',
+      currentQuery: null
     });
   });
 
@@ -121,7 +133,8 @@ describe('query Reducer', () => {
       dataSet: null,
       isQuerying: false,
       neoResults: null,
-      neoError: null
+      neoError: null,
+      currentQuery: null
     });
     expect(JSON.parse(JSON.stringify(query(state, action)))).toEqual({
       neoQueryObj: {
@@ -131,7 +144,8 @@ describe('query Reducer', () => {
       dataSet: null,
       isQuerying: false,
       neoResults: 'existingneoresults',
-      neoError: null
+      neoError: null,
+      currentQuery: null
     });
   });
 
@@ -176,7 +190,8 @@ describe('query Reducer', () => {
       dataSet: null,
       isQuerying: true,
       neoResults: null,
-      neoError: null
+      neoError: null,
+      currentQuery: null
     });
     expect(JSON.parse(JSON.stringify(query(state, action)))).toEqual({
       neoQueryObj: {
@@ -186,7 +201,8 @@ describe('query Reducer', () => {
       dataSet: null,
       isQuerying: true,
       neoResults: 'existingneoresults',
-      neoError: 'existingneoerror'
+      neoError: 'existingneoerror',
+      currentQuery: null,
     });
   });
 
@@ -202,7 +218,8 @@ describe('query Reducer', () => {
       dataSet: null,
       isQuerying: false,
       neoResults: null,
-      neoError: null
+      neoError: null,
+      currentQuery: null
     });
     expect(JSON.parse(JSON.stringify(query(state, action)))).toEqual({
       neoQueryObj: {
@@ -212,7 +229,8 @@ describe('query Reducer', () => {
       dataSet: null,
       isQuerying: false,
       neoResults: 'existingneoresults',
-      neoError: 'existingneoerror'
+      neoError: 'existingneoerror',
+      currentQuery: null
     });
   });
 
@@ -228,7 +246,8 @@ describe('query Reducer', () => {
       dataSet: null,
       isQuerying: false,
       neoResults: null,
-      neoError: null
+      neoError: null,
+      currentQuery: null
     });
     expect(JSON.parse(JSON.stringify(query(state, action)))).toEqual({
       neoQueryObj: {
@@ -238,7 +257,8 @@ describe('query Reducer', () => {
       dataSet: null,
       isQuerying: false,
       neoResults: 'existingneoresults',
-      neoError: 'existingneoerror'
+      neoError: 'existingneoerror',
+      currentQuery: null
     });
   });
 });

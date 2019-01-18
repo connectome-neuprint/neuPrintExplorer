@@ -1,47 +1,52 @@
 /*
  * Stores information related to Neo4j queries.
-*/
-import C from "./constants"
+ */
+import Immutable from 'immutable';
+import C from './constants';
 
-const queryState = {
-    neoQueryObj: {
-        queryStr: "",
-        callback: function callback() { },
-        state: null,
-        params: undefined,
-    },
-    dataSet: null,
-    isQuerying: false,
-    neoResults: null,
-    neoError: null,
-}
+const queryState = Immutable.Map({
+  neoQueryObj: {
+    queryStr: '',
+    callback: function callback() {},
+    state: null,
+    params: undefined
+  },
+  dataSet: null,
+  isQuerying: false,
+  neoResults: null,
+  neoError: null,
+  currentQuery: null
+});
 
 export default function queryReducer(state = queryState, action) {
-    switch (action.type) {
-        case C.UPDATE_QUERY: {
-            return Object.assign({}, state, { neoQueryObj: action.neoQueryObj, isQuerying: true });
-        }
-        case C.SET_QUERY_STATUS: {
-            return Object.assign({}, state, { isQuerying: action.isQuerying });
-        }
-        case C.SET_NEO_ERROR: {
-            return Object.assign({}, state, { neoError: action.neoError, isQuerying: false, neoResults: null });
-        }
-        case C.FINISH_QUERY: {
-            return Object.assign({}, state, { isQuerying: false, neoError: null });
-        }
-        case C.PLUGIN_SUBMIT: {
-            return Object.assign({}, state, { currentQuery: action.query });
-        }
-        case C.PLUGIN_SUBMITTING: {
-            return Object.assign({}, state, { isQuerying: true });
-        }
-        case C.PLUGIN_SUBMIT_ERROR:
-        case C.PLUGIN_SAVE_RESPONSE: {
-            return Object.assign({}, state, { isQuerying: false });
-        }
-        default: {
-            return state;
-        }
+  switch (action.type) {
+    case C.UPDATE_QUERY: {
+      return state.set('neoQueryObj', action.neoQueryObj).set('isQuerying', true);
     }
+    case C.SET_QUERY_STATUS: {
+      return state.set('isQuerying', action.isQuerying);
+    }
+    case C.SET_NEO_ERROR: {
+      return state
+        .set('neoError', action.neoError)
+        .set('isQuerying', false)
+        .set('neoResults', null);
+    }
+    case C.FINISH_QUERY: {
+      return state.set('isQuerying', false).set('neoError', null);
+    }
+    case C.PLUGIN_SUBMIT: {
+      return state.set('currentQuery', action.query);
+    }
+    case C.PLUGIN_SUBMITTING: {
+      return state.set('isQuerying', true);
+    }
+    case C.PLUGIN_SUBMIT_ERROR:
+    case C.PLUGIN_SAVE_RESPONSE: {
+      return state.set('isQuerying', false);
+    }
+    default: {
+      return state;
+    }
+  }
 }

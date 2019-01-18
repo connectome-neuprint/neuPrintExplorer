@@ -209,15 +209,15 @@ Results.propTypes = {
 
 // result data [{name: "table name", header: [headers...], body: [rows...]
 const ResultsState = state => ({
-  isQuerying: state.query.isQuerying,
-  neoError: state.query.neoError,
+  isQuerying: state.query.get('isQuerying'),
+  neoError: state.query.get('neoError'),
   allResults: state.results.get('allResults'),
   viewPlugins: state.app.get('viewPlugins'),
   showSkel: state.skeleton.get('display'),
   userInfo: state.user.get('userInfo'),
   urlQueryString: state.app.get('urlQueryString'),
   selectedResult: state.app.get('selectedResult'),
-  queryObj: state.query.neoQueryObj,
+  queryObj: state.query.get('neoQueryObj'),
   fullscreen: state.app.get('fullscreen')
 });
 

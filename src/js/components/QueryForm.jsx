@@ -136,8 +136,8 @@ QueryForm.propTypes = {
 
 const QueryFormState = state => ({
   pluginList: state.app.get('pluginList'),
-  isQuerying: state.query.isQuerying,
-  neoError: state.query.neoError,
+  isQuerying: state.query.get('isQuerying'),
+  neoError: state.query.get('neoError'),
   userInfo: state.user.get('userInfo'),
   urlQueryString: state.app.get('urlQueryString'),
   neoServerSettings: state.neo4jsettings,
