@@ -37,7 +37,7 @@ export function getQueryString() {
   return window.location.search.substring(1);
 }
 
-export function getQueryObject(plugin) {
+export function getQueryObject(part) {
   let queryObject = qs.parse(decodeURIComponent(getQueryString()), {
     decoder(value) {
       if (value in keywords) {
@@ -46,6 +46,17 @@ export function getQueryObject(plugin) {
       return value;
     }
   });
+  if (part) {
+    queryObject = queryObject[part];
+  }
+  return queryObject || {};
+}
+
+// This function limits the object returned to the plugins namespace
+// The idea is to reduce the amount of work for plugin authors and to
+// prevent them from overwriting core parameters.
+export function getPluginQueryObject(plugin) {
+  let queryObject = getQueryObject('plugins');
   if (plugin) {
     queryObject = queryObject[plugin];
   }
@@ -67,6 +78,16 @@ export function setQueryString(newData) {
     pathname: window.location.pathname,
     search: updatedQuery
   });
+}
+
+// This function limits the setting of parameters to the plugins namespace
+// The idea is to reduce the amount of work for plugin authors and to
+// prevent them from overwriting core parameters.
+export function setPluginQueryString(newData) {
+  const plugins = {
+    'plugins': newData
+  };
+  setQueryString(plugins);
 }
 
 export function getSiteParams(location) {

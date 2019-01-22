@@ -83,6 +83,11 @@ class TopBar extends React.Component {
     setQueryString({
       dataset: selectedDataSet.value
     });
+    // clear out the plugin values whenever the data set
+    // is changed.
+    setQueryString({
+      plugins: []
+    });
   };
 
   render() {

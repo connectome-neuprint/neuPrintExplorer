@@ -17,7 +17,7 @@ import { submit, formError, pluginResponseError } from 'actions/plugins';
 import { metaInfoError } from 'actions/app';
 import { skeletonAddandOpen } from 'actions/skeleton';
 import { neuroglancerAddandOpen } from 'actions/neuroglancer';
-import { getQueryString, getSiteParams, setQueryString, getQueryObject } from 'helpers/queryString';
+import { getQueryString, getSiteParams, setPluginQueryString, getPluginQueryObject } from 'helpers/queryString';
 
 const styles = theme => ({
   divider: {
@@ -166,8 +166,8 @@ const QueryFormDispatch = dispatch => ({
     },
     getQueryString: () => getQueryString(),
     getSiteParams: location => getSiteParams(location),
-    setQueryString: newData => setQueryString(newData),
-    getQueryObject: plugin => getQueryObject(plugin)
+    setQueryString: newData => setPluginQueryString(newData),
+    getQueryObject: plugin => getPluginQueryObject(plugin)
   }
 });
 
