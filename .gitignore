@@ -3,3 +3,5 @@ build
 node_modules
 external
 coverage
+plugins/*
+view-plugins/*
