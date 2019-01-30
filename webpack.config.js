@@ -16,7 +16,6 @@ const miniCssExtractPlugin = new MiniCssExtractPlugin({
 });
 const copyWebpackPlugin = new CopyWebpackPlugin([
   { from: 'public', to: 'public', toType: 'dir' },
-  { from: 'external', to: 'external', toType: 'dir' },
   {
     from: 'node_modules/@janelia-flyem/neuroglancer/dist/min/chunk_worker.bundle.js',
     to: 'chunk_worker.bundle.js',

@@ -60,19 +60,6 @@ fileref2.setAttribute('rel', 'stylesheet');
 fileref2.setAttribute('href', filename2);
 document.getElementsByTagName('head')[0].appendChild(fileref2);
 
-// load js hacks (TODO: make proper npm module for the sharkviewer)
-const jssref = document.createElement('script');
-jssref.setAttribute('src', '/external/SharkViewer/js/threejs/three.js');
-document.getElementsByTagName('head')[0].appendChild(jssref);
-jssref.onload = function refOnload() {
-  const jssref2 = document.createElement('script');
-  jssref2.setAttribute('src', '/external/SharkViewer/js/threejs/TrackballControls.js');
-  document.getElementsByTagName('head')[0].appendChild(jssref2);
-  const jssref3 = document.createElement('script');
-  jssref3.setAttribute('src', '/external/SharkViewer/js/shark_viewer.js');
-  document.getElementsByTagName('head')[0].appendChild(jssref3);
-};
-
 // load form plugins
 loadPlugins(store);
 

@@ -1,4 +1,3 @@
-/* global SharkViewer */
 /*
  * Uses SharkViewer to display a skeleton representation of a neuron
 */
@@ -9,6 +8,9 @@ import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import Chip from '@material-ui/core/Chip';
 import { skeletonNeuronToggle, skeletonRemove } from 'actions/skeleton';
+
+import SharkViewer from '@janelia/sharkviewer';
+import { swcParser } from '@janelia/sharkviewer/dist/viewer/util';
 
 let GlbShark = null;
 
