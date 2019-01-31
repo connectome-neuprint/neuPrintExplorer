@@ -15,6 +15,17 @@ plan.target('production', {
   gitCheck: true
 });
 
+plan.target('staging', {
+  host: 'emdata4',
+  username: 'deploy',
+  agent: process.env.SSH_AUTH_SOCK
+},
+{
+  // Shouldn't be overridden, so please don't try.
+  gitCheck: true
+});
+
+
 // Check if there are files that have not been committed to git. This stops
 // us from deploying code in an inconsistent state. It also prevents slapdash
 // changes from being deployed without a log of who added them in github. Not
