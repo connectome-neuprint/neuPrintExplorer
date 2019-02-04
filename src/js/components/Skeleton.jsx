@@ -1,6 +1,6 @@
 /*
  * Uses SharkViewer to display a skeleton representation of a neuron
-*/
+ */
 
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -11,8 +11,6 @@ import { skeletonNeuronToggle, skeletonRemove } from 'actions/skeleton';
 
 import SharkViewer from '@janelia/sharkviewer';
 import { swcParser } from '@janelia/sharkviewer/dist/viewer/util';
-
-let GlbShark = null;
 
 const styles = theme => ({
   root: {
@@ -47,6 +45,11 @@ const styles = theme => ({
 class Skeleton extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      sharkViewer: {
+        animate: () => {}
+      }
+    };
     this.skelRef = React.createRef();
   }
 
@@ -61,7 +64,7 @@ class Skeleton extends React.Component {
     const { neurons } = this.props;
     if (prevProps.neurons !== neurons) {
       const swc = this.fetchSWC(neurons);
-      this.createShark(swc);
+      this.loadShark(swc);
     }
   }
 
@@ -100,7 +103,7 @@ class Skeleton extends React.Component {
     let maxRowId = 0;
     const swc = neuron.get('swc');
     Object.entries(swc).forEach(entry => {
-      const [ rowName, rowData ] = entry;
+      const [rowName, rowData] = entry;
       const newId = parseInt(rowName, 10) + offset;
       if (newId > maxRowId) {
         maxRowId = newId;
@@ -113,39 +116,74 @@ class Skeleton extends React.Component {
         parent: rowData.parent === -1 ? -1 : rowData.parent + offset,
         radius: rowData.radius
       };
-
     });
 
-    return [ maxRowId + 1, newSWC];
+    return [maxRowId + 1, newSWC];
   };
 
   createShark = swc => {
-    if (GlbShark !== null) {
-      GlbShark.scene.remove(GlbShark.neuron);
-      GlbShark.scene.remove(GlbShark.camera);
-      GlbShark.material.dispose();
-      GlbShark.geometry.dispose();
+    const swcTxt = [
+      '# ORIGINAL_SOURCE NeuronStudio 0.8.80',
+      '# CREATURE',
+      '# REGION',
+      '# FIELD/LAYER',
+      '# TYPE',
+      '# CONTRIBUTOR',
+      '# REFERENCE',
+      '# RAW',
+      '# EXTRAS',
+      '# SOMA_AREA',
+      '# SHINKAGE_CORRECTION 1.0 1.0 1.0',
+      '# VERSION_NUMBER 1.0',
+      '# VERSION_DATE 2007-07-24',
+      '# SCALE 1.0 1.0 1.0',
+      '1 1 14.566132 34.873772 7.857000 0.717830 -1',
+      '2 0 16.022520 33.760513 7.047000 0.463378 1',
+      '3 5 17.542000 32.604973 6.885001 0.638007 2',
+      '4 0 19.163984 32.022469 5.913000 0.602284 3',
+      '5 0 20.448090 30.822802 4.860000 0.436025 4',
+      '6 6 21.897903 28.881084 3.402000 0.471886 5',
+      '7 0 18.461960 30.289471 8.586000 0.447463 3',
+      '8 6 19.420759 28.730757 9.558000 0.496217 7'
+    ].join('\n');
+    const swcTest = swcParser(swcTxt);
+    const sharkViewer = new SharkViewer({
+      dom_element: this.skelRef.current,
+      // center_node: -1,
+      // centerpoint: [24, 18, 0],
+      // WIDTH: this.skelRef.current.clientWidth,
+      // HEIGHT: this.skelRef.current.clientHeight,
+    });
+    sharkViewer.init();
+    sharkViewer.animate();
+    sharkViewer.loadNeuron('swc', null, swcTest);
+    window.s = sharkViewer;
+    this.setState({ sharkViewer });
+  };
 
-      GlbShark = null;
-      const pardiv = this.skelRef.current;
-      if (pardiv.childNodes.length > 0) {
-        pardiv.removeChild(pardiv.childNodes[0]);
-      }
-    }
-
+  /* createShark = swc => {
     if (Object.keys(swc.swc).length !== 0) {
-      GlbShark = new SharkViewer({
-        swc: swc.swc,
-        dom_element: 'skeletonviewer',
-        center_node: -1,
-        WIDTH: this.skelRef.current.clientWidth,
-        HEIGHT: this.skelRef.current.clientHeight,
-        colors: swc.colors
-      });
+      if (GlbShark === null) {
+        GlbShark = new SharkViewer({
+          dom_element: 'skeletonviewer',
+          // center_node: -1,
+          // centerpoint: [24,18,0],
+          WIDTH: this.skelRef.current.clientWidth,
+          HEIGHT: this.skelRef.current.clientHeight,
+          colors: swc.colors
+        });
 
-      GlbShark.init();
-      GlbShark.animate();
+        GlbShark.init();
+        GlbShark.animate();
+      }
+      GlbShark.loadNeuron('swc', null, swc.swc);
     }
+  }; */
+
+  loadShark = swc => {
+    const { sharkViewer } = this.state;
+    console.log('adding neurons');
+    sharkViewer.animate();
   };
 
   render() {
