@@ -10,7 +10,6 @@ import Chip from '@material-ui/core/Chip';
 import { skeletonNeuronToggle, skeletonRemove } from 'actions/skeleton';
 
 import SharkViewer from '@janelia/sharkviewer';
-import { swcParser } from '@janelia/sharkviewer/dist/viewer/util';
 
 const styles = theme => ({
   root: {
@@ -56,15 +55,13 @@ class Skeleton extends React.Component {
   // load skeleton after render takes place
   componentDidMount() {
     const { neurons } = this.props;
-    const swc = this.fetchSWC(neurons);
-    this.createShark(swc);
+    this.createShark(neurons);
   }
 
   componentDidUpdate(prevProps) {
     const { neurons } = this.props;
     if (prevProps.neurons !== neurons) {
-      const swc = this.fetchSWC(neurons);
-      this.loadShark(swc);
+      this.loadShark(neurons);
     }
   }
 
@@ -78,112 +75,51 @@ class Skeleton extends React.Component {
     actions.skeletonNeuronToggle(id);
   };
 
-  // grab latest swc added
-  fetchSWC = neurons => {
-    let swc = {};
-    const colors = [];
-    let offset = 0;
-    neurons
-      .valueSeq()
-      .filter(neuron => neuron.get('visible'))
-      .forEach((neuron, colorIndex) => {
-        [offset, swc] = this.concatSkel(swc, neuron, offset, colorIndex);
-        colors.push(neuron.get('color'));
+  createShark = swcs => {
+    if (swcs.length !== 0) {
+      const sharkViewer = new SharkViewer({
+        dom_element: 'skeletonviewer',
+        WIDTH: this.skelRef.current.clientWidth,
+        HEIGHT: this.skelRef.current.clientHeight,
+        colors: swcs.map(swc => swc.get('color'))
       });
-
-    return {
-      swc,
-      colors
-    };
-  };
-
-  // can we do this better with recursion?
-  concatSkel = (mainswc, neuron, offset, colorIndex) => {
-    const newSWC = mainswc;
-    let maxRowId = 0;
-    const swc = neuron.get('swc');
-    Object.entries(swc).forEach(entry => {
-      const [rowName, rowData] = entry;
-      const newId = parseInt(rowName, 10) + offset;
-      if (newId > maxRowId) {
-        maxRowId = newId;
-      }
-      newSWC[newId] = {
-        type: colorIndex,
-        x: rowData.x,
-        y: rowData.y,
-        z: rowData.z,
-        parent: rowData.parent === -1 ? -1 : rowData.parent + offset,
-        radius: rowData.radius
-      };
-    });
-
-    return [maxRowId + 1, newSWC];
-  };
-
-  createShark = swc => {
-    const swcTxt = [
-      '# ORIGINAL_SOURCE NeuronStudio 0.8.80',
-      '# CREATURE',
-      '# REGION',
-      '# FIELD/LAYER',
-      '# TYPE',
-      '# CONTRIBUTOR',
-      '# REFERENCE',
-      '# RAW',
-      '# EXTRAS',
-      '# SOMA_AREA',
-      '# SHINKAGE_CORRECTION 1.0 1.0 1.0',
-      '# VERSION_NUMBER 1.0',
-      '# VERSION_DATE 2007-07-24',
-      '# SCALE 1.0 1.0 1.0',
-      '1 1 14.566132 34.873772 7.857000 0.717830 -1',
-      '2 0 16.022520 33.760513 7.047000 0.463378 1',
-      '3 5 17.542000 32.604973 6.885001 0.638007 2',
-      '4 0 19.163984 32.022469 5.913000 0.602284 3',
-      '5 0 20.448090 30.822802 4.860000 0.436025 4',
-      '6 6 21.897903 28.881084 3.402000 0.471886 5',
-      '7 0 18.461960 30.289471 8.586000 0.447463 3',
-      '8 6 19.420759 28.730757 9.558000 0.496217 7'
-    ].join('\n');
-    const swcTest = swcParser(swcTxt);
-    const sharkViewer = new SharkViewer({
-      dom_element: this.skelRef.current,
-      // center_node: -1,
-      // centerpoint: [24, 18, 0],
-      // WIDTH: this.skelRef.current.clientWidth,
-      // HEIGHT: this.skelRef.current.clientHeight,
-    });
-    sharkViewer.init();
-    sharkViewer.animate();
-    sharkViewer.loadNeuron('swc', null, swcTest);
-    window.s = sharkViewer;
-    this.setState({ sharkViewer });
-  };
-
-  /* createShark = swc => {
-    if (Object.keys(swc.swc).length !== 0) {
-      if (GlbShark === null) {
-        GlbShark = new SharkViewer({
-          dom_element: 'skeletonviewer',
-          // center_node: -1,
-          // centerpoint: [24,18,0],
-          WIDTH: this.skelRef.current.clientWidth,
-          HEIGHT: this.skelRef.current.clientHeight,
-          colors: swc.colors
-        });
-
-        GlbShark.init();
-        GlbShark.animate();
-      }
-      GlbShark.loadNeuron('swc', null, swc.swc);
+      sharkViewer.init();
+      sharkViewer.animate();
+      swcs.forEach(swc => {
+        sharkViewer.loadNeuron(swc.get('name'), swc.get('color'), swc.get('swc'));
+      });
+      sharkViewer.render();
+      this.setState({sharkViewer});
     }
-  }; */
+  };
 
-  loadShark = swc => {
+  loadShark = swcs => {
     const { sharkViewer } = this.state;
-    console.log('adding neurons');
-    sharkViewer.animate();
+    // check here to see if we have added or removed neurons.
+    const names = {};
+    swcs.forEach(swc => {
+      // If added, then add them to the scene.
+      const exists = sharkViewer.scene.getObjectByName(swc.get('name'));
+      if (!exists) {
+        sharkViewer.loadNeuron(swc.get('name'), swc.get('color'), swc.get('swc'));
+      }
+      // if hidden, then hide them.
+      sharkViewer.setNeuronVisible(swc.get('name'), swc.get('visible'));
+      // push name onto lookup for later use;
+      names[swc.get('name')] = 1;
+    });
+    // If removed, then remove them.
+    // for this we have to loop over the objects in the scene and see if they are
+    // missing from the state.
+    sharkViewer.scene.children.forEach(child => {
+      if (child.type === 'Object3D') {
+        if (!names[child.name]) {
+          sharkViewer.unloadNeuron(child.name);
+        }
+      }
+    });
+
+    sharkViewer.render();
   };
 
   render() {
