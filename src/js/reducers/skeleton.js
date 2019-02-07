@@ -6,6 +6,7 @@ const skeletonState = Immutable.Map({
   neurons: Immutable.Map({}),
   loading: false,
   error: null,
+  cameraPosition: null
 });
 
 /* Neuron structure should be:
@@ -53,6 +54,9 @@ export default function skeletonReducer(state = skeletonState, action) {
     }
     case C.SKELETON_NEURON_HIDE: {
       return state.setIn(['neurons', action.id, 'visible'], false);
+    }
+    case C.SKELETON_SET_CAMERA_POSITION: {
+      return state.set('cameraPosition', action.position);
     }
     default: {
       return state;

@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import Chip from '@material-ui/core/Chip';
-import { skeletonNeuronToggle, skeletonRemove } from 'actions/skeleton';
+import { skeletonNeuronToggle, skeletonRemove, setCameraPosition } from 'actions/skeleton';
 
 import SharkViewer from '@janelia/sharkviewer';
 
@@ -65,6 +65,15 @@ class Skeleton extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    const { sharkViewer } = this.state;
+    const { actions } = this.props;
+
+    const coords = sharkViewer.cameraCoords();
+    actions.setCameraPosition(coords);
+  };
+
+
   handleDelete = id => () => {
     const { actions } = this.props;
     actions.skeletonRemove(id);
@@ -76,18 +85,25 @@ class Skeleton extends React.Component {
   };
 
   createShark = swcs => {
+    const { cameraPosition } = this.props;
     if (swcs.length !== 0) {
       const sharkViewer = new SharkViewer({
         dom_element: 'skeletonviewer',
         WIDTH: this.skelRef.current.clientWidth,
         HEIGHT: this.skelRef.current.clientHeight,
-        colors: swcs.map(swc => swc.get('color'))
+        colors: swcs.map(swc => swc.get('color')),
       });
       sharkViewer.init();
       sharkViewer.animate();
       swcs.forEach(swc => {
         sharkViewer.loadNeuron(swc.get('name'), swc.get('color'), swc.get('swc'));
       });
+
+      if (cameraPosition) {
+        sharkViewer.restoreView(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+      }
+
+      sharkViewer.render();
       sharkViewer.render();
       this.setState({sharkViewer});
     }
@@ -101,7 +117,7 @@ class Skeleton extends React.Component {
       // If added, then add them to the scene.
       const exists = sharkViewer.scene.getObjectByName(swc.get('name'));
       if (!exists) {
-        sharkViewer.loadNeuron(swc.get('name'), swc.get('color'), swc.get('swc'));
+        sharkViewer.loadNeuron(swc.get('name'), swc.get('color'), swc.get('swc'), true);
       }
       // if hidden, then hide them.
       sharkViewer.setNeuronVisible(swc.get('name'), swc.get('visible'));
@@ -165,12 +181,18 @@ Skeleton.propTypes = {
   display: PropTypes.bool.isRequired,
   actions: PropTypes.object.isRequired,
   classes: PropTypes.object.isRequired,
-  neurons: PropTypes.object.isRequired
+  neurons: PropTypes.object.isRequired,
+  cameraPosition: PropTypes.object
 };
+
+Skeleton.defaultProps = {
+  cameraPosition: null
+}
 
 const SkeletonState = state => ({
   neurons: state.skeleton.get('neurons'),
-  display: state.skeleton.get('display')
+  display: state.skeleton.get('display'),
+  cameraPosition: state.skeleton.get('cameraPosition')
 });
 
 const SkeletonDispatch = dispatch => ({
@@ -180,6 +202,9 @@ const SkeletonDispatch = dispatch => ({
     },
     skeletonRemove: id => {
       dispatch(skeletonRemove(id));
+    },
+    setCameraPosition: coords => {
+      dispatch(setCameraPosition(coords));
     }
   }
 });
