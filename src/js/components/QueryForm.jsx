@@ -14,10 +14,15 @@ import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
 
 import { submit, formError, pluginResponseError } from 'actions/plugins';
-import { metaInfoError } from 'actions/app';
+import { metaInfoError, launchNotification } from 'actions/app';
 import { skeletonAddandOpen } from 'actions/skeleton';
 import { neuroglancerAddandOpen } from 'actions/neuroglancer';
-import { getQueryString, getSiteParams, setPluginQueryString, getPluginQueryObject } from 'helpers/queryString';
+import {
+  getQueryString,
+  getSiteParams,
+  setPluginQueryString,
+  getPluginQueryObject
+} from 'helpers/queryString';
 
 const styles = theme => ({
   divider: {
@@ -167,7 +172,8 @@ const QueryFormDispatch = dispatch => ({
     getQueryString: () => getQueryString(),
     getSiteParams: location => getSiteParams(location),
     setQueryString: newData => setPluginQueryString(newData),
-    getQueryObject: plugin => getPluginQueryObject(plugin)
+    getQueryObject: plugin => getPluginQueryObject(plugin),
+    launchNotification: message => dispatch(launchNotification(message))
   }
 });
 

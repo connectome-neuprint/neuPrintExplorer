@@ -66,4 +66,17 @@ describe('app Actions', () => {
     };
     expect(appActions.clearFullScreen()).toEqual(expectedAction);
   });
+  it('should create action to launch notification', () => {
+    const expectedAction = {
+      type: C.NOTIFICATION,
+      notification: 'test'
+    };
+    expect(appActions.launchNotification('test')).toEqual(expectedAction);
+  });
+  it('should create action to clear notification', () => {
+    const expectedAction = {
+      type: C.CLEAR_NOTIFICATION
+    };
+    expect(appActions.clearNotification()).toEqual(expectedAction);
+  });
 });

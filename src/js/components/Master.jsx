@@ -17,9 +17,9 @@ import SideBar from './SideBar';
 import About from './About';
 import QueryDrawer from './QueryDrawer';
 import Errors from './Errors';
+import Notification from './Notification';
 
 import './Master.css';
-
 
 // adapted from material ui example
 const styles = theme => ({
@@ -29,7 +29,7 @@ const styles = theme => ({
     zIndex: 1,
     overflow: 'hidden',
     position: 'relative',
-    display: 'flex',
+    display: 'flex'
   },
   content: {
     height: '100vh',
@@ -37,12 +37,12 @@ const styles = theme => ({
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
     padding: 0,
-    minWidth: 0, // So the Typography noWrap works
+    minWidth: 0 // So the Typography noWrap works
   },
-  toolbar: theme.mixins.toolbar,
+  toolbar: theme.mixins.toolbar
 });
 
-const Master = (props) => {
+const Master = props => {
   const { classes } = props;
   return (
     <Router history={history}>
@@ -50,43 +50,26 @@ const Master = (props) => {
         <TopBar />
         <SideBar />
         <QueryDrawer />
-        <main className={classes.content} >
+        <main className={classes.content}>
           <div className={classes.toolbar} />
           <Switch>
-            <Route
-              exact
-              path="/"
-              component={Home}
-            />
-            <Route
-              path="/results"
-              component={Results}
-            />
-            <Route
-              path="/help"
-              component={Help}
-            />
-            <Route
-              path="/favorites"
-              component={Favorites}
-            />
-            <Route
-              path="/about"
-              component={About}
-            />
-            <Route
-              component={Home}
-            />
+            <Route exact path="/" component={Home} />
+            <Route path="/results" component={Results} />
+            <Route path="/help" component={Help} />
+            <Route path="/favorites" component={Favorites} />
+            <Route path="/about" component={About} />
+            <Route component={Home} />
           </Switch>
         </main>
         <Errors />
+        <Notification />
       </div>
     </Router>
   );
-}
+};
 
 Master.propTypes = {
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(Master);

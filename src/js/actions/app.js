@@ -2,58 +2,71 @@ import { v4 } from 'uuid';
 import C from '../reducers/constants';
 
 function initializingPlugins(pluginList) {
-    return {
-        type: C.INIT_PLUGINS,
-        pluginList
-    }
+  return {
+    type: C.INIT_PLUGINS,
+    pluginList
+  };
 }
 function settingUrlQS(urlQueryString) {
-    return {
-        type: C.SET_URL_QS,
-        urlQueryString,
-    }
+  return {
+    type: C.SET_URL_QS,
+    urlQueryString
+  };
 }
 function activatingPlugin(data, query, viz, uuid) {
-    return {
-        type: C.ACTIVATE_PLUGIN,
-        data,
-        query,
-        viz,
-        uuid,
-    }
+  return {
+    type: C.ACTIVATE_PLUGIN,
+    data,
+    query,
+    viz,
+    uuid
+  };
 }
 function settingAppDb(appDB) {
-    return {
-        type: C.SET_APP_DB,
-        appDB
-    }
+  return {
+    type: C.SET_APP_DB,
+    appDB
+  };
 }
 
 export function initViewPlugins(pluginsMap) {
   return {
     type: C.INIT_VIEWPLUGINS,
-    plugins: pluginsMap,
+    plugins: pluginsMap
   };
 }
 
 export function initPlugins(pluginList) {
-    return initializingPlugins(pluginList);
+  return initializingPlugins(pluginList);
 }
 export function setUrlQS(urlQueryString) {
-    return settingUrlQS(urlQueryString);
+  return settingUrlQS(urlQueryString);
 }
 export function activatePlugin(data, query, viz) {
-    // generate uuid
-    const uuid = v4();
-    return activatingPlugin(data, query, viz, uuid);
+  // generate uuid
+  const uuid = v4();
+  return activatingPlugin(data, query, viz, uuid);
 }
 export function setAppDb(appDb) {
-    return settingAppDb(appDb);
+  return settingAppDb(appDb);
 }
 
 export function clearErrors() {
   return {
-    type: C.CLEAR_ERRORS,
+    type: C.CLEAR_ERRORS
+  };
+}
+
+export function clearNotification() {
+  return {
+    type: C.CLEAR_NOTIFICATION
+  };
+}
+
+export function launchNotification(notification) {
+  return {
+    type: C.NOTIFICATION,
+    notification
   };
 }
 
@@ -66,7 +79,7 @@ export function setFullScreen(viewer) {
 
 export function clearFullScreen() {
   return {
-    type: C.CLEAR_FULLSCREEN_VIEWER,
+    type: C.CLEAR_FULLSCREEN_VIEWER
   };
 }
 

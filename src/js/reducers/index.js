@@ -12,16 +12,16 @@ import user from './user';
 import skeleton from './skeleton';
 import neuroglancer from './neuroglancer';
 import errors from './errors';
+import notification from './notification';
 
 export default combineReducers({
-    skeleton,
-    app,
-    query,
-    neo4jsettings,
-    results,
-    user,
-    errors,
-    neuroglancer,
+  skeleton,
+  app,
+  query,
+  neo4jsettings,
+  results,
+  user,
+  errors,
+  neuroglancer,
+  notification
 });
-
-
