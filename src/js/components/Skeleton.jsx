@@ -58,11 +58,9 @@ class Skeleton extends React.Component {
     this.createShark(neurons);
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate() {
     const { neurons } = this.props;
-    if (prevProps.neurons !== neurons) {
-      this.loadShark(neurons);
-    }
+    this.loadShark(neurons);
   }
 
   componentWillUnmount() {
@@ -136,6 +134,13 @@ class Skeleton extends React.Component {
     });
 
     sharkViewer.render();
+    sharkViewer.render();
+    // UGLY: there is a weird bug that means sometimes the scene is rendered blank.
+    // it seems to be some sort of timing issue, and adding a delayed render seems
+    // to fix it.
+    setTimeout(() => {
+      sharkViewer.render();
+    }, 200);
   };
 
   render() {
