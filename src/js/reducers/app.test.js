@@ -4,7 +4,6 @@ import reducer from './app';
 
 const state = Immutable.Map({
   pluginList: ['existingplugin'],
-  urlQueryString: 'existingstring',
   appDB: 'existingDB',
   fullscreen: false,
   selectedResult: 0
@@ -19,7 +18,6 @@ describe('app Reducer', () => {
     expect(reducer(undefined, action)).toEqual(
       Immutable.Map({
         pluginList: ['test'],
-        urlQueryString: window.location.search.substring(1),
         appDB: '',
         fullscreen: false,
         viewPlugins: Immutable.Map({}),
@@ -29,7 +27,6 @@ describe('app Reducer', () => {
     expect(reducer(state, action)).toEqual(
       Immutable.Map({
         pluginList: ['test'],
-        urlQueryString: 'existingstring',
         appDB: 'existingDB',
         fullscreen: false,
         selectedResult: 0

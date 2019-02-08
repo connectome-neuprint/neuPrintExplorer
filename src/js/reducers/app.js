@@ -6,7 +6,6 @@ import C from './constants';
 
 const appState = Immutable.Map({
   pluginList: [],
-  urlQueryString: window.location.search.substring(1),
   appDB: '',
   fullscreen: false,
   viewPlugins: Immutable.Map({}),
