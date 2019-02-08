@@ -36,30 +36,4 @@ describe('app Reducer', () => {
       })
     );
   });
-
-  it('SET_URL_QS success', () => {
-    const action = {
-      type: C.SET_URL_QS,
-      urlQueryString: 'teststring'
-    };
-    expect(reducer(undefined, action)).toEqual(
-      Immutable.Map({
-        pluginList: [],
-        urlQueryString: 'teststring',
-        appDB: '',
-        fullscreen: false,
-        viewPlugins: Immutable.Map({}),
-        selectedResult: 0
-      })
-    );
-    expect(reducer(state, action)).toEqual(
-      Immutable.Map({
-        pluginList: ['existingplugin'],
-        urlQueryString: 'teststring',
-        appDB: 'existingDB',
-        fullscreen: false,
-        selectedResult: 0
-      })
-    );
-  });
 });

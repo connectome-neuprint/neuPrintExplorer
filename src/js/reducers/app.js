@@ -19,8 +19,6 @@ export default function appReducer(state = appState, action) {
       return state.set('pluginList', action.pluginList);
     case C.INIT_VIEWPLUGINS:
       return state.set('viewPlugins', Immutable.Map(action.plugins));
-    case C.SET_URL_QS:
-      return state.set('urlQueryString', action.urlQueryString);
     case C.SET_APP_DB:
       return state.set('appDB', action.appDB);
     case C.SET_FULLSCREEN_VIEWER:

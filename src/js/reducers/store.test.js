@@ -92,9 +92,6 @@ describe('store Creation', () => {
   it('should initialize view plugins', () => {
     testReducerAction('app', app, { type: C.INIT_VIEWPLUGINS, plugins: { view1: 'view1' } });
   });
-  it('should set URL query string', () => {
-    testReducerAction('app', app, { type: C.SET_URL_QS, urlQueryString: 'testQueryString' });
-  });
   it('should set app database', () => {
     testReducerAction('app', app, { type: C.SET_APP_DB, appDB: 'testDB' });
   });

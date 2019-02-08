@@ -16,13 +16,6 @@ describe('app Actions', () => {
     };
     expect(appActions.initViewPlugins({ a: 'b' })).toEqual(expectedAction);
   });
-  it('should create action to set url query string', () => {
-    const expectedAction = {
-      type: C.SET_URL_QS,
-      urlQueryString: 'abc'
-    };
-    expect(appActions.setUrlQS('abc')).toEqual(expectedAction);
-  });
   it('should create action to set app db', () => {
     const expectedAction = {
       type: C.SET_APP_DB,

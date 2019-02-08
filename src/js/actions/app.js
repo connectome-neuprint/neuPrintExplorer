@@ -6,12 +6,6 @@ function initializingPlugins(pluginList) {
     pluginList
   };
 }
-function settingUrlQS(urlQueryString) {
-  return {
-    type: C.SET_URL_QS,
-    urlQueryString
-  };
-}
 
 function settingAppDb(appDB) {
   return {
@@ -29,10 +23,6 @@ export function initViewPlugins(pluginsMap) {
 
 export function initPlugins(pluginList) {
   return initializingPlugins(pluginList);
-}
-
-export function setUrlQS(urlQueryString) {
-  return settingUrlQS(urlQueryString);
 }
 
 export function setAppDb(appDb) {
