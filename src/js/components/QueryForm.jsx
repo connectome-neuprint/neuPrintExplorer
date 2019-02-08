@@ -77,7 +77,6 @@ class QueryForm extends React.Component {
       dataSet,
       availableROIs,
       isQuerying,
-      urlQueryString,
       neoServerSettings
     } = this.props;
     const { openSnack, hasError } = this.state;
@@ -116,7 +115,6 @@ class QueryForm extends React.Component {
             availableROIs={currROIs}
             disable={isQuerying}
             isQuerying={isQuerying}
-            urlQueryString={urlQueryString}
             neoServerSettings={neoServerSettings}
             actions={actions}
           />
@@ -134,7 +132,6 @@ QueryForm.propTypes = {
   isQuerying: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired,
-  urlQueryString: PropTypes.string.isRequired,
   neoServerSettings: PropTypes.object.isRequired,
   availableROIs: PropTypes.object.isRequired
 };
@@ -144,7 +141,6 @@ const QueryFormState = state => ({
   isQuerying: state.query.get('isQuerying'),
   neoError: state.query.get('neoError'),
   userInfo: state.user.get('userInfo'),
-  urlQueryString: state.app.get('urlQueryString'),
   neoServerSettings: state.neo4jsettings,
   availableROIs: state.neo4jsettings.get('availableROIs')
 });

@@ -1,11 +1,10 @@
 /*
  * Main page to hold results from query.  This could be
  * a simple table or a table of tables.
-*/
+ */
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import qs from 'qs';
 
 import Typography from '@material-ui/core/Typography';
 import Fade from '@material-ui/core/Fade';
@@ -47,24 +46,6 @@ const styles = theme => ({
 });
 
 class Results extends React.Component {
-  componentDidUpdate(prevProps) {
-    const { urlQueryString, showSkel } = this.props;
-    const query = qs.parse(prevProps.urlQueryString);
-    const query2 = qs.parse(urlQueryString);
-    let openQuery = false;
-    let openQuery2 = false;
-    if ('openQuery' in query && query.openQuery === 'true') {
-      openQuery = true;
-    }
-    if ('openQuery' in query2 && query2.openQuery === 'true') {
-      openQuery2 = true;
-    }
-
-    if (prevProps.showSkel !== showSkel || openQuery !== openQuery2) {
-      window.dispatchEvent(new Event('resize'));
-    }
-  }
-
   downloadFile = index => {
     const { allResults } = this.props;
     const results = allResults.get(index);
@@ -100,27 +81,33 @@ class Results extends React.Component {
         <div className={classes.root}>
           <div className={classes.empty}>
             <Typography variant="h6">No Search Results</Typography>
-            <Typography>Please use the Menu to the left or the <Icon>search</Icon> icon to start a search.</Typography>
+            <Typography>
+              Please use the Menu to the left or the <Icon>search</Icon> icon to start a search.
+            </Typography>
           </div>
         </div>
       );
     }
 
     // if the skeleton should be shown, add it to the results list.
-    const combinedResults = (showSkel) ? allResults.push({
-      neuronViz: true,
-      plugin: 'Skeleton',
-      component: <Skeleton key="skeleton" />
-    }).push({
-      neuronViz: true,
-      plugin: 'NeuroGlancer',
-      component: <NeuroGlancer key="ng" />
-    }) : allResults;
+    const combinedResults = showSkel
+      ? allResults
+          .push({
+            neuronViz: true,
+            plugin: 'Skeleton',
+            component: <Skeleton key="skeleton" />
+          })
+          .push({
+            neuronViz: true,
+            plugin: 'NeuroGlancer',
+            component: <NeuroGlancer key="ng" />
+          })
+      : allResults;
 
     let results = '';
 
     if (combinedResults.size > 0) {
-      const combinedIndex = (!combinedResults.get(selectedResult)) ? 0 : selectedResult;
+      const combinedIndex = !combinedResults.get(selectedResult) ? 0 : selectedResult;
       results = combinedResults.slice(combinedIndex, combinedIndex + 1).map((query, index) => {
         if (query.neuronViz) {
           return query.component;
@@ -145,14 +132,12 @@ class Results extends React.Component {
 
     const tabs = combinedResults.map((query, index) => {
       const key = `${query.plugin}${index}`;
-      return (
-        <Tab key={key} label={query.plugin} />
-      );
+      return <Tab key={key} label={query.plugin} />;
     });
     // when opening neuroglancer or skeleton viewer we set the selected index to -1 or -2.
     // This is not a valid option for the Tab component so we need to convert it to the
     // index in the array.
-    let tabValue = (selectedResult < 0) ? tabs.size + selectedResult : selectedResult;
+    let tabValue = selectedResult < 0 ? tabs.size + selectedResult : selectedResult;
 
     // if the tabValue is out of range, then just set it to the first tab.
     if (!tabs.get(tabValue)) {
@@ -161,9 +146,8 @@ class Results extends React.Component {
 
     return (
       <div className={classes.full}>
-
         <AppBar position="static" color="default">
-           <Tabs
+          <Tabs
             value={tabValue}
             onChange={this.handleResultSelection}
             textColor="primary"
@@ -185,7 +169,7 @@ class Results extends React.Component {
             >
               <CircularProgress />
             </Fade>
-              {results}
+            {results}
           </div>
         </div>
       </div>
@@ -200,7 +184,6 @@ Results.propTypes = {
   allResults: PropTypes.object.isRequired,
   viewPlugins: PropTypes.object.isRequired,
   isQuerying: PropTypes.bool.isRequired,
-  urlQueryString: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired,
   showSkel: PropTypes.bool.isRequired,
   actions: PropTypes.object.isRequired,
@@ -215,7 +198,6 @@ const ResultsState = state => ({
   viewPlugins: state.app.get('viewPlugins'),
   showSkel: state.skeleton.get('display'),
   userInfo: state.user.get('userInfo'),
-  urlQueryString: state.app.get('urlQueryString'),
   selectedResult: state.app.get('selectedResult'),
   queryObj: state.query.get('neoQueryObj'),
   fullscreen: state.app.get('fullscreen')
@@ -232,7 +214,7 @@ const ResultDispatch = dispatch => ({
     clearFullScreen: () => {
       dispatch(clearFullScreen());
     },
-    setSelectedResult: (index) => {
+    setSelectedResult: index => {
       dispatch(setSelectedResult(index));
     }
   }
