@@ -1,4 +1,3 @@
-import { v4 } from 'uuid';
 import C from '../reducers/constants';
 
 function initializingPlugins(pluginList) {
@@ -13,15 +12,7 @@ function settingUrlQS(urlQueryString) {
     urlQueryString
   };
 }
-function activatingPlugin(data, query, viz, uuid) {
-  return {
-    type: C.ACTIVATE_PLUGIN,
-    data,
-    query,
-    viz,
-    uuid
-  };
-}
+
 function settingAppDb(appDB) {
   return {
     type: C.SET_APP_DB,
@@ -39,14 +30,11 @@ export function initViewPlugins(pluginsMap) {
 export function initPlugins(pluginList) {
   return initializingPlugins(pluginList);
 }
+
 export function setUrlQS(urlQueryString) {
   return settingUrlQS(urlQueryString);
 }
-export function activatePlugin(data, query, viz) {
-  // generate uuid
-  const uuid = v4();
-  return activatingPlugin(data, query, viz, uuid);
-}
+
 export function setAppDb(appDb) {
   return settingAppDb(appDb);
 }

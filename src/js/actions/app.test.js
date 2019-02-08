@@ -1,5 +1,3 @@
-import uuid from 'uuid';
-
 import * as appActions from './app';
 import C from '../reducers/constants';
 
@@ -24,21 +22,6 @@ describe('app Actions', () => {
       urlQueryString: 'abc'
     };
     expect(appActions.setUrlQS('abc')).toEqual(expectedAction);
-  });
-  it('should create action to activate plugin', () => {
-    const uuidMock = 'testUuid';
-    const v4Spy = jest.spyOn(uuid, 'v4').mockReturnValue(uuidMock);
-
-    const expectedAction = {
-      type: C.ACTIVATE_PLUGIN,
-      data: [1, 2],
-      query: 'testQuery',
-      viz: 'testVis',
-      uuid: 'testUuid'
-    };
-
-    expect(appActions.activatePlugin([1, 2], 'testQuery', 'testVis')).toEqual(expectedAction);
-    expect(v4Spy).toHaveBeenCalledTimes(1);
   });
   it('should create action to set app db', () => {
     const expectedAction = {

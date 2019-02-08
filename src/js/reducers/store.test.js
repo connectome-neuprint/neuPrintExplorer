@@ -95,18 +95,6 @@ describe('store Creation', () => {
   it('should set URL query string', () => {
     testReducerAction('app', app, { type: C.SET_URL_QS, urlQueryString: 'testQueryString' });
   });
-  it('should activate plugin', () => {
-    testReducerAction('app', app, {
-      type: C.ACTIVATE_PLUGIN,
-      id: 'testUUID',
-      data: [[1, 2, 3], [1, 2, 3]],
-      query: 'testQuery',
-      viz: 'testView'
-    });
-  });
-  it('should deactivate plugin', () => {
-    testReducerAction('app', app, { type: C.DEACTIVATE_PLUGIN, id: 'testUUID' });
-  });
   it('should set app database', () => {
     testReducerAction('app', app, { type: C.SET_APP_DB, appDB: 'testDB' });
   });

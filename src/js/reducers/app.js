@@ -1,6 +1,6 @@
 /*
  * Store high-level app state.
-*/
+ */
 import Immutable from 'immutable';
 import C from './constants';
 
@@ -9,7 +9,6 @@ const appState = Immutable.Map({
   urlQueryString: window.location.search.substring(1),
   appDB: '',
   fullscreen: false,
-  activePlugins: Immutable.Map({}),
   viewPlugins: Immutable.Map({}),
   selectedResult: 0
 });
@@ -22,17 +21,6 @@ export default function appReducer(state = appState, action) {
       return state.set('viewPlugins', Immutable.Map(action.plugins));
     case C.SET_URL_QS:
       return state.set('urlQueryString', action.urlQueryString);
-    case C.ACTIVATE_PLUGIN: {
-      const id = action.uuid;
-      const dataElement = Immutable.Map({
-        data: action.data,
-        query: action.query,
-        viz: action.viz
-      });
-      return state.setIn(['activePlugins', id], dataElement);
-    }
-    case C.DEACTIVATE_PLUGIN:
-      return state.deleteIn(['activePlugins', action.uuid]);
     case C.SET_APP_DB:
       return state.set('appDB', action.appDB);
     case C.SET_FULLSCREEN_VIEWER:
