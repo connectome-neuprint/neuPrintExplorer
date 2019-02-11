@@ -4,10 +4,6 @@ import query from './query';
 
 // TODO: rewrite using Immutable once we get rid of callback function in neoQueryObj
 const state = Immutable.Map({
-  neoQueryObj: {
-    queryStr: 'existingquerystring',
-    state: 'existingstate'
-  },
   dataSet: null,
   isQuerying: false,
   neoResults: 'existingneoresults',
@@ -17,62 +13,12 @@ const state = Immutable.Map({
 
 // note: can't test equality of functions
 describe('query Reducer', () => {
-  it('UPDATE_QUERY success', () => {
-    const action = {
-      type: C.UPDATE_QUERY,
-      neoQueryObj: {
-        queryStr: 'newquery',
-        callback: '[Function callback]',
-        state: {
-          datasetstr: 'newdataset'
-        }
-      },
-      isQuerying: true
-    };
-    expect(query(undefined, JSON.parse(JSON.stringify(action)))).toEqual(
-      Immutable.Map({
-        neoQueryObj: {
-          queryStr: 'newquery',
-          callback: '[Function callback]',
-          state: {
-            datasetstr: 'newdataset'
-          }
-        },
-        dataSet: null,
-        isQuerying: true,
-        neoResults: null,
-        neoError: null,
-        currentQuery: null
-      })
-    );
-    expect(query(state, JSON.parse(JSON.stringify(action)))).toEqual(
-      Immutable.Map({
-        neoQueryObj: {
-          queryStr: 'newquery',
-          callback: '[Function callback]',
-          state: {
-            datasetstr: 'newdataset'
-          }
-        },
-        dataSet: null,
-        isQuerying: true,
-        neoResults: 'existingneoresults',
-        neoError: 'existingneoerror',
-        currentQuery: null
-      })
-    );
-  });
-
   it('SET_QUERY_STATUS success', () => {
     const action = {
       type: C.SET_QUERY_STATUS,
       isQuerying: true
     };
     expect(JSON.parse(JSON.stringify(query(undefined, action)))).toEqual({
-      neoQueryObj: {
-        queryStr: '',
-        state: null
-      },
       dataSet: null,
       isQuerying: true,
       neoResults: null,
@@ -80,10 +26,6 @@ describe('query Reducer', () => {
       currentQuery: null
     });
     expect(JSON.parse(JSON.stringify(query(state, action)))).toEqual({
-      neoQueryObj: {
-        queryStr: 'existingquerystring',
-        state: 'existingstate'
-      },
       dataSet: null,
       isQuerying: true,
       neoResults: 'existingneoresults',
@@ -98,10 +40,6 @@ describe('query Reducer', () => {
       neoError: 'newerror'
     };
     expect(JSON.parse(JSON.stringify(query(undefined, action)))).toEqual({
-      neoQueryObj: {
-        queryStr: '',
-        state: null
-      },
       dataSet: null,
       isQuerying: false,
       neoResults: null,
@@ -109,10 +47,6 @@ describe('query Reducer', () => {
       currentQuery: null
     });
     expect(JSON.parse(JSON.stringify(query(state, action)))).toEqual({
-      neoQueryObj: {
-        queryStr: 'existingquerystring',
-        state: 'existingstate'
-      },
       dataSet: null,
       isQuerying: false,
       neoResults: null,
@@ -126,10 +60,6 @@ describe('query Reducer', () => {
       type: C.FINISH_QUERY
     };
     expect(JSON.parse(JSON.stringify(query(undefined, action)))).toEqual({
-      neoQueryObj: {
-        queryStr: '',
-        state: null
-      },
       dataSet: null,
       isQuerying: false,
       neoResults: null,
@@ -137,10 +67,6 @@ describe('query Reducer', () => {
       currentQuery: null
     });
     expect(JSON.parse(JSON.stringify(query(state, action)))).toEqual({
-      neoQueryObj: {
-        queryStr: 'existingquerystring',
-        state: 'existingstate'
-      },
       dataSet: null,
       isQuerying: false,
       neoResults: 'existingneoresults',
@@ -155,10 +81,6 @@ describe('query Reducer', () => {
       query: 'testQuery'
     };
     expect(JSON.parse(JSON.stringify(query(undefined, action)))).toEqual({
-      neoQueryObj: {
-        queryStr: '',
-        state: null
-      },
       dataSet: null,
       isQuerying: false,
       neoResults: null,
@@ -166,10 +88,6 @@ describe('query Reducer', () => {
       currentQuery: 'testQuery'
     });
     expect(JSON.parse(JSON.stringify(query(state, action)))).toEqual({
-      neoQueryObj: {
-        queryStr: 'existingquerystring',
-        state: 'existingstate'
-      },
       dataSet: null,
       isQuerying: false,
       neoResults: 'existingneoresults',
@@ -183,10 +101,6 @@ describe('query Reducer', () => {
       type: C.PLUGIN_SUBMITTING
     };
     expect(JSON.parse(JSON.stringify(query(undefined, action)))).toEqual({
-      neoQueryObj: {
-        queryStr: '',
-        state: null
-      },
       dataSet: null,
       isQuerying: true,
       neoResults: null,
@@ -194,15 +108,11 @@ describe('query Reducer', () => {
       currentQuery: null
     });
     expect(JSON.parse(JSON.stringify(query(state, action)))).toEqual({
-      neoQueryObj: {
-        queryStr: 'existingquerystring',
-        state: 'existingstate'
-      },
       dataSet: null,
       isQuerying: true,
       neoResults: 'existingneoresults',
       neoError: 'existingneoerror',
-      currentQuery: null,
+      currentQuery: null
     });
   });
 
@@ -211,10 +121,6 @@ describe('query Reducer', () => {
       type: C.PLUGIN_SUBMIT_ERROR
     };
     expect(JSON.parse(JSON.stringify(query(undefined, action)))).toEqual({
-      neoQueryObj: {
-        queryStr: '',
-        state: null
-      },
       dataSet: null,
       isQuerying: false,
       neoResults: null,
@@ -222,10 +128,6 @@ describe('query Reducer', () => {
       currentQuery: null
     });
     expect(JSON.parse(JSON.stringify(query(state, action)))).toEqual({
-      neoQueryObj: {
-        queryStr: 'existingquerystring',
-        state: 'existingstate'
-      },
       dataSet: null,
       isQuerying: false,
       neoResults: 'existingneoresults',
@@ -239,10 +141,6 @@ describe('query Reducer', () => {
       type: C.PLUGIN_SAVE_RESPONSE
     };
     expect(JSON.parse(JSON.stringify(query(undefined, action)))).toEqual({
-      neoQueryObj: {
-        queryStr: '',
-        state: null
-      },
       dataSet: null,
       isQuerying: false,
       neoResults: null,
@@ -250,10 +148,6 @@ describe('query Reducer', () => {
       currentQuery: null
     });
     expect(JSON.parse(JSON.stringify(query(state, action)))).toEqual({
-      neoQueryObj: {
-        queryStr: 'existingquerystring',
-        state: 'existingstate'
-      },
       dataSet: null,
       isQuerying: false,
       neoResults: 'existingneoresults',

@@ -5,12 +5,6 @@ import Immutable from 'immutable';
 import C from './constants';
 
 const queryState = Immutable.Map({
-  neoQueryObj: {
-    queryStr: '',
-    callback: function callback() {},
-    state: null,
-    params: undefined
-  },
   dataSet: null,
   isQuerying: false,
   neoResults: null,
@@ -20,9 +14,6 @@ const queryState = Immutable.Map({
 
 export default function queryReducer(state = queryState, action) {
   switch (action.type) {
-    case C.UPDATE_QUERY: {
-      return state.set('neoQueryObj', action.neoQueryObj).set('isQuerying', true);
-    }
     case C.SET_QUERY_STATUS: {
       return state.set('isQuerying', action.isQuerying);
     }
