@@ -129,7 +129,7 @@ export function skeletonNeuronToggle(id) {
   };
 }
 
-export function setCameraPosition(position) {
+export function setView(position) {
   return {
     type: C.SKELETON_SET_CAMERA_POSITION,
     position

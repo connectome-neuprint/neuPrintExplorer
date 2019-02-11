@@ -39,8 +39,9 @@ export default function skeletonReducer(state = skeletonState, action) {
      const updated = state.deleteIn(['neurons', action.id]);
 
       if (updated.get('neurons').size < 1) {
-        return updated.set('display', false);
+        return updated.set('cameraPosition', null).set('display', false);
       }
+
       return updated;
     }
     case C.SKELETON_NEURON_LOADING: {
