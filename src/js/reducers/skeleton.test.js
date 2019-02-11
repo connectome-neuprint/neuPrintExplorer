@@ -6,7 +6,8 @@ const initialState = Immutable.Map({
   display: false,
   neurons: Immutable.Map({}),
   loading: false,
-  error: null
+  error: null,
+  cameraPosition: null
 });
 
 describe('skeleton reducer', () => {
