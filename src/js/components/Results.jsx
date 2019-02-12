@@ -22,6 +22,7 @@ import Skeleton from './Skeleton';
 import NeuroGlancer from './NeuroGlancer';
 
 import './Results.css';
+import { updateQuery } from '../actions/plugins';
 
 const styles = theme => ({
   root: {
@@ -74,7 +75,15 @@ class Results extends React.Component {
 
   render() {
     // TODO: show query runtime results
-    const { classes, isQuerying, allResults, viewPlugins, showSkel, selectedResult } = this.props;
+    const {
+      classes,
+      isQuerying,
+      allResults,
+      viewPlugins,
+      showSkel,
+      selectedResult,
+      actions
+    } = this.props;
 
     if (!isQuerying && allResults.size === 0) {
       return (
@@ -90,7 +99,7 @@ class Results extends React.Component {
     }
 
     // if the skeleton should be shown, add it to the results list.
-    const combinedResults = showSkel
+    const resultsWithViewers = showSkel
       ? allResults
           .push({
             neuronViz: true,
@@ -106,31 +115,34 @@ class Results extends React.Component {
 
     let results = '';
 
-    if (combinedResults.size > 0) {
-      const combinedIndex = !combinedResults.get(selectedResult) ? 0 : selectedResult;
-      results = combinedResults.slice(combinedIndex, combinedIndex + 1).map((query, index) => {
-        if (query.neuronViz) {
-          return query.component;
-        }
-
-        const View = viewPlugins.get(query.visType);
-        const key = `${query.plugin}${index}`;
-        return (
-          <div key={key}>
+    if (resultsWithViewers.size > 0) {
+      const selectedIndex = !resultsWithViewers.get(selectedResult) ? 0 : selectedResult;
+      const selectedQuery = resultsWithViewers.get(selectedIndex);
+      if (selectedQuery.neuronViz) {
+        results = selectedQuery.component;
+      } else {
+        const View = viewPlugins.get(selectedQuery.visType);
+        results = (
+          <div>
             <ResultsTopBar
               downloadCallback={this.downloadFile}
-              name={query.title}
-              index={combinedIndex}
-              queryStr={query.result.debug}
-              color={query.menuColor}
+              name={selectedQuery.title}
+              index={selectedIndex}
+              queryStr={selectedQuery.result.debug}
+              color={selectedQuery.menuColor}
             />
-            <View query={query} properties={query.visProps} />
+            <View
+              query={selectedQuery}
+              index={selectedIndex}
+              properties={selectedQuery.visProps}
+              actions={actions}
+            />
           </div>
         );
-      });
+      }
     }
 
-    const tabs = combinedResults.map((query, index) => {
+    const tabs = resultsWithViewers.map((query, index) => {
       const key = `${query.plugin}${index}`;
       return <Tab key={key} label={query.plugin} />;
     });
@@ -216,6 +228,9 @@ const ResultDispatch = dispatch => ({
     },
     setSelectedResult: index => {
       dispatch(setSelectedResult(index));
+    },
+    updateQuery: (index, newQueryObject) => {
+      dispatch(updateQuery(index, newQueryObject));
     }
   }
 });

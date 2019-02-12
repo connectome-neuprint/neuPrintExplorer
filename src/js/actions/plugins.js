@@ -28,6 +28,14 @@ function saveQueryResponse(combined) {
   };
 }
 
+export function updateQuery(index, newQueryObject) {
+  return {
+    type: C.UPDATE_QUERY,
+    index,
+    queryObject: newQueryObject
+  };
+}
+
 const handleError = response => {
   if (!response.ok) {
     if (response.status !== 400) {

@@ -1,6 +1,6 @@
 /*
  * Store for query results.
-*/
+ */
 
 import Immutable from 'immutable';
 import C from './constants';
@@ -8,7 +8,7 @@ import C from './constants';
 const resultsState = Immutable.Map({
   clearIndices: new Set(),
   numClear: 0,
-  allResults: Immutable.List([]),
+  allResults: Immutable.List([])
 });
 
 export default function resultsReducer(state = resultsState, action) {
@@ -18,6 +18,9 @@ export default function resultsReducer(state = resultsState, action) {
     }
     case C.PLUGIN_SAVE_RESPONSE: {
       return state.updateIn(['allResults'], results => results.unshift(action.combined));
+    }
+    case C.UPDATE_QUERY: {
+      return state.setIn(['allResults', action.index], action.queryObject);
     }
     default: {
       return state;
