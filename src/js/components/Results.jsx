@@ -17,12 +17,14 @@ import AppBar from '@material-ui/core/AppBar';
 
 import { toggleSkeleton } from 'actions/skeleton';
 import { setFullScreen, clearFullScreen, setSelectedResult } from 'actions/app';
+import { metaInfoError } from '@neuprint/support';
+import { updateQuery } from '../actions/plugins';
+
 import ResultsTopBar from './ResultsTopBar';
 import Skeleton from './Skeleton';
 import NeuroGlancer from './NeuroGlancer';
 
 import './Results.css';
-import { updateQuery } from '../actions/plugins';
 
 const styles = theme => ({
   root: {
@@ -82,7 +84,8 @@ class Results extends React.Component {
       viewPlugins,
       showSkel,
       selectedResult,
-      actions
+      actions,
+      neoServer
     } = this.props;
 
     if (!isQuerying && allResults.size === 0) {
@@ -134,8 +137,8 @@ class Results extends React.Component {
             <View
               query={selectedQuery}
               index={selectedIndex}
-              properties={selectedQuery.visProps}
               actions={actions}
+              neoServer={neoServer}
             />
           </div>
         );
@@ -199,7 +202,8 @@ Results.propTypes = {
   classes: PropTypes.object.isRequired,
   showSkel: PropTypes.bool.isRequired,
   actions: PropTypes.object.isRequired,
-  selectedResult: PropTypes.number.isRequired
+  selectedResult: PropTypes.number.isRequired,
+  neoServer: PropTypes.string.isRequired
 };
 
 // result data [{name: "table name", header: [headers...], body: [rows...]
@@ -212,7 +216,8 @@ const ResultsState = state => ({
   userInfo: state.user.get('userInfo'),
   selectedResult: state.app.get('selectedResult'),
   queryObj: state.query.get('neoQueryObj'),
-  fullscreen: state.app.get('fullscreen')
+  fullscreen: state.app.get('fullscreen'),
+  neoServer: state.neo4jsettings.get('neoServer')
 });
 
 const ResultDispatch = dispatch => ({
@@ -231,6 +236,9 @@ const ResultDispatch = dispatch => ({
     },
     updateQuery: (index, newQueryObject) => {
       dispatch(updateQuery(index, newQueryObject));
+    },
+    metaInfoError: error => {
+      dispatch(metaInfoError(error));
     }
   }
 });
