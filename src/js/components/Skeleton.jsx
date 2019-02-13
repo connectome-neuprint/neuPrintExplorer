@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import Chip from '@material-ui/core/Chip';
 import { skeletonNeuronToggle, skeletonRemove, setView } from 'actions/skeleton';
 import SharkViewer from '@janelia/sharkviewer';
+import PouchDB from 'pouchdb';
 
 import CompartmentSelection from './Skeleton/CompartmentSelection';
 
@@ -55,7 +56,8 @@ class Skeleton extends React.Component {
     this.state = {
       sharkViewer: {
         animate: () => {}
-      }
+      },
+      db: new PouchDB('neuprint_compartments')
     };
     this.skelRef = React.createRef();
   }
@@ -97,6 +99,7 @@ class Skeleton extends React.Component {
 
   createShark = (swcs, rois) => {
     const { cameraPosition } = this.props;
+    const { db } = this.state;
     if (swcs.length !== 0) {
       const moveCamera = !cameraPosition;
       const sharkViewer = new SharkViewer({
@@ -112,7 +115,15 @@ class Skeleton extends React.Component {
       });
 
       rois.forEach(roi => {
-        sharkViewer.loadCompartment(roi.get('name'), roi.get('color'), roi.get('obj'), moveCamera);
+        const reader = new FileReader();
+
+        reader.addEventListener("loadend", () => {
+          sharkViewer.loadCompartment(roi.get('name'), roi.get('color'), reader.result, moveCamera);
+        });
+
+        db.getAttachment(roi.get('name'), 'obj').then(obj => {
+          reader.readAsText(obj);
+        });
       });
 
       if (cameraPosition) {
@@ -128,10 +139,10 @@ class Skeleton extends React.Component {
 
   loadShark = (swcs, rois) => {
     const { cameraPosition } = this.props;
-    const { sharkViewer } = this.state;
+    const { sharkViewer, db } = this.state;
     // check here to see if we have added or removed neurons.
     const names = {};
-    const roi_names = {};
+    const roiNames = {};
     const moveCamera = !cameraPosition;
     swcs.forEach(swc => {
       // If added, then add them to the scene.
@@ -148,9 +159,17 @@ class Skeleton extends React.Component {
     rois.forEach(roi => {
       const exists = sharkViewer.scene.getObjectByName(roi.get('name'));
       if (!exists) {
-        sharkViewer.loadCompartment(roi.get('name'), roi.get('color'), roi.get('obj'), moveCamera);
+        const reader = new FileReader();
+
+        reader.addEventListener("loadend", () => {
+          sharkViewer.loadCompartment(roi.get('name'), roi.get('color'), reader.result, moveCamera);
+        });
+
+        db.getAttachment(roi.get('name'), 'obj').then(obj => {
+          reader.readAsText(obj);
+        });
       }
-      roi_names[roi.get('name')] = 1;
+      roiNames[roi.get('name')] = 1;
     });
 
     // If removed, then remove them.
@@ -163,7 +182,7 @@ class Skeleton extends React.Component {
         }
       }
        if (child.type === 'Group') {
-        if (!roi_names[child.name]) {
+        if (!roiNames[child.name]) {
           sharkViewer.unloadCompartment(child.name);
         }
       }

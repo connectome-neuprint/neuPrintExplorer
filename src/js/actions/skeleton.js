@@ -1,4 +1,5 @@
 import randomColor from 'randomcolor';
+import PouchDB from 'pouchdb';
 import C from '../reducers/constants';
 
 export function skeletonOpen() {
@@ -48,8 +49,8 @@ function skeletonLoaded(id, dataSet, result) {
       y: parseInt(row[2], 10),
       z: parseInt(row[3], 10),
       radius: parseInt(row[4], 10),
-      parent: parseInt(row[5], 10),
-    }
+      parent: parseInt(row[5], 10)
+    };
   });
 
   return {
@@ -144,40 +145,68 @@ function skeletonLoadingCompartment(id) {
 }
 
 function skeletonLoadedCompartment(id, result) {
-  return {
-    type: C.SKELETON_ADD_COMPARTMENT,
-    name: id,
-    obj: result,
-    visible: true,
-    color: '#000000'
+  return function skeletonLoadedCompartmentAsync(dispatch) {
+    const db = new PouchDB('neuprint_compartments');
+    return db
+      .putAttachment(id, 'obj', btoa(result), 'text/plain')
+      .then(() =>
+        dispatch({
+          type: C.SKELETON_ADD_COMPARTMENT,
+          name: id,
+          obj: 'localStorage',
+          visible: true,
+          color: '#000000'
+        })
+      )
+      .catch(err => {
+        if (err.name === 'conflict') {
+          dispatch({
+            type: C.SKELETON_ADD_COMPARTMENT,
+            name: id,
+            obj: 'localStorage',
+            visible: true,
+            color: '#000000'
+          });
+        } else {
+          dispatch({
+            type: C.SKELETON_COMPARTMENT_LOAD_ERROR,
+            error: err
+          });
+        }
+      });
   };
 }
 
 function fetchMesh(id, key, dispatch) {
-  return fetch(`http://emdata4.int.janelia.org:8900/api/node/305b514e13d0411c8fe6c789935e7030/roi_data/key/${key}`, {
-    headers: {
-      'Content-Type': 'text/plain',
-      Accept: 'text/plain'
-    },
-    method: 'GET',
-  })
+  return fetch(
+    `http://emdata4.int.janelia.org:8900/api/node/305b514e13d0411c8fe6c789935e7030/roi_data/key/${key}`,
+    {
+      headers: {
+        'Content-Type': 'text/plain',
+        Accept: 'text/plain'
+      },
+      method: 'GET'
+    }
+  )
     .then(result => result.text())
     .then(result => {
       dispatch(skeletonLoadedCompartment(id, result));
     });
 }
 
-
 export function skeletonAddCompartment(id) {
   return function skeletonAddCompartmentAsync(dispatch) {
     dispatch(skeletonLoadingCompartment(id));
-    return fetch(`http://emdata4.int.janelia.org:8900/api/node/305b514e13d0411c8fe6c789935e7030/rois/key/${id}`, {
-      headers: {
-        'Content-Type': 'text/plain',
-        Accept: 'application/json'
-      },
-      method: 'GET',
-    })
+    return fetch(
+      `http://emdata4.int.janelia.org:8900/api/node/305b514e13d0411c8fe6c789935e7030/rois/key/${id}`,
+      {
+        headers: {
+          'Content-Type': 'text/plain',
+          Accept: 'application/json'
+        },
+        method: 'GET'
+      }
+    )
       .then(result => result.json())
       .then(result => {
         const { key } = result['->'];

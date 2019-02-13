@@ -28,7 +28,7 @@ class CompartmentSelection extends React.Component {
     // if not in the list of already selected then fire off
     // an action to load it.
     chosenList.forEach(choice => {
-      if (!(choice in selectedROIs)) {
+      if (!(selectedROIs.has(choice))) {
         actions.addROI(choice);
       }
     });
