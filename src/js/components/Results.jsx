@@ -167,7 +167,7 @@ class Results extends React.Component {
             onChange={this.handleResultSelection}
             textColor="primary"
             indicatorColor="primary"
-            scrollable
+            variant="scrollable"
             scrollButtons="auto"
           >
             {tabs}

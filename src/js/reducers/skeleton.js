@@ -4,6 +4,7 @@ import C from './constants';
 const skeletonState = Immutable.Map({
   display: false,
   neurons: Immutable.Map({}),
+  compartments: Immutable.Map({}),
   loading: false,
   error: null,
   cameraPosition: null
@@ -58,6 +59,18 @@ export default function skeletonReducer(state = skeletonState, action) {
     }
     case C.SKELETON_SET_CAMERA_POSITION: {
       return state.set('cameraPosition', action.position);
+    }
+    case C.SKELETON_ADD_COMPARTMENT: {
+      return state.setIn(['compartments', action.name], Immutable.Map({
+        name: action.name,
+        dataSet: action.dataSet,
+        obj: action.obj,
+        color: action.color,
+        visible: true
+      }));
+    }
+    case C.SKELETON_REMOVE_COMPARTMENT: {
+      return state.deleteIn(['compartments', action.id]);
     }
     default: {
       return state;

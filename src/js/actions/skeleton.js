@@ -136,3 +136,59 @@ export function setView(position) {
   };
 }
 
+function skeletonLoadingCompartment(id) {
+  return {
+    type: C.SKELETON_COMPARTMENT_LOADING,
+    id
+  };
+}
+
+function skeletonLoadedCompartment(id, result) {
+  return {
+    type: C.SKELETON_ADD_COMPARTMENT,
+    name: id,
+    obj: result,
+    visible: true,
+    color: '#000000'
+  };
+}
+
+function fetchMesh(id, key, dispatch) {
+  return fetch(`http://emdata4.int.janelia.org:8900/api/node/305b514e13d0411c8fe6c789935e7030/roi_data/key/${key}`, {
+    headers: {
+      'Content-Type': 'text/plain',
+      Accept: 'text/plain'
+    },
+    method: 'GET',
+  })
+    .then(result => result.text())
+    .then(result => {
+      dispatch(skeletonLoadedCompartment(id, result));
+    });
+}
+
+
+export function skeletonAddCompartment(id) {
+  return function skeletonAddCompartmentAsync(dispatch) {
+    dispatch(skeletonLoadingCompartment(id));
+    return fetch(`http://emdata4.int.janelia.org:8900/api/node/305b514e13d0411c8fe6c789935e7030/rois/key/${id}`, {
+      headers: {
+        'Content-Type': 'text/plain',
+        Accept: 'application/json'
+      },
+      method: 'GET',
+    })
+      .then(result => result.json())
+      .then(result => {
+        const { key } = result['->'];
+        fetchMesh(id, key, dispatch);
+      })
+      .catch(error => dispatch(skeletonLoadError(error)));
+  };
+}
+export function skeletonRemoveCompartment(id) {
+  return {
+    type: C.SKELETON_REMOVE_COMPARTMENT,
+    id
+  };
+}

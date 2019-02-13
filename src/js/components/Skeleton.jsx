@@ -8,8 +8,9 @@ import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import Chip from '@material-ui/core/Chip';
 import { skeletonNeuronToggle, skeletonRemove, setView } from 'actions/skeleton';
-
 import SharkViewer from '@janelia/sharkviewer';
+
+import CompartmentSelection from './Skeleton/CompartmentSelection';
 
 const styles = theme => ({
   root: {
@@ -23,6 +24,13 @@ const styles = theme => ({
     zIndex: 2,
     padding: theme.spacing.unit,
     position: 'absolute'
+  },
+  footer: {
+    zIndex: 2,
+    padding: theme.spacing.unit,
+    position: 'absolute',
+    top: 0,
+    right: 0
   },
   skel: {
     width: '100%',
@@ -54,13 +62,13 @@ class Skeleton extends React.Component {
 
   // load skeleton after render takes place
   componentDidMount() {
-    const { neurons } = this.props;
-    this.createShark(neurons);
+    const { neurons, compartments } = this.props;
+    this.createShark(neurons, compartments);
   }
 
   componentDidUpdate() {
-    const { neurons } = this.props;
-    this.loadShark(neurons);
+    const { neurons, compartments } = this.props;
+    this.loadShark(neurons, compartments);
   }
 
   componentWillUnmount() {
@@ -87,7 +95,7 @@ class Skeleton extends React.Component {
     actions.skeletonNeuronToggle(id);
   };
 
-  createShark = swcs => {
+  createShark = (swcs, rois) => {
     const { cameraPosition } = this.props;
     if (swcs.length !== 0) {
       const moveCamera = !cameraPosition;
@@ -103,6 +111,10 @@ class Skeleton extends React.Component {
         sharkViewer.loadNeuron(swc.get('name'), swc.get('color'), swc.get('swc'), moveCamera);
       });
 
+      rois.forEach(roi => {
+        sharkViewer.loadCompartment(roi.get('name'), roi.get('color'), roi.get('obj'), moveCamera);
+      });
+
       if (cameraPosition) {
         const {coords, target} = cameraPosition;
         sharkViewer.restoreView(coords.x, coords.y, coords.z, target);
@@ -114,11 +126,12 @@ class Skeleton extends React.Component {
     }
   };
 
-  loadShark = swcs => {
+  loadShark = (swcs, rois) => {
     const { cameraPosition } = this.props;
     const { sharkViewer } = this.state;
     // check here to see if we have added or removed neurons.
     const names = {};
+    const roi_names = {};
     const moveCamera = !cameraPosition;
     swcs.forEach(swc => {
       // If added, then add them to the scene.
@@ -131,6 +144,15 @@ class Skeleton extends React.Component {
       // push name onto lookup for later use;
       names[swc.get('name')] = 1;
     });
+
+    rois.forEach(roi => {
+      const exists = sharkViewer.scene.getObjectByName(roi.get('name'));
+      if (!exists) {
+        sharkViewer.loadCompartment(roi.get('name'), roi.get('color'), roi.get('obj'), moveCamera);
+      }
+      roi_names[roi.get('name')] = 1;
+    });
+
     // If removed, then remove them.
     // for this we have to loop over the objects in the scene and see if they are
     // missing from the state.
@@ -140,6 +162,12 @@ class Skeleton extends React.Component {
           sharkViewer.unloadNeuron(child.name);
         }
       }
+       if (child.type === 'Group') {
+        if (!roi_names[child.name]) {
+          sharkViewer.unloadCompartment(child.name);
+        }
+      }
+
     });
 
     sharkViewer.render();
@@ -185,6 +213,7 @@ class Skeleton extends React.Component {
     return (
       <div className={classes.root}>
         <div className={classes.floater}>{chips}</div>
+        <div className={classes.footer}><CompartmentSelection /></div>
         <div className={classes.skel} ref={this.skelRef} id="skeletonviewer" />
       </div>
     );
@@ -196,6 +225,7 @@ Skeleton.propTypes = {
   actions: PropTypes.object.isRequired,
   classes: PropTypes.object.isRequired,
   neurons: PropTypes.object.isRequired,
+  compartments: PropTypes.object.isRequired,
   cameraPosition: PropTypes.object
 };
 
@@ -205,6 +235,7 @@ Skeleton.defaultProps = {
 
 const SkeletonState = state => ({
   neurons: state.skeleton.get('neurons'),
+  compartments: state.skeleton.get('compartments'),
   display: state.skeleton.get('display'),
   cameraPosition: state.skeleton.get('cameraPosition')
 });

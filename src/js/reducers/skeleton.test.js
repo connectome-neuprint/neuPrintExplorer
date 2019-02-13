@@ -5,6 +5,7 @@ import C from './constants';
 const initialState = Immutable.Map({
   display: false,
   neurons: Immutable.Map({}),
+  compartments: Immutable.Map({}),
   loading: false,
   error: null,
   cameraPosition: null

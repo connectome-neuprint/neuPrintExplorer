@@ -1,6 +1,6 @@
 /*
  * Handle neo4j server information.
-*/
+ */
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -35,7 +35,7 @@ class MetaInfo extends React.Component {
   }
 
   updateDB = () => {
-    const { setNeoDatasets, setNeoServer } = this.props;
+    const { setNeoDatasets, setNeoServer, setMeshInfo } = this.props;
     fetch('/api/dbmeta/datasets', {
       credentials: 'include'
     })
@@ -45,7 +45,7 @@ class MetaInfo extends React.Component {
           const datasets = [];
           const rois = {};
           const datasetInfo = {};
-          Object.entries(items).forEach((item) => {
+          Object.entries(items).forEach(item => {
             const [name, data] = item;
             datasets.push(name);
             rois[name] = data.ROIs.sort(sortRois);
@@ -66,6 +66,26 @@ class MetaInfo extends React.Component {
           setNeoServer(data.Location);
         }
       });
+    fetch('/api/custom/custom', {
+      credentials: 'include',
+      body: JSON.stringify({ cypher: 'MATCH (n:Meta) RETURN n.dataset, n.meshHost' }),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      }
+    })
+      .then(result => result.json())
+      .then(resp => {
+        if (!('message' in resp)) {
+          const meshInfo = {}
+          resp.data.forEach(dataset => {
+            const [key, value] = dataset;
+            meshInfo[key] = value;
+          });
+          setMeshInfo(meshInfo);
+        }
+      });
   };
 
   render() {
@@ -76,6 +96,7 @@ class MetaInfo extends React.Component {
 MetaInfo.propTypes = {
   setNeoDatasets: PropTypes.func.isRequired,
   setNeoServer: PropTypes.func.isRequired,
+  setMeshInfo: PropTypes.func.isRequired,
   userInfo: PropTypes.object.isRequired
 };
 
@@ -96,6 +117,12 @@ const MetaInfoDispatch = dispatch => ({
     dispatch({
       type: C.SET_NEO_SERVER,
       neoServer: server
+    });
+  },
+  setMeshInfo(dataSets) {
+    dispatch({
+      type: C.SET_NEO_MESHINFO,
+      dataSets
     });
   }
 });

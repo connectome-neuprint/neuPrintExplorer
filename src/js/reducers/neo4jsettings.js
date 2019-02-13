@@ -8,6 +8,7 @@ const neo4jsettingsState = Immutable.Map({
   availableDatasets: [],
   availableROIs: {},
   datasetInfo: {},
+  meshInfo: {},
   neoServer: ''
 });
 
@@ -21,6 +22,9 @@ export default function neo4jreducer(state = neo4jsettingsState, action) {
     }
     case C.SET_NEO_SERVER: {
       return state.set('neoServer', action.neoServer);
+    }
+    case C.SET_NEO_MESHINFO: {
+      return state.set('meshInfo', action.dataSets);
     }
     default: {
       return state;
