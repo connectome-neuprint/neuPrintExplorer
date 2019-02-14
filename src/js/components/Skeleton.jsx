@@ -88,9 +88,8 @@ class Skeleton extends React.Component {
       coords = sharkViewer.cameraCoords();
       target = sharkViewer.cameraTarget();
     }
-    actions.setView({coords, target});
-  };
-
+    actions.setView({ coords, target });
+  }
 
   handleDelete = id => () => {
     const { actions } = this.props;
@@ -111,7 +110,7 @@ class Skeleton extends React.Component {
         dom_element: 'skeletonviewer',
         WIDTH: this.skelRef.current.clientWidth,
         HEIGHT: this.skelRef.current.clientHeight,
-        colors: swcs.map(swc => swc.get('color')),
+        colors: swcs.map(swc => swc.get('color'))
       });
       sharkViewer.init();
       sharkViewer.animate();
@@ -132,13 +131,13 @@ class Skeleton extends React.Component {
       });
 
       if (cameraPosition) {
-        const {coords, target} = cameraPosition;
+        const { coords, target } = cameraPosition;
         sharkViewer.restoreView(coords.x, coords.y, coords.z, target);
       }
 
       sharkViewer.render();
       sharkViewer.render();
-      this.setState({sharkViewer});
+      this.setState({ sharkViewer });
     }
   };
 
@@ -166,7 +165,7 @@ class Skeleton extends React.Component {
       if (!exists) {
         const reader = new FileReader();
 
-        reader.addEventListener("loadend", () => {
+        reader.addEventListener('loadend', () => {
           sharkViewer.loadCompartment(roi.get('name'), roi.get('color'), reader.result, moveCamera);
         });
 
@@ -186,12 +185,11 @@ class Skeleton extends React.Component {
           sharkViewer.unloadNeuron(child.name);
         }
       }
-       if (child.type === 'Group') {
+      if (child.type === 'Group') {
         if (!roiNames[child.name]) {
           sharkViewer.unloadCompartment(child.name);
         }
       }
-
     });
 
     sharkViewer.render();
@@ -237,7 +235,9 @@ class Skeleton extends React.Component {
     return (
       <div className={classes.root}>
         <div className={classes.floater}>{chips}</div>
-        <div className={classes.footer}><CompartmentSelection /></div>
+        <div className={classes.footer}>
+          <CompartmentSelection />
+        </div>
         <div className={classes.skel} ref={this.skelRef} id="skeletonviewer" />
       </div>
     );
@@ -255,7 +255,7 @@ Skeleton.propTypes = {
 
 Skeleton.defaultProps = {
   cameraPosition: null
-}
+};
 
 const SkeletonState = state => ({
   neurons: state.skeleton.get('neurons'),
