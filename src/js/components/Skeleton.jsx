@@ -68,9 +68,14 @@ class Skeleton extends React.Component {
     this.createShark(neurons, compartments);
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     const { neurons, compartments } = this.props;
-    this.loadShark(neurons, compartments);
+    if (
+      neurons !== prevProps.neurons ||
+      compartments !== prevProps.compartments
+    ) {
+      this.loadShark(neurons, compartments);
+    }
   }
 
   componentWillUnmount() {
