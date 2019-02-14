@@ -138,6 +138,12 @@ class Skeleton extends React.Component {
       sharkViewer.render();
       sharkViewer.render();
       this.setState({ sharkViewer });
+       // UGLY: there is a weird bug that means sometimes the scene is rendered blank.
+      // it seems to be some sort of timing issue, and adding a delayed render seems
+      // to fix it.
+      setTimeout(() => {
+        sharkViewer.render();
+      }, 200);
     }
   };
 
