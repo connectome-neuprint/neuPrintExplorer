@@ -10,6 +10,7 @@ import Chip from '@material-ui/core/Chip';
 import { skeletonNeuronToggle, skeletonRemove, setView } from 'actions/skeleton';
 import SharkViewer from '@janelia/sharkviewer';
 import PouchDB from 'pouchdb';
+import Immutable from 'immutable';
 
 import CompartmentSelection from './Skeleton/CompartmentSelection';
 
@@ -74,7 +75,37 @@ class Skeleton extends React.Component {
       neurons !== prevProps.neurons ||
       compartments !== prevProps.compartments
     ) {
-      this.loadShark(neurons, compartments);
+
+      // figure out which components/rois were updated
+      const differentNeurons = {};
+      const differentCompartments = {};
+      neurons.entrySeq().forEach(entry => {
+        const [ key, value ] = entry;
+        if ( value !== prevProps.neurons.get(key) ) {
+          differentNeurons[key] = value;
+        }
+      });
+      compartments.entrySeq().forEach(entry => {
+        const [ key, value ] = entry;
+        if ( value !== prevProps.compartments.get(key) ) {
+          differentCompartments[key] = value;
+        }
+      });
+      // figure out which components/rois were removed
+      const removedNeurons = [];
+      const removedCompartments = [];
+      prevProps.neurons.keySeq().forEach(key => {
+        if ( !neurons.has(key) ) {
+          removedNeurons.push(key);
+        }
+      });
+
+      prevProps.compartments.keySeq().forEach(key => {
+        if (!compartments.has(key) ) {
+          removedCompartments.push(key);
+        }
+      });
+      this.loadShark(Immutable.Map(differentNeurons), Immutable.Map(differentCompartments), removedNeurons, removedCompartments);
     }
   }
 
@@ -147,7 +178,7 @@ class Skeleton extends React.Component {
     }
   };
 
-  loadShark = (swcs, rois) => {
+  loadShark = (swcs, rois, removedSWCs, removedROIs) => {
     const { cameraPosition } = this.props;
     const { sharkViewer, db } = this.state;
     // check here to see if we have added or removed neurons.
@@ -183,19 +214,12 @@ class Skeleton extends React.Component {
     });
 
     // If removed, then remove them.
-    // for this we have to loop over the objects in the scene and see if they are
-    // missing from the state.
-    sharkViewer.scene.children.forEach(child => {
-      if (child.type === 'Object3D') {
-        if (!names[child.name]) {
-          sharkViewer.unloadNeuron(child.name);
-        }
-      }
-      if (child.type === 'Group') {
-        if (!roiNames[child.name]) {
-          sharkViewer.unloadCompartment(child.name);
-        }
-      }
+    removedSWCs.forEach(child => {
+      sharkViewer.unloadNeuron(child);
+    });
+
+    removedROIs.forEach(child => {
+      sharkViewer.unloadCompartment(child);
     });
 
     sharkViewer.render();
