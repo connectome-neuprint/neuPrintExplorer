@@ -9,6 +9,7 @@ const state = Immutable.Map({
     lastmod: 'existinglastmod',
     uuid: 'existingversion'
   },
+  meshInfo: {},
   neoServer: 'foobar'
 });
 
@@ -16,6 +17,7 @@ const initialState = Immutable.Map({
   availableDatasets: [],
   availableROIs: {},
   datasetInfo: {},
+  meshInfo: {},
   neoServer: ''
 });
 
@@ -38,6 +40,7 @@ describe('neo4jsettings Reducer', () => {
           lastmod: 'newlastmod',
           uuid: 'newversion'
         },
+        meshInfo: {},
         neoServer: ''
       })
     );
@@ -49,6 +52,7 @@ describe('neo4jsettings Reducer', () => {
           lastmod: 'newlastmod',
           uuid: 'newversion'
         },
+        meshInfo: {},
         neoServer: 'foobar'
       })
     );

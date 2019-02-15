@@ -177,9 +177,9 @@ function skeletonLoadedCompartment(id, result) {
   };
 }
 
-function fetchMesh(id, key, dispatch) {
+function fetchMesh(id, key, dispatch, host, uuid) {
   return fetch(
-    `http://emdata4.int.janelia.org:8900/api/node/305b514e13d0411c8fe6c789935e7030/roi_data/key/${key}`,
+    `${host}/api/node/${uuid}/roi_data/key/${key}`,
     {
       headers: {
         'Content-Type': 'text/plain',
@@ -195,10 +195,14 @@ function fetchMesh(id, key, dispatch) {
 }
 
 export function skeletonAddCompartment(id) {
-  return function skeletonAddCompartmentAsync(dispatch) {
+  return function skeletonAddCompartmentAsync(dispatch, getState) {
     dispatch(skeletonLoadingCompartment(id));
+    const meshHost = getState().neo4jsettings.get('meshInfo').hemibrain;
+    const { uuid } = getState().neo4jsettings.get('datasetInfo').hemibrain;
+
+
     return fetch(
-      `http://emdata4.int.janelia.org:8900/api/node/305b514e13d0411c8fe6c789935e7030/rois/key/${id}`,
+      `${meshHost}/api/node/${uuid}/rois/key/${id}`,
       {
         headers: {
           'Content-Type': 'text/plain',
@@ -210,7 +214,7 @@ export function skeletonAddCompartment(id) {
       .then(result => result.json())
       .then(result => {
         const { key } = result['->'];
-        fetchMesh(id, key, dispatch);
+        fetchMesh(id, key, dispatch, meshHost, uuid);
       })
       .catch(error => dispatch(skeletonLoadError(error)));
   };
