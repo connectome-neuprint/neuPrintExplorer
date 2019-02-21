@@ -2,24 +2,25 @@
  * Top level page for displaying queries and results.
  */
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import PropTypes from 'prop-types';
 import { Router, Route, Switch } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import history from '../history';
 
-import Results from './Results';
-import Home from './Home';
-import Help from './Help';
-import Favorites from './Favorites';
 import TopBar from './TopBar';
 import SideBar from './SideBar';
-import About from './About';
 import QueryDrawer from './QueryDrawer';
 import Errors from './Errors';
 import Notification from './Notification';
 
 import './Master.css';
+
+const Results = React.lazy(() => import('./Results'));
+const Help = React.lazy(() => import('./Help'));
+const About = React.lazy(() => import('./About'));
+const Home = React.lazy(() => import('./Home'));
+const Favorites = React.lazy(() => import('./Favorites'));
 
 // adapted from material ui example
 const styles = theme => ({
@@ -52,14 +53,16 @@ const Master = props => {
         <QueryDrawer />
         <main className={classes.content}>
           <div className={classes.toolbar} />
-          <Switch>
-            <Route exact path="/" component={Home} />
-            <Route path="/results" component={Results} />
-            <Route path="/help" component={Help} />
-            <Route path="/favorites" component={Favorites} />
-            <Route path="/about" component={About} />
-            <Route component={Home} />
-          </Switch>
+          <Suspense fallback={<div>loading...</div>}>
+            <Switch>
+              <Route exact path="/" component={Home} />
+              <Route path="/results" component={Results} />
+              <Route path="/help" component={Help} />
+              <Route path="/favorites" component={Favorites} />
+              <Route path="/about" component={About} />
+              <Route component={Home} />
+            </Switch>
+          </Suspense>
         </main>
         <Errors />
         <Notification />

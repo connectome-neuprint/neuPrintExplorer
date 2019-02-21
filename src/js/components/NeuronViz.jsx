@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -9,8 +9,9 @@ import Icon from '@material-ui/core/Icon';
 import { withStyles } from '@material-ui/core/styles';
 
 import { setFullScreen, clearFullScreen } from 'actions/app';
-import Skeleton from './Skeleton';
-import NeuroGlancer from './NeuroGlancer';
+
+const NeuroGlancer = React.lazy(() => import('./NeuroGlancer'));
+const Skeleton = React.lazy(() => import('./Skeleton'));
 
 const styles = () => ({
   full: {
@@ -72,11 +73,13 @@ class NeuronViz extends React.Component {
           <Tab label="Neuroglancer" />
           <Tab label="Skeleton" />
         </Tabs>
-        {selectedViewer === 0 ? (
-          <NeuroGlancer />
-        ) : (
-          <Skeleton />
-        )}
+        <Suspense fallback={<div>loading...</div>}>
+          {selectedViewer === 0 ? (
+            <NeuroGlancer />
+          ) : (
+            <Skeleton />
+          )}
+        </Suspense>
       </div>
     );
   }
