@@ -206,7 +206,7 @@ class Results extends React.Component {
     const tabValue = parseInt(query.tab || 0, 10);
     const currentPlugin = pluginList.find(plugin => plugin.details.abbr === resultsList[tabValue].code);
     const resultTabs = resultsList.map(result => {
-      result.tabName = currentPlugin.queryName;
+      result.tabName = pluginList.find(plugin => plugin.details.abbr === result.code).queryName;
       return result;
     });
 
@@ -232,6 +232,9 @@ class Results extends React.Component {
         </div>
       );
     }
+
+    // TODO: add return here with a way to close the tab, if an error
+    // occurred loading the data. Maybe add a try again button.
 
     const tabs = resultTabs.map((tab, index) => {
       const key = `${tab.code}${index}`;
