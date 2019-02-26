@@ -13,7 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
 
-import { submit, formError, pluginResponseError } from 'actions/plugins';
+import { formError, pluginResponseError } from 'actions/plugins';
 import { metaInfoError, launchNotification } from 'actions/app';
 import { skeletonAddandOpen } from 'actions/skeleton';
 import { neuroglancerAddandOpen } from 'actions/neuroglancer';
@@ -21,7 +21,9 @@ import {
   getQueryString,
   getSiteParams,
   setPluginQueryString,
-  getPluginQueryObject
+  getPluginQueryObject,
+  setSearchQueryString,
+  getQueryObject
 } from 'helpers/queryString';
 
 const styles = theme => ({
@@ -53,6 +55,21 @@ class QueryForm extends React.Component {
       // eslint-disable-next-line react/no-did-update-set-state
       this.setState({ hasError: false });
     }
+  }
+
+  submit = (query) => {
+    const { history } = this.props;
+    // TODO: set query as a tab in the url query string.
+    setSearchQueryString({
+      code: query.pluginCode,
+      ds: query.dataSet,
+      pm: query.parameters
+    });
+    const newQueryString = getQueryObject();
+    history.push({
+      pathname: '/results',
+      search: getQueryString()
+    });
   }
 
   findCurrentPlugin = () => {
@@ -117,6 +134,7 @@ class QueryForm extends React.Component {
             isQuerying={isQuerying}
             neoServerSettings={neoServerSettings}
             actions={actions}
+            submit={this.submit}
           />
         )}
       </div>
@@ -131,6 +149,7 @@ QueryForm.propTypes = {
   dataSet: PropTypes.string.isRequired,
   isQuerying: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired,
   neoServerSettings: PropTypes.object.isRequired,
   availableROIs: PropTypes.object.isRequired
@@ -147,9 +166,6 @@ const QueryFormState = state => ({
 
 const QueryFormDispatch = dispatch => ({
   actions: {
-    submit: query => {
-      dispatch(submit(query));
-    },
     skeletonAddandOpen: (id, dataSet) => {
       dispatch(skeletonAddandOpen(id, dataSet));
     },

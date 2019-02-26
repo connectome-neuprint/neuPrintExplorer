@@ -18,7 +18,9 @@ import AppBar from '@material-ui/core/AppBar';
 import { toggleSkeleton } from 'actions/skeleton';
 import { setFullScreen, clearFullScreen, setSelectedResult } from 'actions/app';
 import { metaInfoError } from '@neuprint/support';
-import { updateQuery } from '../actions/plugins';
+import { updateQuery } from 'actions/plugins';
+
+import { getQueryObject, setQueryString } from 'helpers/queryString';
 
 import ResultsTopBar from './ResultsTopBar';
 import Skeleton from './Skeleton';
@@ -49,6 +51,51 @@ const styles = theme => ({
 });
 
 class Results extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      neuronViz: [],
+      currentResult: null,
+      loadingDisplay: false,
+      loadingError: false
+    };
+  }
+
+
+  componentDidMount() {
+    // grab the contents of the search string.
+    // if it has an array of query objects, fetch the data from neuPrint
+    // and store it in the redux/local state?
+    const { pluginList } = this.props;
+    const query = getQueryObject();
+    const resultsList = query.qr || [];
+    const tabValue = parseInt(query.tab || 0, 10);
+
+    if (resultsList.length > 0) {
+      const currentPlugin = pluginList.find(plugin => plugin.details.abbr === resultsList[tabValue].code);
+
+      // only fetch results for the tab being displayed.
+      this.fetchData(resultsList[tabValue], currentPlugin);
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    const { location, pluginList } = this.props;
+    // if the number of tabs has changed, then update the data.
+    // if the current tab has changed, then update.
+    // if the current page has changed, then update.
+    if (location !== prevProps.location) {
+      const query = getQueryObject();
+      const resultsList = query.qr || [];
+      const tabValue = parseInt(query.tab || 0, 10);
+
+      if (resultsList.length > 0) {
+        const currentPlugin = pluginList.find(plugin => plugin.details.abbr === resultsList[tabValue].code);
+        this.fetchData(resultsList[tabValue], currentPlugin);
+      }
+    }
+  }
+
   downloadFile = index => {
     const { allResults } = this.props;
     const results = allResults.get(index);
@@ -71,24 +118,79 @@ class Results extends React.Component {
   };
 
   handleResultSelection = (event, value) => {
-    const { actions } = this.props;
-    actions.setSelectedResult(value);
+    // set the tabs value in the query string to the value
+    // passed in here.
+    setQueryString({ tab: value});
   };
+
+  fetchData(qParams, plugin) {
+    if ( !plugin ) {
+      return;
+    }
+
+    this.setState({loadingDisplay: true });
+
+    // build the query url. Use the custom one by default.
+    let queryUrl = '/api/custom/custom';
+    if (plugin.details.queryString) {
+      queryUrl = `/api${plugin.details.queryString}`;
+    }
+
+    const { pm: parameters } = qParams;
+    // if cypherQuery is passed in, then add it to the parameters.
+    if (qParams.pm.cypherQuery) {
+      parameters.cypher = qParams.pm.cypherQuery;
+    }
+
+    fetch(queryUrl, {
+      headers: {
+        'content-type': 'application/json',
+        Accept: 'application/json'
+      },
+      body: JSON.stringify(parameters),
+      method: 'POST',
+      credentials: 'include'
+    })
+      .then(result => result.json())
+      .then(resp => {
+        // sends error message provided by neuprinthttp
+        if (resp.error) {
+          throw new Error(resp.error);
+        }
+        // make new result object
+        const data = plugin.processResults(qParams, resp);
+        const combined = Object.assign(qParams, { result: data });
+        this.setState({
+          currentResult: combined,
+          loadingDisplay: false
+        })
+      })
+      .catch(error => {
+        this.setState({
+          loadingError: error,
+          loadingDisplay: false,
+          currentResult: null
+        });
+      });
+  }
 
   render() {
     // TODO: show query runtime results
     const {
       classes,
       isQuerying,
-      allResults,
       viewPlugins,
-      showSkel,
-      selectedResult,
       actions,
-      neoServer
+      neoServer,
+      pluginList
     } = this.props;
 
-    if (!isQuerying && allResults.size === 0) {
+    const { currentResult, loadingDisplay} = this.state;
+
+    const query = getQueryObject();
+    const resultsList = query.qr || [];
+
+    if (!isQuerying && resultsList.length === 0) {
       return (
         <div className={classes.root}>
           <div className={classes.empty}>
@@ -101,63 +203,40 @@ class Results extends React.Component {
       );
     }
 
-    // if the skeleton should be shown, add it to the results list.
-    const resultsWithViewers = showSkel
-      ? allResults
-          .push({
-            neuronViz: true,
-            plugin: 'Skeleton',
-            component: <Skeleton key="skeleton" />
-          })
-          .push({
-            neuronViz: true,
-            plugin: 'NeuroGlancer',
-            component: <NeuroGlancer key="ng" />
-          })
-      : allResults;
-
-    let results = '';
-
-    if (resultsWithViewers.size > 0) {
-      const selectedIndex = !resultsWithViewers.get(selectedResult) ? 0 : selectedResult;
-      const selectedQuery = resultsWithViewers.get(selectedIndex);
-      if (selectedQuery.neuronViz) {
-        results = selectedQuery.component;
-      } else {
-        const View = viewPlugins.get(selectedQuery.visType);
-        results = (
-          <div>
-            <ResultsTopBar
-              downloadCallback={this.downloadFile}
-              name={selectedQuery.title}
-              index={selectedIndex}
-              queryStr={selectedQuery.result.debug}
-              color={selectedQuery.menuColor}
-            />
-            <View
-              query={selectedQuery}
-              index={selectedIndex}
-              actions={actions}
-              neoServer={neoServer}
-            />
-          </div>
-        );
-      }
-    }
-
-    const tabs = resultsWithViewers.map((query, index) => {
-      const key = `${query.plugin}${index}`;
-      return <Tab key={key} label={query.plugin} />;
+    const tabValue = parseInt(query.tab || 0, 10);
+    const currentPlugin = pluginList.find(plugin => plugin.details.abbr === resultsList[tabValue].code);
+    const resultTabs = resultsList.map(result => {
+      result.tabName = currentPlugin.queryName;
+      return result;
     });
-    // when opening neuroglancer or skeleton viewer we set the selected index to -1 or -2.
-    // This is not a valid option for the Tab component so we need to convert it to the
-    // index in the array.
-    let tabValue = selectedResult < 0 ? tabs.size + selectedResult : selectedResult;
 
-    // if the tabValue is out of range, then just set it to the first tab.
-    if (!tabs.get(tabValue)) {
-      tabValue = 0;
+    let tabData = (<div>loading...</div>);
+    if (!loadingDisplay && currentResult) {
+      const View = viewPlugins.get(currentPlugin.details.visType);
+      const tabIndex = parseInt(query.tab || 0, 10);
+      tabData = (
+        <div>
+          <ResultsTopBar
+            downloadCallback={this.downloadFile}
+            name={currentResult.result.title}
+            index={tabIndex}
+            queryStr={currentResult.result.debug}
+            color="#cccccc"
+          />
+          <View
+            query={currentResult}
+            index={tabIndex}
+            actions={actions}
+            neoServer={neoServer}
+          />
+        </div>
+      );
     }
+
+    const tabs = resultTabs.map((tab, index) => {
+      const key = `${tab.code}${index}`;
+      return <Tab key={key} label={tab.tabName} />;
+    });
 
     return (
       <div className={classes.full}>
@@ -184,7 +263,7 @@ class Results extends React.Component {
             >
               <CircularProgress />
             </Fade>
-            {results}
+            {tabData}
           </div>
         </div>
       </div>
@@ -197,17 +276,17 @@ Results.propTypes = {
     search: PropTypes.string.isRequired
   }).isRequired,
   allResults: PropTypes.object.isRequired,
+  pluginList: PropTypes.arrayOf(PropTypes.func).isRequired,
   viewPlugins: PropTypes.object.isRequired,
   isQuerying: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired,
-  showSkel: PropTypes.bool.isRequired,
   actions: PropTypes.object.isRequired,
-  selectedResult: PropTypes.number.isRequired,
   neoServer: PropTypes.string.isRequired
 };
 
 // result data [{name: "table name", header: [headers...], body: [rows...]
 const ResultsState = state => ({
+  pluginList: state.app.get('pluginList'),
   isQuerying: state.query.get('isQuerying'),
   neoError: state.query.get('neoError'),
   allResults: state.results.get('allResults'),

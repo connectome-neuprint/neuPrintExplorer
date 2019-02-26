@@ -21,6 +21,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogContentText from '@material-ui/core/DialogContentText';
 
 import { authError, reAuth } from 'actions/user';
+import { getQueryObject, setQueryString } from 'helpers/queryString';
 import C from '../reducers/constants';
 
 const styles = () => ({
@@ -49,6 +50,16 @@ class ResultsTopBar extends React.Component {
 
   handleClose = () => {
     this.setState({ open: false });
+  };
+
+  handleRemoveResult = (index) => {
+    // get query object
+    const query = getQueryObject();
+    // remove item from the list at position 'index';
+    query.qr.splice(index, 1)
+    // update the tab index
+    const tabIndex = (query.tab > 0) ? query.tab - 1 : 0;
+    setQueryString({ qr: query.qr, tab: tabIndex })
   };
 
   addFavorite = () => {
@@ -155,7 +166,7 @@ class ResultsTopBar extends React.Component {
             className={classes.button}
             aria-label="Close Window"
             onClick={() => {
-              actions.clearNewResult(index);
+              this.handleRemoveResult(index);
             }}
           >
             <Icon style={{ fontSize: 18 }}>close</Icon>
