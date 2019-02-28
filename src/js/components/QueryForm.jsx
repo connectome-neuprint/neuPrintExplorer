@@ -63,9 +63,9 @@ class QueryForm extends React.Component {
     setSearchQueryString({
       code: query.pluginCode,
       ds: query.dataSet,
-      pm: query.parameters
+      pm: query.parameters,
+      visProps: query.visProps
     });
-    const newQueryString = getQueryObject();
     history.push({
       pathname: '/results',
       search: getQueryString()

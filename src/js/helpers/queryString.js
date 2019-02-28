@@ -68,14 +68,7 @@ export function getPluginQueryObject() {
 }
 
 export function setQueryString(newData) {
-  const currentQuery = qs.parse(decodeURIComponent(getQueryString()), {
-    decoder(value) {
-      if (value in keywords) {
-        return keywords[value];
-      }
-      return value;
-    }
-  });
+  const currentQuery = getQueryObject();
   const updatedData = merge(currentQuery, newData, { arrayMerge: overwriteMerge });
   const updatedQuery = qs.stringify(updatedData);
   history.push({
@@ -100,6 +93,14 @@ export function setSearchQueryString(newData) {
   setQueryString({
     'qr': currentQuery,
     'tab': 0
+  });
+}
+
+export function updateResultInQueryString(index, newData) {
+  const currentQuery = getPluginQueryObject();
+  currentQuery[index] = newData;
+  setQueryString({
+    'qr': currentQuery
   });
 }
 

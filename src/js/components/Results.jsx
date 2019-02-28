@@ -20,7 +20,7 @@ import { setFullScreen, clearFullScreen, setSelectedResult } from 'actions/app';
 import { metaInfoError } from '@neuprint/support';
 import { updateQuery } from 'actions/plugins';
 
-import { getQueryObject, setQueryString } from 'helpers/queryString';
+import { getQueryObject, setQueryString, updateResultInQueryString } from 'helpers/queryString';
 
 import ResultsTopBar from './ResultsTopBar';
 import Skeleton from './Skeleton';
@@ -130,6 +130,7 @@ class Results extends React.Component {
 
     this.setState({
       loadingDisplay: true,
+      currentResult: null,
       loadingError: null,
     });
 
@@ -210,7 +211,7 @@ class Results extends React.Component {
     const currentPlugin = pluginList.find(plugin => plugin.details.abbr === resultsList[tabValue].code);
     const resultTabs = resultsList.map(result => {
       const updated = result;
-      updated.tabName = pluginList.find(plugin => plugin.details.abbr === result.code).queryName;
+      updated.tabName = pluginList.find(plugin => plugin.details.abbr === result.code).details.displayName;
       return updated;
     });
 
@@ -230,7 +231,7 @@ class Results extends React.Component {
 
     // TODO: need to pass a function to the view that can pdate the current
     // tab in the url, so that we can change page numbers or rows per page.
-    if (!loadingDisplay && currentResult) {
+    if (!loadingDisplay && currentResult && currentResult.code === currentPlugin.details.abbr) {
       const View = viewPlugins.get(currentPlugin.details.visType);
       tabData = (
         <div>
@@ -345,8 +346,9 @@ const ResultDispatch = dispatch => ({
     setSelectedResult: index => {
       dispatch(setSelectedResult(index));
     },
+    // TODO: change this to modify the url instead of the state.
     updateQuery: (index, newQueryObject) => {
-      dispatch(updateQuery(index, newQueryObject));
+      updateResultInQueryString(index, newQueryObject);
     },
     metaInfoError: error => {
       dispatch(metaInfoError(error));
