@@ -57,7 +57,7 @@ class QueryForm extends React.Component {
     }
   }
 
-  submit = (query) => {
+  submit = query => {
     const { history } = this.props;
     // TODO: set query as a tab in the url query string.
     setSearchQueryString({
@@ -70,13 +70,12 @@ class QueryForm extends React.Component {
       pathname: '/results',
       search: getQueryString()
     });
-  }
+  };
 
   findCurrentPlugin = () => {
     const { pluginList, queryType } = this.props;
     // find matching query type
-    const CurrentQuery =
-      pluginList.find(plugin => slug(plugin.queryName) === queryType) || pluginList[0];
+    const CurrentQuery = pluginList.find(plugin => slug(plugin.details.name) === queryType);
     return CurrentQuery;
   };
 
@@ -87,6 +86,13 @@ class QueryForm extends React.Component {
   render() {
     // assume the first query is the default
     const CurrentQuery = this.findCurrentPlugin();
+
+    if (!CurrentQuery) {
+      return(
+        <Typography>Please select a query type from the menu above.</Typography>
+      );
+    }
+
     const {
       userInfo,
       classes,
@@ -121,7 +127,7 @@ class QueryForm extends React.Component {
             </span>
           }
         />
-        <Typography>{CurrentQuery.queryDescription}</Typography>
+        <Typography>{CurrentQuery.details.description}</Typography>
         <Divider className={classes.divider} />
         {hasError ? (
           failureMessage
