@@ -128,7 +128,10 @@ class Results extends React.Component {
       return;
     }
 
-    this.setState({loadingDisplay: true });
+    this.setState({
+      loadingDisplay: true,
+      loadingError: null,
+    });
 
     // build the query url. Use the custom one by default.
     let queryUrl = '/api/custom/custom';
@@ -185,7 +188,7 @@ class Results extends React.Component {
       pluginList
     } = this.props;
 
-    const { currentResult, loadingDisplay} = this.state;
+    const { currentResult, loadingDisplay, loadingError } = this.state;
 
     const query = getQueryObject();
     const resultsList = query.qr || [];
@@ -230,6 +233,18 @@ class Results extends React.Component {
             neoServer={neoServer}
           />
         </div>
+      );
+    }
+    if (!loadingDisplay && loadingError ) {
+      const tabIndex = parseInt(query.tab || 0, 10);
+      tabData = (
+        <ResultsTopBar
+          downloadCallback={this.downloadFile}
+          name="Error loading content"
+          index={tabIndex}
+          queryStr="error"
+          color="#ffcccc"
+        />
       );
     }
 
