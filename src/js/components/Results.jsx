@@ -209,14 +209,29 @@ class Results extends React.Component {
     const tabValue = parseInt(query.tab || 0, 10);
     const currentPlugin = pluginList.find(plugin => plugin.details.abbr === resultsList[tabValue].code);
     const resultTabs = resultsList.map(result => {
-      result.tabName = pluginList.find(plugin => plugin.details.abbr === result.code).queryName;
-      return result;
+      const updated = result;
+      updated.tabName = pluginList.find(plugin => plugin.details.abbr === result.code).queryName;
+      return updated;
     });
 
-    let tabData = (<div>loading...</div>);
+    const tabIndex = parseInt(query.tab || 0, 10);
+    let tabData = (
+      <div>
+        <ResultsTopBar
+          downloadCallback={this.downloadFile}
+          name="Loading..."
+          index={tabIndex}
+          queryStr="Loading"
+          color="#cccccc"
+        />
+        <div>Loading...</div>
+      </div>
+    );
+
+    // TODO: need to pass a function to the view that can pdate the current
+    // tab in the url, so that we can change page numbers or rows per page.
     if (!loadingDisplay && currentResult) {
       const View = viewPlugins.get(currentPlugin.details.visType);
-      const tabIndex = parseInt(query.tab || 0, 10);
       tabData = (
         <div>
           <ResultsTopBar
@@ -236,7 +251,6 @@ class Results extends React.Component {
       );
     }
     if (!loadingDisplay && loadingError ) {
-      const tabIndex = parseInt(query.tab || 0, 10);
       tabData = (
         <ResultsTopBar
           downloadCallback={this.downloadFile}
