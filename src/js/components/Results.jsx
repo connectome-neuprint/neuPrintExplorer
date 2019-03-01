@@ -16,9 +16,8 @@ import Icon from '@material-ui/core/Icon';
 import AppBar from '@material-ui/core/AppBar';
 
 import { toggleSkeleton } from 'actions/skeleton';
-import { setFullScreen, clearFullScreen, setSelectedResult } from 'actions/app';
+import { setFullScreen, clearFullScreen, setSelectedResult, launchNotification } from 'actions/app';
 import { metaInfoError } from '@neuprint/support';
-import { updateQuery } from 'actions/plugins';
 
 import { getQueryObject, setQueryString, updateResultInQueryString } from 'helpers/queryString';
 
@@ -124,6 +123,7 @@ class Results extends React.Component {
   };
 
   fetchData(qParams, plugin) {
+    const { actions } = this.props;
     if ( !plugin ) {
       return;
     }
@@ -162,7 +162,7 @@ class Results extends React.Component {
           throw new Error(resp.error);
         }
         // make new result object
-        const data = plugin.processResults(qParams, resp);
+        const data = plugin.processResults(qParams, resp, actions);
         const combined = Object.assign(qParams, { result: data });
         this.setState({
           currentResult: combined,
@@ -352,7 +352,8 @@ const ResultDispatch = dispatch => ({
     },
     metaInfoError: error => {
       dispatch(metaInfoError(error));
-    }
+    },
+    launchNotification: message => dispatch(launchNotification(message))
   }
 });
 
