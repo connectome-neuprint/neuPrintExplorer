@@ -18,8 +18,15 @@ import AppBar from '@material-ui/core/AppBar';
 import { toggleSkeleton } from 'actions/skeleton';
 import { setFullScreen, clearFullScreen, setSelectedResult, launchNotification } from 'actions/app';
 import { metaInfoError } from '@neuprint/support';
+import { pluginResponseError } from 'actions/plugins';
 
-import { getQueryObject, setQueryString, updateResultInQueryString } from 'helpers/queryString';
+import {
+  getQueryObject,
+  setQueryString,
+  updateResultInQueryString,
+  getQueryString,
+  setSearchQueryString
+} from 'helpers/queryString';
 
 import ResultsTopBar from './ResultsTopBar';
 import Skeleton from './Skeleton';
@@ -60,7 +67,6 @@ class Results extends React.Component {
     };
   }
 
-
   componentDidMount() {
     // grab the contents of the search string.
     // if it has an array of query objects, fetch the data from neuPrint
@@ -71,7 +77,9 @@ class Results extends React.Component {
     const tabValue = parseInt(query.tab || 0, 10);
 
     if (resultsList.length > 0) {
-      const currentPlugin = pluginList.find(plugin => plugin.details.abbr === resultsList[tabValue].code);
+      const currentPlugin = pluginList.find(
+        plugin => plugin.details.abbr === resultsList[tabValue].code
+      );
 
       // only fetch results for the tab being displayed.
       this.fetchData(resultsList[tabValue], currentPlugin);
@@ -89,11 +97,29 @@ class Results extends React.Component {
       const tabValue = parseInt(query.tab || 0, 10);
 
       if (resultsList.length > 0) {
-        const currentPlugin = pluginList.find(plugin => plugin.details.abbr === resultsList[tabValue].code);
+        const currentPlugin = pluginList.find(
+          plugin => plugin.details.abbr === resultsList[tabValue].code
+        );
         this.fetchData(resultsList[tabValue], currentPlugin);
       }
     }
   }
+
+  submit = query => {
+    const { history } = this.props;
+    // TODO: set query as a tab in the url query string.
+    setSearchQueryString({
+      code: query.pluginCode,
+      ds: query.dataSet,
+      pm: query.parameters,
+      visProps: query.visProps
+    });
+    history.push({
+      pathname: '/results',
+      search: getQueryString()
+    });
+  };
+
 
   downloadFile = index => {
     const { allResults } = this.props;
@@ -119,31 +145,37 @@ class Results extends React.Component {
   handleResultSelection = (event, value) => {
     // set the tabs value in the query string to the value
     // passed in here.
-    setQueryString({ tab: value});
+    setQueryString({ tab: value });
   };
 
   fetchData(qParams, plugin) {
     const { actions } = this.props;
-    if ( !plugin ) {
+    const { pm: parameters } = qParams;
+    if (!plugin) {
       return;
     }
 
     this.setState({
       loadingDisplay: true,
       currentResult: null,
-      loadingError: null,
+      loadingError: null
     });
 
+    // TODO: we should be able to generate the cypher query by calling a function
+    // from the plugin, for all plugins apart from the custom query plugin.
+    //
+    const fetchParams = plugin.fetchParameters(parameters);
     // build the query url. Use the custom one by default.
     let queryUrl = '/api/custom/custom';
-    if (plugin.details.queryString) {
-      queryUrl = `/api${plugin.details.queryString}`;
+    if (fetchParams.queryString) {
+      queryUrl = `/api${fetchParams.queryString}`;
     }
 
-    const { pm: parameters } = qParams;
     // if cypherQuery is passed in, then add it to the parameters.
-    if (qParams.pm.cypherQuery) {
-      parameters.cypher = qParams.pm.cypherQuery;
+    if (parameters.cypherQuery) {
+      parameters.cypher = parameters.cypherQuery;
+    } else if (fetchParams.cypherQuery) {
+      parameters.cypher = fetchParams.cypherQuery;
     }
 
     fetch(queryUrl, {
@@ -162,12 +194,12 @@ class Results extends React.Component {
           throw new Error(resp.error);
         }
         // make new result object
-        const data = plugin.processResults(qParams, resp, actions);
+        const data = plugin.processResults(qParams, resp, actions, this.submit);
         const combined = Object.assign(qParams, { result: data });
         this.setState({
           currentResult: combined,
           loadingDisplay: false
-        })
+        });
       })
       .catch(error => {
         this.setState({
@@ -180,14 +212,7 @@ class Results extends React.Component {
 
   render() {
     // TODO: show query runtime results
-    const {
-      classes,
-      isQuerying,
-      viewPlugins,
-      actions,
-      neoServer,
-      pluginList
-    } = this.props;
+    const { classes, isQuerying, viewPlugins, actions, neoServer, pluginList } = this.props;
 
     const { currentResult, loadingDisplay, loadingError } = this.state;
 
@@ -208,10 +233,14 @@ class Results extends React.Component {
     }
 
     const tabValue = parseInt(query.tab || 0, 10);
-    const currentPlugin = pluginList.find(plugin => plugin.details.abbr === resultsList[tabValue].code);
+    const currentPlugin = pluginList.find(
+      plugin => plugin.details.abbr === resultsList[tabValue].code
+    );
     const resultTabs = resultsList.map(result => {
       const updated = result;
-      updated.tabName = pluginList.find(plugin => plugin.details.abbr === result.code).details.displayName;
+      updated.tabName = pluginList.find(
+        plugin => plugin.details.abbr === result.code
+      ).details.displayName;
       return updated;
     });
 
@@ -242,16 +271,11 @@ class Results extends React.Component {
             queryStr={currentResult.result.debug}
             color="#cccccc"
           />
-          <View
-            query={currentResult}
-            index={tabIndex}
-            actions={actions}
-            neoServer={neoServer}
-          />
+          <View query={currentResult} index={tabIndex} actions={actions} neoServer={neoServer} />
         </div>
       );
     }
-    if (!loadingDisplay && loadingError ) {
+    if (!loadingDisplay && loadingError) {
       tabData = (
         <ResultsTopBar
           downloadCallback={this.downloadFile}
@@ -314,6 +338,7 @@ Results.propTypes = {
   isQuerying: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
   neoServer: PropTypes.string.isRequired
 };
 
@@ -352,6 +377,9 @@ const ResultDispatch = dispatch => ({
     },
     metaInfoError: error => {
       dispatch(metaInfoError(error));
+    },
+    pluginResponseError: error => {
+      dispatch(pluginResponseError(error));
     },
     launchNotification: message => dispatch(launchNotification(message))
   }
