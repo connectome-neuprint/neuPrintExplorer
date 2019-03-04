@@ -59,7 +59,7 @@ class QueryForm extends React.Component {
 
   submit = query => {
     const { history } = this.props;
-    // TODO: set query as a tab in the url query string.
+    // set query as a tab in the url query string.
     setSearchQueryString({
       code: query.pluginCode,
       ds: query.dataSet,
