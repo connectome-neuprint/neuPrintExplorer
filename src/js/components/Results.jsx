@@ -257,8 +257,6 @@ class Results extends React.Component {
       </div>
     );
 
-    // TODO: need to pass a function to the view that can pdate the current
-    // tab in the url, so that we can change page numbers or rows per page.
     if (!loadingDisplay && currentResult && currentResult.code === currentPlugin.details.abbr) {
       const View = viewPlugins.get(currentPlugin.details.visType);
       tabData = (
@@ -294,6 +292,10 @@ class Results extends React.Component {
       return <Tab key={key} label={tab.tabName} />;
     });
 
+    const neuronList = (query.nv || '').split(',').map(num => parseInt(num,10));
+    const compartments = (query.nvc || '').split(',');
+    const cameraPosition = (query.nv_pos || '').split(',').map(num => parseInt(num,10));
+
     return (
       <div className={classes.full}>
         <AppBar position="static" color="default">
@@ -319,6 +321,7 @@ class Results extends React.Component {
             >
               <CircularProgress />
             </Fade>
+            <Skeleton compartmentIds={compartments} cameraInit={cameraPosition} neuronsIds={neuronList} key="skeleton" />
             {tabData}
           </div>
         </div>
