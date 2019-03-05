@@ -60,7 +60,6 @@ class Results extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      neuronViz: [],
       currentResult: null,
       loadingDisplay: false,
       loadingError: false
