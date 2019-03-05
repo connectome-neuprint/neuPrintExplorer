@@ -103,8 +103,7 @@ class ResultsTopBar extends React.Component {
       name,
       index,
       queryStr,
-      downloadCallback,
-      actions
+      downloadCallback
     } = this.props;
     const { showQuery, open } = this.state;
 

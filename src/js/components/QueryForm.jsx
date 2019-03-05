@@ -22,8 +22,7 @@ import {
   getSiteParams,
   setPluginQueryString,
   getPluginQueryObject,
-  setSearchQueryString,
-  getQueryObject
+  setSearchQueryString
 } from 'helpers/queryString';
 
 const styles = theme => ({
