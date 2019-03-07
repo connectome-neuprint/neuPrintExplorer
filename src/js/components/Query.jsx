@@ -103,6 +103,23 @@ class Query extends React.Component {
         )
       }));
 
+    const otherOptions = pluginList
+      .filter(plugin => plugin.details.category === 'other')
+      .map(val => ({
+        value: slug(val.details.name),
+        label: val.details.experimental ? (
+          <div className={classes.experimentalPlugin}>
+            {val.details.displayName}
+            <Tooltip title="under development" placement="right">
+              <Icon style={{ margin: '4px', fontSize: '12px' }}>build</Icon>
+            </Tooltip>
+          </div>
+        ) : (
+          val.details.displayName
+        )
+      }));
+
+
     const queryOptions = [
       {
         label: 'General',
@@ -111,6 +128,10 @@ class Query extends React.Component {
       {
         label: 'Reconstruction Related',
         options: reconOptions
+      },
+      {
+        label: 'Other',
+        options: otherOptions
       }
     ];
 

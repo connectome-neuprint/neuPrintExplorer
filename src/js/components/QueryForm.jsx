@@ -15,7 +15,6 @@ import { withStyles } from '@material-ui/core/styles';
 
 import { formError, pluginResponseError } from 'actions/plugins';
 import { metaInfoError, launchNotification } from 'actions/app';
-import { skeletonAddandOpen } from 'actions/skeleton';
 import { neuroglancerAddandOpen } from 'actions/neuroglancer';
 import {
   getQueryString,
@@ -171,9 +170,6 @@ const QueryFormState = state => ({
 
 const QueryFormDispatch = dispatch => ({
   actions: {
-    skeletonAddandOpen: (id, dataSet) => {
-      dispatch(skeletonAddandOpen(id, dataSet));
-    },
     neuroglancerAddandOpen: (id, dataSet) => {
       dispatch(neuroglancerAddandOpen(id, dataSet));
     },

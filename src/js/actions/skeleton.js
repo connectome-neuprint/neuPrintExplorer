@@ -96,16 +96,28 @@ export function skeletonAdd(id, dataSet) {
   };
 }
 
-export function skeletonAddandOpen(id, dataSet) {
-  return function skeletonAddandOpenAsync(dispatch) {
-    dispatch(skeletonAdd(id, dataSet));
-    dispatch(skeletonOpen());
+export function skeletonAddMultiple(ids, dataSet) {
+  return function skeletonAddMultipleAsync(dispatch) {
+    ids.forEach(id => {
+      dispatch(skeletonAdd(id, dataSet));
+    });
   };
 }
-export function skeletonRemove(id) {
+
+
+export function skeletonAddandOpen(id, dataSet) {
+  return {
+    type: C.SKELETON_ADD_ID,
+    id,
+    dataSet
+  };
+}
+
+export function skeletonRemove(id, dataSet) {
   return {
     type: C.SKELETON_REMOVE,
-    id
+    id,
+    dataSet
   };
 }
 export function skeletonNeuronShow(id) {
@@ -219,6 +231,15 @@ export function skeletonAddCompartment(id) {
       .catch(error => dispatch(skeletonLoadError(error)));
   };
 }
+
+export function skeletonAddMultipleCompartments(ids) {
+  return function skeletonAddMultipleiCompartmentsAsync(dispatch) {
+    ids.forEach(id => {
+      dispatch(skeletonAddCompartment(id));
+    });
+  };
+}
+
 export function skeletonRemoveCompartment(id) {
   return {
     type: C.SKELETON_REMOVE_COMPARTMENT,

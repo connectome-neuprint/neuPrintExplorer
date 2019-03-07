@@ -1,4 +1,6 @@
 import Immutable from 'immutable';
+import { setQueryString, getQueryObject } from 'helpers/queryString';
+
 import C from './constants';
 
 const skeletonState = Immutable.Map({
@@ -27,6 +29,57 @@ export default function skeletonReducer(state = skeletonState, action) {
     case C.SKELETON_CLOSE: {
       return state.set('display', false);
     }
+    case C.SKELETON_ADD_ID: {
+      // grab the tab data
+      const current = getQueryObject('qr', []);
+
+      // need to find the index of the tab we are going to update / replace.
+      let selectedIndex = -1;
+      let selected = null;
+
+      // find existing skeletonviewer tab
+      current.forEach((tab, index) => {
+        if (tab.code === 'sk') {
+          if (tab.ds === action.dataSet) {
+            selectedIndex = index;
+            selected = tab;
+          }
+        }
+      });
+
+      //   if dataSet is the same
+      if (selectedIndex > 0) {
+        const bodyIds = selected.pm.bodyIds.toString().split(',');
+        // push the id into the bodyids list
+        bodyIds.push(action.id);
+        selected.pm.bodyIds = bodyIds.join(',');
+        current[selectedIndex] = selected;
+        setQueryString({
+          tab: selectedIndex,
+        });
+      } else {
+        // if none found, then add one to the querystring
+        //   push the id into the bodyids list
+        // set the tab value to that of the skeleton viewer.
+        current.push({
+          code: 'sk',
+          ds: action.dataSet,
+          pm: {
+            dataSet: action.dataSet,
+            skip: true,
+            bodyIds: action.id
+          }
+        });
+        setQueryString({
+          tab: current.length - 1,
+        });
+      }
+
+      setQueryString({
+        qr: current
+      });
+      return state;
+    }
     case C.SKELETON_ADD: {
       return state.setIn(['neurons', action.id], Immutable.Map({
         name: action.id,
@@ -37,13 +90,35 @@ export default function skeletonReducer(state = skeletonState, action) {
       })).set('loading', false);
     }
     case C.SKELETON_REMOVE: {
-     const updated = state.deleteIn(['neurons', action.id]);
+      // grab the tab data
+      const current = getQueryObject('qr', []);
 
-      if (updated.get('neurons').size < 1) {
-        return updated.set('cameraPosition', null).set('display', false);
+      // need to find the index of the tab we are going to update / replace.
+      let selectedIndex = -1;
+      let selected = null;
+
+      // find existing skeletonviewer tab
+      current.forEach((tab, index) => {
+        if (tab.code === 'sk') {
+          if (tab.ds === action.dataSet) {
+            selectedIndex = index;
+            selected = tab;
+          }
+        }
+      });
+
+      //   if dataSet is the same
+      if (selectedIndex > 0) {
+        const bodyIds = selected.pm.bodyIds.toString().split(',');
+        // push the id into the bodyids list
+        const updated = bodyIds.filter(id => id !== action.id);
+        selected.pm.bodyIds = updated.join(',');
+        current[selectedIndex] = selected;
+        setQueryString({
+          qr: current,
+        });
       }
-
-      return updated;
+      return state;
     }
     case C.SKELETON_NEURON_LOADING: {
       return state.set('loading', true);

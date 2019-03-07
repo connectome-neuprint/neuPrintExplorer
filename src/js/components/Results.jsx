@@ -15,7 +15,7 @@ import Tab from '@material-ui/core/Tab';
 import Icon from '@material-ui/core/Icon';
 import AppBar from '@material-ui/core/AppBar';
 
-import { toggleSkeleton } from 'actions/skeleton';
+import { skeletonAddandOpen, skeletonRemove } from 'actions/skeleton';
 import { setFullScreen, clearFullScreen, setSelectedResult, launchNotification } from 'actions/app';
 import { metaInfoError } from '@neuprint/support';
 import { pluginResponseError } from 'actions/plugins';
@@ -29,7 +29,6 @@ import {
 } from 'helpers/queryString';
 
 import ResultsTopBar from './ResultsTopBar';
-import Skeleton from './Skeleton';
 import NeuroGlancer from './NeuroGlancer';
 
 import './Results.css';
@@ -119,7 +118,6 @@ class Results extends React.Component {
     });
   };
 
-
   downloadFile = index => {
     const { allResults } = this.props;
     const results = allResults.get(index);
@@ -176,6 +174,17 @@ class Results extends React.Component {
     } else if (fetchParams.cypherQuery) {
       parameters.cypher = fetchParams.cypherQuery;
     }
+    // Some plugins have nothing to fetch. In that case we can skip the remote fetch
+    // and just return the query.
+    if (parameters.skip) {
+      const data = plugin.processResults(qParams);
+      const combined = Object.assign(qParams, { result: data });
+      this.setState({
+        currentResult: combined,
+        loadingDisplay: false
+      });
+      return;
+    }
 
     fetch(queryUrl, {
       headers: {
@@ -211,7 +220,16 @@ class Results extends React.Component {
 
   render() {
     // TODO: show query runtime results
-    const { classes, isQuerying, viewPlugins, actions, neoServer, pluginList } = this.props;
+    const {
+      classes,
+      isQuerying,
+      viewPlugins,
+      actions,
+      neoServer,
+      pluginList,
+      neurons,
+      compartments
+    } = this.props;
 
     const { currentResult, loadingDisplay, loadingError } = this.state;
 
@@ -260,7 +278,7 @@ class Results extends React.Component {
     if (!loadingDisplay && currentResult && currentResult.code === currentPlugin.details.abbr) {
       const View = viewPlugins.get(currentPlugin.details.visType);
       tabData = (
-        <div>
+        <div className={classes.full}>
           <ResultsTopBar
             downloadCallback={this.downloadFile}
             name={currentResult.result.title}
@@ -272,6 +290,7 @@ class Results extends React.Component {
         </div>
       );
     }
+
     if (!loadingDisplay && loadingError) {
       tabData = (
         <ResultsTopBar
@@ -292,10 +311,6 @@ class Results extends React.Component {
       return <Tab key={key} label={tab.tabName} />;
     });
 
-    const neuronList = (query.nv || '').split(',').map(num => parseInt(num,10));
-    const compartments = (query.nvc || '').split(',');
-    const cameraPosition = (query.nv_pos || '').split(',').map(num => parseInt(num,10));
-
     return (
       <div className={classes.full}>
         <AppBar position="static" color="default">
@@ -310,19 +325,20 @@ class Results extends React.Component {
             {tabs}
           </Tabs>
         </AppBar>
-        <div className={classes.fill}>
-          <div className={classes.scroll}>
-            <Fade
-              in={isQuerying}
-              style={{
-                transitionDelay: isQuerying ? '800ms' : '0ms'
-              }}
-              unmountOnExit
-            >
-              <CircularProgress />
-            </Fade>
-            <Skeleton compartmentIds={compartments} cameraInit={cameraPosition} neuronsIds={neuronList} key="skeleton" />
-            {tabData}
+        <div className={classes.full}>
+          <div className={classes.fill}>
+            <div className={classes.scroll}>
+              <Fade
+                in={isQuerying}
+                style={{
+                  transitionDelay: isQuerying ? '800ms' : '0ms'
+                }}
+                unmountOnExit
+              >
+                <CircularProgress />
+              </Fade>
+              {tabData}
+            </div>
           </div>
         </div>
       </div>
@@ -361,9 +377,6 @@ const ResultsState = state => ({
 
 const ResultDispatch = dispatch => ({
   actions: {
-    toggleSkeleton: () => {
-      dispatch(toggleSkeleton());
-    },
     setFullScreen: viewer => {
       dispatch(setFullScreen(viewer));
     },
@@ -383,7 +396,13 @@ const ResultDispatch = dispatch => ({
     pluginResponseError: error => {
       dispatch(pluginResponseError(error));
     },
-    launchNotification: message => dispatch(launchNotification(message))
+    launchNotification: message => dispatch(launchNotification(message)),
+    skeletonAddandOpen: (id, dataSet) => {
+      dispatch(skeletonAddandOpen(id, dataSet));
+    },
+    skeletonRemove: (id, dataSet) => {
+      dispatch(skeletonRemove(id, dataSet));
+    },
   }
 });
 

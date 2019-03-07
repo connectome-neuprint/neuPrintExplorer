@@ -7,7 +7,13 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import Chip from '@material-ui/core/Chip';
-import { skeletonNeuronToggle, skeletonRemove, setView } from 'actions/skeleton';
+import {
+  skeletonNeuronToggle,
+  skeletonRemove,
+  setView,
+  skeletonAddMultiple,
+  skeletonAddMultipleCompartments
+} from 'actions/skeleton';
 import SharkViewer from '@janelia/sharkviewer';
 import PouchDB from 'pouchdb';
 import Immutable from 'immutable';
@@ -65,29 +71,38 @@ class Skeleton extends React.Component {
 
   // load skeleton after render takes place
   componentDidMount() {
-    const { neurons, compartments } = this.props;
+    const { neurons, compartments, neuronIds, compartmentIds, actions } = this.props;
+    // TODO: how are we going to get the data set for each neuron id?
+    // could store it in the query url as nv = <id>-<dataSet>,<id>-<dataSet>
+    // That is annoyingly redundant but it may be waht we have to do, otherwise
+    // we have to have a single dataset per tab. or only one visible at a time.
+    // All options sucks with regards to management or url length.
+    const dataSet = 'mb6';
+    if (neuronIds.length > 0) {
+      actions.addSkeletons(neuronIds, dataSet);
+    }
+    if (compartmentIds.length > 0) {
+      actions.addCompartments(compartmentIds);
+    }
+
     this.createShark(neurons, compartments);
   }
 
   componentDidUpdate(prevProps) {
     const { neurons, compartments } = this.props;
-    if (
-      neurons !== prevProps.neurons ||
-      compartments !== prevProps.compartments
-    ) {
-
+    if (neurons !== prevProps.neurons || compartments !== prevProps.compartments) {
       // figure out which components/rois were updated
       const differentNeurons = {};
       const differentCompartments = {};
       neurons.entrySeq().forEach(entry => {
-        const [ key, value ] = entry;
-        if ( value !== prevProps.neurons.get(key) ) {
+        const [key, value] = entry;
+        if (value !== prevProps.neurons.get(key)) {
           differentNeurons[key] = value;
         }
       });
       compartments.entrySeq().forEach(entry => {
-        const [ key, value ] = entry;
-        if ( value !== prevProps.compartments.get(key) ) {
+        const [key, value] = entry;
+        if (value !== prevProps.compartments.get(key)) {
           differentCompartments[key] = value;
         }
       });
@@ -95,17 +110,22 @@ class Skeleton extends React.Component {
       const removedNeurons = [];
       const removedCompartments = [];
       prevProps.neurons.keySeq().forEach(key => {
-        if ( !neurons.has(key) ) {
+        if (!neurons.has(key)) {
           removedNeurons.push(key);
         }
       });
 
       prevProps.compartments.keySeq().forEach(key => {
-        if (!compartments.has(key) ) {
+        if (!compartments.has(key)) {
           removedCompartments.push(key);
         }
       });
-      this.loadShark(Immutable.Map(differentNeurons), Immutable.Map(differentCompartments), removedNeurons, removedCompartments);
+      this.loadShark(
+        Immutable.Map(differentNeurons),
+        Immutable.Map(differentCompartments),
+        removedNeurons,
+        removedCompartments
+      );
     }
   }
 
@@ -135,47 +155,44 @@ class Skeleton extends React.Component {
   createShark = (swcs, rois) => {
     const { cameraPosition } = this.props;
     const { db } = this.state;
-    if (swcs.length !== 0) {
-      const moveCamera = !cameraPosition;
-      const sharkViewer = new SharkViewer({
-        dom_element: 'skeletonviewer',
-        WIDTH: this.skelRef.current.clientWidth,
-        HEIGHT: this.skelRef.current.clientHeight,
-        colors: swcs.map(swc => swc.get('color'))
-      });
-      sharkViewer.init();
-      sharkViewer.animate();
-      swcs.forEach(swc => {
-        sharkViewer.loadNeuron(swc.get('name'), swc.get('color'), swc.get('swc'), moveCamera);
-      });
+    const moveCamera = !cameraPosition;
+    const sharkViewer = new SharkViewer({
+      dom_element: 'skeletonviewer',
+      WIDTH: this.skelRef.current.clientWidth,
+      HEIGHT: this.skelRef.current.clientHeight
+    });
+    sharkViewer.init();
+    sharkViewer.animate();
+    swcs.forEach(swc => {
+      sharkViewer.loadNeuron(swc.get('name'), swc.get('color'), swc.get('swc'), moveCamera);
+    });
 
-      rois.forEach(roi => {
-        const reader = new FileReader();
+    rois.forEach(roi => {
+      const reader = new FileReader();
 
-        reader.addEventListener("loadend", () => {
-          sharkViewer.loadCompartment(roi.get('name'), roi.get('color'), reader.result, moveCamera);
-        });
-
-        db.getAttachment(roi.get('name'), 'obj').then(obj => {
-          reader.readAsText(obj);
-        });
+      reader.addEventListener('loadend', () => {
+        sharkViewer.loadCompartment(roi.get('name'), roi.get('color'), reader.result, moveCamera);
       });
 
-      if (cameraPosition) {
-        const { coords, target } = cameraPosition;
-        sharkViewer.restoreView(coords.x, coords.y, coords.z, target);
-      }
+      db.getAttachment(roi.get('name'), 'obj').then(obj => {
+        reader.readAsText(obj);
+      });
+    });
 
-      sharkViewer.render();
-      sharkViewer.render();
-      this.setState({ sharkViewer });
-       // UGLY: there is a weird bug that means sometimes the scene is rendered blank.
-      // it seems to be some sort of timing issue, and adding a delayed render seems
-      // to fix it.
-      setTimeout(() => {
-        sharkViewer.render();
-      }, 200);
+    if (cameraPosition) {
+      const { coords, target } = cameraPosition;
+      sharkViewer.restoreView(coords.x, coords.y, coords.z, target);
     }
+
+    sharkViewer.render();
+    sharkViewer.render();
+    this.setState({ sharkViewer });
+    // UGLY: there is a weird bug that means sometimes the scene is rendered blank.
+    // it seems to be some sort of timing issue, and adding a delayed render seems
+    // to fix it.
+    setTimeout(() => {
+      sharkViewer.render();
+    }, 200);
   };
 
   loadShark = (swcs, rois, removedSWCs, removedROIs) => {
@@ -233,11 +250,7 @@ class Skeleton extends React.Component {
   };
 
   render() {
-    const { classes, display, neurons } = this.props;
-
-    if (!display) {
-      return null;
-    }
+    const { classes, neurons } = this.props;
 
     const chips = neurons
       .map(neuron => {
@@ -275,22 +288,25 @@ class Skeleton extends React.Component {
 }
 
 Skeleton.propTypes = {
-  display: PropTypes.bool.isRequired,
   actions: PropTypes.object.isRequired,
   classes: PropTypes.object.isRequired,
+  neuronIds: PropTypes.arrayOf(PropTypes.number),
   neurons: PropTypes.object.isRequired,
+  compartmentIds: PropTypes.arrayOf(PropTypes.string),
   compartments: PropTypes.object.isRequired,
+  cameraInit: PropTypes.arrayOf(PropTypes.number).isRequired,
   cameraPosition: PropTypes.object
 };
 
 Skeleton.defaultProps = {
-  cameraPosition: null
+  cameraPosition: null,
+  compartmentIds: [],
+  neuronIds: []
 };
 
 const SkeletonState = state => ({
   neurons: state.skeleton.get('neurons'),
   compartments: state.skeleton.get('compartments'),
-  display: state.skeleton.get('display'),
   cameraPosition: state.skeleton.get('cameraPosition')
 });
 
@@ -301,6 +317,12 @@ const SkeletonDispatch = dispatch => ({
     },
     skeletonRemove: id => {
       dispatch(skeletonRemove(id));
+    },
+    addSkeletons: (ids, dataSet) => {
+      dispatch(skeletonAddMultiple(ids, dataSet));
+    },
+    addCompartments: ids => {
+      dispatch(skeletonAddMultipleCompartments(ids));
     },
     setView: coords => {
       dispatch(setView(coords));
