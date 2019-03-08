@@ -227,8 +227,7 @@ class Results extends React.Component {
       actions,
       neoServer,
       pluginList,
-      neurons,
-      compartments
+      neo4jsettings
     } = this.props;
 
     const { currentResult, loadingDisplay, loadingError } = this.state;
@@ -286,7 +285,7 @@ class Results extends React.Component {
             queryStr={currentResult.result.debug}
             color="#cccccc"
           />
-          <View query={currentResult} index={tabIndex} actions={actions} neoServer={neoServer} />
+          <View query={currentResult} index={tabIndex} actions={actions} neoServer={neoServer} neo4jsettings={neo4jsettings}/>
         </div>
       );
     }
@@ -357,7 +356,8 @@ Results.propTypes = {
   classes: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
-  neoServer: PropTypes.string.isRequired
+  neoServer: PropTypes.string.isRequired,
+  neo4jsettings: PropTypes.object.isRequired
 };
 
 // result data [{name: "table name", header: [headers...], body: [rows...]
@@ -372,6 +372,7 @@ const ResultsState = state => ({
   selectedResult: state.app.get('selectedResult'),
   queryObj: state.query.get('neoQueryObj'),
   fullscreen: state.app.get('fullscreen'),
+  neo4jsettings: state.neo4jsettings,
   neoServer: state.neo4jsettings.get('neoServer')
 });
 
@@ -403,6 +404,8 @@ const ResultDispatch = dispatch => ({
     skeletonRemove: (id, dataSet) => {
       dispatch(skeletonRemove(id, dataSet));
     },
+    getQueryObject: (id, empty) => getQueryObject(id, empty),
+    setQueryString: (data) => setQueryString(data)
   }
 });
 
