@@ -29,7 +29,6 @@ import {
 } from 'helpers/queryString';
 
 import ResultsTopBar from './ResultsTopBar';
-import NeuroGlancer from './NeuroGlancer';
 
 import './Results.css';
 
