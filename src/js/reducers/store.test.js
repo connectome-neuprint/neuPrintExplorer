@@ -49,39 +49,6 @@ describe('store Creation', () => {
   });
   // check store actions
   // skeleton
-  it('should open skeleton', () => {
-    testReducerAction('skeleton', skeleton, { type: C.SKELETON_OPEN });
-  });
-  it('should close skeleton', () => {
-    testReducerAction('skeleton', skeleton, { type: C.SKELETON_CLOSE });
-  });
-  it('should add skeleton', () => {
-    testReducerAction('skeleton', skeleton, {
-      type: C.SKELETON_ADD,
-      id: 'testId',
-      dataSet: 'testDataset',
-      swc: 'testSwc',
-      color: 'testColor'
-    });
-  });
-  it('should remove skeleton', () => {
-    testReducerAction('skeleton', skeleton, { type: C.SKELETON_REMOVE, id: 'testId' });
-  });
-  it('should set neuron loading', () => {
-    testReducerAction('skeleton', skeleton, { type: C.SKELETON_NEURON_LOADING, id: 'testId' });
-  });
-  it('should send neuron loading error', () => {
-    testReducerAction('skeleton', skeleton, {
-      type: C.SKELETON_NEURON_LOAD_ERROR,
-      error: 'testError'
-    });
-  });
-  it('should show neuron', () => {
-    testReducerAction('skeleton', skeleton, { type: C.SKELETON_NEURON_SHOW, id: 'testId' });
-  });
-  it('should hide neuron', () => {
-    testReducerAction('skeleton', skeleton, { type: C.SKELETON_NEURON_HIDE, id: 'testId' });
-  });
   // app
   it('should initialize plugins', () => {
     testReducerAction('app', app, {

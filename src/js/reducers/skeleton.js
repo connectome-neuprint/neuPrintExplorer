@@ -23,12 +23,6 @@ const skeletonState = Immutable.Map({
 
 export default function skeletonReducer(state = skeletonState, action) {
   switch (action.type) {
-    case C.SKELETON_OPEN: {
-      return state.set('display', true);
-    }
-    case C.SKELETON_CLOSE: {
-      return state.set('display', false);
-    }
     case C.SKELETON_ADD_ID: {
       // grab the tab data
       const current = getQueryObject('qr', []);
@@ -80,15 +74,6 @@ export default function skeletonReducer(state = skeletonState, action) {
       });
       return state;
     }
-    case C.SKELETON_ADD: {
-      return state.setIn(['neurons', action.id], Immutable.Map({
-        name: action.id,
-        dataSet: action.dataSet,
-        swc: action.swc,
-        color: action.color,
-        visible: true
-      })).set('loading', false);
-    }
     case C.SKELETON_REMOVE: {
       // grab the tab data
       const current = getQueryObject('qr', []);
@@ -119,33 +104,6 @@ export default function skeletonReducer(state = skeletonState, action) {
         });
       }
       return state;
-    }
-    case C.SKELETON_NEURON_LOADING: {
-      return state.set('loading', true);
-    }
-    case C.SKELETON_NEURON_LOAD_ERROR: {
-      return state.set('loading', false).set('error', action.error);
-    }
-    case C.SKELETON_NEURON_SHOW: {
-      return state.setIn(['neurons', action.id, 'visible'], true);
-    }
-    case C.SKELETON_NEURON_HIDE: {
-      return state.setIn(['neurons', action.id, 'visible'], false);
-    }
-    case C.SKELETON_SET_CAMERA_POSITION: {
-      return state.set('cameraPosition', action.position);
-    }
-    case C.SKELETON_ADD_COMPARTMENT: {
-      return state.setIn(['compartments', action.name], Immutable.Map({
-        name: action.name,
-        dataSet: action.dataSet,
-        obj: action.obj,
-        color: action.color,
-        visible: true
-      }));
-    }
-    case C.SKELETON_REMOVE_COMPARTMENT: {
-      return state.deleteIn(['compartments', action.id]);
     }
     default: {
       return state;
