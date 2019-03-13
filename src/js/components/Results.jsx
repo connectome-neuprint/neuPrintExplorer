@@ -16,6 +16,7 @@ import Icon from '@material-ui/core/Icon';
 import AppBar from '@material-ui/core/AppBar';
 
 import { skeletonAddandOpen, skeletonRemove } from 'actions/skeleton';
+import { neuroglancerAddandOpen } from 'actions/neuroglancer';
 import { setFullScreen, clearFullScreen, setSelectedResult, launchNotification } from 'actions/app';
 import { metaInfoError } from '@neuprint/support';
 import { pluginResponseError } from 'actions/plugins';
@@ -402,6 +403,9 @@ const ResultDispatch = dispatch => ({
     },
     skeletonRemove: (id, dataSet) => {
       dispatch(skeletonRemove(id, dataSet));
+    },
+    neuroglancerAddandOpen: (id, dataSet) => {
+      dispatch(neuroglancerAddandOpen(id, dataSet));
     },
     getQueryObject: (id, empty) => getQueryObject(id, empty),
     setQueryString: (data) => setQueryString(data)

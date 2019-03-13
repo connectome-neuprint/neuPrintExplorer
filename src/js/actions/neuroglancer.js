@@ -136,10 +136,10 @@ export function neuroglancerAddLayer(id, dataSet) {
 }
 
 export function neuroglancerAddandOpen(id, dataSet) {
-  return function neuroglancerAddandOpenAsync(dispatch) {
-    dispatch(neuroglancerAddLayer(id, dataSet));
-    dispatch(neuroglancerAddNeuron(id, dataSet));
-    dispatch(neuroglancerOpen());
+  return {
+    type: C.NEUROGLANCER_ADD_ID,
+    id,
+    dataSet
   };
 }
 export function neuroglancerRemove(id) {
