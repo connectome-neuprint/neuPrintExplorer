@@ -68,40 +68,57 @@ class Query extends React.Component {
     const queryType = qsParams.get('qt') || 'not selected';
     const queryName =
       pluginList
-        .filter(plugin => slug(plugin.queryName) === queryType)
-        .map(plugin => plugin.queryName)[0] || 'Select Query';
+        .filter(plugin => slug(plugin.details.name) === queryType)
+        .map(plugin => plugin.details.displayName)[0] || 'Select Query';
 
     const generalOptions = pluginList
-      .filter(plugin => plugin.queryCategory === undefined)
+      .filter(plugin => plugin.details.category === undefined)
       .map(val => ({
-        value: slug(val.queryName),
-        label: val.isExperimental ? (
+        value: slug(val.details.name),
+        label: val.details.experimental ? (
           <div className={classes.experimentalPlugin}>
-            {val.queryName}
+            {val.details.displayName}
             <Tooltip title="under development" placement="right">
               <Icon style={{ margin: '4px', fontSize: '12px' }}>build</Icon>
             </Tooltip>
           </div>
         ) : (
-          val.queryName
+          val.details.displayName
         )
       }));
 
     const reconOptions = pluginList
-      .filter(plugin => plugin.queryCategory === 'recon')
+      .filter(plugin => plugin.details.category === 'recon')
       .map(val => ({
-        value: slug(val.queryName),
-        label: val.isExperimental ? (
+        value: slug(val.details.name),
+        label: val.details.experimental ? (
           <div className={classes.experimentalPlugin}>
-            {val.queryName}
+            {val.details.displayName}
             <Tooltip title="under development" placement="right">
               <Icon style={{ margin: '4px', fontSize: '12px' }}>build</Icon>
             </Tooltip>
           </div>
         ) : (
-          val.queryName
+          val.details.displayName
         )
       }));
+
+    const otherOptions = pluginList
+      .filter(plugin => plugin.details.category === 'other')
+      .map(val => ({
+        value: slug(val.details.name),
+        label: val.details.experimental ? (
+          <div className={classes.experimentalPlugin}>
+            {val.details.displayName}
+            <Tooltip title="under development" placement="right">
+              <Icon style={{ margin: '4px', fontSize: '12px' }}>build</Icon>
+            </Tooltip>
+          </div>
+        ) : (
+          val.details.displayName
+        )
+      }));
+
 
     const queryOptions = [
       {
@@ -111,6 +128,10 @@ class Query extends React.Component {
       {
         label: 'Reconstruction Related',
         options: reconOptions
+      },
+      {
+        label: 'Other',
+        options: otherOptions
       }
     ];
 

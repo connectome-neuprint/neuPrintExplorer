@@ -19,17 +19,24 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContentText from '@material-ui/core/DialogContentText';
+import CloseIcon from '@material-ui/icons/Close';
 
 import { authError, reAuth } from 'actions/user';
+import { getQueryObject, setQueryString } from 'helpers/queryString';
 import C from '../reducers/constants';
 
-const styles = () => ({
+const styles = (theme) => ({
   root: {
     width: '100%',
     flexGrow: true
   },
   flex: {
     flex: 1
+  },
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing.unit,
+    top: theme.spacing.unit,
   }
 });
 
@@ -49,6 +56,16 @@ class ResultsTopBar extends React.Component {
 
   handleClose = () => {
     this.setState({ open: false });
+  };
+
+  handleRemoveResult = (index) => {
+    // get query object
+    const query = getQueryObject();
+    // remove item from the list at position 'index';
+    query.qr.splice(index, 1)
+    // update the tab index
+    const tabIndex = (query.tab > 0) ? query.tab - 1 : 0;
+    setQueryString({ qr: query.qr, tab: tabIndex })
   };
 
   addFavorite = () => {
@@ -86,8 +103,7 @@ class ResultsTopBar extends React.Component {
       name,
       index,
       queryStr,
-      downloadCallback,
-      actions
+      downloadCallback
     } = this.props;
     const { showQuery, open } = this.state;
 
@@ -112,7 +128,12 @@ class ResultsTopBar extends React.Component {
             }}
             aria-labelledby="form-dialog-title"
           >
-            <DialogTitle id="form-dialog-title">Neo4j Cypher Query</DialogTitle>
+            <DialogTitle id="form-dialog-title">
+              Neo4j Cypher Query
+              <IconButton aria-label="Close" className={classes.closeButton} onClick={() => this.setState({ showQuery: false })}>
+                <CloseIcon />
+              </IconButton>
+            </DialogTitle>
             <DialogContent>
               <DialogContentText>{queryStr}</DialogContentText>
             </DialogContent>
@@ -155,7 +176,7 @@ class ResultsTopBar extends React.Component {
             className={classes.button}
             aria-label="Close Window"
             onClick={() => {
-              actions.clearNewResult(index);
+              this.handleRemoveResult(index);
             }}
           >
             <Icon style={{ fontSize: 18 }}>close</Icon>

@@ -13,15 +13,14 @@ import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
 
-import { submit, formError, pluginResponseError } from 'actions/plugins';
+import { formError, pluginResponseError } from 'actions/plugins';
 import { metaInfoError, launchNotification } from 'actions/app';
-import { skeletonAddandOpen } from 'actions/skeleton';
-import { neuroglancerAddandOpen } from 'actions/neuroglancer';
 import {
   getQueryString,
   getSiteParams,
   setPluginQueryString,
-  getPluginQueryObject
+  getPluginQueryObject,
+  setSearchQueryString
 } from 'helpers/queryString';
 
 const styles = theme => ({
@@ -55,11 +54,25 @@ class QueryForm extends React.Component {
     }
   }
 
+  submit = query => {
+    const { history } = this.props;
+    // set query as a tab in the url query string.
+    setSearchQueryString({
+      code: query.pluginCode,
+      ds: query.dataSet,
+      pm: query.parameters,
+      visProps: query.visProps
+    });
+    history.push({
+      pathname: '/results',
+      search: getQueryString()
+    });
+  };
+
   findCurrentPlugin = () => {
     const { pluginList, queryType } = this.props;
     // find matching query type
-    const CurrentQuery =
-      pluginList.find(plugin => slug(plugin.queryName) === queryType) || pluginList[0];
+    const CurrentQuery = pluginList.find(plugin => slug(plugin.details.name) === queryType);
     return CurrentQuery;
   };
 
@@ -70,6 +83,13 @@ class QueryForm extends React.Component {
   render() {
     // assume the first query is the default
     const CurrentQuery = this.findCurrentPlugin();
+
+    if (!CurrentQuery) {
+      return(
+        <Typography>Please select a query type from the menu above.</Typography>
+      );
+    }
+
     const {
       userInfo,
       classes,
@@ -104,7 +124,7 @@ class QueryForm extends React.Component {
             </span>
           }
         />
-        <Typography>{CurrentQuery.queryDescription}</Typography>
+        <Typography>{CurrentQuery.details.description}</Typography>
         <Divider className={classes.divider} />
         {hasError ? (
           failureMessage
@@ -117,6 +137,7 @@ class QueryForm extends React.Component {
             isQuerying={isQuerying}
             neoServerSettings={neoServerSettings}
             actions={actions}
+            submit={this.submit}
           />
         )}
       </div>
@@ -131,6 +152,7 @@ QueryForm.propTypes = {
   dataSet: PropTypes.string.isRequired,
   isQuerying: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired,
   neoServerSettings: PropTypes.object.isRequired,
   availableROIs: PropTypes.object.isRequired
@@ -147,15 +169,6 @@ const QueryFormState = state => ({
 
 const QueryFormDispatch = dispatch => ({
   actions: {
-    submit: query => {
-      dispatch(submit(query));
-    },
-    skeletonAddandOpen: (id, dataSet) => {
-      dispatch(skeletonAddandOpen(id, dataSet));
-    },
-    neuroglancerAddandOpen: (id, dataSet) => {
-      dispatch(neuroglancerAddandOpen(id, dataSet));
-    },
     formError: query => {
       dispatch(formError(query));
     },

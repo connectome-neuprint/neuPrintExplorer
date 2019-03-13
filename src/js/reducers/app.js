@@ -26,8 +26,6 @@ export default function appReducer(state = appState, action) {
       return state.set('fullscreen', false);
     case C.APP_SET_SELECTED_RESULT:
       return state.set('selectedResult', action.index);
-    case C.SKELETON_OPEN:
-      return state.set('selectedResult', -2);
     case C.PLUGIN_SAVE_RESPONSE:
       return state.set('selectedResult', 0);
     default:
