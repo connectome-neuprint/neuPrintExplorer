@@ -33,7 +33,8 @@ module.exports = {
     miniCssExtractPlugin,
     copyWebpackPlugin,
     new webpack.DefinePlugin({
-      VERSION: JSON.stringify(require('./package.json').version)
+      VERSION: JSON.stringify(require('./package.json').version),
+      PUBLIC: 'false'
     })
   ],
   output: {
@@ -46,9 +47,7 @@ module.exports = {
   watch: true,
   watchOptions: {
     // https://stackoverflow.com/questions/41522721/how-to-watch-certain-node-modules-changes-with-webpack-dev-server
-    ignored: [
-      /node_modules([\\]+|\/)+(?!@neuprint)/
-    ]
+    ignored: [/node_modules([\\]+|\/)+(?!@neuprint)/]
   },
   devtool: 'source-map',
   devServer: {
@@ -64,10 +63,7 @@ module.exports = {
       {
         test: /\.jsx?$/,
         use: ['source-map-loader'],
-        exclude: [
-          /node_modules\/@janelia-flyem\/neuroglancer/,
-          /node_modules\/swagger-client/
-        ],
+        exclude: [/node_modules\/@janelia-flyem\/neuroglancer/, /node_modules\/swagger-client/],
         enforce: 'pre'
       },
       {
