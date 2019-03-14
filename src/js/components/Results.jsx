@@ -401,8 +401,8 @@ const ResultDispatch = dispatch => ({
     skeletonAddandOpen: (id, dataSet) => {
       dispatch(skeletonAddandOpen(id, dataSet));
     },
-    skeletonRemove: (id, dataSet) => {
-      dispatch(skeletonRemove(id, dataSet));
+    skeletonRemove: (id, dataSet, tabIndex) => {
+      dispatch(skeletonRemove(id, dataSet, tabIndex));
     },
     neuroglancerAddandOpen: (id, dataSet) => {
       dispatch(neuroglancerAddandOpen(id, dataSet));

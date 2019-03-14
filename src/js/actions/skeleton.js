@@ -8,10 +8,11 @@ export function skeletonAddandOpen(id, dataSet) {
   };
 }
 
-export function skeletonRemove(id, dataSet) {
+export function skeletonRemove(id, dataSet, tabIndex) {
   return {
     type: C.SKELETON_REMOVE,
     id,
-    dataSet
+    dataSet,
+    tabIndex
   };
 }

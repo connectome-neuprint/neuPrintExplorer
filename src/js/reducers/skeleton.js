@@ -79,26 +79,14 @@ export default function skeletonReducer(state = skeletonState, action) {
       const current = getQueryObject('qr', []);
 
       // need to find the index of the tab we are going to update / replace.
-      let selectedIndex = -1;
-      let selected = null;
+      const selected = current[action.tabIndex];
 
-      // find existing skeletonviewer tab
-      current.forEach((tab, index) => {
-        if (tab.code === 'sk') {
-          if (tab.ds === action.dataSet) {
-            selectedIndex = index;
-            selected = tab;
-          }
-        }
-      });
-
-      //   if dataSet is the same
-      if (selectedIndex > 0) {
+      if (selected) {
         const bodyIds = selected.pm.bodyIds.toString().split(',');
         // push the id into the bodyids list
         const updated = bodyIds.filter(id => id !== action.id);
         selected.pm.bodyIds = updated.join(',');
-        current[selectedIndex] = selected;
+        current[action.tabIndex] = selected;
         setQueryString({
           qr: current,
         });
