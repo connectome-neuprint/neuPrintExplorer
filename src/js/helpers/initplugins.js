@@ -1,3 +1,4 @@
+/* global PUBLIC */
 /*
  * Loads plugin modules and names from plugin directory.
  */
@@ -23,9 +24,16 @@ extViews.keys().forEach(key => {
 });
 
 // load the core query plugins
-Object.keys(plugins).forEach(key => {
-  pluginList.push(plugins[key]);
-});
+Object.keys(plugins)
+  .filter(key => {
+    if (PUBLIC) {
+      return !plugins[key].details.experimental;
+    }
+    return key;
+  })
+  .forEach(key => {
+    pluginList.push(plugins[key]);
+  });
 // load the external query plugins
 extQueries.keys().forEach(key => {
   pluginList.unshift(extQueries(key).default);
