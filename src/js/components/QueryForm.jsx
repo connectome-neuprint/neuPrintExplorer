@@ -1,7 +1,7 @@
+/* global PUBLIC */
 /*
  * Query form that calls specific plugins for form input an doutput processing.
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -85,9 +85,7 @@ class QueryForm extends React.Component {
     const CurrentQuery = this.findCurrentPlugin();
 
     if (!CurrentQuery) {
-      return(
-        <Typography>Please select a query type from the menu above.</Typography>
-      );
+      return <Typography>Please select a query type from the menu above.</Typography>;
     }
 
     const {
@@ -138,6 +136,7 @@ class QueryForm extends React.Component {
             neoServerSettings={neoServerSettings}
             actions={actions}
             submit={this.submit}
+            isPublic={PUBLIC} // indicates whether or not the application is in public mode
           />
         )}
       </div>

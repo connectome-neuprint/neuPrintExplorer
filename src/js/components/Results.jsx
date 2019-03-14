@@ -1,3 +1,4 @@
+/* global PUBLIC */
 /*
  * Main page to hold results from query.  This could be
  * a simple table or a table of tables.
@@ -202,7 +203,7 @@ class Results extends React.Component {
           throw new Error(resp.error);
         }
         // make new result object
-        const data = plugin.processResults(qParams, resp, actions, this.submit);
+        const data = plugin.processResults(qParams, resp, actions, this.submit, PUBLIC); // PUBLIC indicates whether or not this is a public version of the application
         const combined = Object.assign(qParams, { result: data });
         this.setState({
           currentResult: combined,
@@ -285,7 +286,13 @@ class Results extends React.Component {
             queryStr={currentResult.result.debug}
             color="#cccccc"
           />
-          <View query={currentResult} index={tabIndex} actions={actions} neoServer={neoServer} neo4jsettings={neo4jsettings}/>
+          <View
+            query={currentResult}
+            index={tabIndex}
+            actions={actions}
+            neoServer={neoServer}
+            neo4jsettings={neo4jsettings}
+          />
         </div>
       );
     }
@@ -408,7 +415,7 @@ const ResultDispatch = dispatch => ({
       dispatch(neuroglancerAddandOpen(id, dataSet));
     },
     getQueryObject: (id, empty) => getQueryObject(id, empty),
-    setQueryString: (data) => setQueryString(data)
+    setQueryString: data => setQueryString(data)
   }
 });
 
