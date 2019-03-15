@@ -137,6 +137,7 @@ class QueryForm extends React.Component {
             actions={actions}
             submit={this.submit}
             isPublic={PUBLIC} // indicates whether or not the application is in public mode
+            key={dataSet}
           />
         )}
       </div>
