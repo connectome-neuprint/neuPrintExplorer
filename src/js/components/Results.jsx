@@ -104,6 +104,10 @@ class Results extends React.Component {
     }
   }
 
+  static getDerivedStateFromError(error) {
+    return { loadingError: error };
+  }
+
   submit = query => {
     const { history } = this.props;
     // TODO: set query as a tab in the url query string.
@@ -299,13 +303,16 @@ class Results extends React.Component {
 
     if (!loadingDisplay && loadingError) {
       tabData = (
-        <ResultsTopBar
-          downloadCallback={this.downloadFile}
-          name="Error loading content"
-          index={tabIndex}
-          queryStr="error"
-          color="#ffcccc"
-        />
+        <div className={classes.full}>
+          <ResultsTopBar
+            downloadCallback={this.downloadFile}
+            name="Error loading content"
+            index={tabIndex}
+            queryStr="error"
+            color="#ffcccc"
+          />
+          <div>{loadingError.toString()}</div>
+        </div>
       );
     }
 
