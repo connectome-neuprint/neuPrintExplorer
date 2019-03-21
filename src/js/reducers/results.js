@@ -6,21 +6,33 @@ import Immutable from 'immutable';
 import C from './constants';
 
 const resultsState = Immutable.Map({
-  clearIndices: new Set(),
-  numClear: 0,
-  allResults: Immutable.List([])
+  allResults: Immutable.List([]),
+  loading: false,
+  loadingError: null,
 });
 
 export default function resultsReducer(state = resultsState, action) {
   switch (action.type) {
+    case C.PLUGIN_SUBMITTING: {
+      return state.set('loading', true)
+        .removeIn(['allResults', action.tab])
+        .set('loadingError', null);
+    }
     case C.CLEAR_NEW_RESULT: {
       return state.removeIn(['allResults', action.index]);
     }
     case C.PLUGIN_SAVE_RESPONSE: {
-      return state.updateIn(['allResults'], results => results.unshift(action.combined));
+      return state.setIn(['allResults', action.tabIndex], action.response)
+        .set('loading', false)
+        .set('loadingError', null);
     }
     case C.UPDATE_QUERY: {
       return state.setIn(['allResults', action.index], action.queryObject);
+    }
+    case C.PLUGIN_SUBMIT_ERROR: {
+      return state.removeIn(['allResults', action.tabIndex])
+        .set('loading', false)
+        .set('loadingError', action.error);
     }
     default: {
       return state;

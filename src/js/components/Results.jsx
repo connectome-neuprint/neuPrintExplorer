@@ -20,7 +20,7 @@ import { skeletonAddandOpen, skeletonRemove } from 'actions/skeleton';
 import { neuroglancerAddandOpen } from 'actions/neuroglancer';
 import { setFullScreen, clearFullScreen, setSelectedResult, launchNotification } from 'actions/app';
 import { metaInfoError } from '@neuprint/support';
-import { pluginResponseError } from 'actions/plugins';
+import { pluginResponseError, fetchData } from 'actions/plugins';
 
 import {
   getQueryObject,
@@ -57,20 +57,11 @@ const styles = theme => ({
 });
 
 class Results extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      currentResult: null,
-      loadingDisplay: false,
-      loadingError: false
-    };
-  }
-
   componentDidMount() {
     // grab the contents of the search string.
     // if it has an array of query objects, fetch the data from neuPrint
     // and store it in the redux/local state?
-    const { pluginList } = this.props;
+    const { pluginList, actions } = this.props;
     const query = getQueryObject();
     const resultsList = query.qr || [];
     const tabValue = parseInt(query.tab || 0, 10);
@@ -81,12 +72,12 @@ class Results extends React.Component {
       );
 
       // only fetch results for the tab being displayed.
-      this.fetchData(resultsList[tabValue], currentPlugin);
+      actions.fetchData(resultsList[tabValue], currentPlugin, tabValue);
     }
   }
 
   componentDidUpdate(prevProps) {
-    const { location, pluginList } = this.props;
+    const { location, pluginList, actions } = this.props;
     // if the number of tabs has changed, then update the data.
     // if the current tab has changed, then update.
     // if the current page has changed, then update.
@@ -99,7 +90,7 @@ class Results extends React.Component {
         const currentPlugin = pluginList.find(
           plugin => plugin.details.abbr === resultsList[tabValue].code
         );
-        this.fetchData(resultsList[tabValue], currentPlugin);
+        actions.fetchData(resultsList[tabValue], currentPlugin, tabValue);
       }
     }
   }
@@ -110,7 +101,7 @@ class Results extends React.Component {
 
   submit = query => {
     const { history } = this.props;
-    // TODO: set query as a tab in the url query string.
+    // set query as a tab in the url query string.
     setSearchQueryString({
       code: query.pluginCode,
       ds: query.dataSet,
@@ -123,6 +114,7 @@ class Results extends React.Component {
     });
   };
 
+  // TODO: fix the download button.
   downloadFile = index => {
     const { allResults } = this.props;
     const results = allResults.get(index);
@@ -150,95 +142,23 @@ class Results extends React.Component {
     setQueryString({ tab: value });
   };
 
-  fetchData(qParams, plugin) {
-    const { actions } = this.props;
-    const { pm: parameters } = qParams;
-    if (!plugin) {
-      return;
-    }
-
-    this.setState({
-      loadingDisplay: true,
-      currentResult: null,
-      loadingError: null
-    });
-
-    // TODO: we should be able to generate the cypher query by calling a function
-    // from the plugin, for all plugins apart from the custom query plugin.
-    //
-    const fetchParams = plugin.fetchParameters(parameters);
-    // build the query url. Use the custom one by default.
-    let queryUrl = '/api/custom/custom';
-    if (fetchParams.queryString) {
-      queryUrl = `/api${fetchParams.queryString}`;
-    }
-
-    // if cypherQuery is passed in, then add it to the parameters.
-    if (parameters.cypherQuery) {
-      parameters.cypher = parameters.cypherQuery;
-    } else if (fetchParams.cypherQuery) {
-      parameters.cypher = fetchParams.cypherQuery;
-    }
-    // Some plugins have nothing to fetch. In that case we can skip the remote fetch
-    // and just return the query.
-    if (parameters.skip) {
-      const data = plugin.processResults(qParams);
-      const combined = Object.assign(qParams, { result: data });
-      this.setState({
-        currentResult: combined,
-        loadingDisplay: false
-      });
-      return;
-    }
-
-    fetch(queryUrl, {
-      headers: {
-        'content-type': 'application/json',
-        Accept: 'application/json'
-      },
-      body: JSON.stringify(parameters),
-      method: 'POST',
-      credentials: 'include'
-    })
-      .then(result => result.json())
-      .then(resp => {
-        // sends error message provided by neuprinthttp
-        if (resp.error) {
-          throw new Error(resp.error);
-        }
-        // make new result object
-        const data = plugin.processResults(qParams, resp, actions, this.submit, PUBLIC); // PUBLIC indicates whether or not this is a public version of the application
-        const combined = Object.assign(qParams, { result: data });
-        this.setState({
-          currentResult: combined,
-          loadingDisplay: false
-        });
-      })
-      .catch(error => {
-        this.setState({
-          loadingError: error,
-          loadingDisplay: false,
-          currentResult: null
-        });
-      });
-  }
-
   render() {
     // TODO: show query runtime results
     const {
       classes,
       isQuerying,
+      loadingError,
       viewPlugins,
+      allResults,
       actions,
       neoServer,
       pluginList,
       neo4jsettings
     } = this.props;
 
-    const { currentResult, loadingDisplay, loadingError } = this.state;
-
     const query = getQueryObject();
     const resultsList = query.qr || [];
+    const tabValue = parseInt(query.tab || 0, 10);
 
     if (!isQuerying && resultsList.length === 0) {
       return (
@@ -253,10 +173,6 @@ class Results extends React.Component {
       );
     }
 
-    const tabValue = parseInt(query.tab || 0, 10);
-    const currentPlugin = pluginList.find(
-      plugin => plugin.details.abbr === resultsList[tabValue].code
-    );
     const resultTabs = resultsList.map(result => {
       const updated = result;
       updated.tabName = pluginList.find(
@@ -279,29 +195,49 @@ class Results extends React.Component {
       </div>
     );
 
-    if (!loadingDisplay && currentResult && currentResult.code === currentPlugin.details.abbr) {
-      const View = viewPlugins.get(currentPlugin.details.visType);
-      tabData = (
-        <div className={classes.full}>
-          <ResultsTopBar
-            downloadCallback={this.downloadFile}
-            name={currentResult.result.title}
-            index={tabIndex}
-            queryStr={currentResult.result.debug}
-            color="#cccccc"
-          />
-          <View
-            query={currentResult}
-            index={tabIndex}
-            actions={actions}
-            neoServer={neoServer}
-            neo4jsettings={neo4jsettings}
-          />
-        </div>
+
+    if (!isQuerying && allResults.get(tabValue)) {
+      const currentPlugin = pluginList.find(
+        plugin => plugin.details.abbr === resultsList[tabValue].code
       );
+
+      const currentResult = currentPlugin.processResults(
+        resultsList[tabValue],
+        allResults.get(tabValue),
+        actions,
+        this.submit,
+        PUBLIC // PUBLIC indicates this is a public version of the application
+      );
+
+      const combined = Object.assign(resultsList[tabValue], { result: currentResult });
+
+      if (combined && combined.code === currentPlugin.details.abbr) {
+        const View = viewPlugins.get(currentPlugin.details.visType);
+        tabData = (
+          <div className={classes.full}>
+            <ResultsTopBar
+              downloadCallback={this.downloadFile}
+              name={combined.result.title}
+              index={tabIndex}
+              queryStr={combined.result.debug}
+              color="#cccccc"
+            />
+            <View
+              query={combined}
+              index={tabIndex}
+              actions={actions}
+              neoServer={neoServer}
+              neo4jsettings={neo4jsettings}
+            />
+          </div>
+        );
+      }
     }
 
-    if (!loadingDisplay && loadingError) {
+    // Return here with a way to close the tab, if an error
+    // occurred loading the data. Maybe add a try again button.
+
+    if (!isQuerying && loadingError) {
       tabData = (
         <div className={classes.full}>
           <ResultsTopBar
@@ -316,8 +252,6 @@ class Results extends React.Component {
       );
     }
 
-    // TODO: add return here with a way to close the tab, if an error
-    // occurred loading the data. Maybe add a try again button.
 
     const tabs = resultTabs.map((tab, index) => {
       const key = `${tab.code}${index}`;
@@ -366,6 +300,7 @@ Results.propTypes = {
   allResults: PropTypes.object.isRequired,
   pluginList: PropTypes.arrayOf(PropTypes.func).isRequired,
   viewPlugins: PropTypes.object.isRequired,
+  loadingError: PropTypes.object,
   isQuerying: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired,
@@ -374,11 +309,15 @@ Results.propTypes = {
   neo4jsettings: PropTypes.object.isRequired
 };
 
+Results.defaultProps = {
+  loadingError: null
+};
+
 // result data [{name: "table name", header: [headers...], body: [rows...]
 const ResultsState = state => ({
   pluginList: state.app.get('pluginList'),
-  isQuerying: state.query.get('isQuerying'),
-  neoError: state.query.get('neoError'),
+  isQuerying: state.results.get('loading'),
+  loadingError: state.results.get('loadingError'),
   allResults: state.results.get('allResults'),
   viewPlugins: state.app.get('viewPlugins'),
   showSkel: state.skeleton.get('display'),
@@ -422,7 +361,10 @@ const ResultDispatch = dispatch => ({
       dispatch(neuroglancerAddandOpen(id, dataSet));
     },
     getQueryObject: (id, empty) => getQueryObject(id, empty),
-    setQueryString: data => setQueryString(data)
+    setQueryString: data => setQueryString(data),
+    fetchData: (qParams, plugin, tabPosition) => {
+      dispatch(fetchData(qParams, plugin, tabPosition));
+    }
   }
 });
 
