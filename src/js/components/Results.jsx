@@ -275,15 +275,6 @@ class Results extends React.Component {
         <div className={classes.full}>
           <div className={classes.fill}>
             <div className={classes.scroll}>
-              <Fade
-                in={isQuerying}
-                style={{
-                  transitionDelay: isQuerying ? '800ms' : '0ms'
-                }}
-                unmountOnExit
-              >
-                <CircularProgress />
-              </Fade>
               {tabData}
             </div>
           </div>
