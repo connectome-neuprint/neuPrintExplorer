@@ -89,10 +89,11 @@ export function setPluginQueryString(newData) {
 
 export function setSearchQueryString(newData) {
   const currentQuery = getPluginQueryObject();
-  currentQuery.unshift(newData);
+  currentQuery.push(newData);
+  const tab = currentQuery.length - 1;
   setQueryString({
     'qr': currentQuery,
-    'tab': 0
+    tab
   });
 }
 
