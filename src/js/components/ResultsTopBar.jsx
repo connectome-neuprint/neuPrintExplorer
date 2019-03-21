@@ -59,12 +59,14 @@ class ResultsTopBar extends React.Component {
   };
 
   handleRemoveResult = (index) => {
+    const { actions } = this.props;
     // get query object
     const query = getQueryObject();
     // remove item from the list at position 'index';
     query.qr.splice(index, 1)
     // update the tab index
     const tabIndex = (query.tab > 0) ? query.tab - 1 : 0;
+    actions.clearNewResult(tabIndex);
     setQueryString({ qr: query.qr, tab: tabIndex })
   };
 
@@ -196,12 +198,6 @@ const ResultsTopBarDispatch = dispatch => ({
   actions: {
     reAuth() {
       dispatch(reAuth());
-    },
-    clearResult(index) {
-      dispatch({
-        type: C.CLEAR_RESULT,
-        index
-      });
     },
     authError(message) {
       dispatch(authError(message));
