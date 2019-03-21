@@ -1,3 +1,4 @@
+import isEqual from 'react-fast-compare';
 import C from '../reducers/constants';
 
 export function pluginResponseError(error) {
@@ -29,10 +30,11 @@ function fetchingData(tab) {
   };
 }
 
-function dataLoaded(response, tabIndex) {
+function dataLoaded(response, params, tabIndex) {
   return {
     type: C.PLUGIN_SAVE_RESPONSE,
     response,
+    params,
     tabIndex
   };
 }
@@ -57,8 +59,10 @@ export function fetchData(params, plugin, tabPosition) {
     // closing a tab needs to remove the cached values.
     const cached = getState().results.getIn(['allResults', tabPosition]);
     if (cached) {
-      dispatch(cacheHit());
-      return;
+      if (isEqual(cached.params, params)) {
+        dispatch(cacheHit());
+        return;
+      }
     }
 
     const { pm: parameters } = params;
@@ -85,7 +89,7 @@ export function fetchData(params, plugin, tabPosition) {
     // and just return the query.
     if (parameters.skip) {
       const data = {};
-      dispatch(dataLoaded(data, tabPosition));
+      dispatch(dataLoaded(data, params, tabPosition));
       return;
     }
 
@@ -104,8 +108,7 @@ export function fetchData(params, plugin, tabPosition) {
         if (resp.error) {
           throw new Error(resp.error);
         }
-        // make new result object
-        dispatch(dataLoaded(resp, tabPosition));
+        dispatch(dataLoaded(resp, params, tabPosition));
       })
       .catch(error => {
         dispatch(dataLoadFailed(error));

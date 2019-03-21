@@ -26,7 +26,10 @@ export default function resultsReducer(state = resultsState, action) {
         .set('loadingError', null);
     }
     case C.PLUGIN_SAVE_RESPONSE: {
-      return state.setIn(['allResults', action.tabIndex], action.response)
+      return state.setIn(['allResults', action.tabIndex], {
+        result: action.response,
+        params: action.params
+      })
         .set('loading', false)
         .set('loadingError', null);
     }

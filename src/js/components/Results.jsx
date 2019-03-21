@@ -173,14 +173,6 @@ class Results extends React.Component {
       );
     }
 
-    const resultTabs = resultsList.map(result => {
-      const updated = result;
-      updated.tabName = pluginList.find(
-        plugin => plugin.details.abbr === result.code
-      ).details.displayName;
-      return updated;
-    });
-
     const tabIndex = parseInt(query.tab || 0, 10);
     let tabData = (
       <div>
@@ -196,41 +188,45 @@ class Results extends React.Component {
     );
 
 
-    if (!isQuerying && allResults.get(tabValue)) {
-      const currentPlugin = pluginList.find(
-        plugin => plugin.details.abbr === resultsList[tabValue].code
-      );
-
-      const currentResult = currentPlugin.processResults(
-        resultsList[tabValue],
-        allResults.get(tabValue),
-        actions,
-        this.submit,
-        PUBLIC // PUBLIC indicates this is a public version of the application
-      );
-
-      const combined = Object.assign(resultsList[tabValue], { result: currentResult });
-
-      if (combined && combined.code === currentPlugin.details.abbr) {
-        const View = viewPlugins.get(currentPlugin.details.visType);
-        tabData = (
-          <div className={classes.full}>
-            <ResultsTopBar
-              downloadCallback={this.downloadFile}
-              name={combined.result.title}
-              index={tabIndex}
-              queryStr={combined.result.debug}
-              color="#cccccc"
-            />
-            <View
-              query={combined}
-              index={tabIndex}
-              actions={actions}
-              neoServer={neoServer}
-              neo4jsettings={neo4jsettings}
-            />
-          </div>
+    if (!isQuerying) {
+      const cachedResults = allResults.get(tabValue);
+      // check that we have some results and they match the plugin we are trying to use.
+      if (cachedResults && cachedResults.params.code === resultsList[tabValue].code) {
+        const currentPlugin = pluginList.find(
+          plugin => plugin.details.abbr === resultsList[tabValue].code
         );
+
+        const currentResult = currentPlugin.processResults(
+          resultsList[tabValue],
+          cachedResults.result,
+          actions,
+          this.submit,
+          PUBLIC // PUBLIC indicates this is a public version of the application
+        );
+
+        const combined = Object.assign(resultsList[tabValue], { result: currentResult });
+
+        if (combined && combined.code === currentPlugin.details.abbr) {
+          const View = viewPlugins.get(currentPlugin.details.visType);
+          tabData = (
+            <div className={classes.full}>
+              <ResultsTopBar
+                downloadCallback={this.downloadFile}
+                name={combined.result.title}
+                index={tabIndex}
+                queryStr={combined.result.debug}
+                color="#cccccc"
+              />
+              <View
+                query={combined}
+                index={tabIndex}
+                actions={actions}
+                neoServer={neoServer}
+                neo4jsettings={neo4jsettings}
+              />
+            </div>
+          );
+        }
       }
     }
 
@@ -253,9 +249,12 @@ class Results extends React.Component {
     }
 
 
-    const tabs = resultTabs.map((tab, index) => {
+    const tabs = resultsList.map((tab, index) => {
       const key = `${tab.code}${index}`;
-      return <Tab key={key} label={tab.tabName} />;
+      const tabName = pluginList.find(
+        plugin => plugin.details.abbr === tab.code
+      ).details.displayName;
+      return <Tab key={key} label={tabName} />;
     });
 
     return (
