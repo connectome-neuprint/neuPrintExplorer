@@ -8,8 +8,6 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import Typography from '@material-ui/core/Typography';
-import Fade from '@material-ui/core/Fade';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import { withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
