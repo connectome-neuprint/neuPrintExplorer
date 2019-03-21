@@ -54,11 +54,13 @@ function cacheHit() {
 
 export function fetchData(params, plugin, tabPosition) {
   return function fetchDataAsync(dispatch, getState) {
-    // TODO: add a cache lookup step that checks either Redux store
+    // cache lookup step that checks either Redux store
     // or localStorage to see if we have already fetched the results.
     // closing a tab needs to remove the cached values.
     const cached = getState().results.getIn(['allResults', tabPosition]);
     if (cached) {
+      // TODO: ignore vizProps when checking parameters, since that is
+      // allowed to change, without triggering a data refresh.
       if (isEqual(cached.params, params)) {
         dispatch(cacheHit());
         return;
