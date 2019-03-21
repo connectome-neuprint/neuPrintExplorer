@@ -118,11 +118,23 @@ function dataLoadFailed(error) {
   };
 }
 
+function cacheHit() {
+  return {
+    type: C.PLUGIN_CACHE_HIT
+  };
+}
+
 export function fetchData(params, plugin, tabPosition) {
-  return function fetchDataAsync(dispatch) {
+  return function fetchDataAsync(dispatch, getState) {
     // TODO: add a cache lookup step that checks either Redux store
     // or localStorage to see if we have already fetched the results.
     // closing a tab needs to remove the cached values.
+    const cached = getState().results.getIn(['allResults', tabPosition]);
+    if (cached) {
+      dispatch(cacheHit());
+      return;
+    }
+
     const { pm: parameters } = params;
     if (!plugin) {
       return;
