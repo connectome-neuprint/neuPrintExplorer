@@ -6,6 +6,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import clone from 'clone';
 
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
@@ -194,9 +195,15 @@ class Results extends React.Component {
           plugin => plugin.details.abbr === resultsList[tabValue].code
         );
 
+        // We need to deep clone the cached result here, because it looks
+        // like the plugin can modify the cached results. This can lead to strange
+        // behavior now that the results are processed every time the tab is loaded.
+        // If we provide a clone of the object, then the plugin can do what it wants,
+        // without affecting the stored results.
+        const resultsCopy = clone(cachedResults.result);
         const currentResult = currentPlugin.processResults(
           resultsList[tabValue],
-          cachedResults.result,
+          resultsCopy,
           actions,
           this.submit,
           PUBLIC // PUBLIC indicates this is a public version of the application

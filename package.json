@@ -65,6 +65,7 @@
     "@neuprint/views": "^0.4.0",
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "classnames": "^2.2.6",
+    "clone": "^2.1.2",
     "colormap": "^2.3.0",
     "deepmerge": "^2.2.1",
     "history": "^4.7.2",
