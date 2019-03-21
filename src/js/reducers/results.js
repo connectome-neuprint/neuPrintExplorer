@@ -15,7 +15,10 @@ export default function resultsReducer(state = resultsState, action) {
   switch (action.type) {
     case C.PLUGIN_SUBMITTING: {
       return state.set('loading', true)
-        .removeIn(['allResults', action.tab])
+        .setIn(['allResults', action.tab], {
+          result: null,
+          params: null
+        })
         .set('loadingError', null);
     }
     case C.CLEAR_NEW_RESULT: {
