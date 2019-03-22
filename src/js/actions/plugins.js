@@ -1,4 +1,5 @@
 import isEqual from 'react-fast-compare';
+import clone from 'clone';
 import C from '../reducers/constants';
 
 export function pluginResponseError(error) {
@@ -67,13 +68,16 @@ export function fetchData(params, plugin, tabPosition) {
       }
     }
 
-    const { pm: parameters } = params;
     if (!plugin) {
       return;
     }
 
+
     dispatch(fetchingData(tabPosition));
 
+    // we need to clone this object so that it doesn't modify the stored
+    // parameters. This is important when checking for cached results.
+    const parameters = clone(params.pm);
     const fetchParams = plugin.fetchParameters(parameters);
     // build the query url. Use the custom one by default.
     let queryUrl = '/api/custom/custom';
