@@ -60,9 +60,13 @@ export function fetchData(params, plugin, tabPosition) {
     // closing a tab needs to remove the cached values.
     const cached = getState().results.getIn(['allResults', tabPosition]);
     if (cached) {
-      // TODO: ignore vizProps when checking parameters, since that is
+      // Ignore visProps when checking parameters, since that is
       // allowed to change, without triggering a data refresh.
-      if (isEqual(cached.params, params)) {
+      const cachedCopy = clone(cached.params);
+      const currentCopy = clone(params);
+      delete cachedCopy.visProps;
+      delete currentCopy.visProps;
+      if (isEqual(cachedCopy, currentCopy)) {
         dispatch(cacheHit());
         return;
       }
