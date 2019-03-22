@@ -5,8 +5,8 @@ import reducer from './results';
 
 const state = Immutable.Map({
   allResults: Immutable.List([{ existingResult: 'testResult' }]),
-  clearIndices: new Set(),
-  numClear: 0
+  loadingError: null,
+  loading: false
 });
 
 describe('results Reducer', () => {
@@ -18,15 +18,15 @@ describe('results Reducer', () => {
     expect(reducer(undefined, action)).toEqual(
       Immutable.Map({
         allResults: Immutable.List([]),
-        clearIndices: new Set(),
-        numClear: 0
+        loadingError: null,
+        loading: false
       })
     );
     expect(reducer(state, action)).toEqual(
       Immutable.Map({
-        clearIndices: new Set(),
         allResults: Immutable.List([]),
-        numClear: 0
+        loadingError: null,
+        loading: false
       })
     );
   });
@@ -34,40 +34,40 @@ describe('results Reducer', () => {
   it('PLUGIN_SAVE_RESPONSE success', () => {
     const action = {
       type: C.PLUGIN_SAVE_RESPONSE,
-      combined: {
+      tabIndex: 0,
+      response: { columns: ['a', 'b'], data: [1, 2] },
+      params: {
         dataSet: 'hemibrain',
         queryString: 'testQueryString',
-        visType: 'testVisType',
-        result: { columns: ['a', 'b'], data: [1, 2] }
+        visType: 'testVisType'
       }
     };
     expect(reducer(undefined, action)).toEqual(
       Immutable.Map({
-        allResults: Immutable.List([
-          {
+        allResults: Immutable.List([{
+          params: {
             dataSet: 'hemibrain',
             queryString: 'testQueryString',
-            visType: 'testVisType',
-            result: { columns: ['a', 'b'], data: [1, 2] }
-          }
-        ]),
-        clearIndices: new Set(),
-        numClear: 0
+            visType: 'testVisType'
+          },
+          result: { columns: ['a', 'b'], data: [1, 2] }
+        }]),
+        loading: false,
+        loadingError: null
       })
     );
     expect(reducer(state, action)).toEqual(
       Immutable.Map({
-        clearIndices: new Set(),
-        allResults: Immutable.List([
-          {
+        allResults: Immutable.List([{
+          params: {
             dataSet: 'hemibrain',
             queryString: 'testQueryString',
             visType: 'testVisType',
-            result: { columns: ['a', 'b'], data: [1, 2] }
           },
-          { existingResult: 'testResult' }
-        ]),
-        numClear: 0
+          result: { columns: ['a', 'b'], data: [1, 2] }
+        }]),
+        loading: false,
+        loadingError: null
       })
     );
   });
