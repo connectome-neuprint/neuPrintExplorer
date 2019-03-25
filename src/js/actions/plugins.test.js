@@ -1,16 +1,15 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import Immutable from 'immutable';
 
 import * as pluginsActions from './plugins';
 import C from '../reducers/constants';
 
 const mockStore = configureStore([thunk]);
-let store;
 
 describe('plugins Actions', () => {
   beforeEach(() => {
     fetch.resetMocks();
-    store = mockStore({});
   });
   it('should create plugin response error action', () => {
     const expectedAction = {
@@ -19,74 +18,53 @@ describe('plugins Actions', () => {
     };
     expect(pluginsActions.pluginResponseError('test')).toEqual(expectedAction);
   });
-  it('should dispatch submit query', () => {
+
+  it('should check for cached data and miss.', () => {
     fetch.mockResponse(JSON.stringify({ data: [['1:2:3']] }));
-    // TODO: check that submission errors are sent correctly
-
-    const query = {
-      queryStr: '/testcall',
-      parameters: { p: 'test' },
-      processResults: jest.fn(() => ({
-        data: [['1:2:3']]
-      }))
-    };
-    const submitAsync = pluginsActions.submit(query);
-    submitAsync(store.dispatch).then(() => {
-      expect(window.fetch).toHaveBeenCalledTimes(1);
-
-      const actions = store.getActions();
-
-      expect(actions).toContainEqual({
-        type: C.PLUGIN_SUBMITTING,
-        query
-      });
-
-      const combined = Object.assign(query, {
-        result: { data: [['1:2:3']] }
-      });
-      expect(actions).toContainEqual({
-        type: C.PLUGIN_SAVE_RESPONSE,
-        combined
-      });
-      expect(actions.length).toBe(2);
+    const store = mockStore({
+      results: Immutable.Map({
+        allResults: Immutable.List([])
+      })
     });
+
+    const plugin = {
+      fetchParameters: () => ''
+    };
+
+    store
+      .dispatch(pluginsActions.fetchData({pm: {foo: 1}}, plugin, 0))
+      .then(() => {
+        expect(fetch).toBeCalled();
+        const actions = store.getActions();
+        expect(actions[0].type).toEqual('PLUGIN_SUBMITTING');
+        expect(actions[1].type).toEqual('PLUGIN_SAVE_RESPONSE');
+      })
   });
-  it('should dispatch submit for custom queries', () => {
+
+
+  it ('should iissue cache hit if it finds cached data.', () => {
     fetch.mockResponse(JSON.stringify({ data: [['1:2:3']] }));
 
-    // custom query
-    const customQuery = {
-      cypherQuery: 'testCypherQuery',
-      parameters: { p: 'test' },
-      processResults: jest.fn(() => ({
-        data: [['1:2:3']]
-      }))
-    };
-    const submitAsync = pluginsActions.submit(customQuery);
-    submitAsync(store.dispatch).then(() => {
-      expect(window.fetch).toHaveBeenCalledTimes(1);
-
-      const actions = store.getActions();
-
-      expect(actions).toContainEqual({
-        type: C.PLUGIN_SUBMITTING,
-        query: Object.assign(
-          customQuery,
-          Object.assign(customQuery.parameters, { cypherQuery: customQuery.cypherQuery })
-        )
-      });
-
-      const combined = Object.assign(customQuery, {
-        result: { data: [['1:2:3']] }
-      });
-      expect(actions).toContainEqual({
-        type: C.PLUGIN_SAVE_RESPONSE,
-        combined
-      });
-
-      expect(actions.length).toBe(2);
+    const store = mockStore({
+      results: Immutable.Map({
+        allResults: Immutable.List([{params: { pm: {}}}])
+      })
     });
+
+    const plugin = {
+      fetchParameters: () => ''
+    };
+
+    store
+      .dispatch(pluginsActions.fetchData({pm: {}}, plugin, 0))
+      .then(() => {
+        // expect(fetch).not.toBeCalled();
+        const actions = store.getActions();
+        expect(actions[0].type).toEqual('PLUGIN_CACHE_HIT');
+      })
+
   });
+
   it('should create submit form error action', () => {
     const expectedAction = {
       type: C.PLUGIN_SUBMIT_ERROR,

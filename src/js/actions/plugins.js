@@ -68,12 +68,12 @@ export function fetchData(params, plugin, tabPosition) {
       delete currentCopy.visProps;
       if (isEqual(cachedCopy, currentCopy)) {
         dispatch(cacheHit());
-        return;
+        return Promise.resolve();
       }
     }
 
     if (!plugin) {
-      return;
+      return Promise.resolve();
     }
 
 
@@ -100,10 +100,10 @@ export function fetchData(params, plugin, tabPosition) {
     if (parameters.skip) {
       const data = {};
       dispatch(dataLoaded(data, params, tabPosition));
-      return;
+      return Promise.resolve();
     }
 
-    fetch(queryUrl, {
+    return fetch(queryUrl, {
       headers: {
         'content-type': 'application/json',
         Accept: 'application/json'
