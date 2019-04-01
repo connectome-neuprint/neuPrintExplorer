@@ -60,23 +60,20 @@ class Results extends React.Component {
     // grab the contents of the search string.
     // if it has an array of query objects, fetch the data from neuPrint
     // and store it in the redux/local state?
-    const { pluginList, actions } = this.props;
+    const { actions } = this.props;
     const query = getQueryObject();
     const resultsList = query.qr || [];
     const tabValue = parseInt(query.tab || 0, 10);
 
     if (resultsList.length > 0) {
-      const currentPlugin = pluginList.find(
-        plugin => plugin.details.abbr === resultsList[tabValue].code
-      );
-
+      const currentPlugin = this.currentPlugin();
       // only fetch results for the tab being displayed.
       actions.fetchData(resultsList[tabValue], currentPlugin, tabValue);
     }
   }
 
   componentDidUpdate(prevProps) {
-    const { location, pluginList, actions } = this.props;
+    const { location, actions } = this.props;
     // if the number of tabs has changed, then update the data.
     // if the current tab has changed, then update.
     // if the current page has changed, then update.
@@ -86,9 +83,7 @@ class Results extends React.Component {
       const tabValue = parseInt(query.tab || 0, 10);
 
       if (resultsList.length > 0) {
-        const currentPlugin = pluginList.find(
-          plugin => plugin.details.abbr === resultsList[tabValue].code
-        );
+        const currentPlugin = this.currentPlugin();
         actions.fetchData(resultsList[tabValue], currentPlugin, tabValue);
       }
     }
@@ -117,22 +112,36 @@ class Results extends React.Component {
   downloadFile = index => {
     const { allResults } = this.props;
     const results = allResults.get(index);
-    let csvData = `${results.result.columns.toString()}\n`;
-    results.result.data.forEach(row => {
-      const filteredRow = row.map(item => {
-        if (item === null) return '';
-        if (item.csvValue !== undefined) return item.csvValue;
-        if (item.sortBy !== undefined) return item.sortBy;
-        if (item.value !== undefined) return item.value;
-        return item;
-      });
-      csvData += `${filteredRow.toString()}\n`;
-    });
-    const element = document.createElement('a');
-    const file = new Blob([csvData], { type: 'text/csv' });
-    element.href = URL.createObjectURL(file);
-    element.download = 'results.csv';
-    element.click();
+    let csvData = '';
+    if (results) {
+      const currentPlugin = this.currentPlugin();
+
+      if (
+        Object.prototype.hasOwnProperty.call(currentPlugin, 'processDownload') &&
+        typeof currentPlugin.processDownload === 'function'
+      ) {
+        const resultsCopy = clone(results);
+        csvData = currentPlugin.processDownload(resultsCopy);
+      } else {
+        csvData = `${results.result.columns.toString()}\n`;
+        results.result.data.forEach(row => {
+          const filteredRow = row.map(item => {
+            if (item === null) return '';
+            if (item.csvValue !== undefined) return item.csvValue;
+            if (item.sortBy !== undefined) return item.sortBy;
+            if (item.value !== undefined) return item.value;
+            return item;
+          });
+          csvData += `${filteredRow.toString()}\n`;
+        });
+      }
+
+      const element = document.createElement('a');
+      const file = new Blob([csvData], { type: 'text/csv' });
+      element.href = URL.createObjectURL(file);
+      element.download = 'results.csv';
+      element.click();
+    }
   };
 
   handleResultSelection = (event, value) => {
@@ -140,6 +149,17 @@ class Results extends React.Component {
     // passed in here.
     setQueryString({ tab: value });
   };
+
+  currentPlugin() {
+    const { pluginList } = this.props;
+    const query = getQueryObject();
+    const resultsList = query.qr || [];
+    const tabValue = parseInt(query.tab || 0, 10);
+    const currentPlugin = pluginList.find(
+      plugin => plugin.details.abbr === resultsList[tabValue].code
+    );
+    return currentPlugin;
+  }
 
   render() {
     // TODO: show query runtime results
@@ -186,14 +206,11 @@ class Results extends React.Component {
       </div>
     );
 
-
     if (!isQuerying) {
       const cachedResults = allResults.get(tabValue);
       // check that we have some results and they match the plugin we are trying to use.
       if (cachedResults && cachedResults.params.code === resultsList[tabValue].code) {
-        const currentPlugin = pluginList.find(
-          plugin => plugin.details.abbr === resultsList[tabValue].code
-        );
+        const currentPlugin = this.currentPlugin();
 
         // We need to deep clone the cached result here, because it looks
         // like the plugin can modify the cached results. This can lead to strange
@@ -253,12 +270,10 @@ class Results extends React.Component {
       );
     }
 
-
     const tabs = resultsList.map((tab, index) => {
       const key = `${tab.code}${index}`;
-      const tabName = pluginList.find(
-        plugin => plugin.details.abbr === tab.code
-      ).details.displayName;
+      const tabName = pluginList.find(plugin => plugin.details.abbr === tab.code).details
+        .displayName;
       return <Tab key={key} label={tabName} />;
     });
 
@@ -278,9 +293,7 @@ class Results extends React.Component {
         </AppBar>
         <div className={classes.full}>
           <div className={classes.fill}>
-            <div className={classes.scroll}>
-              {tabData}
-            </div>
+            <div className={classes.scroll}>{tabData}</div>
           </div>
         </div>
       </div>
