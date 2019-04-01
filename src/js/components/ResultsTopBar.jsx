@@ -64,9 +64,11 @@ class ResultsTopBar extends React.Component {
     const query = getQueryObject();
     // remove item from the list at position 'index';
     query.qr.splice(index, 1)
-    // update the tab index
+    // remove results for the current tab.
+    actions.clearNewResult(query.tab);
+    // update the tab index in the query string so that we display
+    // the tab before the one that was just removed.
     const tabIndex = (query.tab > 0) ? query.tab - 1 : 0;
-    actions.clearNewResult(tabIndex);
     setQueryString({ qr: query.qr, tab: tabIndex })
   };
 
