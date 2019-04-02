@@ -1,6 +1,6 @@
 /*
  * Top bar for each query result.
-*/
+ */
 
 import React from 'react';
 import { connect } from 'react-redux';
@@ -25,7 +25,7 @@ import { authError, reAuth } from 'actions/user';
 import { getQueryObject, setQueryString } from 'helpers/queryString';
 import C from '../reducers/constants';
 
-const styles = (theme) => ({
+const styles = theme => ({
   root: {
     width: '100%',
     flexGrow: true
@@ -36,7 +36,7 @@ const styles = (theme) => ({
   closeButton: {
     position: 'absolute',
     right: theme.spacing.unit,
-    top: theme.spacing.unit,
+    top: theme.spacing.unit
   }
 });
 
@@ -58,18 +58,18 @@ class ResultsTopBar extends React.Component {
     this.setState({ open: false });
   };
 
-  handleRemoveResult = (index) => {
+  handleRemoveResult = index => {
     const { actions } = this.props;
     // get query object
     const query = getQueryObject();
     // remove item from the list at position 'index';
-    query.qr.splice(index, 1)
+    query.qr.splice(index, 1);
     // remove results for the current tab.
     actions.clearNewResult(query.tab);
     // update the tab index in the query string so that we display
     // the tab before the one that was just removed.
-    const tabIndex = (query.tab > 0) ? query.tab - 1 : 0;
-    setQueryString({ qr: query.qr, tab: tabIndex })
+    const tabIndex = query.tab > 0 ? query.tab - 1 : 0;
+    setQueryString({ qr: query.qr, tab: tabIndex });
   };
 
   addFavorite = () => {
@@ -101,14 +101,7 @@ class ResultsTopBar extends React.Component {
   };
 
   render() {
-    const {
-      classes,
-      color,
-      name,
-      index,
-      queryStr,
-      downloadCallback
-    } = this.props;
+    const { classes, color, name, index, queryStr, downloadCallback, downloadEnabled } = this.props;
     const { showQuery, open } = this.state;
 
     return (
@@ -134,7 +127,11 @@ class ResultsTopBar extends React.Component {
           >
             <DialogTitle id="form-dialog-title">
               Neo4j Cypher Query
-              <IconButton aria-label="Close" className={classes.closeButton} onClick={() => this.setState({ showQuery: false })}>
+              <IconButton
+                aria-label="Close"
+                className={classes.closeButton}
+                onClick={() => this.setState({ showQuery: false })}
+              >
                 <CloseIcon />
               </IconButton>
             </DialogTitle>
@@ -167,15 +164,17 @@ class ResultsTopBar extends React.Component {
               </Button>
             </DialogActions>
           </Dialog>
-          <IconButton
-            className={classes.button}
-            aria-label="Download data"
-            onClick={() => {
-              downloadCallback(index);
-            }}
-          >
-            <Icon style={{ fontSize: 18 }}>file_download</Icon>
-          </IconButton>
+          {downloadEnabled && (
+            <IconButton
+              className={classes.button}
+              aria-label="Download data"
+              onClick={() => {
+                downloadCallback(index);
+              }}
+            >
+              <Icon style={{ fontSize: 18 }}>file_download</Icon>
+            </IconButton>
+          )}
           <IconButton
             className={classes.button}
             aria-label="Close Window"
@@ -218,6 +217,7 @@ ResultsTopBar.propTypes = {
   actions: PropTypes.object.isRequired,
   color: PropTypes.string,
   downloadCallback: PropTypes.func.isRequired,
+  downloadEnabled: PropTypes.bool.isRequired,
   queryStr: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,

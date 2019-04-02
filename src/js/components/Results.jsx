@@ -196,6 +196,7 @@ class Results extends React.Component {
     let tabData = (
       <div>
         <ResultsTopBar
+          downloadEnabled={false}
           downloadCallback={this.downloadFile}
           name="Loading..."
           index={tabIndex}
@@ -228,11 +229,14 @@ class Results extends React.Component {
 
         const combined = Object.assign(resultsList[tabValue], { result: currentResult });
 
+        const downloadEnabled = currentPlugin.details.download !== undefined ? currentPlugin.details.download : true;
+
         if (combined && combined.code === currentPlugin.details.abbr) {
           const View = viewPlugins.get(currentPlugin.details.visType);
           tabData = (
             <div className={classes.full}>
               <ResultsTopBar
+                downloadEnabled={downloadEnabled}
                 downloadCallback={this.downloadFile}
                 name={combined.result.title}
                 index={tabIndex}
@@ -260,6 +264,7 @@ class Results extends React.Component {
         <div className={classes.full}>
           <ResultsTopBar
             downloadCallback={this.downloadFile}
+            downloadEnabled={false}
             name="Error loading content"
             index={tabIndex}
             queryStr="error"
