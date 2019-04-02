@@ -64,8 +64,12 @@ export function fetchData(params, plugin, tabPosition) {
       // allowed to change, without triggering a data refresh.
       const cachedCopy = clone(cached.params);
       const currentCopy = clone(params);
-      delete cachedCopy.visProps;
-      delete currentCopy.visProps;
+      if (cachedCopy) {
+        delete cachedCopy.visProps;
+      }
+      if (currentCopy) {
+        delete currentCopy.visProps;
+      }
       if (isEqual(cachedCopy, currentCopy)) {
         dispatch(cacheHit());
         return Promise.resolve();
