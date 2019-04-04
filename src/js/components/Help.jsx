@@ -119,15 +119,15 @@ class Help extends React.Component {
               <br />
               <Typography>
                 The primary entry point into the graph model is the{' '}
-                <div className={classes.bold}>Neuron</div> node type. Neurons (each which could be a
+                <span className={classes.bold}>Neuron</span> node type. Neurons (each which could be a
                 subset or superset of an actual neuron due to errors in automatic image
                 segmentation) are connected to other neurons via synaptic connections. To provide
                 more granularity into the connectomic dataset, the{' '}
-                <div className={classes.bold}>SynapseSet</div> nodes point to a set of{' '}
-                <div className={classes.bold}>Synapse</div> nodes that give the exact locations of
+                <span className={classes.bold}>SynapseSet</span> nodes point to a set of{' '}
+                <span className={classes.bold}>Synapse</span> nodes that give the exact locations of
                 all synaptic connections for a given neuron. In a similar way, the morphology of the
-                neuron is encoded by a link (<div className={classes.bold}>Skeleton</div> nodes) to
-                a set of skeleton nodes (<div className={classes.bold}>SkelNodes</div>) with size
+                neuron is encoded by a link (<span className={classes.bold}>Skeleton</span> nodes) to
+                a set of skeleton nodes (<span className={classes.bold}>SkelNodes</span>) with size
                 and shape values. Each neuron and synapse is labeled with the given region(s) that
                 they belong to for fast region-based queries.
               </Typography>
