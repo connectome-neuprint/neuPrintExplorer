@@ -8,19 +8,20 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import Icon from '@material-ui/core/Icon';
-// import { Deck, Slide, Image } from 'spectacle';
-// import {SwaggerUI} from 'react-swagger-ui'
-// import 'react-swagger-ui/dist/swagger-ui.css'
+import { Deck, Slide, Image } from 'spectacle';
 import SwaggerUi, { presets } from 'swagger-ui';
 import 'swagger-ui/dist/swagger-ui.css';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import AppBar from '@material-ui/core/AppBar';
+import _ from 'underscore';
+
+const MaxSlideNum = 8;
 
 function TabContainer(props) {
   const { children } = props;
   return (
-    <Typography component="div" style={{ padding: 8 * 3 }}>
+    <Typography component="div" style={{ padding: 8 * 3, width: '100%'}}>
       {children}
     </Typography>
   );
@@ -51,7 +52,7 @@ const styles = theme => ({
   secroot: {
     position: 'relative',
     width: '100%',
-    height: '100%'
+    height: '600px'
   },
   img: {
     maxWidth: '100%',
@@ -119,17 +120,17 @@ class Help extends React.Component {
               <br />
               <Typography>
                 The primary entry point into the graph model is the{' '}
-                <span className={classes.bold}>Neuron</span> node type. Neurons (each which could be a
-                subset or superset of an actual neuron due to errors in automatic image
+                <span className={classes.bold}>Neuron</span> node type. Neurons (each which could be
+                a subset or superset of an actual neuron due to errors in automatic image
                 segmentation) are connected to other neurons via synaptic connections. To provide
                 more granularity into the connectomic dataset, the{' '}
                 <span className={classes.bold}>SynapseSet</span> nodes point to a set of{' '}
                 <span className={classes.bold}>Synapse</span> nodes that give the exact locations of
                 all synaptic connections for a given neuron. In a similar way, the morphology of the
-                neuron is encoded by a link (<span className={classes.bold}>Skeleton</span> nodes) to
-                a set of skeleton nodes (<span className={classes.bold}>SkelNodes</span>) with size
-                and shape values. Each neuron and synapse is labeled with the given region(s) that
-                they belong to for fast region-based queries.
+                neuron is encoded by a link (<span className={classes.bold}>Skeleton</span> nodes)
+                to a set of skeleton nodes (<span className={classes.bold}>SkelNodes</span>) with
+                size and shape values. Each neuron and synapse is labeled with the given region(s)
+                that they belong to for fast region-based queries.
               </Typography>
               <br />
               <Typography>
@@ -184,24 +185,17 @@ class Help extends React.Component {
             <div className={classes.roottext}>
               <Typography>The following slides describe how data is stored in Neo4j.</Typography>
             </div>
-            {/* <div className={classes.secroot}>
-                        <Deck
-                                controls
-                        >
-                        {
-                            _.range(1, MaxSlideNum+1).map( val => {
-                                return (<Slide
-                                                bgColor={"#D0D0D0"}
-                                                key={val}
-                                        >
-                                                <Image
-                                                        src={"/public/graphmodel/Slide" + String(val) + ".jpeg"}
-                                                />
-                                        </Slide>)
-                            })
-                        }
-                        </Deck>
-                    </div> */}
+            <div className={classes.secroot}>
+              <Deck controls>
+                {_.range(1, MaxSlideNum + 1).map(val => {
+                  return (
+                    <Slide bgColor="#D0D0D0" key={val}>
+                      <Image src={`/public/graphmodel/Slide${String(val)}.jpeg`} />
+                    </Slide>
+                  );
+                })}
+              </Deck>
+            </div>
           </TabContainer>
         )}
       </div>
