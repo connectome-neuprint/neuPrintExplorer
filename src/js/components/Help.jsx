@@ -8,15 +8,12 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import Icon from '@material-ui/core/Icon';
-import { Deck, Slide, Image } from 'spectacle';
 import SwaggerUi, { presets } from 'swagger-ui';
 import 'swagger-ui/dist/swagger-ui.css';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import AppBar from '@material-ui/core/AppBar';
-import _ from 'underscore';
-
-const MaxSlideNum = 8;
+import Slides from './Slides';
 
 function TabContainer(props) {
   const { children } = props;
@@ -185,17 +182,7 @@ class Help extends React.Component {
             <div className={classes.roottext}>
               <Typography>The following slides describe how data is stored in Neo4j.</Typography>
             </div>
-            <div className={classes.secroot}>
-              <Deck controls>
-                {_.range(1, MaxSlideNum + 1).map(val => {
-                  return (
-                    <Slide bgColor="#D0D0D0" key={val}>
-                      <Image src={`/public/graphmodel/Slide${String(val)}.jpeg`} />
-                    </Slide>
-                  );
-                })}
-              </Deck>
-            </div>
+            <Slides />
           </TabContainer>
         )}
       </div>
