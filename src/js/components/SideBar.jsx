@@ -18,7 +18,7 @@ import Icon from '@material-ui/core/Icon';
 import Divider from '@material-ui/core/Divider';
 
 import Contact from './Contact';
-import { getSiteParams, setQueryString } from '../helpers/queryString';
+import { getQueryObject, getSiteParams, setQueryString } from '../helpers/queryString';
 
 const drawerWidth = 400;
 
@@ -63,7 +63,12 @@ class SideBar extends React.Component {
 
   render() {
     const { classes, location } = this.props;
+
     const qsParams = getSiteParams(location);
+
+    if (qsParams.get('rt') === 'full') {
+      return '';
+    }
 
     const openQuery = Boolean(qsParams.get('q'));
     const queryString = location.search;

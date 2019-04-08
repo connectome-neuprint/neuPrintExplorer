@@ -229,20 +229,23 @@ class Results extends React.Component {
 
         const combined = Object.assign(resultsList[tabValue], { result: currentResult });
 
-        const downloadEnabled = currentPlugin.details.download !== undefined ? currentPlugin.details.download : true;
+        const downloadEnabled =
+          currentPlugin.details.download !== undefined ? currentPlugin.details.download : true;
 
         if (combined && combined.code === currentPlugin.details.abbr) {
           const View = viewPlugins.get(currentPlugin.details.visType);
           tabData = (
             <div className={classes.full}>
-              <ResultsTopBar
-                downloadEnabled={downloadEnabled}
-                downloadCallback={this.downloadFile}
-                name={combined.result.title}
-                index={tabIndex}
-                queryStr={combined.result.debug}
-                color="#cccccc"
-              />
+              {query.rt !== 'full' && (
+                <ResultsTopBar
+                  downloadEnabled={downloadEnabled}
+                  downloadCallback={this.downloadFile}
+                  name={combined.result.title}
+                  index={tabIndex}
+                  queryStr={combined.result.debug}
+                  color="#cccccc"
+                />
+              )}
               <View
                 query={combined}
                 index={tabIndex}
@@ -284,18 +287,20 @@ class Results extends React.Component {
 
     return (
       <div className={classes.full}>
-        <AppBar position="static" color="default">
-          <Tabs
-            value={tabValue}
-            onChange={this.handleResultSelection}
-            textColor="primary"
-            indicatorColor="primary"
-            variant="scrollable"
-            scrollButtons="auto"
-          >
-            {tabs}
-          </Tabs>
-        </AppBar>
+        {query.rt !== 'full' && (
+          <AppBar position="static" color="default">
+            <Tabs
+              value={tabValue}
+              onChange={this.handleResultSelection}
+              textColor="primary"
+              indicatorColor="primary"
+              variant="scrollable"
+              scrollButtons="auto"
+            >
+              {tabs}
+            </Tabs>
+          </AppBar>
+        )}
         <div className={classes.full}>
           <div className={classes.fill}>
             <div className={classes.scroll}>{tabData}</div>

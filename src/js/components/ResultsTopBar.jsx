@@ -58,6 +58,10 @@ class ResultsTopBar extends React.Component {
     this.setState({ open: false });
   };
 
+  handleFullScreen = () => {
+    setQueryString({ rt: 'full' });
+  };
+
   handleRemoveResult = index => {
     const { actions } = this.props;
     // get query object
@@ -175,6 +179,16 @@ class ResultsTopBar extends React.Component {
               <Icon style={{ fontSize: 18 }}>file_download</Icon>
             </IconButton>
           )}
+          <IconButton
+            className={classes.button}
+            aria-label="Full Screen"
+            onClick={() => {
+              this.handleFullScreen(index);
+            }}
+          >
+            <Icon style={{ fontSize: 18 }}>fullscreen</Icon>
+          </IconButton>
+
           <IconButton
             className={classes.button}
             aria-label="Close Window"

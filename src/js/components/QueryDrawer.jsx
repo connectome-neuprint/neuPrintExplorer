@@ -29,8 +29,9 @@ const QueryDrawer = props => {
   const qsParams = getSiteParams(location);
 
   const openQuery = qsParams.get('q');
+  const fullscreen = qsParams.get('rt');
 
-  if (openQuery) {
+  if (openQuery && fullscreen !== 'full') {
     return (
       <div>
         <Drawer
