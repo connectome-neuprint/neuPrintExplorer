@@ -174,6 +174,7 @@ const HomeState = state => ({
   availableDatasets: state.neo4jsettings.get('availableDatasets'),
   datasetInfo: state.neo4jsettings.get('datasetInfo'),
   loggedIn: state.user.get('loggedIn'),
+  publicState: state.neo4jsettings.get('publicState'),
   authLevel: state.user.get('userInfo').AuthLevel
 });
 
@@ -187,7 +188,8 @@ Home.propTypes = {
   authLevel: PropTypes.string.isRequired,
   availableDatasets: PropTypes.arrayOf(PropTypes.string).isRequired,
   datasetInfo: PropTypes.object.isRequired,
-  neoServer: PropTypes.string.isRequired
+  neoServer: PropTypes.string.isRequired,
+  publicState: PropTypes.bool.isRequired
 };
 
 export default withStyles(styles, { withTheme: true })(

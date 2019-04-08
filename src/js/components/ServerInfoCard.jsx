@@ -27,10 +27,10 @@ const styles = theme => ({
 });
 
 function ServerInfoCard (props) {
-  const { classes, neoServer, availableDatasets, datasetInfo, loggedIn, authLevel } = props;
+  const { classes, neoServer, availableDatasets, datasetInfo, loggedIn, authLevel, publicState } = props;
 
   if (loggedIn) {
-    if (authLevel === "readwrite") {
+    if (authLevel === "readwrite" || publicState) {
       return (
         <Card className={classes.card}>
           <CardContent>
@@ -94,7 +94,8 @@ ServerInfoCard.propTypes = {
   authLevel: PropTypes.string.isRequired,
   availableDatasets: PropTypes.arrayOf(PropTypes.string).isRequired,
   datasetInfo: PropTypes.object.isRequired,
-  neoServer: PropTypes.string.isRequired
+  neoServer: PropTypes.string.isRequired,
+  publicState: PropTypes.bool.isRequired
 };
 
 export default withStyles(styles)(ServerInfoCard);
