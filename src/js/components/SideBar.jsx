@@ -18,7 +18,7 @@ import Icon from '@material-ui/core/Icon';
 import Divider from '@material-ui/core/Divider';
 
 import Contact from './Contact';
-import { getQueryObject, getSiteParams, setQueryString } from '../helpers/queryString';
+import { getSiteParams, setQueryString } from '../helpers/queryString';
 
 const drawerWidth = 400;
 

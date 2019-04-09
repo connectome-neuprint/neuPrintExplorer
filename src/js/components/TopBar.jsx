@@ -12,7 +12,6 @@ import { withRouter } from 'react-router';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
 import SvgIcon from '@material-ui/core/SvgIcon';
@@ -73,6 +72,12 @@ const selectStyles = {
   })
 };
 
+function handleFullScreen() {
+  setQueryString({
+    rt: ''
+  });
+}
+
 class TopBar extends React.Component {
   handleChange = selectedDataSet => {
     const { location } = this.props;
@@ -90,12 +95,6 @@ class TopBar extends React.Component {
       plugins: []
     });
   };
-
-  handleFullScreen() {
-    setQueryString({
-      rt: ''
-    });
-  }
 
   render() {
     const { classes, availableDatasets, loggedIn, location } = this.props;
@@ -137,7 +136,7 @@ class TopBar extends React.Component {
               className={classes.button}
               aria-label="Exit Full Screen"
               onClick={() => {
-                this.handleFullScreen();
+                handleFullScreen();
               }}
             >
               <Icon>fullscreen_exit</Icon>
