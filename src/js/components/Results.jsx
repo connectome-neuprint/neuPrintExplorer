@@ -210,7 +210,7 @@ class Results extends React.Component {
     if (!isQuerying) {
       const cachedResults = allResults.get(tabValue);
       // check that we have some results and they match the plugin we are trying to use.
-      if (cachedResults && cachedResults.params.code === resultsList[tabValue].code) {
+      if (cachedResults && cachedResults.params && cachedResults.params.code === resultsList[tabValue].code) {
         const currentPlugin = this.currentPlugin();
 
         // We need to deep clone the cached result here, because it looks
