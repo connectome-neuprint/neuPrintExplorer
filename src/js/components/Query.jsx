@@ -18,6 +18,8 @@ import Icon from '@material-ui/core/Icon';
 import QueryForm from './QueryForm';
 import { getSiteParams, setQueryString } from '../helpers/queryString';
 
+import './Query.css';
+
 const styles = theme => ({
   root: {
     padding: theme.spacing.unit * 3
@@ -32,19 +34,6 @@ const styles = theme => ({
   },
   chip: {
     margin: theme.spacing.unit / 4
-  },
-  formControl: {
-    margin: theme.spacing.unit,
-    minWidth: 120,
-    maxWidth: 300
-  },
-  formControl2: {
-    margin: theme.spacing.unit,
-    minWidth: 250,
-    maxWidth: 300
-  },
-  selectWidth: {
-    minWidth: 250
   },
   select: {
     fontFamily: theme.typography.fontFamily,
@@ -142,6 +131,7 @@ class Query extends React.Component {
       <div className={classes.root}>
         <InputLabel htmlFor="controlled-open-select">Query Type</InputLabel>
         <Select
+          classNamePrefix="custom-query"
           className={classes.select}
           value={{ label: queryName, value: queryName }}
           onChange={this.setQuery}
