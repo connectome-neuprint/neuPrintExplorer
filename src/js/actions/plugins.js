@@ -55,6 +55,18 @@ function cacheHit() {
 
 export function fetchData(params, plugin, tabPosition) {
   return function fetchDataAsync(dispatch, getState) {
+    // we need to clone this object so that it doesn't modify the stored
+    // parameters. This is important when checking for cached results.
+    const parameters = clone(params.pm);
+
+    // Some plugins have nothing to fetch. In that case we can skip the remote fetch
+    // and just return the query.
+    if (parameters.skip) {
+      const data = {};
+      dispatch(dataLoaded(data, params, tabPosition));
+      return Promise.resolve();
+    }
+
     // cache lookup step that checks either Redux store
     // or localStorage to see if we have already fetched the results.
     // closing a tab needs to remove the cached values.
@@ -83,9 +95,6 @@ export function fetchData(params, plugin, tabPosition) {
 
     dispatch(fetchingData(tabPosition));
 
-    // we need to clone this object so that it doesn't modify the stored
-    // parameters. This is important when checking for cached results.
-    const parameters = clone(params.pm);
     const fetchParams = plugin.fetchParameters(parameters);
     // build the query url. Use the custom one by default.
     let queryUrl = '/api/custom/custom';
@@ -98,13 +107,6 @@ export function fetchData(params, plugin, tabPosition) {
       parameters.cypher = parameters.cypherQuery;
     } else if (fetchParams.cypherQuery) {
       parameters.cypher = fetchParams.cypherQuery;
-    }
-    // Some plugins have nothing to fetch. In that case we can skip the remote fetch
-    // and just return the query.
-    if (parameters.skip) {
-      const data = {};
-      dispatch(dataLoaded(data, params, tabPosition));
-      return Promise.resolve();
     }
 
     return fetch(queryUrl, {
