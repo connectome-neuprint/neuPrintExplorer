@@ -25,7 +25,7 @@ export default function resultsReducer(state = resultsState, action) {
       return state.removeIn(['allResults', action.index]);
     }
     case C.PLUGIN_CACHE_HIT: {
-      return state.set('loading': false)
+      return state.set('loading', false)
         .set('loadingError', null);
     }
     case C.PLUGIN_SAVE_RESPONSE: {
