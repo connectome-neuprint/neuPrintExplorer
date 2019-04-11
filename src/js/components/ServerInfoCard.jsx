@@ -49,9 +49,10 @@ function ServerInfoCard (props) {
                     <b>{item}</b>
                   </Typography>
                   <div className={classes.padLeft}>
-                    <Typography>
-                      modified: {datasetInfo[item].lastmod} <br />
-                      version: {datasetInfo[item].uuid}
+                    <Typography component="ul">
+                      <li>modified: {datasetInfo[item].lastmod}</li>
+                      <li>version: {datasetInfo[item].uuid}</li>
+                      <li>info: <a href={datasetInfo[item].info}>{datasetInfo[item].info}</a></li>
                     </Typography>
                   </div>
                 </div>
