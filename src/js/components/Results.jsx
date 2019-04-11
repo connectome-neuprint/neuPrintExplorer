@@ -280,9 +280,13 @@ class Results extends React.Component {
 
     const tabs = resultsList.map((tab, index) => {
       const key = `${tab.code}${index}`;
-      const tabName = pluginList.find(plugin => plugin.details.abbr === tab.code).details
-        .displayName;
-      return <Tab key={key} label={tabName} />;
+      const selectedPlugin = pluginList.find(plugin => plugin.details.abbr === tab.code);
+
+      if (selectedPlugin && selectedPlugin.details) {
+        const tabName = selectedPlugin.details.displayName;
+        return <Tab key={key} label={tabName} />;
+      }
+      return <Tab key={key} label="Unknown Plugin" />
     });
 
     return (
