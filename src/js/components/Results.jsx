@@ -213,48 +213,51 @@ class Results extends React.Component {
       if (cachedResults && cachedResults.params && cachedResults.params.code === resultsList[tabValue].code) {
         const currentPlugin = this.currentPlugin();
 
-        // We need to deep clone the cached result here, because it looks
-        // like the plugin can modify the cached results. This can lead to strange
-        // behavior now that the results are processed every time the tab is loaded.
-        // If we provide a clone of the object, then the plugin can do what it wants,
-        // without affecting the stored results.
-        const resultsCopy = clone(cachedResults.result);
-        const currentResult = currentPlugin.processResults(
-          resultsList[tabValue],
-          resultsCopy,
-          actions,
-          this.submit,
-          PUBLIC // PUBLIC indicates this is a public version of the application
-        );
+        if (currentPlugin) {
 
-        const combined = Object.assign(resultsList[tabValue], { result: currentResult });
-
-        const downloadEnabled =
-          currentPlugin.details.download !== undefined ? currentPlugin.details.download : true;
-
-        if (combined && combined.code === currentPlugin.details.abbr) {
-          const View = viewPlugins.get(currentPlugin.details.visType);
-          tabData = (
-            <div className={classes.full}>
-              {query.rt !== 'full' && (
-                <ResultsTopBar
-                  downloadEnabled={downloadEnabled}
-                  downloadCallback={this.downloadFile}
-                  name={combined.result.title}
-                  index={tabIndex}
-                  queryStr={combined.result.debug}
-                  color="#cccccc"
-                />
-              )}
-              <View
-                query={combined}
-                index={tabIndex}
-                actions={actions}
-                neoServer={neoServer}
-                neo4jsettings={neo4jsettings}
-              />
-            </div>
+          // We need to deep clone the cached result here, because it looks
+          // like the plugin can modify the cached results. This can lead to strange
+          // behavior now that the results are processed every time the tab is loaded.
+          // If we provide a clone of the object, then the plugin can do what it wants,
+          // without affecting the stored results.
+          const resultsCopy = clone(cachedResults.result);
+          const currentResult = currentPlugin.processResults(
+            resultsList[tabValue],
+            resultsCopy,
+            actions,
+            this.submit,
+            PUBLIC // PUBLIC indicates this is a public version of the application
           );
+
+          const combined = Object.assign(resultsList[tabValue], { result: currentResult });
+
+          const downloadEnabled =
+            currentPlugin.details.download !== undefined ? currentPlugin.details.download : true;
+
+          if (combined && combined.code === currentPlugin.details.abbr) {
+            const View = viewPlugins.get(currentPlugin.details.visType);
+            tabData = (
+              <div className={classes.full}>
+                {query.rt !== 'full' && (
+                  <ResultsTopBar
+                    downloadEnabled={downloadEnabled}
+                    downloadCallback={this.downloadFile}
+                    name={combined.result.title}
+                    index={tabIndex}
+                    queryStr={combined.result.debug}
+                    color="#cccccc"
+                  />
+                )}
+                <View
+                  query={combined}
+                  index={tabIndex}
+                  actions={actions}
+                  neoServer={neoServer}
+                  neo4jsettings={neo4jsettings}
+                />
+              </div>
+            );
+          }
         }
       }
     }
