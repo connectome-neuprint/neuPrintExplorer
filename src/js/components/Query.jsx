@@ -93,7 +93,7 @@ class Query extends React.Component {
       }));
 
     const otherOptions = pluginList
-      .filter(plugin => plugin.details.category === 'other')
+      .filter(plugin => plugin.details.category === 'visualization')
       .map(val => ({
         value: slug(val.details.name),
         label: val.details.experimental ? (
@@ -119,7 +119,7 @@ class Query extends React.Component {
         options: reconOptions
       },
       {
-        label: 'Other',
+        label: 'Visualization',
         options: otherOptions
       }
     ];
