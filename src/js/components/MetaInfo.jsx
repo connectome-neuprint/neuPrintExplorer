@@ -51,7 +51,8 @@ class MetaInfo extends React.Component {
             rois[name] = data.ROIs.sort(sortRois);
             datasetInfo[name] = {
               uuid: data.uuid,
-              lastmod: data['last-mod']
+              lastmod: data['last-mod'],
+              info: data.info
             };
           });
           setNeoDatasets(datasets, rois, datasetInfo);
