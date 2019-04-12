@@ -52,7 +52,7 @@ function ServerInfoCard (props) {
                     <Typography component="ul">
                       <li>modified: {datasetInfo[item].lastmod}</li>
                       <li>version: {datasetInfo[item].uuid}</li>
-                      <li>info: <a href={datasetInfo[item].info}>{datasetInfo[item].info}</a></li>
+                      <li><a href={datasetInfo[item].info}>Information</a></li>
                     </Typography>
                   </div>
                 </div>
