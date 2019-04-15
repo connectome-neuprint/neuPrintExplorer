@@ -60,7 +60,7 @@
     "@janelia/sharkviewer": "^1.1.3",
     "@material-ui/core": "^3.2.0",
     "@material-ui/icons": "^3.0.1",
-    "@neuprint/queries": "^3.0.2",
+    "@neuprint/queries": "^3.0.3",
     "@neuprint/support": "^0.1.3",
     "@neuprint/views": "^1.1.1",
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
