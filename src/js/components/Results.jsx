@@ -215,6 +215,10 @@ class Results extends React.Component {
 
         if (currentPlugin) {
 
+          // TODO: here is where we should trigger the loading of the view plugins. It is only at this
+          // point that we need them. Would need to add a check to see if the plugin has loaded in
+          // addition to the content.
+
           // We need to deep clone the cached result here, because it looks
           // like the plugin can modify the cached results. This can lead to strange
           // behavior now that the results are processed every time the tab is loaded.
