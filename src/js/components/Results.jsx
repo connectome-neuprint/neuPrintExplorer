@@ -240,27 +240,49 @@ class Results extends React.Component {
 
           if (combined && combined.code === currentPlugin.details.abbr) {
             const View = viewPlugins.get(currentPlugin.details.visType);
-            tabData = (
-              <div className={classes.full}>
-                {query.rt !== 'full' && (
-                  <ResultsTopBar
-                    downloadEnabled={downloadEnabled}
-                    downloadCallback={this.downloadFile}
-                    name={combined.result.title}
+            if (View) {
+              tabData = (
+                <div className={classes.full}>
+                  {query.rt !== 'full' && (
+                    <ResultsTopBar
+                      downloadEnabled={downloadEnabled}
+                      downloadCallback={this.downloadFile}
+                      name={combined.result.title}
+                      index={tabIndex}
+                      queryStr={combined.result.debug}
+                      color="#cccccc"
+                    />
+                  )}
+                  <View
+                    query={combined}
                     index={tabIndex}
-                    queryStr={combined.result.debug}
-                    color="#cccccc"
+                    actions={actions}
+                    neoServer={neoServer}
+                    neo4jsettings={neo4jsettings}
                   />
-                )}
-                <View
-                  query={combined}
-                  index={tabIndex}
-                  actions={actions}
-                  neoServer={neoServer}
-                  neo4jsettings={neo4jsettings}
-                />
-              </div>
-            );
+                </div>
+              );
+            } else {
+              tabData = (
+                 <div className={classes.full}>
+                  {query.rt !== 'full' && (
+                    <ResultsTopBar
+                      downloadEnabled={downloadEnabled}
+                      downloadCallback={this.downloadFile}
+                      name={combined.result.title}
+                      index={tabIndex}
+                      queryStr={combined.result.debug}
+                      color="#cccccc"
+                    />
+                  )}
+                  <div>
+                    Your browser/OS/drivers do not support WebGL2. In order to use
+                    this plugin, please try a different browser.
+                  </div>
+                </div>
+
+              );
+            }
           }
         }
       }

@@ -4,11 +4,11 @@
  */
 
 import { initPlugins, initViewPlugins } from 'actions/app';
+import { plugins as viewPlugins } from '@neuprint/views';
 
 // search the plugins directory and load all the files found there.
 const pluginList = [];
 const plugins = require('@neuprint/queries');
-const viewPlugins = require('@neuprint/views');
 
 const extQueries = require.context('../../../plugins/', true, /.jsx?$/);
 const extViews = require.context('../../../view-plugins/', true, /.jsx?$/);
