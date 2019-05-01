@@ -247,7 +247,7 @@ class Results extends React.Component {
                     <ResultsTopBar
                       downloadEnabled={downloadEnabled}
                       downloadCallback={this.downloadFile}
-                      name={combined.result.title}
+                      name={combined.result.title || 'Error'}
                       index={tabIndex}
                       queryStr={combined.result.debug}
                       color="#cccccc"
@@ -269,7 +269,7 @@ class Results extends React.Component {
                     <ResultsTopBar
                       downloadEnabled={downloadEnabled}
                       downloadCallback={this.downloadFile}
-                      name={combined.result.title}
+                      name={combined.result.title || 'Error'}
                       index={tabIndex}
                       queryStr={combined.result.debug}
                       color="#cccccc"
