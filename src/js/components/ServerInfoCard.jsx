@@ -30,7 +30,7 @@ function ServerInfoCard (props) {
   const { classes, neoServer, availableDatasets, datasetInfo, loggedIn, authLevel, publicState } = props;
 
   if (loggedIn) {
-    if (authLevel === "readwrite" || publicState) {
+    if (authLevel.match(/^readwrite|admin$/) || publicState) {
       return (
         <Card className={classes.card}>
           <CardContent>
