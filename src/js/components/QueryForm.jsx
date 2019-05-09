@@ -55,7 +55,16 @@ class QueryForm extends React.Component {
   }
 
   submit = query => {
-    const { history } = this.props;
+    const { history, allResults, actions } = this.props;
+    // check to see if the tab limit has been reached.
+    if (allResults && allResults.size >= 10) {
+      // more than ten tabs can cause issues with the url string,
+      // which results in the site crashing. To prevent this we stop
+      // any further submissions and show a warning message to ask
+      // the user to close some of the older tabs.
+      actions.metaInfoError('There are too many open tabs to submit another request. Please close some and submit again.');
+      return;
+    }
     // set query as a tab in the url query string.
     setSearchQueryString({
       code: query.pluginCode,
@@ -111,7 +120,7 @@ class QueryForm extends React.Component {
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           open={openSnack}
           onClose={this.handleClose}
-          SnackbarContentProps={{
+          ContentProps={{
             'aria-describedby': 'message-id'
           }}
           message={
@@ -154,6 +163,7 @@ QueryForm.propTypes = {
   classes: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired,
+  allResults: PropTypes.object.isRequired,
   neoServerSettings: PropTypes.object.isRequired,
   availableROIs: PropTypes.object.isRequired
 };
@@ -163,6 +173,7 @@ const QueryFormState = state => ({
   isQuerying: state.query.get('isQuerying'),
   neoError: state.query.get('neoError'),
   userInfo: state.user.get('userInfo'),
+  allResults: state.results.get('allResults'),
   neoServerSettings: state.neo4jsettings,
   availableROIs: state.neo4jsettings.get('availableROIs')
 });
