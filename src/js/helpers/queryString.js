@@ -39,7 +39,11 @@ export function getQueryString() {
 
 export function getQueryObject(part, ifEmpty = {}) {
   let queryObject = qs.parse(decodeURIComponent(getQueryString()), {
-    decoder(value) {
+    // The qs library set a limit of 20 for the number of items in an array
+    // that is passed to it. This limit would convert any array over a length
+    // of 20 to an object. That is bad, so bump it to 2000.
+    arrayLimit: 2000,
+    decoder: function decoder(value) {
       // if we encounter something that looks like a number then return it
       // as a number and not a string.
       if (/^(\d+|\d*\.\d+)$/.test(value)) {
@@ -108,7 +112,11 @@ export function updateResultInQueryString(index, newData) {
 export function getSiteParams(location) {
   const decoded =
     qs.parse(decodeURIComponent(location.search.substring(1)), {
-      decoder(value) {
+    // that is passed to it. This limit would convert any array over a length
+    // of 20 to an object. That is bad, so bump it to 2000.
+    arrayLimit: 2000,
+      arrayLimit: 2000,
+      decoder: function decoder(value) {
         if (value in keywords) {
           return keywords[value];
         }
