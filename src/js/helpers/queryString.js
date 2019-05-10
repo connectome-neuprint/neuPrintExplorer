@@ -112,9 +112,9 @@ export function updateResultInQueryString(index, newData) {
 export function getSiteParams(location) {
   const decoded =
     qs.parse(decodeURIComponent(location.search.substring(1)), {
-    // that is passed to it. This limit would convert any array over a length
-    // of 20 to an object. That is bad, so bump it to 2000.
-    arrayLimit: 2000,
+      // The qs library set a limit of 20 for the number of items in an array
+      // that is passed to it. This limit would convert any array over a length
+      // of 20 to an object. That is bad, so bump it to 2000.
       arrayLimit: 2000,
       decoder: function decoder(value) {
         if (value in keywords) {
