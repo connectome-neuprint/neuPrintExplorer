@@ -98,6 +98,7 @@
     "pretest": "eslint --ext .jsx,.js src/js/",
     "test": "jest",
     "test-watch": "jest --watch",
+    "preversion": "npm test",
     "dev-server": "webpack-dev-server --open",
     "dev": "webpack",
     "build": "webpack --config webpack.prod.js",
