@@ -140,7 +140,12 @@ class Results extends React.Component {
       const file = new Blob([csvData], { type: 'text/csv' });
       element.href = URL.createObjectURL(file);
       element.download = 'results.csv';
+      document.body.appendChild(element);
       element.click();
+      setTimeout(() => {
+        document.body.removeChild(element);
+        URL.revokeObjectURL(file);
+      }, 100);
     }
   };
 
