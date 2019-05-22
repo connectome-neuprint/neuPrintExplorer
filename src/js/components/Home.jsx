@@ -15,6 +15,7 @@ import CardContent from '@material-ui/core/CardContent';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import SvgIcon from '@material-ui/core/SvgIcon';
+import Icon from '@material-ui/core/Icon';
 import MobileStepper from '@material-ui/core/MobileStepper';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
@@ -45,12 +46,10 @@ const styles = theme => ({
     padding: theme.spacing.unit * 3
   },
   roottext: {
-    maxWidth: 560,
-    margin: '0 auto'
+    textAlign: 'center'
   },
-  card: {
-    minWidth: 275,
-    maxWidth: 500
+  description: {
+    margin: theme.spacing.unit * 2
   },
   title: {
     marginBottom: 16,
@@ -111,24 +110,25 @@ class Home extends React.Component {
     return (
       <div className={classes.root}>
         {redirectHome ? <Redirect to="/" /> : <div />}
-        <Grid container spacing={24}>
-          <Grid item xs={12}>
-            <div className={classes.roottext}>
-              <Typography variant="h6">Analysis tools for connectomics</Typography>
-              <br />
-              <Typography>
-                neuPrintExplorer provides tools to query and visualize connectomic data stored in{' '}
-                <a href="https://github.com/janelia-flyem/neuPrint">neuPrint</a>, which uses a neo4j
-                graph database. Use the search icon at the <a href="/?openQuery=true">top left</a>{' '}
-                to query the database.
-              </Typography>
-            </div>
+        <Grid container spacing={24} justify="center">
+          <Grid item xs={2} />
+          <Grid item xs={8} className={classes.roottext}>
+            <Typography variant="h3">Analysis tools for connectomics</Typography>
+            <Typography className={classes.description}>
+              neuPrintExplorer provides tools to query and visualize connectomic data stored in{' '}
+              <a href="https://github.com/janelia-flyem/neuPrint">neuPrint</a>, which uses a neo4j
+              graph database.
+            </Typography>
+            <Typography variant="h6">
+              Use the search icon <Icon>search</Icon> in the menu on the <Link to="/?q=1">left</Link> to query the database.
+            </Typography>
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={2} />
+          <Grid item xs={12} md={6} lg={4}>
             <ServerInfoCard {...passedProps} />
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <Card className={classes.card}>
+          <Grid item xs={12} md={6} lg={4}>
+            <Card>
               <CardContent>
                 <Typography className={classes.title} color="textSecondary">
                   Helpful Hints

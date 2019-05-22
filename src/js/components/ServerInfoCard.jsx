@@ -9,11 +9,6 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
-  card: {
-    minWidth: 275,
-    maxWidth: 500,
-    marginLeft: 'auto'
-  },
   title: {
     marginBottom: 16,
     fontSize: 14
@@ -32,7 +27,7 @@ function ServerInfoCard (props) {
   if (loggedIn) {
     if (authLevel.match(/^readwrite|admin$/) || publicState) {
       return (
-        <Card className={classes.card}>
+        <Card>
           <CardContent>
             <Typography className={classes.title} color="textSecondary">
               neuPrint Server Information
@@ -63,7 +58,7 @@ function ServerInfoCard (props) {
       );
     }
     return (
-      <Card className={classes.card}>
+      <Card>
         <CardContent>
           <Typography className={classes.title} color="textSecondary">
             Authorization Required
@@ -78,7 +73,7 @@ function ServerInfoCard (props) {
   }
 
   return (
-    <Card className={classes.card}>
+    <Card>
         <CardHeader title="Logged Out" />
         <CardContent>
           <Typography component="p">
