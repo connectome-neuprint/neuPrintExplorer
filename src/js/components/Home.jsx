@@ -124,10 +124,10 @@ class Home extends React.Component {
             </Typography>
           </Grid>
           <Grid item xs={2} />
-          <Grid item xs={12} md={6} lg={4}>
+          <Grid item xs={12} md={6} lg={5}>
             <ServerInfoCard {...passedProps} />
           </Grid>
-          <Grid item xs={12} md={6} lg={4}>
+          <Grid item xs={12} md={6} lg={5}>
             <Card>
               <CardContent>
                 <Typography className={classes.title} color="textSecondary">
