@@ -11,6 +11,7 @@ import slug from 'slugg';
 import Tooltip from '@material-ui/core/Tooltip';
 
 import InputLabel from '@material-ui/core/InputLabel';
+import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
 import Icon from '@material-ui/core/Icon';
@@ -31,6 +32,20 @@ const styles = theme => ({
   chips: {
     display: 'flex',
     flexWrap: 'wrap'
+  },
+  arrow: {
+    position: 'absolute',
+    top: '4px',
+    marginLeft: '4px',
+    fontWeight: 'bold'
+  },
+  dataset: {
+    background: theme.palette.common.white,
+    color: theme.palette.error.dark,
+    fontWeight: 'bold',
+    borderRadius: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 2,
+    position: 'relative'
   },
   chip: {
     margin: theme.spacing.unit / 4
@@ -108,7 +123,6 @@ class Query extends React.Component {
         )
       }));
 
-
     const queryOptions = [
       {
         label: 'General',
@@ -129,6 +143,12 @@ class Query extends React.Component {
     // TODO: fix default menu option (maybe make the custom query the default)
     return (
       <div className={classes.root}>
+        {dataSet === '' && (
+          <Typography className={classes.dataset} variant="h6">
+            Please select a data set above
+            <Icon className={classes.arrow}>arrow_upward</Icon>
+          </Typography>
+        )}
         <InputLabel htmlFor="controlled-open-select">Query Type</InputLabel>
         <Select
           classNamePrefix="custom-query"
