@@ -38,9 +38,16 @@ const styles = theme => ({
     padding: theme.spacing.unit,
     outline: 0
   },
+  resultContent: {
+    flex: 1,
+    flexDirection: 'column',
+    display: 'flex',
+    overflow: 'hidden'
+  },
   full: {
-    width: '100%',
-    height: '100%',
+    flex: 1,
+    flexDirection: 'column',
+    display: 'flex',
     overflow: 'auto'
   },
   errorText: {
@@ -56,10 +63,8 @@ const styles = theme => ({
   },
   scroll: {
     overflow: 'auto',
-    height: '100%'
-  },
-  fill: {
-    height: '100%'
+    flex: 1,
+    display: 'flex'
   }
 });
 
@@ -340,7 +345,7 @@ class Results extends React.Component {
     });
 
     return (
-      <div className={classes.full}>
+      <div className={classes.resultContent}>
         {query.rt !== 'full' && (
           <AppBar position="static" color="default">
             <Tabs
@@ -355,11 +360,7 @@ class Results extends React.Component {
             </Tabs>
           </AppBar>
         )}
-        <div className={classes.full}>
-          <div className={classes.fill}>
-            <div className={classes.scroll}>{tabData}</div>
-          </div>
-        </div>
+        <div className={classes.scroll}>{tabData}</div>
       </div>
     );
   }

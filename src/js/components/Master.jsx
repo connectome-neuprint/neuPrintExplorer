@@ -33,11 +33,12 @@ const styles = theme => ({
     display: 'flex'
   },
   content: {
-    height: '100vh',
-    overflow: 'auto',
-    flexGrow: 1,
+    overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
     backgroundColor: theme.palette.background.default,
     padding: 0,
+    width: '100%',
     minWidth: 0 // So the Typography noWrap works
   },
   toolbar: theme.mixins.toolbar
