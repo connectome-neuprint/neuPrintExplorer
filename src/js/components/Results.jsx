@@ -43,6 +43,14 @@ const styles = theme => ({
     height: '100%',
     overflow: 'auto'
   },
+  errorText: {
+    marginLeft:  theme.spacing.unit * 2,
+    maxWidth: '800px',
+    overflow: 'auto',
+    overflowWrap: 'normal',
+    wordBreak: 'normal',
+    whiteSpace: 'pre-wrap',
+  },
   empty: {
     padding: theme.spacing.unit * 3
   },
@@ -307,7 +315,15 @@ class Results extends React.Component {
             queryStr="error"
             color="#ffcccc"
           />
-          <div>{loadingError.toString()}</div>
+          { /*
+           Some of the error messages are returned from the server as plain text with
+           a set amount of white space used to indicate where the error occurs. So
+           placing them in a pre tag preserves the indicator location in a web
+           page.
+            */ }
+          <div>
+            <pre className={classes.errorText}>{loadingError.toString()}</pre>
+          </div>
         </div>
       );
     }
