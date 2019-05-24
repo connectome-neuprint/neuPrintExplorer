@@ -98,10 +98,12 @@ class MetaInfo extends React.Component {
       .then(resp => {
         if (!('message' in resp)) {
           const meshInfo = {}
-          resp.data.forEach(dataset => {
-            const [key, value] = dataset;
-            meshInfo[key] = value;
-          });
+          if (resp.data) {
+            resp.data.forEach(dataset => {
+              const [key, value] = dataset;
+              meshInfo[key] = value;
+            });
+          }
           setMeshInfo(meshInfo);
         }
       });
