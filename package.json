@@ -102,6 +102,7 @@
     "dev-server": "webpack-dev-server --open",
     "dev": "webpack",
     "build": "webpack --config webpack.prod.js",
+    "build-analysis": "webpack --config webpack.analysis.js",
     "build-public": "webpack --config webpack.public.js",
     "dev-public": "webpack --config webpack.public-dev.js"
   },
