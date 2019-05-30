@@ -13,6 +13,7 @@ import { withStyles } from '@material-ui/core/styles';
 const styles = theme => ({
   root: {
     flexGrow: 1,
+    overflow: 'auto',
     margin: theme.spacing.unit * 2
   },
   centered: {
