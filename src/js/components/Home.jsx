@@ -60,6 +60,9 @@ const styles = theme => ({
   },
   hint: {
     margin: `${theme.spacing.unit * 2}px 0`
+  },
+  container: {
+    alignContent: 'flex-start'
   }
 });
 
@@ -110,7 +113,7 @@ class Home extends React.Component {
     return (
       <div className={classes.root}>
         {redirectHome ? <Redirect to="/" /> : <div />}
-        <Grid container spacing={24} justify="center">
+        <Grid container spacing={24} justify="center" className={classes.container}>
           <Grid item xs={2} />
           <Grid item xs={8} className={classes.roottext}>
             <Typography variant="h3">Analysis tools for connectomics</Typography>
