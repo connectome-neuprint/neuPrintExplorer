@@ -97,6 +97,10 @@ class QueryForm extends React.Component {
       return <Typography>Please select a query type from the menu above.</Typography>;
     }
 
+    if (CurrentQuery.details.disabled) {
+      return <Typography variant="h6">This query is currently disabled.</Typography>;
+    }
+
     const {
       userInfo,
       classes,
