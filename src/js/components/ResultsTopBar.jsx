@@ -22,6 +22,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import CloseIcon from '@material-ui/icons/Close';
 
 import { authError, reAuth } from 'actions/user';
+import { launchNotification } from 'actions/app';
 import { getQueryObject, setQueryString } from 'helpers/queryString';
 import C from '../reducers/constants';
 
@@ -99,6 +100,9 @@ class ResultsTopBar extends React.Component {
           // need to re-authenticate
           actions.reAuth();
           actions.authError('User must re-authenticate');
+        }
+        else {
+          actions.launchNotification('Favorite added succesfully');
         }
       });
     }
@@ -216,6 +220,9 @@ const ResultsTopBarDispatch = dispatch => ({
     },
     authError(message) {
       dispatch(authError(message));
+    },
+    launchNotification(message) {
+      dispatch(launchNotification(message));
     },
     clearNewResult(index) {
       dispatch({

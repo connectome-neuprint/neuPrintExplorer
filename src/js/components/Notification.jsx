@@ -25,7 +25,7 @@ class Notification extends React.Component {
           'aria-describedby': 'message-id'
         }}
         message={<span id="message-id">{notificationMessage}</span>}
-        autoHideDuration={800}
+        autoHideDuration={2000}
       />
     );
   }
