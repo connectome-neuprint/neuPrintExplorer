@@ -107,6 +107,8 @@ class Favorites extends React.Component {
 
     const favoriteRows = favoritesArr
       .slice(startRecord, page * rowsPerPage + rowsPerPage)
+      // remove any items that don't have the value property, these were set using the old system.
+      .filter(item => item.value)
       .map((tableinfo) => {
         const rowKey = tableinfo.id;
         return (
