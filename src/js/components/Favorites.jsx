@@ -18,6 +18,8 @@ import TableRow from '@material-ui/core/TableRow';
 import TablePaginationActions from '@neuprint/support';
 import { apiError } from 'actions/app';
 
+import DeleteButton from './Favorites/DeleteButton';
+
 const styles = theme => ({
   root: {
     width: '80%',
@@ -72,13 +74,7 @@ class Favorites extends React.Component {
         .then(items => {
           const itemList = !(items instanceof Array) ? [items] : items;
 
-          const temparray = itemList.map(item => ({
-            name: item.name,
-            url: item.url,
-            cypher: item.cypher
-          }));
-
-          this.setState({ favoritesArr: temparray, favoritesLoaded: true, favoritesLoading: false });
+          this.setState({ favoritesArr: itemList, favoritesLoaded: true, favoritesLoading: false });
         })
         .catch(error => {
           actions.apiError(error);
@@ -94,6 +90,15 @@ class Favorites extends React.Component {
     this.setState({ rowsPerPage: event.target.value });
   };
 
+  handleDelete = (id) => {
+    // grab the favorites array
+    const { favoritesArr } = this.state;
+    // filter it to remove the one with the passed id.
+    const purged = favoritesArr.filter(item => item.id !== id);
+    // set the array back in the state.
+    this.setState({favoritesArr: purged});
+  };
+
   // TODO: add favorites deletion
   render() {
     const { classes, token } = this.props;
@@ -102,17 +107,20 @@ class Favorites extends React.Component {
 
     const favoriteRows = favoritesArr
       .slice(startRecord, page * rowsPerPage + rowsPerPage)
-      .map((tableinfo, index) => {
-        const rowKey = startRecord + index;
+      .map((tableinfo) => {
+        const rowKey = tableinfo.id;
         return (
           <TableRow key={rowKey}>
             <TableCell>
               <Typography>
-                <a href={tableinfo.url}>{tableinfo.name}</a>
+                <a href={tableinfo.value.url}>{tableinfo.value.name}</a>
               </Typography>
             </TableCell>
             <TableCell>
-              <Typography>{tableinfo.cypher}</Typography>
+              <Typography>{tableinfo.value.cypher}</Typography>
+            </TableCell>
+            <TableCell>
+              <DeleteButton {...this.props} id={tableinfo.id} removeItem={this.handleDelete} />
             </TableCell>
           </TableRow>
         );
