@@ -80,9 +80,9 @@ class About extends React.Component {
   }
 
   loadIssues() {
-    const { token } = this.props;
+    const { token, appDB } = this.props;
     /* Call to Google API function */
-    fetch('https://us-east1-dvid-em.cloudfunctions.net/neuprint-janelia/gitinfo', {
+    fetch(`${appDB}/gitinfo`, {
       method: 'POST',
       headers: {
         Authorization: `token ${token}`,
@@ -230,12 +230,14 @@ class About extends React.Component {
 }
 
 const AboutState = state => ({
-  token: state.user.get('token')
+  token: state.user.get('token'),
+  appDB: state.app.get('appDB')
 });
 
 About.propTypes = {
   classes: PropTypes.object.isRequired,
-  token: PropTypes.string.isRequired
+  token: PropTypes.string.isRequired,
+  appDB: PropTypes.string.isRequired
 };
 
 export default withStyles(styles)(
