@@ -62,7 +62,6 @@ const Master = props => {
               <Route path="/help" component={Help} />
               <Route path="/favorites" component={Favorites} />
               <Route path="/about" component={About} />
-              <Route path="/about" component={About} />
               <Route component={NoMatch} />
             </Switch>
           </Suspense>
