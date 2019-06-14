@@ -150,6 +150,15 @@ class ResultsTopBar extends React.Component {
           <IconButton aria-label="Add favorite" onClick={this.openPopup}>
             <Icon style={{ fontSize: 18 }}>star</Icon>
           </IconButton>
+          <IconButton
+            className={classes.button}
+            aria-label="Save"
+            onClick={() => {
+              this.handleSaveResults(index);
+            }}
+          >
+            <Icon style={{ fontSize: 18 }}>save</Icon>
+          </IconButton>
           <Dialog open={open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">Save Bookmark</DialogTitle>
             <DialogContent>
