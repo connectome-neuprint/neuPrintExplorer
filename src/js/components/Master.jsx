@@ -21,6 +21,7 @@ const Help = React.lazy(() => import('./Help'));
 const About = React.lazy(() => import('./About'));
 const Home = React.lazy(() => import('./Home'));
 const Favorites = React.lazy(() => import('./Favorites'));
+const NoMatch = React.lazy(() => import('./NoMatch'));
 
 // adapted from material ui example
 const styles = theme => ({
@@ -61,7 +62,8 @@ const Master = props => {
               <Route path="/help" component={Help} />
               <Route path="/favorites" component={Favorites} />
               <Route path="/about" component={About} />
-              <Route component={Home} />
+              <Route path="/about" component={About} />
+              <Route component={NoMatch} />
             </Switch>
           </Suspense>
         </main>
