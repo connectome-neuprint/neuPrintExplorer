@@ -132,7 +132,6 @@ class Login extends React.Component {
               onClose={this.closeUser}
             >
               <MenuItem onClick={this.logout}>Logout</MenuItem>
-              <MenuItem component='a' href="/token" >Auth Token</MenuItem>
               <MenuItem
                 component={NavLink}
                 to={{ pathname: '/account'}}
