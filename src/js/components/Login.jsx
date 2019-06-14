@@ -5,7 +5,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { NavLink, withRouter } from 'react-router-dom';
+
 import classNames from 'classnames';
 
 import { withStyles } from '@material-ui/core/styles';
@@ -132,6 +133,10 @@ class Login extends React.Component {
             >
               <MenuItem onClick={this.logout}>Logout</MenuItem>
               <MenuItem component='a' href="/token" >Auth Token</MenuItem>
+              <MenuItem
+                component={NavLink}
+                to={{ pathname: '/account'}}
+              >Account</MenuItem>
             </Menu>
           </div>
         )}

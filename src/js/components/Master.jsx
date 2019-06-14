@@ -19,6 +19,7 @@ import './Master.css';
 const Results = React.lazy(() => import('./Results'));
 const Help = React.lazy(() => import('./Help'));
 const About = React.lazy(() => import('./About'));
+const Account = React.lazy(() => import('./Account'));
 const Home = React.lazy(() => import('./Home'));
 const Favorites = React.lazy(() => import('./Favorites'));
 const NoMatch = React.lazy(() => import('./NoMatch'));
@@ -62,6 +63,7 @@ const Master = props => {
               <Route path="/help" component={Help} />
               <Route path="/favorites" component={Favorites} />
               <Route path="/about" component={About} />
+              <Route path="/account" component={Account} />
               <Route component={NoMatch} />
             </Switch>
           </Suspense>
