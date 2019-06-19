@@ -23,7 +23,7 @@ import DeleteButton from './Favorites/DeleteButton';
 
 const styles = theme => ({
   root: {
-    width: '80%',
+    overflow: 'auto',
     padding: theme.spacing.unit * 3
   },
   table: {
