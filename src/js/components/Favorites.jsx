@@ -1,6 +1,7 @@
 /*
- * Main page to hold results from query.  This could be
- * a simple table or a table of tables.
+ * Favorites & Saved searches.
+ * This page show the favorite search queries that have been stored in
+ * addition to saved search results.
 */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -99,7 +100,6 @@ class Favorites extends React.Component {
     this.setState({favoritesArr: purged});
   };
 
-  // TODO: add favorites deletion
   render() {
     const { classes, token } = this.props;
     const { rowsPerPage, page, favoritesArr } = this.state;
