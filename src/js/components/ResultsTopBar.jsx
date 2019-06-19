@@ -63,6 +63,38 @@ class ResultsTopBar extends React.Component {
     setQueryString({ rt: 'full' });
   };
 
+  handleSaveResults = index => {
+    // save the result data, cypher query and current time stamp
+    // into google data store
+    const { actions, token, appDB, queryStr, results } = this.props;
+    const data = JSON.stringify(results.get(index));
+    if (token !== '') {
+      fetch(`${appDB}/user/searches`, {
+        body: JSON.stringify({
+          name: 'test',
+          data,
+          cypher: queryStr,
+          timestamp: new Date().getTime()
+        }),
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'content-type': 'application/json'
+        },
+        method: 'POST'
+      }).then(resp => {
+        if (resp.status === 401) {
+          // need to re-authenticate
+          actions.reAuth();
+          actions.authError('User must re-authenticate');
+        }
+        else {
+          actions.launchNotification('Results saved successfully');
+        }
+      });
+    }
+
+  };
+
   handleRemoveResult = index => {
     const { actions } = this.props;
     // get query object
@@ -102,7 +134,7 @@ class ResultsTopBar extends React.Component {
           actions.authError('User must re-authenticate');
         }
         else {
-          actions.launchNotification('Favorite added succesfully');
+          actions.launchNotification('Favorite added successfully');
         }
       });
     }
@@ -219,6 +251,7 @@ class ResultsTopBar extends React.Component {
 
 const ResultsTopBarState = state => ({
   token: state.user.get('token'),
+  results: state.results.get('allResults'),
   appDB: state.app.get('appDB')
 });
 
@@ -252,7 +285,8 @@ ResultsTopBar.propTypes = {
   name: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
   token: PropTypes.string.isRequired,
-  appDB: PropTypes.string.isRequired
+  appDB: PropTypes.string.isRequired,
+  results: PropTypes.object.isRequired
 };
 
 ResultsTopBar.defaultProps = {
