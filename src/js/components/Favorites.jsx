@@ -2,10 +2,11 @@
  * Favorites & Saved searches.
  * This page show the favorite search queries that have been stored in
  * addition to saved search results.
-*/
+ */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import dateFns from 'date-fns';
 
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
@@ -42,44 +43,76 @@ class Favorites extends React.Component {
       rowsPerPage: 5,
       favoritesLoaded: false,
       favoritesLoading: false,
-      favoritesArr: []
+      favoritesArr: [],
+      searchesLoaded: false,
+      searchesLoading: false,
+      searchesArr: []
     };
   }
 
   componentDidMount() {
-    const { favoritesLoaded, favoritesLoading } = this.state;
-    if (!favoritesLoaded && !favoritesLoading) {
-      this.fetchBookmarks();
-    }
+    this.fetchBookmarks();
+    this.fetchSavedSearches();
   }
 
   componentDidUpdate() {
-    const { favoritesLoaded, favoritesLoading } = this.state;
-    if (!favoritesLoaded && !favoritesLoading) {
-      this.fetchBookmarks();
-    }
+    this.fetchBookmarks();
+    this.fetchSavedSearches();
   }
 
-  fetchBookmarks = () => {
-    const { token, appDB, actions } = this.props;
-    if (token !== '') {
-       this.setState({ favoritesLoading: true });
-      // fetch favorites and add to state
-      fetch(`${appDB}/user/favorites`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-        method: 'GET'
-      })
-        .then(result => result.json())
-        .then(items => {
-          const itemList = !(items instanceof Array) ? [items] : items;
-
-          this.setState({ favoritesArr: itemList, favoritesLoaded: true, favoritesLoading: false });
+  fetchSavedSearches = () => {
+    const { searchesLoaded, searchesLoading } = this.state;
+    if (!searchesLoaded && !searchesLoading) {
+      const { token, appDB, actions } = this.props;
+      if (token !== '') {
+        this.setState({ searchesLoading: true });
+        // fetch favorites and add to state
+        fetch(`${appDB}/user/searches`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          method: 'GET'
         })
-        .catch(error => {
-          actions.apiError(error);
-        });
+          .then(result => result.json())
+          .then(items => {
+            const itemList = !(items instanceof Array) ? [items] : items;
+
+            this.setState({ searchesArr: itemList, searchesLoaded: true, searchesLoading: false });
+          })
+          .catch(error => {
+            actions.apiError(error);
+          });
+      }
+    }
+  };
+
+  fetchBookmarks = () => {
+    const { favoritesLoaded, favoritesLoading } = this.state;
+    if (!favoritesLoaded && !favoritesLoading) {
+      const { token, appDB, actions } = this.props;
+      if (token !== '') {
+        this.setState({ favoritesLoading: true });
+        // fetch favorites and add to state
+        fetch(`${appDB}/user/favorites`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          method: 'GET'
+        })
+          .then(result => result.json())
+          .then(items => {
+            const itemList = !(items instanceof Array) ? [items] : items;
+
+            this.setState({
+              favoritesArr: itemList,
+              favoritesLoaded: true,
+              favoritesLoading: false
+            });
+          })
+          .catch(error => {
+            actions.apiError(error);
+          });
+      }
     }
   };
 
@@ -91,25 +124,58 @@ class Favorites extends React.Component {
     this.setState({ rowsPerPage: event.target.value });
   };
 
-  handleDelete = (id) => {
+  handleDelete = id => {
     // grab the favorites array
     const { favoritesArr } = this.state;
     // filter it to remove the one with the passed id.
     const purged = favoritesArr.filter(item => item.id !== id);
     // set the array back in the state.
-    this.setState({favoritesArr: purged});
+    this.setState({ favoritesArr: purged });
+  };
+
+  handleDeleteSearch = id => {
+    // grab the favorites array
+    const { searchesArr } = this.state;
+    // filter it to remove the one with the passed id.
+    const purged = searchesArr.filter(item => item.id !== id);
+    // set the array back in the state.
+    this.setState({ searchesArr: purged });
   };
 
   render() {
     const { classes, token } = this.props;
-    const { rowsPerPage, page, favoritesArr } = this.state;
+    const { rowsPerPage, page, favoritesArr, searchesArr } = this.state;
     const startRecord = page * rowsPerPage;
+
+    const searchRows = searchesArr.slice(startRecord, page * rowsPerPage + rowsPerPage).map(row => {
+      const rowKey = row.id;
+      return (
+        <TableRow key={rowKey}>
+          <TableCell>
+            <Typography>
+              {row.value.name} - {dateFns.format(new Date(row.value.timestamp), 'MM/DD/YYYY H:mm')}
+            </Typography>
+          </TableCell>
+          <TableCell>
+            <Typography>{row.value.cypher}</Typography>
+          </TableCell>
+          <TableCell>
+            <DeleteButton
+              {...this.props}
+              type="searches"
+              id={row.id}
+              removeItem={this.handleDeleteSearch}
+            />
+          </TableCell>
+        </TableRow>
+      );
+    });
 
     const favoriteRows = favoritesArr
       .slice(startRecord, page * rowsPerPage + rowsPerPage)
       // remove any items that don't have the value property, these were set using the old system.
       .filter(item => item.value)
-      .map((tableinfo) => {
+      .map(tableinfo => {
         const rowKey = tableinfo.id;
         return (
           <TableRow key={rowKey}>
@@ -151,6 +217,27 @@ class Favorites extends React.Component {
         ) : (
           <div />
         )}
+        <Typography variant="h6">Saved Searches</Typography>
+        {token !== '' ? (
+          <Table className={classes.table}>
+            <TableBody>{searchRows}</TableBody>
+            <TableFooter>
+              <TableRow>
+                <TablePagination
+                  colSpan={2}
+                  count={searchesArr.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onChangePage={this.handleChangePage}
+                  onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                  ActionsComponent={TablePaginationActions}
+                />
+              </TableRow>
+            </TableFooter>
+          </Table>
+        ) : (
+          <div />
+        )}
       </div>
     );
   }
@@ -163,7 +250,7 @@ const FavoritesState = state => ({
 
 const FavoritesDispatch = dispatch => ({
   actions: {
-    apiError: (error) => {
+    apiError: error => {
       dispatch(apiError(error));
     }
   }

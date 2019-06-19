@@ -66,12 +66,12 @@ class ResultsTopBar extends React.Component {
   handleSaveResults = index => {
     // save the result data, cypher query and current time stamp
     // into google data store
-    const { actions, token, appDB, queryStr, results } = this.props;
+    const { actions, token, appDB, queryStr, results, name } = this.props;
     const data = JSON.stringify(results.get(index));
     if (token !== '') {
       fetch(`${appDB}/user/searches`, {
         body: JSON.stringify({
-          name: 'test',
+          name,
           data,
           cypher: queryStr,
           timestamp: new Date().getTime()

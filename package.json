@@ -67,6 +67,7 @@
     "classnames": "^2.2.6",
     "clone": "^2.1.2",
     "colormap": "^2.3.0",
+    "date-fns": "^1.30.1",
     "deepmerge": "^2.2.1",
     "history": "^4.7.2",
     "immutable": "^4.0.0-rc.12",

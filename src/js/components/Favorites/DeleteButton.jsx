@@ -2,11 +2,11 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 
 function deleteItem(props) {
-  const { token, appDB, actions, id, removeItem} = props;
+  const { token, appDB, actions, id, removeItem, type = 'favorites'} = props;
 
   if (token !== '') {
     // fetch favorites and add to state
-    fetch(`${appDB}/user/favorites/${id}`, {
+    fetch(`${appDB}/user/${type}/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`
       },
