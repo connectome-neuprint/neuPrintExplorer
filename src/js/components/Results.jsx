@@ -195,7 +195,7 @@ class Results extends React.Component {
 
     const query = getQueryObject();
     const resultsList = query.qr || [];
-    const tabValue = parseInt(query.tab || 0, 10);
+    const tabIndex = parseInt(query.tab || 0, 10);
 
     if (!isQuerying && resultsList.length === 0) {
       return (
@@ -210,12 +210,12 @@ class Results extends React.Component {
       );
     }
 
-    const tabIndex = parseInt(query.tab || 0, 10);
     let tabData = (
-      <div>
+      <div className={classes.full}>
         <ResultsTopBar
           downloadEnabled={false}
           downloadCallback={this.downloadFile}
+          saveEnabled={false}
           name="Loading..."
           index={tabIndex}
           queryStr="Loading"
@@ -226,9 +226,9 @@ class Results extends React.Component {
     );
 
     if (!isQuerying) {
-      const cachedResults = allResults.get(tabValue);
+      const cachedResults = allResults.get(tabIndex);
       // check that we have some results and they match the plugin we are trying to use.
-      if (cachedResults && cachedResults.params && cachedResults.params.code === resultsList[tabValue].code) {
+      if (cachedResults && cachedResults.params && cachedResults.params.code === resultsList[tabIndex].code) {
         const currentPlugin = this.currentPlugin();
 
         if (currentPlugin) {
@@ -244,17 +244,20 @@ class Results extends React.Component {
           // without affecting the stored results.
           const resultsCopy = clone(cachedResults.result);
           const currentResult = currentPlugin.processResults(
-            resultsList[tabValue],
+            resultsList[tabIndex],
             resultsCopy,
             actions,
             this.submit,
             PUBLIC // PUBLIC indicates this is a public version of the application
           );
 
-          const combined = Object.assign(resultsList[tabValue], { result: currentResult });
+          const combined = Object.assign(resultsList[tabIndex], { result: currentResult });
 
           const downloadEnabled =
             currentPlugin.details.download !== undefined ? currentPlugin.details.download : true;
+
+          const saveEnabled =
+            currentPlugin.details.save !== undefined ? currentPlugin.details.save : true;
 
           if (combined && combined.code === currentPlugin.details.abbr) {
             const View = viewPlugins.get(currentPlugin.details.visType);
@@ -264,6 +267,7 @@ class Results extends React.Component {
                   {query.rt !== 'full' && (
                     <ResultsTopBar
                       downloadEnabled={downloadEnabled}
+                      saveEnabled={saveEnabled}
                       downloadCallback={this.downloadFile}
                       name={combined.result.title || 'Error'}
                       index={tabIndex}
@@ -286,6 +290,7 @@ class Results extends React.Component {
                   {query.rt !== 'full' && (
                     <ResultsTopBar
                       downloadEnabled={downloadEnabled}
+                      saveEnabled={saveEnabled}
                       downloadCallback={this.downloadFile}
                       name={combined.result.title || 'Error'}
                       index={tabIndex}
@@ -315,6 +320,7 @@ class Results extends React.Component {
           <ResultsTopBar
             downloadCallback={this.downloadFile}
             downloadEnabled={false}
+            saveEnavled={false}
             name="Error loading content"
             index={tabIndex}
             queryStr="error"
@@ -349,7 +355,7 @@ class Results extends React.Component {
         {query.rt !== 'full' && (
           <AppBar position="static" color="default">
             <Tabs
-              value={tabValue}
+              value={tabIndex}
               onChange={this.handleResultSelection}
               textColor="primary"
               indicatorColor="primary"

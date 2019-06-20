@@ -141,7 +141,7 @@ class ResultsTopBar extends React.Component {
   };
 
   render() {
-    const { classes, color, name, index, queryStr, downloadCallback, downloadEnabled } = this.props;
+    const { classes, color, name, index, queryStr, downloadCallback, downloadEnabled, saveEnabled } = this.props;
     const { showQuery, open } = this.state;
 
     return (
@@ -179,18 +179,25 @@ class ResultsTopBar extends React.Component {
               <DialogContentText>{queryStr}</DialogContentText>
             </DialogContent>
           </Dialog>
-          <IconButton aria-label="Add favorite" onClick={this.openPopup}>
-            <Icon style={{ fontSize: 18 }}>star</Icon>
-          </IconButton>
-          <IconButton
-            className={classes.button}
-            aria-label="Save"
-            onClick={() => {
-              this.handleSaveResults(index);
-            }}
-          >
-            <Icon style={{ fontSize: 18 }}>save</Icon>
-          </IconButton>
+
+          {saveEnabled && (
+            <IconButton aria-label="Add favorite" onClick={this.openPopup}>
+              <Icon style={{ fontSize: 18 }}>star</Icon>
+            </IconButton>
+          )}
+
+          {saveEnabled && (
+            <IconButton
+              className={classes.button}
+              aria-label="Save"
+              onClick={() => {
+                this.handleSaveResults(index);
+              }}
+            >
+              <Icon style={{ fontSize: 18 }}>save</Icon>
+            </IconButton>
+          )}
+
           <Dialog open={open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">Save Bookmark</DialogTitle>
             <DialogContent>
@@ -213,6 +220,7 @@ class ResultsTopBar extends React.Component {
               </Button>
             </DialogActions>
           </Dialog>
+
           {downloadEnabled && (
             <IconButton
               className={classes.button}
@@ -281,6 +289,7 @@ ResultsTopBar.propTypes = {
   color: PropTypes.string,
   downloadCallback: PropTypes.func.isRequired,
   downloadEnabled: PropTypes.bool.isRequired,
+  saveEnabled: PropTypes.bool.isRequired,
   queryStr: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
