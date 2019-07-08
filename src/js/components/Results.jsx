@@ -274,8 +274,18 @@ class Results extends React.Component {
 
           const processingPlugin = this.getProcessingPlugin(currentPlugin, resultsCopy);
 
+          // TODO: If this is a saved search, then we need to provide the original visprops
+          // to the processResults() function and also modify it based on the input added
+          // to the current url query. For example, if the items per page for the saved
+          // query was 25, but the user asked for 5, then we need to overwrite it, but
+          // preserve all the other properties.
+          let combinedQuery = resultsList[tabIndex];
+          if (currentPlugin.details.abbr === 'sv') {
+            combinedQuery = JSON.parse(cachedResults.result.data).params;
+          }
+
           const currentResult = currentPlugin.processResults(
-            resultsList[tabIndex],
+            combinedQuery,
             resultsCopy,
             actions,
             this.submit,
