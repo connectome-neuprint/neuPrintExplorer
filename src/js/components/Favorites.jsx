@@ -16,9 +16,11 @@ import TableCell from '@material-ui/core/TableCell';
 import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
+import Button from '@material-ui/core/Button';
 
 import TablePaginationActions from '@neuprint/support';
 import { apiError } from 'actions/app';
+import { setSearchQueryString, getQueryString } from 'helpers/queryString';
 
 import DeleteButton from './Favorites/DeleteButton';
 
@@ -134,12 +136,32 @@ class Favorites extends React.Component {
   };
 
   handleDeleteSearch = id => {
-    // grab the favorites array
+    // grab the searches array
     const { searchesArr } = this.state;
     // filter it to remove the one with the passed id.
     const purged = searchesArr.filter(item => item.id !== id);
     // set the array back in the state.
     this.setState({ searchesArr: purged });
+  };
+
+  handleViewSearch = id => {
+    const { history } = this.props;
+    // updates the url to include the 'sv' (saved search plugin)
+    // and the id to load, then redirect to the results page
+
+    // add a new tab with query type 'sv'
+    // and the cloud id to be loaded
+    setSearchQueryString({
+      code: 'sv',
+      pm: {
+        id
+      }
+    });
+    // change the page location to /results
+    history.push({
+      pathname: '/results',
+      search: getQueryString()
+    });
   };
 
   render() {
@@ -153,7 +175,9 @@ class Favorites extends React.Component {
         <TableRow key={rowKey}>
           <TableCell>
             <Typography>
-              {row.value.name} - {dateFns.format(new Date(row.value.timestamp), 'MM/DD/YYYY H:mm')}
+              <Button color="primary" onClick={() => this.handleViewSearch(row.id)}>
+                {row.value.name} - {dateFns.format(new Date(row.value.timestamp), 'MM/DD/YYYY H:mm')}
+              </Button>
             </Typography>
           </TableCell>
           <TableCell>
@@ -259,6 +283,7 @@ const FavoritesDispatch = dispatch => ({
 Favorites.propTypes = {
   classes: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
   location: PropTypes.shape({
     search: PropTypes.string.isRequired
   }).isRequired,

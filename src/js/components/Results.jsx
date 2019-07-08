@@ -68,12 +68,22 @@ const styles = theme => ({
   }
 });
 
+function getQueryData(queryData) {
+  // If a timestamp is found in the data structure, then it is a saved result
+  // and we need to return only the saved data.
+  if (queryData.result && queryData.result.resp && queryData.result.resp.timestamp) {
+    return JSON.parse(queryData.result.resp.data);
+  }
+  return queryData;
+}
+
+
 class Results extends React.Component {
   componentDidMount() {
     // grab the contents of the search string.
     // if it has an array of query objects, fetch the data from neuPrint
     // and store it in the redux/local state?
-    const { actions } = this.props;
+    const { actions, token } = this.props;
     const query = getQueryObject();
     const resultsList = query.qr || [];
     const tabValue = parseInt(query.tab || 0, 10);
@@ -81,12 +91,12 @@ class Results extends React.Component {
     if (resultsList.length > 0) {
       const currentPlugin = this.currentPlugin();
       // only fetch results for the tab being displayed.
-      actions.fetchData(resultsList[tabValue], currentPlugin, tabValue);
+      actions.fetchData(resultsList[tabValue], currentPlugin, tabValue, token);
     }
   }
 
   componentDidUpdate(prevProps) {
-    const { location, actions } = this.props;
+    const { location, actions, token } = this.props;
     // if the number of tabs has changed, then update the data.
     // if the current tab has changed, then update.
     // if the current page has changed, then update.
@@ -97,13 +107,30 @@ class Results extends React.Component {
 
       if (resultsList.length > 0) {
         const currentPlugin = this.currentPlugin();
-        actions.fetchData(resultsList[tabValue], currentPlugin, tabValue);
+        actions.fetchData(resultsList[tabValue], currentPlugin, tabValue, token);
       }
     }
   }
 
   static getDerivedStateFromError(error) {
     return { loadingError: error };
+  }
+
+  getViewPlugin(queryPlugin) {
+    const { viewPlugins } = this.props;
+    return viewPlugins.get(queryPlugin.details.visType);
+  }
+
+  getProcessingPlugin(currentPlugin, cachedResults) {
+    const { pluginList } = this.props;
+    if (currentPlugin.details.abbr === 'sv') {
+      const originalPlugin = JSON.parse(cachedResults.data).params.code;
+      const processingPlugin = pluginList.find(
+        plugin => plugin.details.abbr === originalPlugin
+      );
+      return processingPlugin;
+    }
+    return currentPlugin;
   }
 
   submit = query => {
@@ -121,7 +148,7 @@ class Results extends React.Component {
     });
   };
 
-  // TODO: fix the download button.
+  // TODO: fix the download button. - why is it broken?
   downloadFile = index => {
     const { allResults } = this.props;
     const results = allResults.get(index);
@@ -185,7 +212,6 @@ class Results extends React.Component {
       classes,
       isQuerying,
       loadingError,
-      viewPlugins,
       allResults,
       actions,
       neoServer,
@@ -226,6 +252,7 @@ class Results extends React.Component {
     );
 
     if (!isQuerying) {
+      // we have results
       const cachedResults = allResults.get(tabIndex);
       // check that we have some results and they match the plugin we are trying to use.
       if (cachedResults && cachedResults.params && cachedResults.params.code === resultsList[tabIndex].code) {
@@ -243,12 +270,17 @@ class Results extends React.Component {
           // If we provide a clone of the object, then the plugin can do what it wants,
           // without affecting the stored results.
           const resultsCopy = clone(cachedResults.result);
+
+
+          const processingPlugin = this.getProcessingPlugin(currentPlugin, resultsCopy);
+
           const currentResult = currentPlugin.processResults(
             resultsList[tabIndex],
             resultsCopy,
             actions,
             this.submit,
-            PUBLIC // PUBLIC indicates this is a public version of the application
+            PUBLIC, // PUBLIC indicates this is a public version of the application
+            processingPlugin
           );
 
           const combined = Object.assign(resultsList[tabIndex], { result: currentResult });
@@ -260,23 +292,29 @@ class Results extends React.Component {
             currentPlugin.details.save !== undefined ? currentPlugin.details.save : true;
 
           if (combined && combined.code === currentPlugin.details.abbr) {
-            const View = viewPlugins.get(currentPlugin.details.visType);
+
+            // show the header information if not in full screen mode.
+            const tabDataHeader = query.rt !== 'full' ? (
+              <ResultsTopBar
+                downloadEnabled={downloadEnabled}
+                saveEnabled={saveEnabled}
+                downloadCallback={this.downloadFile}
+                name={combined.result.title || 'Error'}
+                index={tabIndex}
+                queryStr={combined.result.debug}
+                color="#cccccc"
+              />
+            ) : '';
+
+            const View = this.getViewPlugin(processingPlugin);
+
             if (View) {
+              const queryData = getQueryData(combined);
               tabData = (
                 <div className={classes.full}>
-                  {query.rt !== 'full' && (
-                    <ResultsTopBar
-                      downloadEnabled={downloadEnabled}
-                      saveEnabled={saveEnabled}
-                      downloadCallback={this.downloadFile}
-                      name={combined.result.title || 'Error'}
-                      index={tabIndex}
-                      queryStr={combined.result.debug}
-                      color="#cccccc"
-                    />
-                  )}
+                  {tabDataHeader}
                   <View
-                    query={combined}
+                    query={queryData}
                     index={tabIndex}
                     actions={actions}
                     neoServer={neoServer}
@@ -287,17 +325,7 @@ class Results extends React.Component {
             } else {
               tabData = (
                  <div className={classes.full}>
-                  {query.rt !== 'full' && (
-                    <ResultsTopBar
-                      downloadEnabled={downloadEnabled}
-                      saveEnabled={saveEnabled}
-                      downloadCallback={this.downloadFile}
-                      name={combined.result.title || 'Error'}
-                      index={tabIndex}
-                      queryStr={combined.result.debug}
-                      color="#cccccc"
-                    />
-                  )}
+                  {tabDataHeader}
                   <div>
                     Your browser/OS/drivers do not support WebGL2. In order to use
                     this plugin, please try a different browser.
@@ -320,7 +348,7 @@ class Results extends React.Component {
           <ResultsTopBar
             downloadCallback={this.downloadFile}
             downloadEnabled={false}
-            saveEnavled={false}
+            saveEnabled={false}
             name="Error loading content"
             index={tabIndex}
             queryStr="error"
@@ -385,6 +413,7 @@ Results.propTypes = {
   actions: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   neoServer: PropTypes.string.isRequired,
+  token: PropTypes.string.isRequired,
   neo4jsettings: PropTypes.object.isRequired
 };
 
@@ -405,6 +434,7 @@ const ResultsState = state => ({
   queryObj: state.query.get('neoQueryObj'),
   fullscreen: state.app.get('fullscreen'),
   neo4jsettings: state.neo4jsettings,
+  token: state.user.get('token'),
   neoServer: state.neo4jsettings.get('neoServer')
 });
 
@@ -441,8 +471,8 @@ const ResultDispatch = dispatch => ({
     },
     getQueryObject: (id, empty) => getQueryObject(id, empty),
     setQueryString: data => setQueryString(data),
-    fetchData: (qParams, plugin, tabPosition) => {
-      dispatch(fetchData(qParams, plugin, tabPosition));
+    fetchData: (qParams, plugin, tabPosition, token) => {
+      dispatch(fetchData(qParams, plugin, tabPosition, token));
     }
   }
 });

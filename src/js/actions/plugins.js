@@ -53,7 +53,7 @@ function cacheHit() {
   };
 }
 
-export function fetchData(params, plugin, tabPosition) {
+export function fetchData(params, plugin, tabPosition, token) {
   return function fetchDataAsync(dispatch, getState) {
     // we need to clone this object so that it doesn't modify the stored
     // parameters. This is important when checking for cached results.
@@ -92,12 +92,11 @@ export function fetchData(params, plugin, tabPosition) {
       return Promise.resolve();
     }
 
-
     dispatch(fetchingData(tabPosition));
 
-    const fetchParams = plugin.fetchParameters(parameters);
+    const fetchParams = plugin.fetchParameters(parameters, token);
     // build the query url. Use the custom one by default.
-    let queryUrl = '/api/custom/custom';
+    let queryUrl = fetchParams.queryUrl || '/api/custom/custom';
     if (fetchParams.queryString) {
       queryUrl = `/api${fetchParams.queryString}`;
     }
@@ -109,7 +108,7 @@ export function fetchData(params, plugin, tabPosition) {
       parameters.cypher = fetchParams.cypherQuery;
     }
 
-    return fetch(queryUrl, {
+    const querySettings = fetchParams.querySettings || {
       headers: {
         'content-type': 'application/json',
         Accept: 'application/json'
@@ -117,7 +116,9 @@ export function fetchData(params, plugin, tabPosition) {
       body: JSON.stringify(parameters),
       method: 'POST',
       credentials: 'include'
-    })
+    };
+
+    return fetch(queryUrl, querySettings)
       .then(result => result.json())
       .then(resp => {
         // sends error message provided by neuprinthttp
