@@ -9,6 +9,7 @@ const resultsState = Immutable.Map({
   allResults: Immutable.List([]),
   loading: false,
   loadingError: null,
+  showCypher: false,
 });
 
 export default function resultsReducer(state = resultsState, action) {
@@ -46,6 +47,9 @@ export default function resultsReducer(state = resultsState, action) {
     }
     case C.REFRESH_RESULT: {
       return state.setIn(['allResults', action.index], {});
+    }
+    case C.TOGGLE_CYPHER_DISPLAY: {
+      return state.set('showCypher', !state.get('showCypher'));
     }
     default: {
       return state;

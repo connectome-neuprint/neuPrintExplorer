@@ -46,8 +46,7 @@ class ResultsTopBar extends React.Component {
     super(props);
     this.state = {
       open: false,
-      bookmarkname: '',
-      showQuery: false
+      bookmarkname: ''
     };
   }
 
@@ -149,12 +148,12 @@ class ResultsTopBar extends React.Component {
       color,
       name,
       index,
-      queryStr,
       downloadCallback,
       downloadEnabled,
-      saveEnabled
+      saveEnabled,
+      actions
     } = this.props;
-    const { showQuery, open } = this.state;
+    const { open } = this.state;
 
     return (
       <div className={classNames(classes.root, 'topresultbar')} style={{ backgroundColor: color }}>
@@ -164,34 +163,12 @@ class ResultsTopBar extends React.Component {
           </Typography>
           <IconButton
             onClick={() => {
-              this.setState({ showQuery: true });
+              actions.toggleCypherDisplay();
             }}
             aria-label="Show Query"
           >
             <Icon style={{ fontSize: 18 }}>info</Icon>
           </IconButton>
-          <Dialog
-            open={showQuery}
-            onClose={() => {
-              this.setState({ showQuery: false });
-            }}
-            aria-labelledby="form-dialog-title"
-          >
-            <DialogTitle id="form-dialog-title">
-              Neo4j Cypher Query
-              <IconButton
-                aria-label="Close"
-                className={classes.closeButton}
-                onClick={() => this.setState({ showQuery: false })}
-              >
-                <CloseIcon />
-              </IconButton>
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText>{queryStr}</DialogContentText>
-            </DialogContent>
-          </Dialog>
-
           <IconButton
             aria-label="Refresh"
             onClick={this.handleRefresh}
@@ -305,6 +282,11 @@ const ResultsTopBarDispatch = dispatch => ({
         index
       });
     },
+    toggleCypherDisplay() {
+      dispatch({
+        type: C.TOGGLE_CYPHER_DISPLAY
+      });
+    }
   }
 });
 

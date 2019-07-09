@@ -30,6 +30,7 @@ import {
 } from 'helpers/queryString';
 
 import ResultsTopBar from './ResultsTopBar';
+import CypherQuery from './CypherQuery';
 
 import './Results.css';
 
@@ -218,7 +219,8 @@ class Results extends React.Component {
       actions,
       neoServer,
       pluginList,
-      neo4jsettings
+      neo4jsettings,
+      showCypher
     } = this.props;
 
     const query = getQueryObject();
@@ -325,6 +327,7 @@ class Results extends React.Component {
               tabData = (
                 <div className={classes.full}>
                   {tabDataHeader}
+                  {showCypher && <CypherQuery cypherString={combined.result.debug} />}
                   <View
                     query={queryData}
                     index={tabIndex}
@@ -426,7 +429,8 @@ Results.propTypes = {
   history: PropTypes.object.isRequired,
   neoServer: PropTypes.string.isRequired,
   token: PropTypes.string.isRequired,
-  neo4jsettings: PropTypes.object.isRequired
+  neo4jsettings: PropTypes.object.isRequired,
+  showCypher: PropTypes.bool.isRequired
 };
 
 Results.defaultProps = {
@@ -439,6 +443,7 @@ const ResultsState = state => ({
   isQuerying: state.results.get('loading'),
   loadingError: state.results.get('loadingError'),
   allResults: state.results.get('allResults'),
+  showCypher: state.results.get('showCypher'),
   viewPlugins: state.app.get('viewPlugins'),
   showSkel: state.skeleton.get('display'),
   userInfo: state.user.get('userInfo'),
