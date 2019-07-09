@@ -86,13 +86,17 @@ class ResultsTopBar extends React.Component {
           // need to re-authenticate
           actions.reAuth();
           actions.authError('User must re-authenticate');
-        }
-        else {
+        } else {
           actions.launchNotification('Results saved successfully');
         }
       });
     }
+  };
 
+  handleRefresh = () => {
+    const { actions } = this.props;
+    const query = getQueryObject();
+    actions.refreshResult(query.tab);
   };
 
   handleRemoveResult = index => {
@@ -132,8 +136,7 @@ class ResultsTopBar extends React.Component {
           // need to re-authenticate
           actions.reAuth();
           actions.authError('User must re-authenticate');
-        }
-        else {
+        } else {
           actions.launchNotification('Favorite added successfully');
         }
       });
@@ -141,7 +144,16 @@ class ResultsTopBar extends React.Component {
   };
 
   render() {
-    const { classes, color, name, index, queryStr, downloadCallback, downloadEnabled, saveEnabled } = this.props;
+    const {
+      classes,
+      color,
+      name,
+      index,
+      queryStr,
+      downloadCallback,
+      downloadEnabled,
+      saveEnabled
+    } = this.props;
     const { showQuery, open } = this.state;
 
     return (
@@ -179,6 +191,13 @@ class ResultsTopBar extends React.Component {
               <DialogContentText>{queryStr}</DialogContentText>
             </DialogContent>
           </Dialog>
+
+          <IconButton
+            aria-label="Refresh"
+            onClick={this.handleRefresh}
+          >
+            <Icon style={{ fontSize: 18 }}>refresh</Icon>
+          </IconButton>
 
           {saveEnabled && (
             <IconButton aria-label="Add favorite" onClick={this.openPopup}>
@@ -279,7 +298,13 @@ const ResultsTopBarDispatch = dispatch => ({
         type: C.CLEAR_NEW_RESULT,
         index
       });
-    }
+    },
+    refreshResult(index) {
+      dispatch({
+        type: C.REFRESH_RESULT,
+        index
+      });
+    },
   }
 });
 

@@ -44,6 +44,9 @@ export default function resultsReducer(state = resultsState, action) {
         .set('loading', false)
         .set('loadingError', action.error);
     }
+    case C.REFRESH_RESULT: {
+      return state.setIn(['allResults', action.index], {});
+    }
     default: {
       return state;
     }

@@ -96,18 +96,20 @@ class Results extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { location, actions, token } = this.props;
+    const { location, actions, token, allResults, isQuerying } = this.props;
     // if the number of tabs has changed, then update the data.
     // if the current tab has changed, then update.
     // if the current page has changed, then update.
-    if (location !== prevProps.location) {
+    if (!isQuerying) {
       const query = getQueryObject();
-      const resultsList = query.qr || [];
       const tabValue = parseInt(query.tab || 0, 10);
 
-      if (resultsList.length > 0) {
-        const currentPlugin = this.currentPlugin();
-        actions.fetchData(resultsList[tabValue], currentPlugin, tabValue, token);
+      if (location !== prevProps.location || !allResults.get(tabValue, {}).result) {
+        const resultsList = query.qr || [];
+        if (resultsList.length > 0) {
+          const currentPlugin = this.currentPlugin();
+          actions.fetchData(resultsList[tabValue], currentPlugin, tabValue, token);
+        }
       }
     }
   }
