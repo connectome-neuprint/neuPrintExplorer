@@ -1,4 +1,5 @@
 import Immutable from 'immutable';
+import timekeeper from 'timekeeper';
 
 import C from './constants';
 import reducer from './results';
@@ -7,10 +8,20 @@ const state = Immutable.Map({
   allResults: Immutable.List([{ existingResult: 'testResult' }]),
   loadingError: null,
   loading: false,
-  showCypher: false
+  showCypher: false,
 });
 
 describe('results Reducer', () => {
+  let time;
+  beforeEach(() => {
+    time = new Date();
+    timekeeper.freeze(time);
+  });
+
+  afterEach(() => {
+    timekeeper.reset(time);
+  });
+
   it('CLEAR_NEW_RESULT success', () => {
     const action = {
       type: C.CLEAR_NEW_RESULT,
@@ -53,7 +64,8 @@ describe('results Reducer', () => {
             queryString: 'testQueryString',
             visType: 'testVisType'
           },
-          result: { columns: ['a', 'b'], data: [1, 2] }
+          result: { columns: ['a', 'b'], data: [1, 2] },
+          timestamp: time.getTime()
         }]),
         loading: false,
         loadingError: null,
@@ -68,7 +80,8 @@ describe('results Reducer', () => {
             queryString: 'testQueryString',
             visType: 'testVisType',
           },
-          result: { columns: ['a', 'b'], data: [1, 2] }
+          result: { columns: ['a', 'b'], data: [1, 2] },
+          timestamp: time.getTime()
         }]),
         loading: false,
         loadingError: null,
