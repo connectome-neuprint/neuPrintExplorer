@@ -19,7 +19,6 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContentText from '@material-ui/core/DialogContentText';
-import CloseIcon from '@material-ui/icons/Close';
 
 import { authError, reAuth } from 'actions/user';
 import { launchNotification } from 'actions/app';
