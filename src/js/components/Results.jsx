@@ -315,6 +315,7 @@ class Results extends React.Component {
                 downloadCallback={this.downloadFile}
                 name={combined.result.title || 'Error'}
                 index={tabIndex}
+                fetchedTime={cachedResults.timestamp || null}
                 queryStr={combined.result.debug}
                 color="#cccccc"
               />

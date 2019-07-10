@@ -18,7 +18,8 @@ export default function resultsReducer(state = resultsState, action) {
       return state.set('loading', true)
         .setIn(['allResults', action.tab], {
           result: null,
-          params: null
+          params: null,
+          timestamp: ''
         })
         .set('loadingError', null);
     }
@@ -32,7 +33,8 @@ export default function resultsReducer(state = resultsState, action) {
     case C.PLUGIN_SAVE_RESPONSE: {
       return state.setIn(['allResults', action.tabIndex], {
         result: action.response,
-        params: action.params
+        params: action.params,
+        timestamp: (new Date()).getTime()
       })
         .set('loading', false)
         .set('loadingError', null);

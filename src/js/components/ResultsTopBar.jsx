@@ -25,6 +25,8 @@ import { launchNotification } from 'actions/app';
 import { getQueryObject, setQueryString } from 'helpers/queryString';
 import C from '../reducers/constants';
 
+import CachedCounter from './CachedCounter';
+
 const styles = theme => ({
   root: {
     width: '100%',
@@ -37,6 +39,9 @@ const styles = theme => ({
     position: 'absolute',
     right: theme.spacing.unit,
     top: theme.spacing.unit
+  },
+  cachedTime: {
+    color: '#555'
   }
 });
 
@@ -150,7 +155,8 @@ class ResultsTopBar extends React.Component {
       downloadCallback,
       downloadEnabled,
       saveEnabled,
-      actions
+      actions,
+      fetchedTime
     } = this.props;
     const { open } = this.state;
 
@@ -159,6 +165,8 @@ class ResultsTopBar extends React.Component {
         <Toolbar>
           <Typography variant="caption" color="inherit" className={classes.flex} noWrap>
             {name}
+            <br />
+            <span className={classes.cachedTime}> Loaded from server <CachedCounter fetchedTime={fetchedTime} key={index} /> ago </span>
           </Typography>
           <IconButton
             onClick={() => {
@@ -298,6 +306,7 @@ ResultsTopBar.propTypes = {
   saveEnabled: PropTypes.bool.isRequired,
   queryStr: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
+  fetchedTime: PropTypes.number,
   index: PropTypes.number.isRequired,
   token: PropTypes.string.isRequired,
   appDB: PropTypes.string.isRequired,
@@ -305,7 +314,8 @@ ResultsTopBar.propTypes = {
 };
 
 ResultsTopBar.defaultProps = {
-  color: '#cccccc'
+  color: '#cccccc',
+  fetchedTime: (new Date()).getTime()
 };
 
 export default withStyles(styles)(
