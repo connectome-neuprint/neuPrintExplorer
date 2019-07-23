@@ -31,6 +31,7 @@ import {
 
 import ResultsTopBar from './ResultsTopBar';
 import CypherQuery from './CypherQuery';
+import ScrollManager from '../helpers/ScrollManager';
 
 import './Results.css';
 
@@ -329,13 +330,18 @@ class Results extends React.Component {
                 <div className={classes.full}>
                   {tabDataHeader}
                   {showCypher && <CypherQuery cypherString={combined.result.debug} />}
-                  <View
-                    query={queryData}
-                    index={tabIndex}
-                    actions={actions}
-                    neoServer={neoServer}
-                    neo4jsettings={neo4jsettings}
-                  />
+                  <ScrollManager scrollKey={tabIndex}>
+                    {({ connectScrollTarget, ...props }) =>
+                      <View
+                        query={queryData}
+                        index={tabIndex}
+                        key={tabIndex}
+                        actions={actions}
+                        neoServer={neoServer}
+                        neo4jsettings={neo4jsettings}
+                      />
+                    }
+                  </ScrollManager>
                 </div>
               );
             } else {
