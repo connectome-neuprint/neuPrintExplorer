@@ -104,7 +104,6 @@ class Results extends React.Component {
     // if the current page has changed, then update.
     if (!isQuerying) {
       const query = getQueryObject();
-      const prevQuery = getQueryObject(null, {}, prevProps.location.search.substring(1));
       const tabValue = parseInt(query.tab || 0, 10);
 
       if (location !== prevProps.location || !allResults.get(tabValue, {}).result) {
@@ -330,7 +329,7 @@ class Results extends React.Component {
               const viewKey = `t${tabIndex}`;
               tabData = (
                 <ScrollManager scrollKey={viewKey}>
-                  {({ connectScrollTarget, ...props }) =>
+                  {({ connectScrollTarget }) =>
                     <div className={classes.full} ref={connectScrollTarget}>
                       {tabDataHeader}
                       {showCypher && <CypherQuery cypherString={combined.result.debug} />}
