@@ -11,92 +11,33 @@
  * */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import requestAnimationFrame from 'raf';
 
 export const memoryStore = {
-  _data: new Map(),
+  data: new Map(),
   get(key) {
     if (!key) {
       return null;
     }
 
-    return this._data.get(key) || null;
+    return this.data.get(key) || null;
   },
   set(key, data) {
     if (!key) {
-      return;
+      return null;
     }
-    return this._data.set(key, data);
+    return this.data.set(key, data);
   }
-};
-
-/**
- *  * Component that will save and restore Window scroll position.
- *   */
-export default class ScrollPositionManager extends React.Component {
-  constructor(props) {
-    super(...arguments);
-    this.connectScrollTarget = this.connectScrollTarget.bind(this);
-    this._target = window;
-  }
-
-  connectScrollTarget(node) {
-    this._target = node;
-  }
-
-  restoreScrollPosition(pos) {
-    pos = pos || this.props.scrollStore.get(this.props.scrollKey);
-    if (this._target && pos) {
-      requestAnimationFrame(() => {
-        scroll(this._target, pos.x, pos.y);
-      });
-    }
-  }
-
-  saveScrollPosition(key) {
-    if (this._target) {
-      const pos = getScrollPosition(this._target);
-      key = key || this.props.scrollKey;
-      this.props.scrollStore.set(key, pos);
-    }
-  }
-
-  componentDidMount() {
-    this.restoreScrollPosition();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (this.props.scrollKey !== nextProps.scrollKey) {
-      this.saveScrollPosition();
-    }
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.scrollKey !== prevProps.scrollKey) {
-      this.restoreScrollPosition();
-    }
-  }
-
-  componentWillUnmount() {
-    this.saveScrollPosition();
-  }
-
-  render() {
-    const { children = null, ...props } = this.props;
-    return children && children({ ...props, connectScrollTarget: this.connectScrollTarget });
-  }
-}
-
-ScrollPositionManager.defaultProps = {
-  scrollStore: memoryStore
 };
 
 function scroll(target, x, y) {
-  if (target instanceof window.Window) {
-    target.scrollTo(x, y);
+  const updateTarget = target;
+  if (updateTarget instanceof window.Window) {
+    updateTarget.scrollTo(x, y);
   } else {
-    target.scrollLeft = x;
-    target.scrollTop = y;
+    updateTarget.scrollLeft = x;
+    updateTarget.scrollTop = y;
   }
 }
 
@@ -107,3 +48,74 @@ function getScrollPosition(target) {
 
   return { x: target.scrollLeft, y: target.scrollTop };
 }
+
+/**
+ *  * Component that will save and restore Window scroll position.
+ *   */
+export default class ScrollPositionManager extends React.Component {
+  constructor(props) {
+    super(props);
+    this.connectScrollTarget = this.connectScrollTarget.bind(this);
+    this.target = window;
+  }
+
+  componentDidMount() {
+    this.restoreScrollPosition();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { scrollKey } = this.props;
+    if (scrollKey !== nextProps.scrollKey) {
+      this.saveScrollPosition();
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    const { scrollKey } = this.props;
+    if (scrollKey !== prevProps.scrollKey) {
+      this.restoreScrollPosition();
+    }
+  }
+
+  componentWillUnmount() {
+    this.saveScrollPosition();
+  }
+
+  restoreScrollPosition(pos) {
+    const { scrollStore, scrollKey } = this.props;
+    const updatePos = pos || scrollStore.get(scrollKey);
+    if (this.target && updatePos) {
+      requestAnimationFrame(() => {
+        scroll(this.target, updatePos.x, updatePos.y);
+      });
+    }
+  }
+
+  saveScrollPosition(key) {
+    const { scrollStore, scrollKey } = this.props;
+    if (this.target) {
+      const pos = getScrollPosition(this.target);
+      const updateKey = key || scrollKey;
+      scrollStore.set(updateKey, pos);
+    }
+  }
+
+  connectScrollTarget(node) {
+    this.target = node;
+  }
+
+  render() {
+    const { children = null, ...props } = this.props;
+    return children && children({ ...props, connectScrollTarget: this.connectScrollTarget });
+  }
+}
+
+ScrollPositionManager.propTypes = {
+  scrollKey: PropTypes.string.isRequired,
+  scrollStore: PropTypes.object,
+  children: PropTypes.func.isRequired
+};
+
+ScrollPositionManager.defaultProps = {
+  scrollStore: memoryStore
+};

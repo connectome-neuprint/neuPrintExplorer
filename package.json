@@ -76,6 +76,7 @@
     "prettier": "^1.14.3",
     "prop-types": "^15.6.2",
     "qs": "^6.5.2",
+    "raf": "^3.4.1",
     "randomcolor": "^0.5.3",
     "react": "^16.6.0",
     "react-copy-to-clipboard": "^5.0.1",
