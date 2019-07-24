@@ -104,6 +104,7 @@ class Results extends React.Component {
     // if the current page has changed, then update.
     if (!isQuerying) {
       const query = getQueryObject();
+      const prevQuery = getQueryObject(null, {}, prevProps.location.search.substring(1));
       const tabValue = parseInt(query.tab || 0, 10);
 
       if (location !== prevProps.location || !allResults.get(tabValue, {}).result) {
@@ -326,23 +327,24 @@ class Results extends React.Component {
 
             if (View) {
               const queryData = getQueryData(combined);
+              const viewKey = `t${tabIndex}`;
               tabData = (
-                <div className={classes.full}>
-                  {tabDataHeader}
-                  {showCypher && <CypherQuery cypherString={combined.result.debug} />}
-                  <ScrollManager scrollKey={tabIndex}>
-                    {({ connectScrollTarget, ...props }) =>
-                      <View
-                        query={queryData}
-                        index={tabIndex}
-                        key={tabIndex}
-                        actions={actions}
-                        neoServer={neoServer}
-                        neo4jsettings={neo4jsettings}
-                      />
-                    }
-                  </ScrollManager>
-                </div>
+                <ScrollManager scrollKey={viewKey}>
+                  {({ connectScrollTarget, ...props }) =>
+                    <div className={classes.full} ref={connectScrollTarget}>
+                      {tabDataHeader}
+                      {showCypher && <CypherQuery cypherString={combined.result.debug} />}
+                          <View
+                            query={queryData}
+                            index={tabIndex}
+                            key={viewKey}
+                            actions={actions}
+                            neoServer={neoServer}
+                            neo4jsettings={neo4jsettings}
+                          />
+                    </div>
+                  }
+                </ScrollManager>
               );
             } else {
               tabData = (
