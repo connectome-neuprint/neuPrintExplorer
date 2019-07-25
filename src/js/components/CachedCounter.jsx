@@ -4,6 +4,13 @@ import dateFns from 'date-fns';
 
 
 class CachedCounter extends React.Component {
+  /* I can't see a way to get the setState on an unmounted component warning
+   * to go away, by simply clearing the Interval in the componentWillUnmount
+   * method. There are still cases when the setState function fires.
+   * Therefore I added an isMountedNow test to ignore the set state, if it
+   * fires before the interval gets cancelled. */
+  isMountedNow = false;
+
   constructor(props) {
     super(props);
     const { fetchedTime } = this.props;
@@ -13,13 +20,17 @@ class CachedCounter extends React.Component {
   }
 
   componentDidMount() {
+    this.isMountedNow = true;
     this.updateTimeId = setInterval(() => {
       const { fetchedTime } = this.props;
-      this.setState({distanceInWords: dateFns.distanceInWordsToNow(new Date(fetchedTime))});
+      if (this.isMountedNow) {
+        this.setState({distanceInWords: dateFns.distanceInWordsToNow(new Date(fetchedTime))});
+      }
     },  1000);
   }
 
   componentWillUnmount() {
+    this.isMountedNow = false;
     clearInterval(this.updateTimeID);
   }
 
