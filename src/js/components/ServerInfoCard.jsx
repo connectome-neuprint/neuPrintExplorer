@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
-import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
+import ComputerIcon from '@material-ui/icons/Computer';
 
 const styles = theme => ({
   title: {
@@ -28,11 +28,14 @@ function ServerInfoCard (props) {
     if (authLevel.match(/^readwrite|admin$/) || publicState) {
       return (
         <Card>
+          <CardHeader
+            title="neuPrint Server Information"
+            className="homeCardHeader"
+            avatar={
+              <ComputerIcon color="primary" />
+            }
+          />
           <CardContent>
-            <Typography className={classes.title} color="textSecondary">
-              neuPrint Server Information
-            </Typography>
-            <Divider className={classes.divider} />
             <Typography component="p">
               server: {neoServer} <br />
             </Typography>
@@ -59,11 +62,8 @@ function ServerInfoCard (props) {
     }
     return (
       <Card>
+        <CardHeader title="Authorization Required" />
         <CardContent>
-          <Typography className={classes.title} color="textSecondary">
-            Authorization Required
-          </Typography>
-          <Divider className={classes.divider} />
           <Typography component="p">
             Please contact your server administrator to gain access.
           </Typography>
@@ -77,7 +77,7 @@ function ServerInfoCard (props) {
         <CardHeader title="Logged Out" />
         <CardContent>
           <Typography component="p">
-            Please log at the top of the page to access the data.
+            Please log in at the top of the page to access the data.
           </Typography>
         </CardContent>
     </Card>

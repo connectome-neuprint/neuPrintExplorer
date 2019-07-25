@@ -15,9 +15,6 @@ import { withStyles } from '@material-ui/core/styles';
 const styles = theme => ({
   hint: {
     margin: `${theme.spacing.unit * 2}px 0`
-  },
-  container: {
-    alignContent: 'flex-start'
   }
 });
 
@@ -61,6 +58,7 @@ class Hints extends React.Component {
     return (
       <Card>
         <CardHeader
+          className="homeCardHeader"
           title="Helpful Hints"
           avatar={
             <SvgIcon nativeColor="orange">

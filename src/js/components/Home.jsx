@@ -16,6 +16,7 @@ import ServerInfoCard from './ServerInfoCard';
 import News from './News';
 import Hints from './Hints';
 
+import './Home.css';
 
 const styles = theme => ({
   root: {
@@ -73,6 +74,7 @@ class Home extends React.Component {
             </Typography>
           </Grid>
           <Grid item xs={2} />
+
           <Grid item xs={12} sm={12} md={6} lg={5}>
             <ServerInfoCard {...passedProps} />
           </Grid>

@@ -2,6 +2,7 @@ import React from 'react';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
+import NewReleasesIcon from '@material-ui/icons/NewReleases';
 
 class News extends React.Component {
   componentDidMount() {
@@ -11,7 +12,13 @@ class News extends React.Component {
   render() {
     return (
       <Card>
-        <CardHeader title="New Features"/>
+        <CardHeader
+          title="New Features"
+          className="homeCardHeader"
+          avatar={
+            <NewReleasesIcon color="primary" />
+          }
+        />
         <CardContent>
           <p>News items here</p>
         </CardContent>
