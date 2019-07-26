@@ -5,22 +5,36 @@ import CardHeader from '@material-ui/core/CardHeader';
 import NewReleasesIcon from '@material-ui/icons/NewReleases';
 
 class News extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      newsItems: [] // these get populated from a static file on the server
+    };
+  }
+
   componentDidMount() {
-    // load in the news items from the api? static file on the server?
+    // load in the news items from a static file on the server
+    fetch('/public/news.json')
+      .then(resp => resp.json())
+      .then(data => this.setState({newsItems: data.items}))
   }
 
   render() {
+    const { newsItems } = this.state;
+    const itemList = newsItems.map(item => <li key={item}>{item}</li>);
     return (
       <Card>
         <CardHeader
-          title="New Features"
+          title="News & Release Notes"
           className="homeCardHeader"
           avatar={
             <NewReleasesIcon color="primary" />
           }
         />
         <CardContent>
-          <p>News items here</p>
+          <ul>
+            {itemList}
+          </ul>
         </CardContent>
       </Card>
     );
