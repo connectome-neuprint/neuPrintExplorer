@@ -7,6 +7,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import clone from 'clone';
+import Immutable from 'immutable';
 
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
@@ -98,15 +99,16 @@ class Results extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { location, actions, token, allResults, isQuerying } = this.props;
+    const { location, actions, token, allResults, isQuerying, loadingError } = this.props;
+
     // if the number of tabs has changed, then update the data.
     // if the current tab has changed, then update.
     // if the current page has changed, then update.
     if (!isQuerying) {
       const query = getQueryObject();
       const tabValue = parseInt(query.tab || 0, 10);
-
-      if (location !== prevProps.location || !allResults.get(tabValue, {}).result) {
+      // if we switched location, or there are no results and the loading error is empty
+      if (location !== prevProps.location || (!allResults.get(tabValue, {}).result && !loadingError.get(tabValue))) {
         const resultsList = query.qr || [];
         if (resultsList.length > 0) {
           const currentPlugin = this.currentPlugin();
@@ -365,7 +367,7 @@ class Results extends React.Component {
     // Return here with a way to close the tab, if an error
     // occurred loading the data. Maybe add a try again button.
 
-    if (!isQuerying && loadingError) {
+    if (!isQuerying && loadingError.get(tabIndex)) {
       tabData = (
         <div className={classes.full}>
           <ResultsTopBar
@@ -384,7 +386,7 @@ class Results extends React.Component {
            page.
             */ }
           <div>
-            <pre className={classes.errorText}>{loadingError.toString()}</pre>
+            <pre className={classes.errorText}>{loadingError.get(tabIndex).toString()}</pre>
           </div>
         </div>
       );
@@ -442,7 +444,7 @@ Results.propTypes = {
 };
 
 Results.defaultProps = {
-  loadingError: null
+  loadingError: Immutable.List([])
 };
 
 // result data [{name: "table name", header: [headers...], body: [rows...]

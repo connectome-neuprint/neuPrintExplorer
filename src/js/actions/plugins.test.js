@@ -68,6 +68,7 @@ describe('plugins Actions', () => {
   it('should create submit form error action', () => {
     const expectedAction = {
       type: C.PLUGIN_SUBMIT_ERROR,
+      tabIndex: 0,
       error: 'test'
     };
     expect(pluginsActions.formError('test')).toEqual(expectedAction);

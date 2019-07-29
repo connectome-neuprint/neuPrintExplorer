@@ -17,10 +17,11 @@ export function updateQuery(index, newQueryObject) {
   };
 }
 
-export function formError(error) {
+export function formError(error, tabIndex=0) {
   return {
     type: C.PLUGIN_SUBMIT_ERROR,
-    error
+    error,
+    tabIndex
   };
 }
 
@@ -40,10 +41,11 @@ function dataLoaded(response, params, tabIndex) {
   };
 }
 
-function dataLoadFailed(error) {
+function dataLoadFailed(error, tabIndex=0) {
   return {
     type: C.PLUGIN_SUBMIT_ERROR,
-    error
+    error,
+    tabIndex
   };
 }
 
@@ -128,7 +130,7 @@ export function fetchData(params, plugin, tabPosition, token) {
         dispatch(dataLoaded(resp, params, tabPosition));
       })
       .catch(error => {
-        dispatch(dataLoadFailed(error));
+        dispatch(dataLoadFailed(error, tabPosition));
       });
   }
 }

@@ -6,7 +6,7 @@ import reducer from './results';
 
 const state = Immutable.Map({
   allResults: Immutable.List([{ existingResult: 'testResult' }]),
-  loadingError: null,
+  loadingError: Immutable.List([]),
   loading: false,
   showCypher: false,
 });
@@ -30,7 +30,7 @@ describe('results Reducer', () => {
     expect(reducer(undefined, action)).toEqual(
       Immutable.Map({
         allResults: Immutable.List([]),
-        loadingError: null,
+        loadingError: Immutable.List([]),
         loading: false,
         showCypher: false
       })
@@ -38,7 +38,7 @@ describe('results Reducer', () => {
     expect(reducer(state, action)).toEqual(
       Immutable.Map({
         allResults: Immutable.List([]),
-        loadingError: null,
+        loadingError: Immutable.List([]),
         loading: false,
         showCypher: false
       })
@@ -68,7 +68,7 @@ describe('results Reducer', () => {
           timestamp: time.getTime()
         }]),
         loading: false,
-        loadingError: null,
+        loadingError: Immutable.List([null]),
         showCypher: false
       })
     );
@@ -84,7 +84,7 @@ describe('results Reducer', () => {
           timestamp: time.getTime()
         }]),
         loading: false,
-        loadingError: null,
+        loadingError: Immutable.List([null]),
         showCypher: false
       })
     );
