@@ -12,9 +12,12 @@ import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Icon from '@material-ui/core/Icon';
 
+import { getQueryObject } from 'helpers/queryString';
+
 import ServerInfoCard from './ServerInfoCard';
 import News from './News';
 import Hints from './Hints';
+import DataSetHome from './DataSetHome';
 
 import './Home.css';
 
@@ -37,25 +40,21 @@ const styles = theme => ({
 });
 
 class Home extends React.Component {
-  // only update if the available datasets changed.
-  shouldComponentUpdate(nextProps) {
-    const { availableDatasets, loggedIn } = this.props;
-    if (loggedIn !== nextProps.loggedIn) {
-      return true;
-    }
-
-    if (availableDatasets !== nextProps.availableDatasets) {
-      return true;
-    }
-    return false;
-  }
-
   render() {
     const { classes, ...passedProps } = this.props;
     let redirectHome = false;
     if (window.location.pathname !== '/') {
       redirectHome = true;
     }
+
+    // if we have a dataset selected then show that homepage.
+    const queryObject = getQueryObject();
+    if (queryObject.dataset) {
+      return(
+        <DataSetHome dataSet={queryObject.dataset} />
+      );
+    }
+
 
     return (
       <div className={classes.root}>
