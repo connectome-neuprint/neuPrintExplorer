@@ -11,6 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Icon from '@material-ui/core/Icon';
+import Divider from '@material-ui/core/Divider';
 
 import { getQueryObject } from 'helpers/queryString';
 
@@ -23,9 +24,9 @@ import './Home.css';
 
 const styles = theme => ({
   root: {
-    flexGrow: 1,
     flexWrap: 'wrap',
     display: 'flex',
+    overflow: 'auto',
     padding: theme.spacing.unit * 3
   },
   roottext: {
@@ -36,6 +37,10 @@ const styles = theme => ({
   },
   container: {
     alignContent: 'flex-start'
+  },
+  sectionDivide: {
+    width: '100%',
+    margin: '2em 0'
   }
 });
 
@@ -49,12 +54,6 @@ class Home extends React.Component {
 
     // if we have a dataset selected then show that homepage.
     const queryObject = getQueryObject();
-    if (queryObject.dataset) {
-      return(
-        <DataSetHome dataSet={queryObject.dataset} />
-      );
-    }
-
 
     return (
       <div className={classes.root}>
@@ -73,7 +72,14 @@ class Home extends React.Component {
             </Typography>
           </Grid>
           <Grid item xs={2} />
-
+          {queryObject.dataset && (
+            <Grid item xs={12}>
+              <DataSetHome dataSet={queryObject.dataset} />
+            </Grid>
+          )}
+        </Grid>
+        {queryObject.dataset && <Divider variant="middle" className={classes.sectionDivide} />}
+        <Grid container spacing={24} justify="center" className={classes.container}>
           <Grid item xs={12} sm={12} md={6} lg={5}>
             <ServerInfoCard {...passedProps} />
           </Grid>
