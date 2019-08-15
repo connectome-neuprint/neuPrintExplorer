@@ -44,6 +44,11 @@ const theme = createMuiTheme({
 // eslint-disable-next-line  no-underscore-dangle
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
+// TODO: if there is an identifier in the url to indicate that the state has been
+// stored somewhere, then we should fetch that state, deserialize it and use it to
+// populate the store.
+// TODO: what should the identifier be called?
+// TODO: add a button to allow people to pull the current state from the store and save it.
 // create redux store to handle app state
 const store = createStore(AppReducers, {}, composeEnhancers(applyMiddleware(thunk)));
 
