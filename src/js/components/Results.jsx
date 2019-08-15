@@ -300,7 +300,7 @@ class Results extends React.Component {
             processingPlugin
           );
 
-          const combined = Object.assign(resultsList[tabIndex], { result: currentResult });
+          const combined = Object.assign(combinedQuery, { result: currentResult });
 
           const downloadEnabled =
             currentPlugin.details.download !== undefined ? currentPlugin.details.download : true;
@@ -308,7 +308,7 @@ class Results extends React.Component {
           const saveEnabled =
             currentPlugin.details.save !== undefined ? currentPlugin.details.save : true;
 
-          if (combined && combined.code === currentPlugin.details.abbr) {
+          if (combined && combined.code === processingPlugin.details.abbr) {
 
             // show the header information if not in full screen mode.
             const tabDataHeader = query.rt !== 'full' ? (
