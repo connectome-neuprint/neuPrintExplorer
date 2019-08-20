@@ -16,3 +16,12 @@ export function skeletonRemove(id, dataSet, tabIndex) {
     tabIndex
   };
 }
+
+export function toggleSynapse(bodyId, synapseId, isInput) {
+  return {
+    type: C.SKELETON_SYNAPSE_TOGGLE,
+    synapseId,
+    bodyId,
+    isInput
+  };
+}

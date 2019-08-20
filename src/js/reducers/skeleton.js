@@ -7,6 +7,7 @@ const skeletonState = Immutable.Map({
   display: false,
   neurons: Immutable.Map({}),
   compartments: Immutable.Map({}),
+  synapses: Immutable.Map({}),
   loading: false,
   error: null,
   cameraPosition: null
@@ -92,6 +93,12 @@ export default function skeletonReducer(state = skeletonState, action) {
         });
       }
       return state;
+    }
+    case C.SKELETON_SYNAPSE_TOGGLE: {
+      const synapseType = action.isInput ? 'inputs' : 'outputs';
+      const currentState = state.getIn(['synapses', action.bodyId, synapseType, action.synapseId], false);
+      const updated = state.setIn(['synapses', action.bodyId, synapseType, action.synapseId], !currentState);
+      return updated;
     }
     default: {
       return state;

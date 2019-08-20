@@ -3,7 +3,7 @@
  * Main page to hold results from query.  This could be
  * a simple table or a table of tables.
  */
-import React from 'react';
+import React, { Suspense } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import clone from 'clone';
@@ -35,6 +35,8 @@ import CypherQuery from './CypherQuery';
 import ScrollManager from '../helpers/ScrollManager';
 
 import './Results.css';
+
+const SkeletonView = React.lazy(() => import('../containers/SkeletonView'));
 
 const styles = theme => ({
   root: {
@@ -326,7 +328,33 @@ class Results extends React.Component {
 
             const View = this.getViewPlugin(processingPlugin);
 
-            if (View) {
+            // TODO: lazy load skeleton and neuroglancer plugins here as opposed to loading
+            // them in the init plugins code.
+            if (processingPlugin.details.visType === 'SkeletonView') {
+              const queryData = getQueryData(combined);
+              const viewKey = `t${tabIndex}`;
+              tabData = (
+                <ScrollManager scrollKey={viewKey}>
+                  {({ connectScrollTarget }) =>
+                    <div className={classes.full} ref={connectScrollTarget}>
+                      {tabDataHeader}
+                      {showCypher && <CypherQuery cypherString={combined.result.debug} />}
+                        <Suspense fallback={<div>loading skeleton viewer...</div>}>
+                          <SkeletonView
+                            query={queryData}
+                            index={tabIndex}
+                            key={viewKey}
+                            actions={actions}
+                            neoServer={neoServer}
+                            neo4jsettings={neo4jsettings}
+                          />
+                        </Suspense>
+                    </div>
+                  }
+                </ScrollManager>
+              );
+
+            } else if (View) {
               const queryData = getQueryData(combined);
               const viewKey = `t${tabIndex}`;
               tabData = (
