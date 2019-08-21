@@ -68,19 +68,22 @@ class SynapseSelection extends React.Component {
 
     const ids = new Set();
 
-    result.data.forEach(synapse => {
-      if (isInput) {
-        // inputs are anything where the start node is not the current bodyid
-        if (synapse[1] !== bodyId) {
-          ids.add(synapse[1]);
+    result.data
+      .sort((a, b) => a[0] > b[0]) // sort by weight
+      .forEach(synapse => {
+        console.log(synapse[0]);
+        if (isInput) {
+          // inputs are anything where the start node is not the current bodyid
+          if (synapse[1] !== bodyId) {
+            ids.add(synapse[1]);
+          }
+        } else if (!isInput) {
+          // outputs are anything where the end node is not the current bodyid
+          if (synapse[3] !== bodyId) {
+            ids.add(synapse[3]);
+          }
         }
-      } else if (!isInput) {
-        // outputs are anything where the end node is not the current bodyid
-        if (synapse[3] !== bodyId) {
-          ids.add(synapse[3]);
-        }
-      }
-    });
+      });
 
     this.setState({ ids });
   }

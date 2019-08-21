@@ -66,7 +66,8 @@ class SkeletonView extends React.Component {
       db: new PouchDB('neuprint_compartments'),
       bodies: Immutable.Map({}),
       inputs: Immutable.Map({}),
-      compartments: Immutable.Map({})
+      compartments: Immutable.Map({}),
+      loading: Immutable.Map({})
     };
     this.skelRef = React.createRef();
   }
@@ -78,6 +79,8 @@ class SkeletonView extends React.Component {
       if (query.pm.bodyIds) {
         const bodyIds = query.pm.bodyIds.toString().split(',');
         this.addSkeletons(bodyIds, query.pm.dataSet);
+        // need to add the inputs to the state?
+
       }
       if (query.pm.compartments) {
         const compIds = query.pm.compartments.split(',');
@@ -154,15 +157,14 @@ class SkeletonView extends React.Component {
         );
         this.addCompartments(newCompartmentIds, dataSet);
 
-        // load inputs that are new
-        synapses.forEach((value, bodyId) => {
-          value.get('inputs').forEach((status, inputId) => {
-            if (!prevProps.synapses.getIn([bodyId, 'inputs', inputId])) {
-              this.addInput(bodyId, inputId, dataSet);
-            }
-          });
-        });
       }
+
+      // load inputs into state
+      synapses.forEach((value, bodyId) => {
+        value.get('inputs').forEach((status, inputId) => {
+          this.addInput(bodyId, inputId, query.pm.dataSet);
+        });
+      });
 
       if (!deepEqual(this.state, prevState)) {
         // only perform actions here that update the canvas rendering.
@@ -447,9 +449,22 @@ class SkeletonView extends React.Component {
   }
 
   addInput(bodyId, inputId, dataSet) {
+    const { loading } = this.state;
+
     if (bodyId === '') {
       return;
     }
+
+    // skip it if it already exists.
+    const loadStatus = loading.getIn([bodyId, inputId]);
+    if (loadStatus && (loadStatus.loaded || loadStatus.loading)) {
+      return;
+    }
+
+    // set the loading status to prevent multiple load calls.
+    const updated = loading.setIn([bodyId, inputId],{loading: true});
+    this.setState({loading: updated});
+
     // generate the querystring.
     const completeQuery = psdQuery
       .replace(/<OTHERBODYID>/g, inputId)
@@ -513,9 +528,10 @@ class SkeletonView extends React.Component {
 
   addInputToState(inputId, bodyId, dataSet, data, color) {
     console.log(inputId, bodyId, dataSet, data, color);
-    const { bodies } = this.state;
-    const updated = bodies.setIn([bodyId.toString(), 'inputs', inputId], { color, swc: data });
-    this.setState({ bodies: updated });
+    const { bodies, loading } = this.state;
+    const updated = bodies.setIn([bodyId.toString(), 'inputs', inputId], { color, swc: data});
+    const loadUpdated = loading.setIn([bodyId, inputId], { loaded: true });
+    this.setState({ bodies: updated, loading: loadUpdated });
   }
 
   addSkeleton(bodyId, dataSet) {
@@ -595,6 +611,7 @@ class SkeletonView extends React.Component {
 
   addSkeletonToState(id, dataSet, data, color) {
     const { bodies } = this.state;
+
     const updated = bodies.set(
       id,
       Immutable.Map({
@@ -626,7 +643,7 @@ class SkeletonView extends React.Component {
     this.setState({ outputs: updated });
   }
 
-  renderSynapse(body, input, moveCamera = true) {
+  renderSynapse(body, input, moveCamera = false) {
     const { sharkViewer } = this.state;
     const name = `${body.get('name')}_${input}`;
     sharkViewer.loadNeuron(name, input.color, input.swc, moveCamera);
