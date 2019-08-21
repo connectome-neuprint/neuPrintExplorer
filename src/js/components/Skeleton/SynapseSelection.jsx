@@ -103,7 +103,7 @@ class SynapseSelection extends React.Component {
         <ListItem key={id}>
           <ListItemText>{id}</ListItemText>
           <ListItemSecondaryAction>
-            <Switch onChange={() => this.handleToggle(id)} checked={checked} />
+            <Switch onChange={() => this.handleToggle(id)} checked={checked} color="primary" />
           </ListItemSecondaryAction>
         </ListItem>
       );

@@ -68,18 +68,6 @@ class ActionMenu extends React.Component {
     this.setState({ anchorEl: null });
   };
 
-  handleInputToggle = inputFrom => {
-    const { handleInputClick, bodyId } = this.props;
-    handleInputClick(bodyId.toString(), inputFrom);
-    this.setState({ anchorEl: null });
-  };
-
-  handleOutputToggle = outputTo => {
-    const { handleOutputClick, bodyId } = this.props;
-    handleOutputClick(bodyId.toString(), outputTo);
-    this.setState({ anchorEl: null });
-  };
-
   handleChangeColor = newColor => {
     const { handleChangeColor, bodyId } = this.props;
     handleChangeColor(bodyId.toString(), newColor.hex);
@@ -154,8 +142,6 @@ ActionMenu.propTypes = {
   isVisible: PropTypes.bool.isRequired,
   handleDelete: PropTypes.func.isRequired,
   handleClick: PropTypes.func.isRequired,
-  handleInputClick: PropTypes.func.isRequired,
-  handleOutputClick: PropTypes.func.isRequired,
   handleChangeColor: PropTypes.func.isRequired
 };
 

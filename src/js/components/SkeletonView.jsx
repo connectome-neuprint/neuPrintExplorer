@@ -56,7 +56,7 @@ const tbarQuery =
 
 // input
 const psdQuery =
-  'MATCH (n :`<DATASET>-Neuron` {bodyId: <OTHERBODYID>})<-[:To]-(cs :ConnectionSet)-[:From]->(m :`<DATASET>-Neuron` {bodyId: <TARGETBODYID>}) WITH cs MATCH (cs)-[:Contains]->(s :PostSyn) RETURN s.location.x AS x, s.location.y AS y, s.location.z AS z';
+  'MATCH (n :`<DATASET>-Neuron` {bodyId: <TARGETBODYID>})<-[:To]-(cs :ConnectionSet)-[:From]->(m :`<DATASET>-Neuron` {bodyId: <OTHERBODYID>}) WITH cs MATCH (cs)-[:Contains]->(s :PostSyn) RETURN s.location.x AS x, s.location.y AS y, s.location.z AS z';
 
 class SkeletonView extends React.Component {
   constructor(props) {
@@ -72,7 +72,7 @@ class SkeletonView extends React.Component {
   }
 
   componentDidMount() {
-    const { query } = this.props;
+    const { query, synapses } = this.props;
     // check for neurons and compartments here and load them into the state
     if (query.pm.dataSet) {
       if (query.pm.bodyIds) {
@@ -88,7 +88,9 @@ class SkeletonView extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { query } = this.props;
+    const { query, synapses } = this.props;
+    // TODO: check to see if the synapse selection has changed. If so, update
+    // the viewer to show the changes.
     const { sharkViewer } = this.state;
     if (sharkViewer) {
       if (!deepEqual(this.props, prevProps)) {
@@ -122,6 +124,17 @@ class SkeletonView extends React.Component {
         missingBodies.forEach(missingId => {
           this.removeSkeleton(missingId);
         });
+
+        // compare items in prevProps.synapse with props.synapse to figure out which inputs
+        // have been removed.
+        prevProps.synapses.forEach((value, bodyId) => {
+          value.get('inputs').forEach((status, inputId) => {
+            if (!synapses.getIn([bodyId, 'inputs', inputId])) {
+              this.removeInput(bodyId, inputId);
+            }
+          });
+        });
+
         // remove compartments that are no longer in props
         const currentCompartmentSet = new Set(compartmentIdList);
         const missingCompartments = prevCompartmentIdList.filter(
@@ -140,7 +153,17 @@ class SkeletonView extends React.Component {
           compartmentId => !prevCompartmentSet.has(compartmentId)
         );
         this.addCompartments(newCompartmentIds, dataSet);
+
+        // load inputs that are new
+        synapses.forEach((value, bodyId) => {
+          value.get('inputs').forEach((status, inputId) => {
+            if (!prevProps.synapses.getIn([bodyId, 'inputs', inputId])) {
+              this.addInput(bodyId, inputId, dataSet);
+            }
+          });
+        });
       }
+
       if (!deepEqual(this.state, prevState)) {
         // only perform actions here that update the canvas rendering.
         const { bodies, compartments } = this.state;
@@ -190,6 +213,17 @@ class SkeletonView extends React.Component {
           .filter(body => body.get('color') !== prevBodies.getIn([body.get('name'), 'color']))
           .forEach(body => {
             this.renderBodies([body.get('name')], false, true);
+          });
+
+        // render synapses that weren't visible.
+        bodies
+          .filter(body => body.get('visible'))
+          .forEach(body => {
+            body.get('inputs', Immutable.Map({})).forEach(input => {
+              if (!prevBodies.getIn([body.get('name'), 'inputs', input])) {
+                this.renderSynapse(body, input);
+              }
+            });
           });
 
         // render new compartments
@@ -269,7 +303,7 @@ class SkeletonView extends React.Component {
     });
   };
 
-  handleDelete = (id) => {
+  handleDelete = id => {
     const { actions, query, index } = this.props;
     const { bodies } = this.state;
     const updated = bodies.delete(id);
@@ -278,40 +312,26 @@ class SkeletonView extends React.Component {
     // action passed in from Results that removes id from the url
   };
 
-  handleClick = (id) => {
+  handleClick = id => {
     const { bodies } = this.state;
     const visible = !bodies.getIn([id, 'visible']);
     const updated = bodies.setIn([id, 'visible'], visible);
     this.setState({ bodies: updated });
   };
 
-  handleInputClick = (id) => {
-    const { bodies } = this.state;
-    const visible = !bodies.getIn([id, 'inputs']);
-    const updated = bodies.setIn([id, 'inputs'], visible);
-    this.setState({ bodies: updated });
-  };
-
-  handleOutputClick = (id) => {
-    const { bodies } = this.state;
-    const visible = !bodies.getIn([id, 'outputs']);
-    const updated = bodies.setIn([id, 'outputs'], visible);
-    this.setState({ bodies: updated });
-  };
-
   handleChangeColor = (id, color) => {
     const { db, bodies } = this.state;
-    db.get(`sk_${id}`).then((doc) => {
-      doc.color = color;
-      return db.put(doc);
-    }).then(() => {
-      // update the skeleton color in the state
-      const updated = bodies.setIn([id, 'color'], color);
-      this.setState({bodies: updated});
-    });
-
-  }
-
+    db.get(`sk_${id}`)
+      .then(doc => {
+        doc.color = color;
+        return db.put(doc);
+      })
+      .then(() => {
+        // update the skeleton color in the state
+        const updated = bodies.setIn([id, 'color'], color);
+        this.setState({ bodies: updated });
+      });
+  };
 
   addCompartment = (id, dataset) => {
     if (id === '') {
@@ -426,12 +446,15 @@ class SkeletonView extends React.Component {
       });
   }
 
-  addInput(bodyId, dataSet) {
+  addInput(bodyId, inputId, dataSet) {
     if (bodyId === '') {
       return;
     }
     // generate the querystring.
-    const completeQuery = psdQuery.replace(/<DATASET>/g, dataSet).replace(/<BODYID>/g, bodyId);
+    const completeQuery = psdQuery
+      .replace(/<OTHERBODYID>/g, inputId)
+      .replace(/<DATASET>/g, dataSet)
+      .replace(/<TARGETBODYID>/g, bodyId);
     // fetch swc data
     fetch('/api/custom/custom', {
       headers: {
@@ -449,18 +472,12 @@ class SkeletonView extends React.Component {
         if ('error' in result) {
           throw result.error;
         }
-        this.inputLoaded(bodyId, dataSet, result);
+        this.inputLoaded(inputId, bodyId, dataSet, result);
       })
       .catch(error => this.setState({ loadingError: error }));
   }
 
-  addInputs(inputIds, dataSet) {
-    inputIds.forEach(id => {
-      this.addInput(id, dataSet);
-    });
-  }
-
-  inputLoaded(id, dataSet, result) {
+  inputLoaded(inputId, bodyId, dataSet, result) {
     const { db } = this.state;
     // parse the result into swc format for skeleton viewer code.
     const data = {};
@@ -470,7 +487,7 @@ class SkeletonView extends React.Component {
         x: parseInt(row[0], 10),
         y: parseInt(row[1], 10),
         z: parseInt(row[2], 10),
-        radius: 0.2,
+        radius: 5,
         parent: -1
       };
     });
@@ -478,24 +495,27 @@ class SkeletonView extends React.Component {
     // check to see if we have a color cached for this.
     // if yes, then return the color,
     // else, generate random color and cache it.
-    db.get(`input_${id}`)
+    db.get(`input_${inputId}`)
       .then(doc => {
         const { color } = doc;
-        this.addInputToState(id, dataSet, data, color);
+        this.addInputToState(inputId, bodyId, dataSet, data, color);
       })
       .catch(() => {
         const color = randomColor({ luminosity: 'light', hue: 'random' });
         db.put({
-          _id: `input_${id}`,
+          _id: `input_${inputId}`,
           color
         }).then(() => {
-          this.addInputToState(id, dataSet, data, color);
+          this.addInputToState(inputId, bodyId, dataSet, data, color);
         });
       });
   }
 
-  addInputToState(id, dataSet, data, color) {
-    console.log(id, dataSet, data, color);
+  addInputToState(inputId, bodyId, dataSet, data, color) {
+    console.log(inputId, bodyId, dataSet, data, color);
+    const { bodies } = this.state;
+    const updated = bodies.setIn([bodyId.toString(), 'inputs', inputId], { color, swc: data });
+    this.setState({ bodies: updated });
   }
 
   addSkeleton(bodyId, dataSet) {
@@ -534,13 +554,8 @@ class SkeletonView extends React.Component {
   }
 
   addSkeletons(bodyIds, dataSet) {
-    const { synapses } = this.props;
     bodyIds.forEach(id => {
       this.addSkeleton(id, dataSet);
-      const inputIds = synapses.getIn([id, 'inputs']);
-      if (inputIds) {
-        this.addInputs(inputIds, dataSet);
-      }
     });
   }
 
@@ -597,6 +612,32 @@ class SkeletonView extends React.Component {
     const { bodies } = this.state;
     const updated = bodies.delete(id);
     this.setState({ bodies: updated });
+  }
+
+  removeInput(bodyId, inputId) {
+    const { bodies } = this.state;
+    const updated = bodies.deleteIn([bodyId.toString(), 'inputs', inputId]);
+    this.setState({ bodies: updated });
+  }
+
+  removeOutput(bodyId, outputId) {
+    const { outputs } = this.state;
+    const updated = outputs.deleteIn([bodyId, 'outputs', outputId]);
+    this.setState({ outputs: updated });
+  }
+
+  renderSynapse(body, input, moveCamera = true) {
+    const { sharkViewer } = this.state;
+    const name = `${body.get('name')}_${input}`;
+    sharkViewer.loadNeuron(name, input.color, input.swc, moveCamera);
+    sharkViewer.render();
+    sharkViewer.render();
+    // UGLY: there is a weird bug that means sometimes the scene is rendered blank.
+    // it seems to be some sort of timing issue, and adding a delayed render seems
+    // to fix it.
+    setTimeout(() => {
+      sharkViewer.render();
+    }, 200);
   }
 
   renderBodies(ids, moveCamera = false, colorChange = false) {
@@ -671,8 +712,6 @@ class SkeletonView extends React.Component {
           bodyId={parseInt(name, 10)}
           handleDelete={this.handleDelete}
           handleClick={this.handleClick}
-          handleInputClick={this.handleInputClick}
-          handleOutputClick={this.handleOutputClick}
           handleChangeColor={this.handleChangeColor}
         />
       );
