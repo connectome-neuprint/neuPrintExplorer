@@ -24,7 +24,7 @@ class SynapseSelection extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      ids: new Set(),
+      ids: {},
       loadingError: null
     };
   }
@@ -66,21 +66,20 @@ class SynapseSelection extends React.Component {
     // store them as separate arrays in the state. They will be used later
     // for the menu when picking which ones to display.
 
-    const ids = new Set();
+    const { ids } = this.state;
 
     result.data
       .sort((a, b) => a[0] > b[0]) // sort by weight
       .forEach(synapse => {
-        console.log(synapse[0]);
         if (isInput) {
           // inputs are anything where the start node is not the current bodyid
           if (synapse[1] !== bodyId) {
-            ids.add(synapse[1]);
+            ids[synapse[1]] = { weight: synapse[0], type: synapse[2] };
           }
         } else if (!isInput) {
           // outputs are anything where the end node is not the current bodyid
           if (synapse[3] !== bodyId) {
-            ids.add(synapse[3]);
+            ids[synapse[3]] = { weight: synapse[0], type: synapse[4] };
           }
         }
       });
@@ -100,17 +99,22 @@ class SynapseSelection extends React.Component {
       ? synapseState.getIn([bodyId, 'inputs'], Immutable.Map({}))
       : synapseState.getIn([bodyId, 'outputs'], Immutable.Map({}));
 
-    const inputMenuItems = [...ids].map(id => {
-      const checked = synapseStateCheck.get(id, false);
-      return (
-        <ListItem key={id}>
-          <ListItemText>{id}</ListItemText>
-          <ListItemSecondaryAction>
-            <Switch onChange={() => this.handleToggle(id)} checked={checked} color="primary" />
-          </ListItemSecondaryAction>
-        </ListItem>
-      );
-    });
+    const inputMenuItems = Object.entries(ids)
+      .sort((a, b) => b[1].weight - a[1].weight)
+      .map(entry => {
+        const [id, synapseMeta] = entry;
+        const checked = synapseStateCheck.get(id, false);
+        return (
+          <ListItem key={id}>
+            <ListItemText>
+              {id}({synapseMeta.type}) {synapseMeta.weight}
+            </ListItemText>
+            <ListItemSecondaryAction>
+              <Switch onChange={() => this.handleToggle(id)} checked={checked} color="primary" />
+            </ListItemSecondaryAction>
+          </ListItem>
+        );
+      });
 
     return (
       <React.Fragment>
