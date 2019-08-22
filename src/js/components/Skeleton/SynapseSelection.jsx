@@ -14,6 +14,12 @@ const styles = () => ({
   synapseList: {
     height: '320px',
     overflow: 'auto'
+  },
+  colorBox: {
+    height: '20px',
+    width: '20px',
+    border: '1px solid #ccc',
+    padding: '1px'
   }
 });
 
@@ -30,8 +36,8 @@ class SynapseSelection extends React.Component {
   }
 
   componentDidMount() {
-    const { bodyId, dataSet } = this.props;
-    const finalQuery = cypherQuery.replace(/<DATASET>/, dataSet).replace(/<BODYID>/, bodyId);
+    const { body, dataSet } = this.props;
+    const finalQuery = cypherQuery.replace(/<DATASET>/, dataSet).replace(/<BODYID>/, body.get('name'));
     fetch('/api/custom/custom', {
       headers: {
         'content-type': 'application/json',
@@ -54,14 +60,14 @@ class SynapseSelection extends React.Component {
   }
 
   handleToggle = id => {
-    const { bodyId, isInput, actions } = this.props;
+    const { body, isInput, actions } = this.props;
     // decide if this input/output
     // set the state to show that the id has been selected.
-    actions.toggleSynapse(bodyId, id, isInput);
+    actions.toggleSynapse(body.get('name'), id, isInput);
   };
 
   synapsesLoaded(result) {
-    const { bodyId, isInput } = this.props;
+    const { body, isInput } = this.props;
     // loop over the data and pull out the inputs vs the outputs.
     // store them as separate arrays in the state. They will be used later
     // for the menu when picking which ones to display.
@@ -73,12 +79,12 @@ class SynapseSelection extends React.Component {
       .forEach(synapse => {
         if (isInput) {
           // inputs are anything where the start node is not the current bodyid
-          if (synapse[1] !== bodyId) {
+          if (synapse[1] !== body.get('name')) {
             ids[synapse[1]] = { weight: synapse[0], type: synapse[2] };
           }
         } else if (!isInput) {
           // outputs are anything where the end node is not the current bodyid
-          if (synapse[3] !== bodyId) {
+          if (synapse[3] !== body.get('name')) {
             ids[synapse[3]] = { weight: synapse[0], type: synapse[4] };
           }
         }
@@ -88,26 +94,31 @@ class SynapseSelection extends React.Component {
   }
 
   render() {
-    const { isInput, classes, bodyId, synapseState } = this.props;
+    const { isInput, classes, body, synapseState } = this.props;
     const { ids, loadingError } = this.state;
 
     if (loadingError) {
-      return <p>Unable to load synapses for {bodyId}</p>;
+      return <p>Unable to load synapses for {body.get('name')}</p>;
     }
 
+    const synapseType = isInput ? 'inputs' : 'outputs';
+
     const synapseStateCheck = isInput
-      ? synapseState.getIn([bodyId, 'inputs'], Immutable.Map({}))
-      : synapseState.getIn([bodyId, 'outputs'], Immutable.Map({}));
+      ? synapseState.getIn([body.get('name'), synapseType], Immutable.Map({}))
+      : synapseState.getIn([body.get('name'), synapseType], Immutable.Map({}));
 
     const inputMenuItems = Object.entries(ids)
       .sort((a, b) => b[1].weight - a[1].weight)
       .map(entry => {
         const [id, synapseMeta] = entry;
         const checked = synapseStateCheck.get(id, false);
+        const colorBoxStyle = {
+          backgroundColor: body.getIn([synapseType, id, 'color'])
+        };
         return (
           <ListItem key={id}>
             <ListItemText>
-              {id}({synapseMeta.type}) {synapseMeta.weight}
+              {id}({synapseMeta.type}) {synapseMeta.weight} <div className={classes.colorBox} style={colorBoxStyle} />
             </ListItemText>
             <ListItemSecondaryAction>
               <Switch onChange={() => this.handleToggle(id)} checked={checked} color="primary" />
@@ -128,7 +139,7 @@ class SynapseSelection extends React.Component {
 SynapseSelection.propTypes = {
   isInput: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired,
-  bodyId: PropTypes.number.isRequired,
+  body: PropTypes.object.isRequired,
   dataSet: PropTypes.string.isRequired,
   synapseState: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired

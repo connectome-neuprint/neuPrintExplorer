@@ -58,30 +58,30 @@ class ActionMenu extends React.Component {
   };
 
   handleVisible = () => {
-    const { handleClick, bodyId } = this.props;
-    handleClick(bodyId.toString());
+    const { handleClick, body } = this.props;
+    handleClick(body.get('name').toString());
   };
 
   handleDelete = () => {
-    const { handleDelete, bodyId } = this.props;
-    handleDelete(bodyId.toString());
+    const { handleDelete, body } = this.props;
+    handleDelete(body.get('name').toString());
     this.setState({ anchorEl: null });
   };
 
   handleChangeColor = newColor => {
-    const { handleChangeColor, bodyId } = this.props;
-    handleChangeColor(bodyId.toString(), newColor.hex);
+    const { handleChangeColor, body } = this.props;
+    handleChangeColor(body.get('name').toString(), newColor.hex);
   };
 
   render() {
-    const { classes, bodyId, color, isVisible, dataSet } = this.props;
+    const { classes, body, color, isVisible, dataSet } = this.props;
     const { anchorEl } = this.state;
 
     return (
       <React.Fragment>
         <Chip
-          key={bodyId}
-          label={bodyId}
+          key={body.get('name')}
+          label={body.get('name')}
           onDelete={this.handleDelete}
           onClick={this.handleClick}
           className={classes.chip}
@@ -93,10 +93,10 @@ class ActionMenu extends React.Component {
         <Popover
           onClose={this.handleClose}
           anchorEl={anchorEl}
-          key={`${bodyId}_popover`}
+          key={`${body.get('name')}_popover`}
           open={Boolean(anchorEl)}
         >
-          <Typography variant="h5" className={classes.popoverTitle}>Modify body {bodyId}</Typography>
+          <Typography variant="h5" className={classes.popoverTitle}>Modify body {body.get('name')}</Typography>
           <FormControlLabel
             className={classes.visToggle}
             control={
@@ -114,10 +114,10 @@ class ActionMenu extends React.Component {
             className={classes.popover}
           >
             <Grid item xs={4}>
-              <SynapseSelection isInput bodyId={bodyId} dataSet={dataSet} />
+              <SynapseSelection isInput body={body} dataSet={dataSet} />
             </Grid>
             <Grid item xs={4}>
-              <SynapseSelection isInput={false} bodyId={bodyId} dataSet={dataSet} />
+              <SynapseSelection isInput={false} body={body} dataSet={dataSet} />
             </Grid>
             <Grid item xs={3}>
               <Typography variant="subtitle2">Change Color:</Typography>
@@ -135,7 +135,7 @@ class ActionMenu extends React.Component {
 }
 
 ActionMenu.propTypes = {
-  bodyId: PropTypes.number.isRequired,
+  body: PropTypes.object.isRequired,
   dataSet: PropTypes.string.isRequired,
   color: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired,
