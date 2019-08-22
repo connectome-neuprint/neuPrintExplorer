@@ -692,13 +692,13 @@ class SkeletonView extends React.Component {
       // TODO: add toggle switch to turn the skeletons into stick drawings,
       // with a radius of one. The following code will do the job, just need
       // a way to activate it in the UI.
-      const swc = objectMap(body.get('swc'), (value) => {
+      /* const swc = objectMap(body.get('swc'), (value) => {
         const updatedValue = value;
         updatedValue.radius = 1;
         return updatedValue;
-      });
+      }); */
 
-      // const swc = body.get('swc');
+      const swc = body.get('swc');
 
       // If added, then add them to the scene.
       const exists = sharkViewer.scene.getObjectByName(body.get('name'));
