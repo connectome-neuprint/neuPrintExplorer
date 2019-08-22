@@ -59,10 +59,10 @@ const psdQuery =
   'MATCH (n :`<DATASET>-Neuron` {bodyId: <TARGETBODYID>})<-[:To]-(cs :ConnectionSet)-[:From]->(m :`<DATASET>-Neuron` {bodyId: <OTHERBODYID>}) WITH cs MATCH (cs)-[:Contains]->(s :PostSyn) RETURN s.location.x AS x, s.location.y AS y, s.location.z AS z';
 
 function objectMap(object, mapFn) {
-  return Object.keys(object).reduce(function(result, key) {
-    result[key] = mapFn(object[key])
-    return result
-  }, {})
+  return Object.keys(object).reduce((result, key) => {
+    result[key] = mapFn(object[key]);
+    return result;
+  }, {});
 }
 
 class SkeletonView extends React.Component {
@@ -72,7 +72,6 @@ class SkeletonView extends React.Component {
       sharkViewer: null,
       db: new PouchDB('neuprint_compartments'),
       bodies: Immutable.Map({}),
-      inputs: Immutable.Map({}),
       compartments: Immutable.Map({}),
       loading: Immutable.Map({})
     };
@@ -80,14 +79,12 @@ class SkeletonView extends React.Component {
   }
 
   componentDidMount() {
-    const { query, synapses } = this.props;
+    const { query } = this.props;
     // check for neurons and compartments here and load them into the state
     if (query.pm.dataSet) {
       if (query.pm.bodyIds) {
         const bodyIds = query.pm.bodyIds.toString().split(',');
         this.addSkeletons(bodyIds, query.pm.dataSet);
-        // need to add the inputs to the state?
-
       }
       if (query.pm.compartments) {
         const compIds = query.pm.compartments.split(',');
@@ -138,9 +135,14 @@ class SkeletonView extends React.Component {
         // compare items in prevProps.synapse with props.synapse to figure out which inputs
         // have been removed.
         prevProps.synapses.forEach((value, bodyId) => {
-          value.get('inputs').forEach((status, inputId) => {
+          value.get('inputs', Immutable.Map({})).forEach((status, inputId) => {
             if (!synapses.getIn([bodyId, 'inputs', inputId])) {
-              this.removeInput(bodyId, inputId);
+              this.removeSynapse(bodyId, inputId, true);
+            }
+          });
+          value.get('outputs', Immutable.Map({})).forEach((status, outputId) => {
+            if (!synapses.getIn([bodyId, 'outputs', outputId])) {
+              this.removeSynapse(bodyId, outputId, false);
             }
           });
         });
@@ -163,13 +165,15 @@ class SkeletonView extends React.Component {
           compartmentId => !prevCompartmentSet.has(compartmentId)
         );
         this.addCompartments(newCompartmentIds, dataSet);
-
       }
 
       // load inputs into state
       synapses.forEach((value, bodyId) => {
-        value.get('inputs').forEach((status, inputId) => {
-          this.addInput(bodyId, inputId, query.pm.dataSet);
+        value.get('inputs', Immutable.Map({})).forEach((status, inputId) => {
+          this.addSynapse(bodyId, inputId, query.pm.dataSet, { isInput: true });
+        });
+        value.get('outputs', Immutable.Map({})).forEach((status, outputId) => {
+          this.addSynapse(bodyId, outputId, query.pm.dataSet, { isInput: false });
         });
       });
 
@@ -233,6 +237,12 @@ class SkeletonView extends React.Component {
                 this.renderSynapse(body, input);
               }
             });
+            body.get('outputs', Immutable.Map({})).forEach(output => {
+              if (!prevBodies.getIn([body.get('name'), 'outputs', output])) {
+                this.renderSynapse(body, output);
+              }
+            });
+
           });
 
         // render new compartments
@@ -455,7 +465,7 @@ class SkeletonView extends React.Component {
       });
   }
 
-  addInput(bodyId, inputId, dataSet) {
+  addSynapse(bodyId, synapseId, dataSet, options = { isInput: true }) {
     const { loading } = this.state;
 
     if (bodyId === '') {
@@ -463,20 +473,29 @@ class SkeletonView extends React.Component {
     }
 
     // skip it if it already exists.
-    const loadStatus = loading.getIn([bodyId, inputId]);
+    const loadStatus = loading.getIn([bodyId, synapseId]);
     if (loadStatus && (loadStatus.loaded || loadStatus.loading)) {
       return;
     }
 
     // set the loading status to prevent multiple load calls.
-    const updated = loading.setIn([bodyId, inputId],{loading: true});
-    this.setState({loading: updated});
+    const updated = loading.setIn([bodyId, synapseId], { loading: true });
+    this.setState({ loading: updated });
 
+    let completeQuery = '';
     // generate the querystring.
-    const completeQuery = psdQuery
-      .replace(/<OTHERBODYID>/g, inputId)
-      .replace(/<DATASET>/g, dataSet)
-      .replace(/<TARGETBODYID>/g, bodyId);
+    if (options.isInput) {
+      completeQuery = psdQuery
+        .replace(/<OTHERBODYID>/g, synapseId)
+        .replace(/<DATASET>/g, dataSet)
+        .replace(/<TARGETBODYID>/g, bodyId);
+    } else {
+      completeQuery = tbarQuery
+        .replace(/<OTHERBODYID>/g, synapseId)
+        .replace(/<DATASET>/g, dataSet)
+        .replace(/<TARGETBODYID>/g, bodyId);
+    }
+
     // fetch swc data
     fetch('/api/custom/custom', {
       headers: {
@@ -494,12 +513,12 @@ class SkeletonView extends React.Component {
         if ('error' in result) {
           throw result.error;
         }
-        this.inputLoaded(inputId, bodyId, dataSet, result);
+        this.synapseLoaded(synapseId, bodyId, dataSet, result, options );
       })
       .catch(error => this.setState({ loadingError: error }));
   }
 
-  inputLoaded(inputId, bodyId, dataSet, result) {
+  synapseLoaded(synapseId, bodyId, dataSet, result, options = { isInput: true}) {
     const { db } = this.state;
     // parse the result into swc format for skeleton viewer code.
     const data = {};
@@ -514,30 +533,31 @@ class SkeletonView extends React.Component {
       };
     });
 
+    const colorStringId = options.isInput ?`input_${synapseId}`:`output_${synapseId}`;
     // check to see if we have a color cached for this.
     // if yes, then return the color,
     // else, generate random color and cache it.
-    db.get(`input_${inputId}`)
+    db.get(colorStringId)
       .then(doc => {
         const { color } = doc;
-        this.addInputToState(inputId, bodyId, dataSet, data, color);
+        this.addSynapseToState(synapseId, bodyId, dataSet, data, color, options);
       })
       .catch(() => {
         const color = randomColor({ luminosity: 'light', hue: 'random' });
         db.put({
-          _id: `input_${inputId}`,
+          _id: colorStringId,
           color
         }).then(() => {
-          this.addInputToState(inputId, bodyId, dataSet, data, color);
+          this.addSynapseToState(synapseId, bodyId, dataSet, data, color, options);
         });
       });
   }
 
-  addInputToState(inputId, bodyId, dataSet, data, color) {
-    console.log(inputId, bodyId, dataSet, data, color);
+  addSynapseToState(synapseId, bodyId, dataSet, data, color, options = { isInput: true}) {
     const { bodies, loading } = this.state;
-    const updated = bodies.setIn([bodyId.toString(), 'inputs', inputId], { color, swc: data});
-    const loadUpdated = loading.setIn([bodyId, inputId], { loaded: true });
+    const synapseType = options.isInput ? 'inputs' : 'outputs';
+    const updated = bodies.setIn([bodyId.toString(), synapseType, synapseId], { color, swc: data });
+    const loadUpdated = loading.setIn([bodyId, synapseId], { loaded: true });
     this.setState({ bodies: updated, loading: loadUpdated });
   }
 
@@ -638,9 +658,10 @@ class SkeletonView extends React.Component {
     this.setState({ bodies: updated });
   }
 
-  removeInput(bodyId, inputId) {
+  removeSynapse(bodyId, synapseId, isInput = true) {
     const { bodies } = this.state;
-    const updated = bodies.deleteIn([bodyId.toString(), 'inputs', inputId]);
+    const synapseType = isInput ? 'inputs' : 'outputs';
+    const updated = bodies.deleteIn([bodyId.toString(), synapseType, synapseId]);
     this.setState({ bodies: updated });
   }
 
@@ -650,10 +671,10 @@ class SkeletonView extends React.Component {
     this.setState({ outputs: updated });
   }
 
-  renderSynapse(body, input, moveCamera = false) {
+  renderSynapse(body, synapse, moveCamera = false) {
     const { sharkViewer } = this.state;
-    const name = `${body.get('name')}_${input}`;
-    sharkViewer.loadNeuron(name, input.color, input.swc, moveCamera);
+    const name = `${body.get('name')}_${synapse}`;
+    sharkViewer.loadNeuron(name, synapse.color, synapse.swc, moveCamera);
     sharkViewer.render();
     sharkViewer.render();
     // UGLY: there is a weird bug that means sometimes the scene is rendered blank.
