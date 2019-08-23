@@ -100,6 +100,23 @@ export default function skeletonReducer(state = skeletonState, action) {
       const updated = state.setIn(['synapses', action.bodyId, synapseType, action.synapseId], !currentState);
       return updated;
     }
+    case C.SKELETON_SPINDLE_TOGGLE: {
+       // grab the tab data
+      const current = getQueryObject('qr', []);
+      // need to find the index of the tab we are going to update / replace.
+      const selected = current[action.tabIndex];
+
+      if (selected) {
+        // get current spindle display state
+        const spindleState = selected.sp || 0;
+        selected.sp = !spindleState ? 1 : 0;
+        current[action.tabIndex] = selected;
+        setQueryString({
+          qr: current,
+        });
+      }
+      return state;
+    }
     default: {
       return state;
     }

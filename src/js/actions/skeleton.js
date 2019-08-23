@@ -25,3 +25,10 @@ export function toggleSynapse(bodyId, synapseId, isInput) {
     isInput
   };
 }
+
+export function toggleSpindle(tabIndex) {
+  return {
+    type: C.SKELETON_SPINDLE_TOGGLE,
+    tabIndex
+  };
+}

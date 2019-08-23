@@ -5,7 +5,11 @@ import Immutable from 'immutable';
 import PouchDB from 'pouchdb';
 import deepEqual from 'deep-equal';
 
+import Switch from '@material-ui/core/Switch';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { withStyles } from '@material-ui/core/styles';
+
 import ActionMenu from './Skeleton/ActionMenu';
 
 import CompartmentSelection from './Skeleton/CompartmentSelection';
@@ -22,7 +26,7 @@ const styles = theme => ({
     padding: theme.spacing.unit,
     position: 'absolute'
   },
-  footer: {
+  compartments: {
     zIndex: 2,
     padding: theme.spacing.unit,
     position: 'absolute',
@@ -44,6 +48,12 @@ const styles = theme => ({
     position: 'absolute',
     top: '1em',
     right: '1em'
+  },
+  spindleToggle: {
+    position: 'absolute',
+    bottom: '0px',
+    left: '1em',
+    zIndex: 2
   }
 });
 
@@ -73,7 +83,8 @@ class SkeletonView extends React.Component {
       db: new PouchDB('neuprint_compartments'),
       bodies: Immutable.Map({}),
       compartments: Immutable.Map({}),
-      loading: Immutable.Map({})
+      loading: Immutable.Map({}),
+      spindleView: false
     };
     this.skelRef = React.createRef();
   }
@@ -89,6 +100,9 @@ class SkeletonView extends React.Component {
       if (query.pm.compartments) {
         const compIds = query.pm.compartments.split(',');
         this.addCompartments(compIds, query.pm.dataSet);
+      }
+      if (query.sp) {
+        this.setState({spindleView: true });
       }
     }
     this.createShark();
@@ -242,7 +256,6 @@ class SkeletonView extends React.Component {
                 this.renderSynapse(body, output);
               }
             });
-
           });
 
         // render new compartments
@@ -251,6 +264,16 @@ class SkeletonView extends React.Component {
           compartment => !prevCompartmentSet.has(compartment.get('name'))
         );
         this.renderCompartments(newCompartments);
+      }
+
+      if (query.sp !== prevProps.query.sp) {
+        const { bodies } = this.state;
+        bodies.forEach(bodyId => {
+          // unload all the bodies
+          this.unloadBody(bodyId.get('name'));
+          // reload all the bodies
+          this.renderBodies([bodyId.get('name')]);
+        });
       }
     }
   }
@@ -386,6 +409,11 @@ class SkeletonView extends React.Component {
     });
   };
 
+  handleSpindleToggle = () => {
+    const { actions, index } = this.props;
+    actions.toggleSpindle(index);
+  };
+
   unloadCompartment(id) {
     const { sharkViewer } = this.state;
     sharkViewer.unloadCompartment(id);
@@ -513,12 +541,12 @@ class SkeletonView extends React.Component {
         if ('error' in result) {
           throw result.error;
         }
-        this.synapseLoaded(synapseId, bodyId, dataSet, result, options );
+        this.synapseLoaded(synapseId, bodyId, dataSet, result, options);
       })
       .catch(error => this.setState({ loadingError: error }));
   }
 
-  synapseLoaded(synapseId, bodyId, dataSet, result, options = { isInput: true}) {
+  synapseLoaded(synapseId, bodyId, dataSet, result, options = { isInput: true }) {
     const { db } = this.state;
     // parse the result into swc format for skeleton viewer code.
     const data = {};
@@ -533,7 +561,7 @@ class SkeletonView extends React.Component {
       };
     });
 
-    const colorStringId = options.isInput ?`input_${synapseId}`:`output_${synapseId}`;
+    const colorStringId = options.isInput ? `input_${synapseId}` : `output_${synapseId}`;
     // check to see if we have a color cached for this.
     // if yes, then return the color,
     // else, generate random color and cache it.
@@ -553,7 +581,7 @@ class SkeletonView extends React.Component {
       });
   }
 
-  addSynapseToState(synapseId, bodyId, dataSet, data, color, options = { isInput: true}) {
+  addSynapseToState(synapseId, bodyId, dataSet, data, color, options = { isInput: true }) {
     const { bodies, loading } = this.state;
     const synapseType = options.isInput ? 'inputs' : 'outputs';
     const updated = bodies.setIn([bodyId.toString(), synapseType, synapseId], { color, swc: data });
@@ -687,18 +715,17 @@ class SkeletonView extends React.Component {
 
   renderBodies(ids, moveCamera = false, colorChange = false) {
     const { sharkViewer, bodies } = this.state;
+    const { query } = this.props;
     ids.forEach(id => {
       const body = bodies.get(id);
-      // TODO: add toggle switch to turn the skeletons into stick drawings,
-      // with a radius of one. The following code will do the job, just need
-      // a way to activate it in the UI.
-      /* const swc = objectMap(body.get('swc'), (value) => {
-        const updatedValue = value;
-        updatedValue.radius = 1;
-        return updatedValue;
-      }); */
 
-      const swc = body.get('swc');
+      const swc = query.sp
+        ? objectMap(JSON.parse(JSON.stringify(body.get('swc'))), value => {
+            const updatedValue = value;
+            updatedValue.radius = 1;
+            return updatedValue;
+          })
+        : body.get('swc');
 
       // If added, then add them to the scene.
       const exists = sharkViewer.scene.getObjectByName(body.get('name'));
@@ -790,10 +817,24 @@ class SkeletonView extends React.Component {
       />
     );
 
+    const spindleChecked = Boolean(query.sp);
+
+    const spindleToggle = (
+      <FormGroup row>
+        <FormControlLabel
+          control={
+            <Switch onChange={this.handleSpindleToggle} checked={spindleChecked} color="primary" />
+          }
+          label="Spindle View"
+        />
+      </FormGroup>
+    );
+
     return (
       <div className={classes.root}>
         <div className={classes.floater}>{chipsArray}</div>
-        <div className={classes.footer}>{compartmentSelection}</div>
+        <div className={classes.compartments}>{compartmentSelection}</div>
+        <div className={classes.spindleToggle}>{spindleToggle}</div>
         <div className={classes.skel} ref={this.skelRef} id="skeletonviewer" />
       </div>
     );

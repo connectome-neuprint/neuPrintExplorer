@@ -344,7 +344,6 @@ class Results extends React.Component {
                             query={queryData}
                             index={tabIndex}
                             key={viewKey}
-                            actions={actions}
                             neoServer={neoServer}
                             neo4jsettings={neo4jsettings}
                           />
