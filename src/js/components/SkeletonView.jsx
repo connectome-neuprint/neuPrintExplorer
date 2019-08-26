@@ -183,11 +183,21 @@ class SkeletonView extends React.Component {
 
       // load inputs into state
       synapses.forEach((value, bodyId) => {
-        value.get('inputs', Immutable.Map({})).forEach((status, inputId) => {
-          this.addSynapse(bodyId, inputId, query.pm.dataSet, { isInput: true });
+        value.get('inputs', Immutable.Map({})).forEach((isActive, inputId) => {
+          if (isActive) {
+            this.addSynapse(bodyId, inputId, query.pm.dataSet, { isInput: true });
+          }
+          else {
+            this.removeSynapse(bodyId, inputId, query.pm.dataSet, { isInput: true });
+          }
         });
-        value.get('outputs', Immutable.Map({})).forEach((status, outputId) => {
-          this.addSynapse(bodyId, outputId, query.pm.dataSet, { isInput: false });
+        value.get('outputs', Immutable.Map({})).forEach((isActive, outputId) => {
+          if (isActive) {
+            this.addSynapse(bodyId, outputId, query.pm.dataSet, { isInput: false });
+          }
+          else {
+            this.removeSynapse(bodyId, outputId, query.pm.dataSet, { isInput: false });
+          }
         });
       });
 
