@@ -60,14 +60,6 @@ const styles = theme => ({
 const skeletonQuery =
   'MATCH (:`<DATASET>-Neuron` {bodyId:<BODYID>})-[:Contains]->(:Skeleton)-[:Contains]->(root :SkelNode) WHERE NOT (root)<-[:LinksTo]-() RETURN root.rowNumber AS rowId, root.location.x AS x, root.location.y AS y, root.location.z AS z, root.radius AS radius, -1 AS link ORDER BY root.rowNumber UNION match (:`<DATASET>-Neuron` {bodyId:<BODYID>})-[:Contains]->(:Skeleton)-[:Contains]->(s :SkelNode)<-[:LinksTo]-(ss :SkelNode) RETURN s.rowNumber AS rowId, s.location.x AS x, s.location.y AS y, s.location.z AS z, s.radius AS radius, ss.rowNumber AS link ORDER BY s.rowNumber';
 
-// output
-const tbarQuery =
-  'MATCH (n :`<DATASET>-Neuron` {bodyId: <TARGETBODYID>})<-[:From]-(cs :ConnectionSet)-[:To]->(m :`<DATASET>-Neuron` {bodyId: <OTHERBODYID>}) WITH cs MATCH (cs)-[:Contains]->(s :PreSyn) RETURN s.location.x AS x, s.location.y AS y, s.location.z AS z';
-
-// input
-const psdQuery =
-  'MATCH (n :`<DATASET>-Neuron` {bodyId: <TARGETBODYID>})<-[:To]-(cs :ConnectionSet)-[:From]->(m :`<DATASET>-Neuron` {bodyId: <OTHERBODYID>}) WITH cs MATCH (cs)-[:Contains]->(s :PostSyn) RETURN s.location.x AS x, s.location.y AS y, s.location.z AS z';
-
 function objectMap(object, mapFn) {
   return Object.keys(object).reduce((result, key) => {
     result[key] = mapFn(object[key]);
@@ -90,7 +82,7 @@ class SkeletonView extends React.Component {
   }
 
   componentDidMount() {
-    const { query } = this.props;
+    const { query, synapses } = this.props;
     // check for neurons and compartments here and load them into the state
     if (query.pm.dataSet) {
       if (query.pm.bodyIds) {
@@ -151,12 +143,12 @@ class SkeletonView extends React.Component {
         prevProps.synapses.forEach((value, bodyId) => {
           value.get('inputs', Immutable.Map({})).forEach((status, inputId) => {
             if (!synapses.getIn([bodyId, 'inputs', inputId])) {
-              this.removeSynapse(bodyId, inputId, true);
+              this.unloadSynapse(bodyId, inputId);
             }
           });
           value.get('outputs', Immutable.Map({})).forEach((status, outputId) => {
             if (!synapses.getIn([bodyId, 'outputs', outputId])) {
-              this.removeSynapse(bodyId, outputId, false);
+              this.unloadSynapse(bodyId, outputId);
             }
           });
         });
@@ -179,25 +171,13 @@ class SkeletonView extends React.Component {
           compartmentId => !prevCompartmentSet.has(compartmentId)
         );
         this.addCompartments(newCompartmentIds, dataSet);
+
       }
 
-      // load inputs into state
+      // render synapses that are new, ie those that are in props, but not prevProps
       synapses.forEach((value, bodyId) => {
-        value.get('inputs', Immutable.Map({})).forEach((isActive, inputId) => {
-          if (isActive) {
-            this.addSynapse(bodyId, inputId, query.pm.dataSet, { isInput: true });
-          }
-          else {
-            this.removeSynapse(bodyId, inputId, query.pm.dataSet, { isInput: true });
-          }
-        });
-        value.get('outputs', Immutable.Map({})).forEach((isActive, outputId) => {
-          if (isActive) {
-            this.addSynapse(bodyId, outputId, query.pm.dataSet, { isInput: false });
-          }
-          else {
-            this.removeSynapse(bodyId, outputId, query.pm.dataSet, { isInput: false });
-          }
+        value.get('inputs', Immutable.Map({})).forEach((inputMeta, inputId) => {
+          this.renderSynapse(bodyId, inputId, inputMeta);
         });
       });
 
@@ -230,7 +210,7 @@ class SkeletonView extends React.Component {
           this.unloadCompartment(compId);
         });
 
-        // render new bodies
+             // render new bodies
         const prevBodiesSet = new Set(Object.keys(prevBodies.toJS()));
         const newBodyIds = Object.keys(bodies.toJS()).filter(bodyId => !prevBodiesSet.has(bodyId));
 
@@ -250,22 +230,6 @@ class SkeletonView extends React.Component {
           .filter(body => body.get('color') !== prevBodies.getIn([body.get('name'), 'color']))
           .forEach(body => {
             this.renderBodies([body.get('name')], false, true);
-          });
-
-        // render synapses that weren't visible.
-        bodies
-          .filter(body => body.get('visible'))
-          .forEach(body => {
-            body.get('inputs', Immutable.Map({})).forEach(input => {
-              if (!prevBodies.getIn([body.get('name'), 'inputs', input])) {
-                this.renderSynapse(body, input);
-              }
-            });
-            body.get('outputs', Immutable.Map({})).forEach(output => {
-              if (!prevBodies.getIn([body.get('name'), 'outputs', output])) {
-                this.renderSynapse(body, output);
-              }
-            });
           });
 
         // render new compartments
@@ -450,6 +414,20 @@ class SkeletonView extends React.Component {
     }, 200);
   }
 
+  unloadSynapse(bodyId, synapseId) {
+    const { sharkViewer } = this.state;
+    const name = `${bodyId}_${synapseId}`;
+    sharkViewer.unloadNeuron(name);
+    sharkViewer.render();
+    sharkViewer.render();
+    // UGLY: there is a weird bug that means sometimes the scene is rendered blank.
+    // it seems to be some sort of timing issue, and adding a delayed render seems
+    // to fix it.
+    setTimeout(() => {
+      sharkViewer.render();
+    }, 200);
+  }
+
   removeCompartmentsFromState(ids) {
     const { compartments } = this.state;
     const updated = compartments.deleteAll(ids);
@@ -501,102 +479,6 @@ class SkeletonView extends React.Component {
           });
         }
       });
-  }
-
-  addSynapse(bodyId, synapseId, dataSet, options = { isInput: true }) {
-    const { loading } = this.state;
-
-    if (bodyId === '') {
-      return;
-    }
-
-    // skip it if it already exists.
-    const loadStatus = loading.getIn([bodyId, synapseId]);
-    if (loadStatus && (loadStatus.loaded || loadStatus.loading)) {
-      return;
-    }
-
-    // set the loading status to prevent multiple load calls.
-    const updated = loading.setIn([bodyId, synapseId], { loading: true });
-    this.setState({ loading: updated });
-
-    let completeQuery = '';
-    // generate the querystring.
-    if (options.isInput) {
-      completeQuery = psdQuery
-        .replace(/<OTHERBODYID>/g, synapseId)
-        .replace(/<DATASET>/g, dataSet)
-        .replace(/<TARGETBODYID>/g, bodyId);
-    } else {
-      completeQuery = tbarQuery
-        .replace(/<OTHERBODYID>/g, synapseId)
-        .replace(/<DATASET>/g, dataSet)
-        .replace(/<TARGETBODYID>/g, bodyId);
-    }
-
-    // fetch swc data
-    fetch('/api/custom/custom', {
-      headers: {
-        'content-type': 'application/json',
-        Accept: 'application/json'
-      },
-      body: JSON.stringify({
-        cypher: completeQuery
-      }),
-      method: 'POST',
-      credentials: 'include'
-    })
-      .then(result => result.json())
-      .then(result => {
-        if ('error' in result) {
-          throw result.error;
-        }
-        this.synapseLoaded(synapseId, bodyId, dataSet, result, options);
-      })
-      .catch(error => this.setState({ loadingError: error }));
-  }
-
-  synapseLoaded(synapseId, bodyId, dataSet, result, options = { isInput: true }) {
-    const { db } = this.state;
-    // parse the result into swc format for skeleton viewer code.
-    const data = {};
-
-    result.data.forEach((row, i) => {
-      data[i + 1] = {
-        x: parseInt(row[0], 10),
-        y: parseInt(row[1], 10),
-        z: parseInt(row[2], 10),
-        radius: 5,
-        parent: -1
-      };
-    });
-
-    const colorStringId = options.isInput ? `input_${synapseId}` : `output_${synapseId}`;
-    // check to see if we have a color cached for this.
-    // if yes, then return the color,
-    // else, generate random color and cache it.
-    db.get(colorStringId)
-      .then(doc => {
-        const { color } = doc;
-        this.addSynapseToState(synapseId, bodyId, dataSet, data, color, options);
-      })
-      .catch(() => {
-        const color = randomColor({ luminosity: 'light', hue: 'random' });
-        db.put({
-          _id: colorStringId,
-          color
-        }).then(() => {
-          this.addSynapseToState(synapseId, bodyId, dataSet, data, color, options);
-        });
-      });
-  }
-
-  addSynapseToState(synapseId, bodyId, dataSet, data, color, options = { isInput: true }) {
-    const { bodies, loading } = this.state;
-    const synapseType = options.isInput ? 'inputs' : 'outputs';
-    const updated = bodies.setIn([bodyId.toString(), synapseType, synapseId], { color, swc: data });
-    const loadUpdated = loading.setIn([bodyId, synapseId], { loaded: true });
-    this.setState({ bodies: updated, loading: loadUpdated });
   }
 
   addSkeleton(bodyId, dataSet) {
@@ -696,31 +578,27 @@ class SkeletonView extends React.Component {
     this.setState({ bodies: updated });
   }
 
-  removeSynapse(bodyId, synapseId, isInput = true) {
-    const { bodies } = this.state;
-    const synapseType = isInput ? 'inputs' : 'outputs';
-    const updated = bodies.deleteIn([bodyId.toString(), synapseType, synapseId]);
-    this.setState({ bodies: updated });
-  }
-
   removeOutput(bodyId, outputId) {
     const { outputs } = this.state;
     const updated = outputs.deleteIn([bodyId, 'outputs', outputId]);
     this.setState({ outputs: updated });
   }
 
-  renderSynapse(body, synapse, moveCamera = false) {
+  renderSynapse(bodyId, synapseId, synapseData, moveCamera = false) {
     const { sharkViewer } = this.state;
-    const name = `${body.get('name')}_${synapse}`;
-    sharkViewer.loadNeuron(name, synapse.color, synapse.swc, moveCamera);
-    sharkViewer.render();
-    sharkViewer.render();
-    // UGLY: there is a weird bug that means sometimes the scene is rendered blank.
-    // it seems to be some sort of timing issue, and adding a delayed render seems
-    // to fix it.
-    setTimeout(() => {
+    const name = `${bodyId}_${synapseId}`;
+    const exists = sharkViewer.scene.getObjectByName(name);
+    if (!exists) {
+      sharkViewer.loadNeuron(name, synapseData.color, synapseData.swc, moveCamera);
       sharkViewer.render();
-    }, 200);
+      sharkViewer.render();
+      // UGLY: there is a weird bug that means sometimes the scene is rendered blank.
+      // it seems to be some sort of timing issue, and adding a delayed render seems
+      // to fix it.
+      setTimeout(() => {
+        sharkViewer.render();
+      }, 200);
+    }
   }
 
   renderBodies(ids, moveCamera = false, colorChange = false) {

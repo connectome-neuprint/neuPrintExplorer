@@ -60,10 +60,14 @@ class SynapseSelection extends React.Component {
   }
 
   handleToggle = id => {
-    const { body, isInput, actions } = this.props;
+    const { body, isInput, actions, synapseState, dataSet } = this.props;
     // decide if this input/output
-    // set the state to show that the id has been selected.
-    actions.toggleSynapse(body.get('name'), id, isInput);
+    const synapseType = isInput ? 'inputs' : 'outputs';
+    if (synapseState.getIn([body.get('name'), synapseType, id])) {
+      actions.removeSynapse(body.get('name'), id, isInput);
+    } else {
+      actions.loadSynapse(body.get('name'), id, dataSet, { isInput });
+    }
   };
 
   synapsesLoaded(result) {
@@ -111,9 +115,9 @@ class SynapseSelection extends React.Component {
       .sort((a, b) => b[1].weight - a[1].weight)
       .map(entry => {
         const [id, synapseMeta] = entry;
-        const checked = synapseStateCheck.get(id, false);
+        const checked = Boolean(synapseStateCheck.get(id, false));
         const colorBoxStyle = {
-          backgroundColor: body.getIn([synapseType, id, 'color'])
+          backgroundColor: synapseState.getIn([body.get('name'), synapseType, id, 'color'])
         };
         return (
           <ListItem key={id}>

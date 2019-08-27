@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import SynapseSelection from 'components/Skeleton/SynapseSelection';
-import { toggleSynapse } from 'actions/skeleton';
+import { loadSynapse, removeSynapse } from 'actions/skeleton';
 
 const SynapseSelectionState = state => ({
   synapseState: state.skeleton.get('synapses')
@@ -8,8 +8,11 @@ const SynapseSelectionState = state => ({
 
 const SynapseSelectionDispatch = dispatch => ({
   actions: {
-    toggleSynapse : (bodyId, synapseId, isInput) => {
-      dispatch(toggleSynapse(bodyId, synapseId, isInput));
+    loadSynapse : (bodyId, synapseId, dataSet, isInput) => {
+      dispatch(loadSynapse(bodyId, synapseId, dataSet, isInput));
+    },
+    removeSynapse : (bodyId, synapseId, isInput) => {
+      dispatch(removeSynapse(bodyId, synapseId, isInput));
     }
   }
 });

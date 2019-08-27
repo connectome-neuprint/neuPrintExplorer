@@ -94,10 +94,13 @@ export default function skeletonReducer(state = skeletonState, action) {
       }
       return state;
     }
-    case C.SKELETON_SYNAPSE_TOGGLE: {
+    case C.SKELETON_SYNAPSE_LOADED: {
+      const updated = state.setIn(['synapses', action.bodyId, action.synapseType, action.synapseId], {color: action.color, swc: action.data});
+      return updated;
+    }
+    case C.SKELETON_SYNAPSE_REMOVE: {
       const synapseType = action.isInput ? 'inputs' : 'outputs';
-      const currentState = state.getIn(['synapses', action.bodyId, synapseType, action.synapseId], false);
-      const updated = state.setIn(['synapses', action.bodyId, synapseType, action.synapseId], !currentState);
+      const updated = state.deleteIn(['synapses', action.bodyId, synapseType, action.synapseId]);
       return updated;
     }
     case C.SKELETON_SPINDLE_TOGGLE: {
