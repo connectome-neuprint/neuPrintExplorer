@@ -62,7 +62,7 @@ const skeletonQuery =
 
 function objectMap(object, mapFn) {
   return Object.keys(object).reduce((result, key) => {
-    result[key] = mapFn(object[key]);
+    result[key] = mapFn(object[key]); // eslint-disable-line no-param-reassign
     return result;
   }, {});
 }
@@ -82,7 +82,7 @@ class SkeletonView extends React.Component {
   }
 
   componentDidMount() {
-    const { query, synapses } = this.props;
+    const { query } = this.props;
     // check for neurons and compartments here and load them into the state
     if (query.pm.dataSet) {
       if (query.pm.bodyIds) {
@@ -214,7 +214,7 @@ class SkeletonView extends React.Component {
         const prevBodiesSet = new Set(Object.keys(prevBodies.toJS()));
         const newBodyIds = Object.keys(bodies.toJS()).filter(bodyId => !prevBodiesSet.has(bodyId));
 
-        const moveCamera = query.pm.coordinates ? false : true;
+        const moveCamera = !query.pm.coordinates;
 
         this.renderBodies(newBodyIds, moveCamera);
 
@@ -284,7 +284,7 @@ class SkeletonView extends React.Component {
   createShark = () => {
     const { query } = this.props;
     import('@janelia/sharkviewer').then(SharkViewer => {
-      const sharkViewer = new SharkViewer.default({
+      const sharkViewer = new SharkViewer.default({ // eslint-disable-line new-cap
         dom_element: 'skeletonviewer',
         WIDTH: this.skelRef.current.clientWidth,
         HEIGHT: this.skelRef.current.clientHeight
@@ -339,8 +339,9 @@ class SkeletonView extends React.Component {
     const { db, bodies } = this.state;
     db.get(`sk_${id}`)
       .then(doc => {
-        doc.color = color;
-        return db.put(doc);
+        const updated = doc;
+        updated.color = color;
+        return db.put(updated);
       })
       .then(() => {
         // update the skeleton color in the state

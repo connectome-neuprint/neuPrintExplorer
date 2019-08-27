@@ -6,6 +6,7 @@ const initialState = Immutable.Map({
   display: false,
   neurons: Immutable.Map({}),
   compartments: Immutable.Map({}),
+  synapses: Immutable.Map({}),
   loading: false,
   error: null,
   cameraPosition: null

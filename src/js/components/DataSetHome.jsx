@@ -3,6 +3,13 @@ import PropTypes from 'prop-types';
 import Grid from '@material-ui/core/Grid';
 
 class DataSetHome extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+
+    };
+  }
+
   render() {
     const { dataSet } = this.props;
     return (

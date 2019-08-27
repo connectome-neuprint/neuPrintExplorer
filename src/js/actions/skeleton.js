@@ -72,7 +72,7 @@ function loadedSynapse(bodyId, synapseId, dataSet, response, options = { isInput
     }
   }
 
-function loadingSynapse(bodyId, synapseId, options = { isInput: true }) {
+function loadingSynapse(bodyId, synapseId) {
   return {
     type: C.SKELETON_SYNAPSE_LOADING,
     bodyId,

@@ -44,55 +44,53 @@ const styles = theme => ({
   }
 });
 
-class Home extends React.Component {
-  render() {
-    const { classes, ...passedProps } = this.props;
-    let redirectHome = false;
-    if (window.location.pathname !== '/') {
-      redirectHome = true;
-    }
-
-    // if we have a dataset selected then show that homepage.
-    const queryObject = getQueryObject();
-
-    return (
-      <div className={classes.root}>
-        {redirectHome ? <Redirect to="/" /> : <div />}
-        <Grid container spacing={24} justify="center" className={classes.container}>
-          <Grid item xs={2} />
-          <Grid item xs={8} className={classes.roottext}>
-            <Typography variant="h3">Analysis tools for connectomics</Typography>
-            <Typography className={classes.description}>
-              neuPrintExplorer provides tools to query and visualize connectomic data stored in{' '}
-              <a href="https://github.com/janelia-flyem/neuPrint">neuPrint</a>, which uses a neo4j
-              graph database.
-            </Typography>
-            <Typography variant="h6">
-              Use the search icon <Icon>search</Icon> in the menu on the <Link to="/?q=1">left</Link> to query the database.
-            </Typography>
-          </Grid>
-          <Grid item xs={2} />
-          {queryObject.dataset && (
-            <Grid item xs={12}>
-              <DataSetHome dataSet={queryObject.dataset} />
-            </Grid>
-          )}
-        </Grid>
-        {queryObject.dataset && <Divider variant="middle" className={classes.sectionDivide} />}
-        <Grid container spacing={24} justify="center" className={classes.container}>
-          <Grid item xs={12} sm={12} md={6} lg={5}>
-            <ServerInfoCard {...passedProps} />
-          </Grid>
-          <Grid item xs={12} sm={12} md={6} lg={5}>
-            <Hints {...passedProps} />
-          </Grid>
-          <Grid item xs={12} sm={12} md={6} lg={5}>
-            <News {...passedProps} />
-          </Grid>
-        </Grid>
-      </div>
-    );
+function Home(props) {
+  const { classes, ...passedProps } = props;
+  let redirectHome = false;
+  if (window.location.pathname !== '/') {
+    redirectHome = true;
   }
+
+  // if we have a dataset selected then show that homepage.
+  const queryObject = getQueryObject();
+
+  return (
+    <div className={classes.root}>
+      {redirectHome ? <Redirect to="/" /> : <div />}
+      <Grid container spacing={24} justify="center" className={classes.container}>
+        <Grid item xs={2} />
+        <Grid item xs={8} className={classes.roottext}>
+          <Typography variant="h3">Analysis tools for connectomics</Typography>
+          <Typography className={classes.description}>
+            neuPrintExplorer provides tools to query and visualize connectomic data stored in{' '}
+            <a href="https://github.com/janelia-flyem/neuPrint">neuPrint</a>, which uses a neo4j
+            graph database.
+          </Typography>
+          <Typography variant="h6">
+            Use the search icon <Icon>search</Icon> in the menu on the <Link to="/?q=1">left</Link> to query the database.
+          </Typography>
+        </Grid>
+        <Grid item xs={2} />
+        {queryObject.dataset && (
+          <Grid item xs={12}>
+            <DataSetHome dataSet={queryObject.dataset} />
+          </Grid>
+        )}
+      </Grid>
+      {queryObject.dataset && <Divider variant="middle" className={classes.sectionDivide} />}
+      <Grid container spacing={24} justify="center" className={classes.container}>
+        <Grid item xs={12} sm={12} md={6} lg={5}>
+          <ServerInfoCard {...passedProps} />
+        </Grid>
+        <Grid item xs={12} sm={12} md={6} lg={5}>
+          <Hints {...passedProps} />
+        </Grid>
+        <Grid item xs={12} sm={12} md={6} lg={5}>
+          <News {...passedProps} />
+        </Grid>
+      </Grid>
+    </div>
+  );
 }
 
 const HomeState = state => ({
