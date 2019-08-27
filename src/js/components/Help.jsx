@@ -43,8 +43,8 @@ const styles = theme => ({
     flex: 1,
     padding: '1em'
   },
-  overflow: {
-    overflow: 'auto'
+  graphModel: {
+    background: '#fff'
   },
   secroot: {
     position: 'relative',
@@ -160,11 +160,12 @@ class Help extends React.Component {
                 open={open}
                 onClose={this.handleClose}
               >
-                <div className={classes.overflow}>
+                <div className={classes.graphModel}>
                   <Button onClick={this.handleClose}>
                     <img
                       src="https://raw.githubusercontent.com/connectome-neuprint/neuPrint/master/pgmv1.png"
                       alt="Neo4j graph model diagram"
+                      className={classes.img}
                     />
                   </Button>
                 </div>
