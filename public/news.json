@@ -1,6 +1,6 @@
 {
   "items": [
-    "Tab Scrolling is fixed.",
-    "ROI labels in the bar charts"
+    "Added Connectivity Graph network download. This can be imported into the cytoscape application.",
+    "Added Synapse display to the Skeleton Viewer. Also added a color selector tool to change the body colors."
   ]
 }
