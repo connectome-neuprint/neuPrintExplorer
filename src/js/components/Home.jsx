@@ -18,7 +18,7 @@ import { getQueryObject } from 'helpers/queryString';
 import ServerInfoCard from './ServerInfoCard';
 import News from './News';
 import Hints from './Hints';
-// import DataSetHome from './DataSetHome';
+import DataSetHome from './DataSetHome';
 
 import './Home.css';
 
@@ -71,11 +71,11 @@ function Home(props) {
           </Typography>
         </Grid>
         <Grid item xs={2} />
-        {/* queryObject.dataset && (
+        {queryObject.dataset && (
           <Grid item xs={12}>
             <DataSetHome dataSet={queryObject.dataset} />
           </Grid>
-        ) */}
+        )}
       </Grid>
       {queryObject.dataset && <Divider variant="middle" className={classes.sectionDivide} />}
       <Grid container spacing={24} justify="center" className={classes.container}>
