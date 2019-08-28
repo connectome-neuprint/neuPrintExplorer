@@ -179,6 +179,9 @@ class SkeletonView extends React.Component {
         value.get('inputs', Immutable.Map({})).forEach((inputMeta, inputId) => {
           this.renderSynapse(bodyId, inputId, inputMeta);
         });
+        value.get('outputs', Immutable.Map({})).forEach((outputMeta, outputId) => {
+          this.renderSynapse(bodyId, outputId, outputMeta);
+        });
       });
 
       if (!deepEqual(this.state, prevState)) {
