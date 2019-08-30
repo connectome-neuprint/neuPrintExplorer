@@ -57,9 +57,6 @@ const styles = theme => ({
   }
 });
 
-const skeletonQuery =
-  'MATCH (:`<DATASET>-Neuron` {bodyId:<BODYID>})-[:Contains]->(:Skeleton)-[:Contains]->(root :SkelNode) WHERE NOT (root)<-[:LinksTo]-() RETURN root.rowNumber AS rowId, root.location.x AS x, root.location.y AS y, root.location.z AS z, root.radius AS radius, -1 AS link ORDER BY root.rowNumber UNION match (:`<DATASET>-Neuron` {bodyId:<BODYID>})-[:Contains]->(:Skeleton)-[:Contains]->(s :SkelNode)<-[:LinksTo]-(ss :SkelNode) RETURN s.rowNumber AS rowId, s.location.x AS x, s.location.y AS y, s.location.z AS z, s.radius AS radius, ss.rowNumber AS link ORDER BY s.rowNumber';
-
 function objectMap(object, mapFn) {
   return Object.keys(object).reduce((result, key) => {
     result[key] = mapFn(object[key]); // eslint-disable-line no-param-reassign
@@ -353,16 +350,16 @@ class SkeletonView extends React.Component {
       });
   };
 
-  addCompartment = (id, dataset) => {
+  addCompartment = (id, dataSet) => {
     if (id === '') {
       return;
     }
     const { neo4jsettings } = this.props;
-    const meshHost = neo4jsettings.get('meshInfo')[dataset];
-    const { uuid } = neo4jsettings.get('datasetInfo')[dataset];
+    const meshHost = neo4jsettings.get('meshInfo')[dataSet];
+    const { uuid } = neo4jsettings.get('datasetInfo')[dataSet];
 
     if (meshHost && uuid) {
-      fetch(`${meshHost}/api/node/${uuid}/rois/key/${id}`, {
+      fetch(`/api/roimeshes/mesh/${dataSet}/${id}`, {
         headers: {
           'Content-Type': 'text/plain',
           Accept: 'application/json'
@@ -489,9 +486,6 @@ class SkeletonView extends React.Component {
     if (bodyId === '') {
       return;
     }
-    // generate the querystring.
-    const completeQuery = skeletonQuery.replace(/<DATASET>/g, dataSet).replace(/<BODYID>/g, bodyId);
-    // fetch swc data
     // TODO: check if we have a cached copy of the data and skip the fetch if we do.
     // document key should be sk_<id>
     //
@@ -499,15 +493,14 @@ class SkeletonView extends React.Component {
     // WITH [1,2] AS ids MATCH (n:`mb6-Neuron`)-[:Contains]->(s:Skeleton) WHERE n.bodyId IN ids RETURN n.bodyId,s.timeStamp
     // That will return the timestamps for each of the neurons, then if it is different or blank,
     // we fetch the swc data.
-    fetch('/api/custom/custom', {
+
+    // fetch swc data
+    fetch(`/api/skeletons/skeleton/${dataSet}/${bodyId}`, {
       headers: {
         'content-type': 'application/json',
         Accept: 'application/json'
       },
-      body: JSON.stringify({
-        cypher: completeQuery
-      }),
-      method: 'POST',
+      method: 'GET',
       credentials: 'include'
     })
       .then(result => result.json())
