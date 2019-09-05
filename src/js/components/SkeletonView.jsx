@@ -289,7 +289,9 @@ class SkeletonView extends React.Component {
       const sharkViewer = new SharkViewer.default({ // eslint-disable-line new-cap
         dom_element: 'skeletonviewer',
         WIDTH: this.skelRef.current.clientWidth,
-        HEIGHT: this.skelRef.current.clientHeight
+        HEIGHT: this.skelRef.current.clientHeight,
+        //  on_select_node: (id, sampleNumber, event) => { console.log(id, sampleNumber) },
+        on_toggle_node: (id) => { this.handleClick(id) }
       });
       sharkViewer.init();
       sharkViewer.animate();
