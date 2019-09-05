@@ -24,7 +24,9 @@ const styles = theme => ({
   floater: {
     zIndex: 2,
     padding: theme.spacing.unit,
-    position: 'absolute'
+    position: 'absolute',
+    display: 'flex', // keeps the chips in a vertical column instead of a row.
+    flexDirection: 'column'
   },
   compartments: {
     zIndex: 2,
