@@ -290,7 +290,7 @@ class SkeletonView extends React.Component {
         dom_element: 'skeletonviewer',
         WIDTH: this.skelRef.current.clientWidth,
         HEIGHT: this.skelRef.current.clientHeight,
-        //  on_select_node: (id, sampleNumber, event) => { console.log(id, sampleNumber) },
+        // on_select_node: (id, sampleNumber, event, coords) => { console.log(id, sampleNumber, event, coords) },
         on_toggle_node: (id) => { this.handleClick(id) }
       });
       sharkViewer.init();
@@ -332,7 +332,7 @@ class SkeletonView extends React.Component {
     // action passed in from Results that removes id from the url
   };
 
-  handleClick = id => {
+  handleClick = (id) => {
     const { bodies } = this.state;
     const visible = !bodies.getIn([id, 'visible']);
     const updated = bodies.setIn([id, 'visible'], visible);
