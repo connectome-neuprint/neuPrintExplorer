@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@material-ui/core/Grid';
+import ConnectivityHeatMap from './visualization/ConnectivityHeatMap';
 
 class DataSetHome extends React.Component {
   constructor(props) {
@@ -38,7 +39,7 @@ class DataSetHome extends React.Component {
           </Grid>
         </Grid>
         <Grid item sm={8}>
-          <p>ROI Connectivity Graph</p>
+          <ConnectivityHeatMap dataSet={dataSet} />
         </Grid>
       </Grid>
     );
