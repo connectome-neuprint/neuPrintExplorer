@@ -110,13 +110,15 @@ export function fetchData(params, plugin, tabPosition, token) {
       parameters.cypher = fetchParams.cypherQuery;
     }
 
+    const body = (fetchParams.method === 'GET') ? null : JSON.stringify(parameters);
+
     const querySettings = fetchParams.querySettings || {
       headers: {
         'content-type': 'application/json',
         Accept: 'application/json'
       },
-      body: JSON.stringify(parameters),
-      method: 'POST',
+      body,
+      method: fetchParams.method || 'POST',
       credentials: 'include'
     };
 
