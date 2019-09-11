@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@material-ui/core/Grid';
+import ConnectivityHeatMap from './visualization/ConnectivityHeatMap';
+import ROICompletenessChart from './visualization/ROICompletenessChart';
 
 class DataSetHome extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-
-    };
+    this.state = {};
   }
 
   render() {
@@ -23,22 +23,12 @@ class DataSetHome extends React.Component {
               <p>Stats for {dataSet}</p>
             </Grid>
             <Grid item xs={12}>
-              <p>ROI connectivity table for {dataSet}</p>
-              <ul>
-                <li>name</li>
-                <li>completeness</li>
-                <li>description</li>
-                <li>virtual flybrain link</li>
-                <li>pre / post synaptic regions</li>
-                <li>tbar density</li>
-                <li>neuron count</li>
-                <li>etc.</li>
-              </ul>
+              <ROICompletenessChart dataSet={dataSet} />
             </Grid>
           </Grid>
         </Grid>
         <Grid item sm={8}>
-          <p>ROI Connectivity Graph</p>
+          <ConnectivityHeatMap dataSet={dataSet} />
         </Grid>
       </Grid>
     );
