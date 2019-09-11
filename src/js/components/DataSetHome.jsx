@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@material-ui/core/Grid';
 import ConnectivityHeatMap from './visualization/ConnectivityHeatMap';
-import ROICompletenessTable from './visualization/ROICompletenessTable';
+import ROICompletenessChart from './visualization/ROICompletenessChart';
 
 class DataSetHome extends React.Component {
   constructor(props) {
@@ -23,7 +23,7 @@ class DataSetHome extends React.Component {
               <p>Stats for {dataSet}</p>
             </Grid>
             <Grid item xs={12}>
-              <ROICompletenessTable dataSet={dataSet} />
+              <ROICompletenessChart dataSet={dataSet} />
             </Grid>
           </Grid>
         </Grid>
