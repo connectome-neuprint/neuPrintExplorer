@@ -33,7 +33,7 @@ function createDataTable(dataSet, roiInfo) {
         <CartesianGrid strokeDasharray="3 3" />
         <YAxis type="category" dataKey="name" />
         <XAxis type="number" />
-        <Tooltip />
+        <Tooltip isAnimationActive={false} />
         <Legend />
         <Bar dataKey="% post complete" fill="#82ca9d" />
       </BarChart>
