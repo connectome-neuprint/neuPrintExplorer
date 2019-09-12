@@ -4,35 +4,28 @@ import Grid from '@material-ui/core/Grid';
 import ConnectivityHeatMap from './visualization/ConnectivityHeatMap';
 import ROICompletenessChart from './visualization/ROICompletenessChart';
 
-class DataSetHome extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
-  render() {
-    const { dataSet } = this.props;
-    return (
-      <Grid container spacing={24} justify="center">
-        <Grid item sm={4}>
-          <Grid container spacing={24} justify="center">
-            <Grid item xs={12}>
-              <p>Meta Info for {dataSet}</p>
-            </Grid>
-            <Grid item xs={12}>
-              <p>Stats for {dataSet}</p>
-            </Grid>
-            <Grid item xs={12}>
-              <ROICompletenessChart dataSet={dataSet} />
-            </Grid>
+function DataSetHome(props) {
+  const { dataSet } = props;
+  return (
+    <Grid container spacing={24} justify="center">
+      <Grid item sm={4}>
+        <Grid container spacing={24} justify="center">
+          <Grid item xs={12}>
+            <p>Meta Info for {dataSet}</p>
+          </Grid>
+          <Grid item xs={12}>
+            <p>Stats for {dataSet}</p>
+          </Grid>
+          <Grid item xs={12}>
+            <ROICompletenessChart dataSet={dataSet} />
           </Grid>
         </Grid>
-        <Grid item sm={8}>
-          <ConnectivityHeatMap dataSet={dataSet} />
-        </Grid>
       </Grid>
-    );
-  }
+      <Grid item sm={8}>
+        <ConnectivityHeatMap dataSet={dataSet} />
+      </Grid>
+    </Grid>
+  );
 }
 
 DataSetHome.propTypes = {
