@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@material-ui/core/Grid';
+import ROICompletenessChart from 'containers/visualization/ROICompletenessChart';
 import ConnectivityHeatMap from './visualization/ConnectivityHeatMap';
-import ROICompletenessChart from './visualization/ROICompletenessChart';
 
 function DataSetHome(props) {
   const { dataSet } = props;

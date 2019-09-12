@@ -42,7 +42,9 @@ function createDataTable(dataSet, roiInfo) {
 }
 
 function ROICompletenessChart(props) {
-  const { dataSet } = props;
+  const { dataSet, superROIsByDataSet } = props;
+
+  const superROIs = superROIsByDataSet[dataSet];
 
   const [roiInfo, setRoiInfo] = useState();
 
@@ -63,7 +65,11 @@ function ROICompletenessChart(props) {
         if (resp.error) {
           throw new Error(resp.error);
         }
-        setRoiInfo(resp);
+
+        // filter out non super level ROIS
+        const filtered = resp
+        filtered.data = resp.data.filter(roi => superROIs.includes(roi[0]));
+        setRoiInfo(filtered);
       })
       .catch(error => {
         console.log(error);
@@ -77,7 +83,8 @@ function ROICompletenessChart(props) {
 }
 
 ROICompletenessChart.propTypes = {
-  dataSet: PropTypes.string.isRequired
+  dataSet: PropTypes.string.isRequired,
+  superROIsByDataSet: PropTypes.object.isRequired
 };
 
 export default ROICompletenessChart;
