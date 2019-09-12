@@ -7,6 +7,7 @@ import C from './constants';
 const neo4jsettingsState = Immutable.Map({
   availableDatasets: [],
   availableROIs: {},
+  superROIs: {},
   datasetInfo: {},
   meshInfo: {},
   neoServer: '',
@@ -19,6 +20,7 @@ export default function neo4jreducer(state = neo4jsettingsState, action) {
       return state
         .set('availableDatasets', action.availableDatasets)
         .set('availableROIs', action.availableROIs)
+        .set('superROIs', action.superROIs)
         .set('datasetInfo', action.datasetInfo);
     }
     case C.SET_NEO_SERVER: {

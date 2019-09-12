@@ -25,7 +25,7 @@ class MetaInfo extends React.Component {
   componentWillReceiveProps(nextProps) {
     const { userInfo, setNeoDatasets, setNeoServer } = this.props;
     if (nextProps.userInfo === null && userInfo !== null) {
-      setNeoDatasets([], {}, {});
+      setNeoDatasets([], {}, {}, {});
       setNeoServer('');
     }
 
@@ -44,18 +44,20 @@ class MetaInfo extends React.Component {
         if (!('message' in items)) {
           const datasets = [];
           const rois = {};
+          const superRois = {};
           const datasetInfo = {};
           Object.entries(items).forEach(item => {
             const [name, data] = item;
             datasets.push(name);
             rois[name] = data.ROIs.sort(sortRois);
+            superRois[name] = data.superLevelROIs.sort(sortRois);
             datasetInfo[name] = {
               uuid: data.uuid,
               lastmod: data['last-mod'],
               info: data.info
             };
           });
-          setNeoDatasets(datasets, rois, datasetInfo);
+          setNeoDatasets(datasets, rois, superRois, datasetInfo);
         }
       });
 
@@ -127,11 +129,12 @@ const MetaInfoState = state => ({
 });
 
 const MetaInfoDispatch = dispatch => ({
-  setNeoDatasets(datasets, rois, datasetInfo) {
+  setNeoDatasets(datasets, rois, superRois, datasetInfo) {
     dispatch({
       type: C.SET_NEO_DATASETS,
       availableDatasets: datasets,
       availableROIs: rois,
+      superROIs: superRois,
       datasetInfo
     });
   },
