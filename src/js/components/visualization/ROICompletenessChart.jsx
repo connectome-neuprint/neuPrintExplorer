@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 function createDataTable(dataSet, roiInfo) {
+  // sort by highest to lowest % complete
+  // TODO: filter out any ROI that isn't at the super level.
   const data = roiInfo.data.map(roi => {
     const [name, roipre, roipost, totalpre, totalpost] = roi;
     const postComplete = Math.round((roipost * 100) / totalpost);
@@ -16,8 +18,8 @@ function createDataTable(dataSet, roiInfo) {
   }).sort((a,b) => b.order - a.order);
   return (
     <BarChart
-      width={500}
-      height={300}
+      width={400}
+      height={500}
       data={data}
       margin={{
         top: 5,
@@ -25,10 +27,11 @@ function createDataTable(dataSet, roiInfo) {
         left: 20,
         bottom: 5
       }}
+      layout="vertical"
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" />
-      <YAxis />
+      <YAxis type="category" dataKey="name" />
+      <XAxis type="number" />
       <Tooltip />
       <Legend />
       <Bar dataKey="% post complete" fill="#82ca9d" />
