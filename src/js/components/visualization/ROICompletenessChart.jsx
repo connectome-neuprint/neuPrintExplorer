@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 function createDataTable(dataSet, roiInfo) {
   // sort by highest to lowest % complete
@@ -17,25 +17,27 @@ function createDataTable(dataSet, roiInfo) {
     }
   }).sort((a,b) => b.order - a.order);
   return (
-    <BarChart
-      width={400}
-      height={500}
-      data={data}
-      margin={{
-        top: 5,
-        right: 30,
-        left: 20,
-        bottom: 5
-      }}
-      layout="vertical"
-    >
-      <CartesianGrid strokeDasharray="3 3" />
-      <YAxis type="category" dataKey="name" />
-      <XAxis type="number" />
-      <Tooltip />
-      <Legend />
-      <Bar dataKey="% post complete" fill="#82ca9d" />
-    </BarChart>
+    <ResponsiveContainer width="100%" height={500} >
+      <BarChart
+        width={400}
+        height={500}
+        data={data}
+        margin={{
+          top: 5,
+          right: 30,
+          left: 20,
+          bottom: 5
+        }}
+        layout="vertical"
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <YAxis type="category" dataKey="name" />
+        <XAxis type="number" />
+        <Tooltip />
+        <Legend />
+        <Bar dataKey="% post complete" fill="#82ca9d" />
+      </BarChart>
+    </ResponsiveContainer>
   );
 }
 
