@@ -19,6 +19,7 @@ import AppBar from '@material-ui/core/AppBar';
 import { skeletonAddandOpen, skeletonRemove } from 'actions/skeleton';
 import { neuroglancerAddandOpen } from 'actions/neuroglancer';
 import { setFullScreen, clearFullScreen, setSelectedResult, launchNotification } from 'actions/app';
+import { setColumnStatus, initColumnStatus } from 'actions/visibleColumns';
 import { metaInfoError } from '@neuprint/support';
 import { pluginResponseError, fetchData } from 'actions/plugins';
 
@@ -97,11 +98,12 @@ class Results extends React.Component {
       const currentPlugin = this.currentPlugin();
       // only fetch results for the tab being displayed.
       actions.fetchData(resultsList[tabValue], currentPlugin, tabValue, token);
+      actions.initColumnStatus(tabValue, currentPlugin.getColumnHeaders(query.qr[tabValue]));
     }
   }
 
   componentDidUpdate(prevProps) {
-    const { location, actions, token, allResults, isQuerying, loadingError } = this.props;
+    const { location, actions, token, allResults, isQuerying, loadingError, visibleColumns } = this.props;
 
     // if the number of tabs has changed, then update the data.
     // if the current tab has changed, then update.
@@ -115,6 +117,10 @@ class Results extends React.Component {
         if (resultsList.length > 0) {
           const currentPlugin = this.currentPlugin();
           actions.fetchData(resultsList[tabValue], currentPlugin, tabValue, token);
+          // if the column values for this tab haven't been set yet, then do so.
+          if (!visibleColumns.get(tabValue)) {
+            actions.initColumnStatus(tabValue, currentPlugin.getColumnHeaders(query.qr[tabValue]));
+          }
         }
       }
     }
@@ -225,7 +231,8 @@ class Results extends React.Component {
       neoServer,
       pluginList,
       neo4jsettings,
-      showCypher
+      showCypher,
+      visibleColumns
     } = this.props;
 
     const query = getQueryObject();
@@ -369,6 +376,7 @@ class Results extends React.Component {
                             actions={actions}
                             neoServer={neoServer}
                             neo4jsettings={neo4jsettings}
+                            visibleColumns={visibleColumns.get(tabIndex, Immutable.List([]))}
                           />
                     </div>
                   }
@@ -467,7 +475,8 @@ Results.propTypes = {
   neoServer: PropTypes.string.isRequired,
   token: PropTypes.string.isRequired,
   neo4jsettings: PropTypes.object.isRequired,
-  showCypher: PropTypes.bool.isRequired
+  showCypher: PropTypes.bool.isRequired,
+  visibleColumns: PropTypes.object.isRequired
 };
 
 Results.defaultProps = {
@@ -489,7 +498,8 @@ const ResultsState = state => ({
   fullscreen: state.app.get('fullscreen'),
   neo4jsettings: state.neo4jsettings,
   token: state.user.get('token'),
-  neoServer: state.neo4jsettings.get('neoServer')
+  neoServer: state.neo4jsettings.get('neoServer'),
+  visibleColumns: state.visibleColumns.get('tab')
 });
 
 const ResultDispatch = dispatch => ({
@@ -527,6 +537,12 @@ const ResultDispatch = dispatch => ({
     setQueryString: data => setQueryString(data),
     fetchData: (qParams, plugin, tabPosition, token) => {
       dispatch(fetchData(qParams, plugin, tabPosition, token));
+    },
+    setColumnStatus: (tabIndex, columnIndex, status) => {
+      dispatch(setColumnStatus(tabIndex, columnIndex, status));
+    },
+    initColumnStatus: (tabIndex, columns) => {
+      dispatch(initColumnStatus(tabIndex, columns));
     }
   }
 });

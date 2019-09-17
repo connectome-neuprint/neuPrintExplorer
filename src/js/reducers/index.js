@@ -13,6 +13,7 @@ import skeleton from './skeleton';
 import neuroglancer from './neuroglancer';
 import errors from './errors';
 import notification from './notification';
+import visibleColumns from './visibleColumns';
 
 export default combineReducers({
   skeleton,
@@ -20,6 +21,7 @@ export default combineReducers({
   query,
   neo4jsettings,
   results,
+  visibleColumns,
   user,
   errors,
   neuroglancer,
