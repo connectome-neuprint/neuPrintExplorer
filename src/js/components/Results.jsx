@@ -98,7 +98,9 @@ class Results extends React.Component {
       const currentPlugin = this.currentPlugin();
       // only fetch results for the tab being displayed.
       actions.fetchData(resultsList[tabValue], currentPlugin, tabValue, token);
-      actions.initColumnStatus(tabValue, currentPlugin.getColumnHeaders(query.qr[tabValue]));
+      if (currentPlugin.hasOwnProperty('getColumnHeaders')) {
+        actions.initColumnStatus(tabValue, currentPlugin.getColumnHeaders(query.qr[tabValue]));
+      }
     }
   }
 
@@ -118,7 +120,7 @@ class Results extends React.Component {
           const currentPlugin = this.currentPlugin();
           actions.fetchData(resultsList[tabValue], currentPlugin, tabValue, token);
           // if the column values for this tab haven't been set yet, then do so.
-          if (!visibleColumns.get(tabValue)) {
+          if (!visibleColumns.get(tabValue) && currentPlugin.hasOwnProperty('getColumnHeaders')) {
             actions.initColumnStatus(tabValue, currentPlugin.getColumnHeaders(query.qr[tabValue]));
           }
         }
