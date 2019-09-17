@@ -5,6 +5,7 @@ import neo4jsettings from './neo4jsettings';
 const state = Immutable.Map({
   availableDatasets: ['existingdataset'],
   availableROIs: { rois: ['existingrois'] },
+  superROIs: {},
   datasetInfo: {
     lastmod: 'existinglastmod',
     uuid: 'existingversion'
@@ -17,6 +18,7 @@ const state = Immutable.Map({
 const initialState = Immutable.Map({
   availableDatasets: [],
   availableROIs: {},
+  superROIs: {},
   datasetInfo: {},
   meshInfo: {},
   neoServer: '',
@@ -29,6 +31,7 @@ describe('neo4jsettings Reducer', () => {
       type: C.SET_NEO_DATASETS,
       availableDatasets: ['newdataset'],
       availableROIs: { rois: ['newrois'] },
+      superROIs: {},
       datasetInfo: {
         lastmod: 'newlastmod',
         uuid: 'newversion'
@@ -38,6 +41,7 @@ describe('neo4jsettings Reducer', () => {
       Immutable.Map({
         availableDatasets: ['newdataset'],
         availableROIs: { rois: ['newrois'] },
+        superROIs: {},
         datasetInfo: {
           lastmod: 'newlastmod',
           uuid: 'newversion'
@@ -51,6 +55,7 @@ describe('neo4jsettings Reducer', () => {
       Immutable.Map({
         availableDatasets: ['newdataset'],
         availableROIs: { rois: ['newrois'] },
+        superROIs: {},
         datasetInfo: {
           lastmod: 'newlastmod',
           uuid: 'newversion'
