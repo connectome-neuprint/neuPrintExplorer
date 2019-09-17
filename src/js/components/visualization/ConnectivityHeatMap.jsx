@@ -62,7 +62,7 @@ function generateGraph(rois, dataSet) {
       const weightColor = `rgba(${WEIGHTCOLOR}${scaleFactor})`;
       row.push({
         value: (
-          <button type="button" className="heatmapbutton" onClick={() => console.log(neuronsQuery)}>
+          <button type="button" className="heatmapbutton" onClick={() => this.handleClick(neuronsQuery)}>
             <ColorBox
               margin={0}
               width={squareSize}
@@ -99,7 +99,7 @@ function generateGraph(rois, dataSet) {
 }
 
 function ConnectivityHeatMap(props) {
-  const { dataSet } = props;
+  const { dataSet, actions } = props;
   const [roiInfo, setRoiInfo] = useState(0);
 
   useEffect(() => {
@@ -122,7 +122,7 @@ function ConnectivityHeatMap(props) {
         setRoiInfo(resp);
       })
       .catch(error => {
-        console.log(error);
+        actions.metaInfoError(error);
       });
   }, [dataSet]);
 
@@ -134,7 +134,8 @@ function ConnectivityHeatMap(props) {
 }
 
 ConnectivityHeatMap.propTypes = {
-  dataSet: PropTypes.string.isRequired
+  dataSet: PropTypes.string.isRequired,
+  actions: PropTypes.object.isRequired
 };
 
 export default ConnectivityHeatMap;

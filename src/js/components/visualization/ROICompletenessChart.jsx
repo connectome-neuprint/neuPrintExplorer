@@ -42,7 +42,7 @@ function createDataTable(dataSet, roiInfo) {
 }
 
 function ROICompletenessChart(props) {
-  const { dataSet, superROIsByDataSet } = props;
+  const { dataSet, superROIsByDataSet, actions } = props;
 
   const superROIs = superROIsByDataSet[dataSet];
 
@@ -72,7 +72,7 @@ function ROICompletenessChart(props) {
         setRoiInfo(filtered);
       })
       .catch(error => {
-        console.log(error);
+        actions.metaInfoError(error);
       });
   }, [dataSet]);
 
@@ -84,7 +84,8 @@ function ROICompletenessChart(props) {
 
 ROICompletenessChart.propTypes = {
   dataSet: PropTypes.string.isRequired,
-  superROIsByDataSet: PropTypes.object.isRequired
+  superROIsByDataSet: PropTypes.object.isRequired,
+  actions: PropTypes.object.isRequired
 };
 
 export default ROICompletenessChart;
