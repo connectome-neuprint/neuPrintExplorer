@@ -113,7 +113,7 @@ class Login extends React.Component {
         ) : (
           <div>
             <Badge className={classes.adminIcon} invisible={badgeVis} badgeContent="A" color="secondary">
-              <Fab size="small" onClick={this.launchUserPopup}>
+              <Fab size="small" onClick={this.launchUserPopup} color="primary">
                 <Avatar alt="Click for Menu" src={userInfo.ImageURL} />
               </Fab>
             </Badge>
