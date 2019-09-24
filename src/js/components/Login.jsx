@@ -11,8 +11,11 @@ import classNames from 'classnames';
 
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import Fab from '@material-ui/core/Fab';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
+import Badge from '@material-ui/core/Badge';
+import Avatar from '@material-ui/core/Avatar';
 
 import C from '../reducers/constants';
 
@@ -30,12 +33,6 @@ const styles = theme => ({
     }
   },
   buttonFont: theme.typography.button,
-  icon: {
-    padding: theme.spacing.unit,
-    height: '4em',
-    width: '4em',
-    borderRadius: '500px'
-  }
 });
 
 class Login extends React.Component {
@@ -45,7 +42,6 @@ class Login extends React.Component {
       isLoggedIn: false,
       userTarget: null,
       openUser: false,
-      imageURL: ''
     };
 
     this.fetchProfile();
@@ -60,7 +56,7 @@ class Login extends React.Component {
       .then(result => result.json())
       .then(userInfo => {
         loginUser(userInfo);
-        this.setState({ isLoggedIn: true, imageURL: userInfo.ImageURL });
+        this.setState({ isLoggedIn: true });
       });
   };
 
@@ -85,7 +81,7 @@ class Login extends React.Component {
   logout = () => {
     const { logoutUser } = this.props;
     const { history } = this.props;
-    this.setState({ isLoggedIn: false, imageURL: '' });
+    this.setState({ isLoggedIn: false });
     logoutUser();
     fetch('/logout', {
       method: 'POST',
@@ -103,8 +99,10 @@ class Login extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
-    const { isLoggedIn, userTarget, openUser, imageURL } = this.state;
+    const { classes, userInfo } = this.props;
+    const { isLoggedIn, userTarget, openUser } = this.state;
+
+    const badgeVis = userInfo.AuthLevel !== 'admin'
 
     return (
       <div className={classes.buttonWrap}>
@@ -114,9 +112,11 @@ class Login extends React.Component {
           </Button>
         ) : (
           <div>
-            <Button className={classes.buttonBasic} onClick={this.launchUserPopup}>
-              <img alt="user avatar icon - click for menu" src={imageURL} className={classes.icon} />
-            </Button>
+            <Badge className={classes.adminIcon} invisible={badgeVis} badgeContent="A" color="secondary">
+              <Fab size="small" onClick={this.launchUserPopup}>
+                <Avatar alt="Click for Menu" src={userInfo.ImageURL} />
+              </Fab>
+            </Badge>
             <Menu
               id="menu-appbar"
               anchorEl={userTarget}
@@ -169,13 +169,18 @@ Login.propTypes = {
   logoutUser: PropTypes.func.isRequired,
   loginUser: PropTypes.func.isRequired,
   setUserToken: PropTypes.func.isRequired,
+  userInfo: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired
 };
+
+const LoginState = (state) => ({
+  userInfo: state.user.get('userInfo'),
+});
 
 export default withRouter(
   withStyles(styles)(
     connect(
-      null,
+      LoginState,
       LoginDispatch
     )(Login)
   )
