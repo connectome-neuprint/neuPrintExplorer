@@ -99,7 +99,7 @@ const HomeState = state => ({
   datasetInfo: state.neo4jsettings.get('datasetInfo'),
   loggedIn: state.user.get('loggedIn'),
   publicState: state.neo4jsettings.get('publicState'),
-  authLevel: state.user.get('userInfo').AuthLevel
+  authLevel: state.user.get('userInfo').AuthLevel || 'none'
 });
 
 Home.propTypes = {
