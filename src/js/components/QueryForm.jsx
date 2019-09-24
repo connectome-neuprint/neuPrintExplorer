@@ -90,18 +90,7 @@ class QueryForm extends React.Component {
   };
 
   render() {
-    // assume the first query is the default
-    const CurrentQuery = this.findCurrentPlugin();
-
-    if (!CurrentQuery) {
-      return <Typography>Please select a query type from the menu above.</Typography>;
-    }
-
-    if (CurrentQuery.details.disabled) {
-      return <Typography variant="h6">This query is currently disabled.</Typography>;
-    }
-
-    const {
+     const {
       userInfo,
       classes,
       actions,
@@ -111,6 +100,22 @@ class QueryForm extends React.Component {
       neoServerSettings
     } = this.props;
     const { openSnack, hasError } = this.state;
+
+
+    // assume the first query is the default
+    const CurrentQuery = this.findCurrentPlugin();
+
+    if (!CurrentQuery) {
+      return <Typography>Please select a query type from the menu above.</Typography>;
+    }
+
+    const { AuthLevel: authLevel = 'none' } = userInfo;
+
+    if (CurrentQuery.details.disabled) {
+      if (!authLevel.match(/^admin$/)) {
+        return <Typography variant="h6">This query is currently disabled.</Typography>;
+      }
+    }
 
     let currROIs = [];
 
