@@ -62,6 +62,7 @@
     "@material-ui/core": "^3.2.0",
     "@material-ui/icons": "^3.0.1",
     "@neuprint/queries": "^4.0.4",
+    "@neuprint/react-heatmap": "0.0.1",
     "@neuprint/support": "^0.2.0",
     "@neuprint/views": "^4.0.2",
     "ajv": "^6.9.1",

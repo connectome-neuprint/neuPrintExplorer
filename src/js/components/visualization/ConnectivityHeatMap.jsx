@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-import Typography from '@material-ui/core/Typography';
-import { HeatMapTable } from '@neuprint/views';
-
-import ColorBox from './ColorBox';
-
-const WEIGHTCOLOR = '255,100,100,';
-const squareSize = 40;
+import HeatMap from '@neuprint/react-heatmap';
 
 function generateGraph(rois, dataSet) {
   const neuronsInRoisQuery = (inputRoi, outputRoi) => ({
@@ -40,16 +34,10 @@ function generateGraph(rois, dataSet) {
     });
   });
 
-  // make data table
   const data = [];
-  roiNames.forEach(input => {
-    const row = [];
-    // set the row title
-    row.push(input);
 
-    // fill out the data blocks for each column
+  roiNames.forEach(input => {
     roiNames.forEach(output => {
-      const neuronsQuery = neuronsInRoisQuery(input, output);
       const connectionName = `${input}=>${output}`;
       const connectivityValue = rois.weights[connectionName]
         ? rois.weights[connectionName].weight
@@ -58,44 +46,14 @@ function generateGraph(rois, dataSet) {
         ? rois.weights[connectionName].count
         : 0;
 
-      const scaleFactor = Math.log(connectivityValue) / Math.log(maxWeight);
-      const weightColor = `rgba(${WEIGHTCOLOR}${scaleFactor})`;
-      row.push({
-        value: (
-          <button type="button" className="heatmapbutton" onClick={() => this.handleClick(neuronsQuery)}>
-            <ColorBox
-              margin={0}
-              width={squareSize}
-              height={squareSize}
-              backgroundColor={weightColor}
-              title=""
-              key={connectionName}
-              text={
-                <div>
-                  <Typography>{Math.round(connectivityValue, 0)}</Typography>
-                  <Typography variant="caption">{connectivityCount}</Typography>
-                </div>
-              }
-            />
-          </button>
-        ),
-        sortBy: { rowValue: input, columeValue: output },
-        csvValue: connectivityValue,
-        uniqueId: connectionName
-      });
+
+      data.push({column: input, row: output, value: connectivityValue, label2: connectivityCount});
     });
-    data.push(row);
   });
 
-  return <HeatMapTable query={{
-    result: {
-      columns: ['', ...roiNames],
-      data
-    },
-    visProps: {
-      squareSize
-    }
-  }} />
+  const height = (roiNames.length * 15) + 150;
+
+  return <HeatMap data={data} xLabels={roiNames.slice().reverse()} yLabels={roiNames} height={height} width={height} />;
 }
 
 function ConnectivityHeatMap(props) {
