@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@material-ui/core/Grid';
 import ROICompletenessChart from 'containers/visualization/ROICompletenessChart';
-import ConnectivityHeatMap from 'containers/visualization/ConnectivityHeatMap';
+import Connectivity from 'components/Connectivity';
 
 function DataSetHome(props) {
   const { dataSet } = props;
@@ -22,7 +22,7 @@ function DataSetHome(props) {
         </Grid>
       </Grid>
       <Grid item sm={8}>
-        <ConnectivityHeatMap dataSet={dataSet} />
+        <Connectivity dataSet={dataSet} />
       </Grid>
     </Grid>
   );

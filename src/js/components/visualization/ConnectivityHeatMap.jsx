@@ -3,17 +3,10 @@ import PropTypes from 'prop-types';
 
 import HeatMap from '@neuprint/react-heatmap';
 
-function generateGraph(rois, dataSet) {
-  const neuronsInRoisQuery = (inputRoi, outputRoi) => ({
-    dataSet,
-    parameters: {
-      dataset: dataSet,
-      input_ROIs: [inputRoi],
-      output_ROIs: [outputRoi]
-    },
-    pluginCode: 'fn'
-  });
+import { getQueryString, setSearchQueryString } from 'helpers/queryString';
+import history from '../../history';
 
+function generateGraph(rois, dataSet, mouseOver, mouseOut) {
   const roiNames = rois.roi_names;
 
   let maxWeight = 0;
@@ -46,18 +39,53 @@ function generateGraph(rois, dataSet) {
         ? rois.weights[connectionName].count
         : 0;
 
-
-      data.push({column: input, row: output, value: connectivityValue, label2: connectivityCount});
+      data.push({
+        column: input,
+        row: output,
+        value: connectivityValue,
+        label2: connectivityCount
+      });
     });
   });
 
-  const height = (roiNames.length * 15) + 150;
+  const height = roiNames.length * 15 + 150;
 
-  return <HeatMap data={data} xLabels={roiNames.slice().reverse()} yLabels={roiNames} height={height} width={height} />;
+  function clickHandler(event) {
+    // set query as a tab in the url query string.
+    setSearchQueryString({
+      code: 'fn',
+      ds: dataSet,
+      pm: {
+        dataset: dataSet,
+        input_ROIs: [event.column],
+        output_ROIs: [event.row]
+      },
+      visProps: { rowsPerPage: 25 }
+    });
+    history.push({
+      pathname: '/results',
+      search: getQueryString()
+    });
+  };
+
+  return (
+    <React.Fragment>
+      <HeatMap
+        data={data}
+        xLabels={roiNames.slice().reverse()}
+        yLabels={roiNames}
+        height={height}
+        width={height}
+        onClick={clickHandler}
+        onMouseOver={mouseOver}
+        onMouseOut={mouseOut}
+      />
+    </React.Fragment>
+  );
 }
 
 function ConnectivityHeatMap(props) {
-  const { dataSet, actions } = props;
+  const { dataSet, actions, mouseOver, mouseOut } = props;
   const [roiInfo, setRoiInfo] = useState(0);
 
   useEffect(() => {
@@ -85,7 +113,7 @@ function ConnectivityHeatMap(props) {
   }, [dataSet]);
 
   if (roiInfo) {
-    return generateGraph(roiInfo, dataSet);
+    return generateGraph(roiInfo, dataSet, mouseOver, mouseOut);
   }
   // return the loading statement
   return <p>loading ConnectivityHeatMap for {dataSet}</p>;
@@ -93,7 +121,9 @@ function ConnectivityHeatMap(props) {
 
 ConnectivityHeatMap.propTypes = {
   dataSet: PropTypes.string.isRequired,
-  actions: PropTypes.object.isRequired
+  actions: PropTypes.object.isRequired,
+  mouseOver: PropTypes.func.isRequired,
+  mouseOut: PropTypes.func.isRequired,
 };
 
 export default ConnectivityHeatMap;
