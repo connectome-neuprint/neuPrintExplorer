@@ -78,7 +78,9 @@ function generateGraph(rois, dataSet, mouseOver, mouseOut) {
         width={height}
         onClick={clickHandler}
         onMouseOver={mouseOver}
+        onFocus={mouseOver}
         onMouseOut={mouseOut}
+        onBlur={mouseOver}
       />
     </React.Fragment>
   );
