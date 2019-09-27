@@ -368,7 +368,8 @@ class SkeletonView extends React.Component {
           'Content-Type': 'text/plain',
           Accept: 'application/json'
         },
-        method: 'GET'
+        method: 'GET',
+        credentials: 'include'
       })
         .then(result => result.json())
         .then(result => {
