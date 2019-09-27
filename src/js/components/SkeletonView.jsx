@@ -371,10 +371,9 @@ class SkeletonView extends React.Component {
         method: 'GET',
         credentials: 'include'
       })
-        .then(result => result.json())
+        .then(result => result.text())
         .then(result => {
-          const { key } = result['->'];
-          this.fetchMesh(id, key, meshHost, uuid);
+          this.skeletonLoadedCompartment(id, result);
         })
         .catch(error => this.setState({ loadingError: error }));
     }
@@ -439,20 +438,6 @@ class SkeletonView extends React.Component {
     const updated = compartments.deleteAll(ids);
     this.setState({ compartments: updated });
     return updated;
-  }
-
-  fetchMesh(id, key, host, uuid) {
-    return fetch(`${host}/api/node/${uuid}/roi_data/key/${key}`, {
-      headers: {
-        'Content-Type': 'text/plain',
-        Accept: 'text/plain'
-      },
-      method: 'GET'
-    })
-      .then(result => result.text())
-      .then(result => {
-        this.skeletonLoadedCompartment(id, result);
-      });
   }
 
   addCompartments(cIds, dataSet) {
