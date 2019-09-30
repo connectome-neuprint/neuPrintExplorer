@@ -5,3 +5,4 @@ external
 coverage
 plugins/*
 view-plugins/*
+neuprint_compartments
