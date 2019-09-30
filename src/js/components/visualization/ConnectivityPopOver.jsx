@@ -20,7 +20,7 @@ function ConnectivityPopOver(props) {
     return (
       <div className={classes.popover} style={{ top: coords.y + 20, left: coords.x + 20 }}>
         <p>
-          {contents.column} &rarr; {contents.row}
+          {contents.row} &rarr; {contents.column}
         </p>
         <p>{Math.round(contents.value)}</p>
         <p>{contents.label2}</p>

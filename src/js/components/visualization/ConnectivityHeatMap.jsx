@@ -40,8 +40,8 @@ function generateGraph(rois, dataSet, mouseOver, mouseOut) {
         : 0;
 
       data.push({
-        column: input,
-        row: output,
+        column: output,
+        row: input,
         value: connectivityValue,
         label2: connectivityCount
       });
@@ -57,8 +57,8 @@ function generateGraph(rois, dataSet, mouseOver, mouseOut) {
       ds: dataSet,
       pm: {
         dataset: dataSet,
-        input_ROIs: [event.column],
-        output_ROIs: [event.row]
+        input_ROIs: [event.row],
+        output_ROIs: [event.column]
       },
       visProps: { rowsPerPage: 25 }
     });
