@@ -66,9 +66,12 @@ function Home(props) {
             <a href="https://github.com/janelia-flyem/neuPrint">neuPrint</a>, which uses a neo4j
             graph database.
           </Typography>
-          <Typography variant="h6">
-            Use the search icon <Icon>search</Icon> in the menu on the <Link to="/?q=1">left</Link> to query the database.
-          </Typography>
+          {!queryObject.q && (
+            <Typography variant="h6">
+              Use the search icon <Icon>search</Icon> in the menu on the{' '}
+              <Link to="/?q=1">left</Link> to query the database.
+            </Typography>
+          )}
         </Grid>
         <Grid item xs={2} />
         {queryObject.dataset && (
