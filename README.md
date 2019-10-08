@@ -8,8 +8,11 @@ The application is written using REACT+Redux and Material-UI.
 
 ## Installation
 
-To build the package for development:
+    % git clone git@github.com:connectome-neuprint/neuPrintExplorer.git
+    % cd neuPrintExplorer
 
+To build the package for development:
+    
     % npm install
     % npm run dev
 
@@ -18,21 +21,29 @@ To build for production:
     % npm install
     % npm run build
 
-Currently, the skeletonization visualization is a third-party
-library not built into the npm system.  For now,
-add a copy of the library into the build or distribution
-folder:
-
-    % mkdir BUILD_DIR/external
-    % cd BUILD_DIR/external
-    % git clone https://github.com/JaneliaSciComp/SharkViewer.git
     
 Finally, you will need plugins to perform the queries and display
 the results. Core plugins can be found in their own repository at:
 [neuPrintExplorerPlugins](https://github.com/connectome-neuprint/neuPrintExplorerPlugins). 
-Clone the repository and then link the plugins into the neuPrintExplorer
-repository at the following locations.
+These are marked as a dependency for neuPrintExplorer, so they will get installed
+at the same time. If you wish to make changes to the plugins and test them
+localy, without publishing them to npm, you will need to clone the repository
+and link them into your development copy of neuPrintExplorer:
+
+    % git clone git@github.com:connectome-neuprint/neuPrintExplorerPlugins.git
+    % cd neuPrintExplorerPlugins
+    % lerna bootstrap
+    % lerna exec npm link
+    % lerna link
+    % lerna exec --parallel -- npm run dev
+
+In a new terminal:
+
+    % cd neuPrintExplorer
+    % npm link @neuprint/queries @neuprint/views @neuprint/support
        
+If you wish to write your own custom plugins, they need to be placed in the following locations
+
 view-plugins should be linked into:
        
     src/js/components/view-plugins
