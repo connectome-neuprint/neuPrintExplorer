@@ -37,6 +37,8 @@ export function getQueryString() {
   return window.location.search.substring(1);
 }
 
+// TODO: add methods to the queryObject.
+
 export function getQueryObject(part, ifEmpty = {}) {
   let queryObject = qs.parse(decodeURIComponent(getQueryString()), {
     // The qs library set a limit of 20 for the number of items in an array
