@@ -46,17 +46,21 @@ const styles = theme => ({
 
 function Home(props) {
   const { classes, ...passedProps } = props;
-  let redirectHome = false;
-  if (window.location.pathname !== '/') {
-    redirectHome = true;
-  }
 
   // if we have a dataset selected then show that homepage.
   const queryObject = getQueryObject();
 
+  if (!queryObject.dataset || !queryObject.qt) {
+    return (
+      <Redirect to={{
+        pathname: "/",
+        search: "?dataset=hemibrain&qt=findneurons"
+      }} />
+    );
+  }
+
   return (
     <div className={classes.root}>
-      {redirectHome ? <Redirect to="/" /> : <div />}
       <Grid container spacing={24} justify="center" className={classes.container}>
         <Grid item xs={2} />
         <Grid item xs={8} className={classes.roottext}>
@@ -66,9 +70,12 @@ function Home(props) {
             <a href="https://github.com/janelia-flyem/neuPrint">neuPrint</a>, which uses a neo4j
             graph database.
           </Typography>
-          <Typography variant="h6">
-            Use the search icon <Icon>search</Icon> in the menu on the <Link to="/?q=1">left</Link> to query the database.
-          </Typography>
+          {!queryObject.q && (
+            <Typography variant="h6">
+              Use the search icon <Icon>search</Icon> in the menu on the{' '}
+              <Link to="/?q=1">left</Link> to query the database.
+            </Typography>
+          )}
         </Grid>
         <Grid item xs={2} />
         {queryObject.dataset && (
