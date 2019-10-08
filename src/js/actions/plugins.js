@@ -136,3 +136,9 @@ export function fetchData(params, plugin, tabPosition, token) {
       });
   }
 }
+
+export function clearResultsCache() {
+  return {
+    type: C.CLEAR_CACHE
+  };
+}

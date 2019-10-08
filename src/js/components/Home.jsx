@@ -2,7 +2,7 @@
  * Home page contains basic information for the page.
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
@@ -14,11 +14,13 @@ import Icon from '@material-ui/core/Icon';
 import Divider from '@material-ui/core/Divider';
 
 import { getQueryObject } from 'helpers/queryString';
+import { clearResultsCache } from 'actions/plugins';
 
 import ServerInfoCard from './ServerInfoCard';
 import News from './News';
 import Hints from './Hints';
 import DataSetHome from './DataSetHome';
+
 
 import './Home.css';
 
@@ -44,11 +46,30 @@ const styles = theme => ({
   }
 });
 
+const useCacheClear = myAction => {
+  useEffect( () => {
+    myAction();
+  }, [])
+}
+
 function Home(props) {
-  const { classes, ...passedProps } = props;
+  const { classes, actions, ...passedProps } = props;
+
+
 
   // if we have a dataset selected then show that homepage.
   const queryObject = getQueryObject();
+
+  // clear out the cache if we no longer have the query result parameters in the url.
+  // This prevents strange errors, eg: clicking on the heatmap on the homepage with a
+  // cached result could cause the site to crash as it would try and use a cached
+  // result for the wrong ROI. Or if there were 10 results in the cache and the url
+  // was cleared of the result parameters, there is no way to start a new search,
+  // because the site says there are too many results, but there is no way to clear
+  // them without refreshing the page.
+  if (!queryObject.qr) {
+    useCacheClear(actions.clearResultsCache);
+  }
 
   if (!queryObject.dataset || !queryObject.qt) {
     return (
@@ -109,6 +130,14 @@ const HomeState = state => ({
   authLevel: state.user.get('userInfo').AuthLevel || 'none'
 });
 
+const HomeDispatch = dispatch => ({
+  actions: {
+    clearResultsCache: () => {
+      dispatch(clearResultsCache());
+    }
+  }
+})
+
 Home.propTypes = {
   location: PropTypes.shape({
     search: PropTypes.string.isRequired
@@ -120,12 +149,13 @@ Home.propTypes = {
   availableDatasets: PropTypes.arrayOf(PropTypes.string).isRequired,
   datasetInfo: PropTypes.object.isRequired,
   neoServer: PropTypes.string.isRequired,
-  publicState: PropTypes.bool.isRequired
+  publicState: PropTypes.bool.isRequired,
+  actions: PropTypes.object.isRequired
 };
 
 export default withStyles(styles, { withTheme: true })(
   connect(
     HomeState,
-    null
+    HomeDispatch
   )(Home)
 );

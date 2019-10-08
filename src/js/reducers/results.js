@@ -53,6 +53,9 @@ export default function resultsReducer(state = resultsState, action) {
     case C.TOGGLE_CYPHER_DISPLAY: {
       return state.set('showCypher', !state.get('showCypher'));
     }
+    case C.CLEAR_CACHE: {
+      return state.set('allResults', Immutable.List([]));
+    }
     default: {
       return state;
     }
