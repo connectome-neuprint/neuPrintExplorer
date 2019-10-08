@@ -20,7 +20,22 @@ const copyWebpackPlugin = new CopyWebpackPlugin([
     from: 'node_modules/@janelia-flyem/neuroglancer/dist/module/chunk_worker.bundle.js',
     to: 'chunk_worker.bundle.js',
     toType: 'file'
-  }
+  },
+  {
+    from: 'node_modules/@janelia-flyem/neuroglancer/dist/module/draco.bundle.js',
+    to: 'draco.bundle.js',
+    toType: 'file'
+  },
+  {
+    from: 'node_modules/@janelia-flyem/neuroglancer/dist/module/async_computation.bundle.js',
+    to: 'async_computation.bundle.js',
+    toType: 'file'
+  },
+  {
+    from: 'node_modules/@janelia-flyem/neuroglancer/dist/module/tfjs-library.bundle.js',
+    to: 'tfjs-library.bundle.js',
+    toType: 'file'
+  },
 ]);
 
 module.exports = {
