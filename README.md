@@ -28,32 +28,8 @@ the results. Core plugins can be found in their own repository at:
 These are marked as a dependency for neuPrintExplorer, so they will get installed
 at the same time. If you wish to make changes to the plugins and test them
 localy, without publishing them to npm, you will need to clone the repository
-and link them into your development copy of neuPrintExplorer:
+and link them into your development copy of neuPrintExplorer. Please see the [README](https://github.com/connectome-neuprint/neuPrintExplorerPlugins/blob/master/README.md) in the neuPrintExplorerPlugins repository for more information on writing your own plugins.
 
-    % git clone git@github.com:connectome-neuprint/neuPrintExplorerPlugins.git
-    % cd neuPrintExplorerPlugins
-    % lerna bootstrap
-    % lerna exec npm link
-    % lerna link
-    % lerna exec --parallel -- npm run dev
-
-In a new terminal:
-
-    % cd neuPrintExplorer
-    % npm link @neuprint/queries @neuprint/views @neuprint/support
-       
-If you wish to write your own custom plugins, they need to be placed in the following locations
-
-view-plugins should be linked into:
-       
-    src/js/components/view-plugins
-      
-query plugins should be linked into:
-
-    src/js/components/plugins
-
-See the [README](https://github.com/connectome-neuprint/neuPrintExplorerPlugins/blob/master/README.md) in the neuPrintExplorerPlugins repository for more information
-writing your own plugins.
 
 ## Running
 
