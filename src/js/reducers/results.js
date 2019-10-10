@@ -7,7 +7,7 @@ import C from './constants';
 
 const resultsState = Immutable.Map({
   allResults: Immutable.List([]),
-  loading: false,
+  loading: Immutable.List([]),
   loadingError: Immutable.List([]),
   showCypher: false,
 });
@@ -15,7 +15,7 @@ const resultsState = Immutable.Map({
 export default function resultsReducer(state = resultsState, action) {
   switch (action.type) {
     case C.PLUGIN_SUBMITTING: {
-      return state.set('loading', true)
+      return state.setIn(['loading', action.tab], true)
         .setIn(['allResults', action.tab], {
           result: null,
           params: null,
@@ -29,7 +29,7 @@ export default function resultsReducer(state = resultsState, action) {
         .removeIn(['loadingError', action.index]);
     }
     case C.PLUGIN_CACHE_HIT: {
-      return state.set('loading', false)
+      return state.setIn(['loading', action.tab], false)
     }
     case C.PLUGIN_SAVE_RESPONSE: {
       return state.setIn(['allResults', action.tabIndex], {
@@ -38,7 +38,7 @@ export default function resultsReducer(state = resultsState, action) {
         label: action.label,
         timestamp: (new Date()).getTime()
       })
-        .set('loading', false)
+        .setIn(['loading', action.tabIndex], false)
         .setIn(['loadingError', action.tabIndex], null);
     }
     case C.UPDATE_QUERY: {
@@ -46,7 +46,7 @@ export default function resultsReducer(state = resultsState, action) {
     }
     case C.PLUGIN_SUBMIT_ERROR: {
       return state.setIn(['allResults', action.tabIndex], {})
-        .set('loading', false)
+        .setIn(['loading', action.tabIndex], false)
         .setIn(['loadingError', action.tabIndex], action.error);
     }
     case C.REFRESH_RESULT: {

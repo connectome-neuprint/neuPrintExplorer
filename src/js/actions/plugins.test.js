@@ -28,7 +28,10 @@ describe('plugins Actions', () => {
     });
 
     const plugin = {
-      fetchParameters: () => ''
+      fetchParameters: () => '',
+      details: {
+        displayName: 'test'
+      }
     };
 
     store
@@ -42,7 +45,7 @@ describe('plugins Actions', () => {
   });
 
 
-  it ('should iissue cache hit if it finds cached data.', () => {
+  it ('should issue cache hit if it finds cached data.', () => {
     fetch.mockResponse(JSON.stringify({ data: [['1:2:3']] }));
 
     const store = mockStore({
@@ -52,7 +55,10 @@ describe('plugins Actions', () => {
     });
 
     const plugin = {
-      fetchParameters: () => ''
+      fetchParameters: () => '',
+      details: {
+        displayName: 'test'
+      }
     };
 
     store

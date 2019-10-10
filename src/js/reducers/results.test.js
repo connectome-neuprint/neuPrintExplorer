@@ -7,7 +7,7 @@ import reducer from './results';
 const state = Immutable.Map({
   allResults: Immutable.List([{ existingResult: 'testResult' }]),
   loadingError: Immutable.List([]),
-  loading: false,
+  loading: Immutable.List([]),
   showCypher: false,
 });
 
@@ -31,7 +31,7 @@ describe('results Reducer', () => {
       Immutable.Map({
         allResults: Immutable.List([]),
         loadingError: Immutable.List([]),
-        loading: false,
+        loading: Immutable.List([]),
         showCypher: false
       })
     );
@@ -39,7 +39,7 @@ describe('results Reducer', () => {
       Immutable.Map({
         allResults: Immutable.List([]),
         loadingError: Immutable.List([]),
-        loading: false,
+        loading: Immutable.List([]),
         showCypher: false
       })
     );
@@ -67,7 +67,7 @@ describe('results Reducer', () => {
           result: { columns: ['a', 'b'], data: [1, 2] },
           timestamp: time.getTime()
         }]),
-        loading: false,
+        loading: Immutable.List([false]),
         loadingError: Immutable.List([null]),
         showCypher: false
       })
@@ -83,7 +83,7 @@ describe('results Reducer', () => {
           result: { columns: ['a', 'b'], data: [1, 2] },
           timestamp: time.getTime()
         }]),
-        loading: false,
+        loading: Immutable.List([false]),
         loadingError: Immutable.List([null]),
         showCypher: false
       })
