@@ -19,6 +19,7 @@ export default function resultsReducer(state = resultsState, action) {
         .setIn(['allResults', action.tab], {
           result: null,
           params: null,
+          label: 'Loading...',
           timestamp: ''
         })
         .setIn(['loadingError', action.tab], null);
@@ -34,6 +35,7 @@ export default function resultsReducer(state = resultsState, action) {
       return state.setIn(['allResults', action.tabIndex], {
         result: action.response,
         params: action.params,
+        label: action.label,
         timestamp: (new Date()).getTime()
       })
         .set('loading', false)

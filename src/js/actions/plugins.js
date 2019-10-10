@@ -32,12 +32,13 @@ function fetchingData(tab) {
   };
 }
 
-function dataLoaded(response, params, tabIndex) {
+function dataLoaded(response, params, tabIndex, label) {
   return {
     type: C.PLUGIN_SAVE_RESPONSE,
     response,
     params,
-    tabIndex
+    tabIndex,
+    label
   };
 }
 
@@ -61,18 +62,20 @@ export function fetchData(params, plugin, tabPosition, token) {
     // parameters. This is important when checking for cached results.
     const parameters = clone(params.pm);
 
+    const cached = getState().results.getIn(['allResults', tabPosition]);
+    const label = (cached && cached.label) ? cached.label : `${tabPosition} - ${plugin.details.displayName}`;
+
     // Some plugins have nothing to fetch. In that case we can skip the remote fetch
     // and just return the query.
     if (parameters.skip) {
       const data = {};
-      dispatch(dataLoaded(data, params, tabPosition));
+      dispatch(dataLoaded(data, params, tabPosition, label));
       return Promise.resolve();
     }
 
     // cache lookup step that checks either Redux store
     // or localStorage to see if we have already fetched the results.
     // closing a tab needs to remove the cached values.
-    const cached = getState().results.getIn(['allResults', tabPosition]);
     if (cached) {
       // Ignore visProps when checking parameters, since that is
       // allowed to change, without triggering a data refresh.
@@ -129,7 +132,7 @@ export function fetchData(params, plugin, tabPosition, token) {
         if (resp.error) {
           throw new Error(resp.error);
         }
-        dispatch(dataLoaded(resp, params, tabPosition));
+        dispatch(dataLoaded(resp, params, tabPosition, label));
       })
       .catch(error => {
         dispatch(dataLoadFailed(error, tabPosition));
