@@ -241,7 +241,8 @@ class Result extends React.Component {
       neo4jsettings,
       showCypher,
       visibleColumns,
-      tabIndex
+      tabIndex,
+      fixed
     } = this.props;
 
     const query = getQueryObject();
@@ -270,6 +271,7 @@ class Result extends React.Component {
           index={tabIndex}
           queryStr="Loading"
           color="#cccccc"
+          fixed={fixed}
         />
         <div>Loading...</div>
       </div>
@@ -340,6 +342,7 @@ class Result extends React.Component {
                   fetchedTime={cachedResults.timestamp || null}
                   queryStr={combined.result.debug}
                   color="#cccccc"
+                  fixed={fixed}
                 />
               ) : (
                 ''
@@ -423,6 +426,7 @@ class Result extends React.Component {
             index={tabIndex}
             queryStr="error"
             color="#ffcccc"
+            fixed={fixed}
           />
           {/*
            Some of the error messages are returned from the server as plain text with
@@ -458,11 +462,13 @@ Result.propTypes = {
   neo4jsettings: PropTypes.object.isRequired,
   showCypher: PropTypes.bool.isRequired,
   visibleColumns: PropTypes.object.isRequired,
-  tabIndex: PropTypes.number.isRequired
+  tabIndex: PropTypes.number.isRequired,
+  fixed: PropTypes.bool
 };
 
 Result.defaultProps = {
-  loadingError: Immutable.List([])
+  loadingError: Immutable.List([]),
+  fixed: false
 };
 
 // result data [{name: "table name", header: [headers...], body: [rows...]

@@ -66,10 +66,10 @@ class ResultsTopBar extends React.Component {
     setQueryString({ rt: 'full' });
   };
 
-  handleSaveResults = index => {
+  handleSaveResults = () => {
     // save the result data, cypher query and current time stamp
     // into google data store
-    const { actions, token, appDB, queryStr, results, name } = this.props;
+    const { actions, token, appDB, queryStr, results, name, index } = this.props;
     const data = JSON.stringify(results.get(index));
     if (token !== '') {
       fetch(`${appDB}/user/searches`, {
@@ -97,23 +97,29 @@ class ResultsTopBar extends React.Component {
   };
 
   handleRefresh = () => {
-    const { actions } = this.props;
-    const query = getQueryObject();
-    actions.refreshResult(query.tab);
+    const { actions, index } = this.props;
+    actions.refreshResult(index);
   };
 
-  handleRemoveResult = index => {
-    const { actions } = this.props;
+  handleRemoveResult = () => {
+    const { actions, index, fixed } = this.props;
+    // if fixed, just clear the ftab in the url and have the page close the split
+    // window.
+    if (fixed) {
+      setQueryString({ ftab: '' });
+      return;
+    }
+
     // get query object
     const query = getQueryObject();
     // remove item from the list at position 'index';
     query.qr.splice(index, 1);
     // remove results for the current tab.
-    actions.clearNewResult(query.tab);
+    actions.clearNewResult(index);
     // update the tab index in the query string so that we display
     // the tab before the one that was just removed.
     const tabIndex = query.tab > 0 ? query.tab - 1 : 0;
-    setQueryString({ qr: query.qr, tab: tabIndex });
+    setQueryString({ qr: query.qr, tab: tabIndex, ftab: '' });
   };
 
   addFavorite = () => {
@@ -310,7 +316,8 @@ ResultsTopBar.propTypes = {
   index: PropTypes.number.isRequired,
   token: PropTypes.string.isRequired,
   appDB: PropTypes.string.isRequired,
-  results: PropTypes.object.isRequired
+  results: PropTypes.object.isRequired,
+  fixed: PropTypes.bool.isRequired
 };
 
 ResultsTopBar.defaultProps = {

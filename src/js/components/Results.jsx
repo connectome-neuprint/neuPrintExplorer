@@ -63,7 +63,7 @@ class Results extends React.Component {
 
     if (fixedTab) {
       tabData.push(
-        <Result key='fixed' tabIndex={fixedTab} query={query} />
+        <Result key='fixed' tabIndex={fixedTab} query={query} fixed />
       );
     }
 
