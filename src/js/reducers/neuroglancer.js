@@ -46,9 +46,12 @@ export default function neuroglancerReducer(state = neuroglancerState, action) {
         bodyIds.push(action.id);
         selected.pm.bodyIds = bodyIds.join(',');
         current[selectedIndex] = selected;
-        setQueryString({
+        // the SetQueryString function is turned off so that it doesn't immediately
+        // shift the user to the neuroglancer tab. This can be turned back on if
+        // the desired behavior changes.
+        /* setQueryString({
           tab: selectedIndex,
-        });
+        });*/
       } else {
         // if none found, then add one to the querystring
         //   push the id into the bodyids list
@@ -62,9 +65,12 @@ export default function neuroglancerReducer(state = neuroglancerState, action) {
             bodyIds: action.id
           }
         });
-        setQueryString({
+        // the SetQueryString function is turned off so that it doesn't immediately
+        // shift the user to the neuroglancer tab. This can be turned back on if
+        // the desired behavior changes.
+        /* setQueryString({
           tab: current.length - 1,
-        });
+        });*/
       }
 
       setQueryString({

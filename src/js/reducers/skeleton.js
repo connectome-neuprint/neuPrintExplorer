@@ -50,7 +50,7 @@ export default function skeletonReducer(state = skeletonState, action) {
         selected.pm.bodyIds = bodyIds.join(',');
         current[selectedIndex] = selected;
         setQueryString({
-          tab: selectedIndex,
+          ftab: selectedIndex,
         });
       } else {
         // if none found, then add one to the querystring
@@ -66,7 +66,7 @@ export default function skeletonReducer(state = skeletonState, action) {
           }
         });
         setQueryString({
-          tab: current.length - 1,
+          ftab: current.length - 1,
         });
       }
 
