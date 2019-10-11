@@ -61,7 +61,7 @@
     "@janelia/sharkviewer": "^1.2.0",
     "@material-ui/core": "^3.2.0",
     "@material-ui/icons": "^3.0.1",
-    "@neuprint/queries": "^5.0.1",
+    "@neuprint/queries": "^5.0.2",
     "@neuprint/react-heatmap": "0.2.3",
     "@neuprint/support": "^1.0.1",
     "@neuprint/views": "^5.0.1",
