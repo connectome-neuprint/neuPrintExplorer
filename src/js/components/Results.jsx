@@ -61,7 +61,9 @@ class Results extends React.Component {
       <Result key='changing' tabIndex={tabIndex} query={query} />
     ];
 
-    if (fixedTab) {
+    // need to check for >= 0 here instead of just checking the Boolean value,
+    // because the first tab index is 0, which evaluates to false.
+    if (fixedTab >= 0) {
       tabData.push(
         <Result key='fixed' tabIndex={fixedTab} query={query} fixed />
       );
