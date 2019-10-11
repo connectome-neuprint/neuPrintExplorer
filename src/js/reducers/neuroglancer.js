@@ -51,7 +51,7 @@ export default function neuroglancerReducer(state = neuroglancerState, action) {
         // the desired behavior changes.
         /* setQueryString({
           tab: selectedIndex,
-        });*/
+        }); */
       } else {
         // if none found, then add one to the querystring
         //   push the id into the bodyids list
@@ -70,7 +70,7 @@ export default function neuroglancerReducer(state = neuroglancerState, action) {
         // the desired behavior changes.
         /* setQueryString({
           tab: current.length - 1,
-        });*/
+        }); */
       }
 
       setQueryString({
