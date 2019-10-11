@@ -43,7 +43,7 @@ export default function skeletonReducer(state = skeletonState, action) {
       });
 
       //   if dataSet is the same
-      if (selectedIndex > 0) {
+      if (selectedIndex >= 0) {
         const bodyIds = selected.pm.bodyIds.toString().split(',');
         // push the id into the bodyids list
         bodyIds.push(action.id);
