@@ -116,9 +116,18 @@ class ResultsTopBar extends React.Component {
     query.qr.splice(index, 1);
     // remove results for the current tab.
     actions.clearNewResult(index);
+
     // update the tab index in the query string so that we display
     // the tab before the one that was just removed.
-    const tabIndex = query.tab > 0 ? query.tab - 1 : 0;
+    let tabIndex = query.tab > 0 ? query.tab - 1 : 0;
+    // if window was split, then we show the other panel that we didn't close
+    if (query.ftab >= 0) {
+      if (query.tab> query.ftab) {
+        tabIndex = query.ftab;
+      } else {
+        tabIndex = query.ftab > 0 ? query.ftab - 1 : 0;
+      }
+    }
     setQueryString({ qr: query.qr, tab: tabIndex, ftab: '' });
   };
 
