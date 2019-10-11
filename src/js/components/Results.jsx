@@ -37,6 +37,7 @@ class Results extends React.Component {
     const query = getQueryObject();
     const resultsList = query.qr || [];
     const tabIndex = parseInt(query.tab || 0, 10);
+    const fixedTab = parseInt(query.ftab, 10);
 
     const tabs = resultsList.map((tab, index) => {
       const key = `${tab.code}${index}`;
@@ -57,9 +58,14 @@ class Results extends React.Component {
     });
 
     const tabData = [
-      <Result tabIndex={tabIndex} query={query} />,
-      <Result tabIndex={0} query={query} />
+      <Result key='changing' tabIndex={tabIndex} query={query} />
     ];
+
+    if (fixedTab) {
+      tabData.push(
+        <Result key='fixed' tabIndex={fixedTab} query={query} />
+      );
+    }
 
     return (
       <div className={classes.resultContent}>
