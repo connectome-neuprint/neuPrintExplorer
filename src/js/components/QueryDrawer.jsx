@@ -17,7 +17,8 @@ const drawerWidth = 400;
 // adapted from material ui example
 const styles = theme => ({
   drawerPaperQuery: {
-    minHeight: '100vh',
+    height: '100vh',
+    overflow: 'auto',
     position: 'relative',
     width: drawerWidth
   },
