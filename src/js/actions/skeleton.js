@@ -35,7 +35,7 @@ function loadedSynapse(bodyId, synapseId, dataSet, response, options = { isInput
         x: parseInt(row[0], 10),
         y: parseInt(row[1], 10),
         z: parseInt(row[2], 10),
-        radius: 5,
+        radius: 40,
         parent: -1
       };
     });
@@ -161,6 +161,13 @@ export function toggleSpindle(tabIndex) {
   // component. This way we don't get out of sync.
   return {
     type: C.SKELETON_SPINDLE_TOGGLE,
+    tabIndex
+  };
+}
+
+export function toggleSynapsesOnTop(tabIndex) {
+  return {
+    type: C.SKELETON_SYNAPSES_ON_TOP_TOGGLE,
     tabIndex
   };
 }
