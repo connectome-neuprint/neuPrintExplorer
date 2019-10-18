@@ -21,6 +21,8 @@ import MetaInfo from './MetaInfo';
 import Login from './Login';
 import {getSiteParams, setQueryString } from '../helpers/queryString';
 
+import './TopBar.css';
+
 // adapted from material ui example
 const styles = theme => ({
   appBar: {
@@ -47,6 +49,11 @@ const styles = theme => ({
     fontFamily: theme.typography.fontFamily,
     width: '15em',
     marginLeft: '2em'
+  },
+  bounce: {
+    animation: 'iconbounce 0.5s 3 ease',
+    display: 'inline-block',
+    position: 'relative'
   },
   button: {
     color: theme.palette.common.white,
@@ -139,7 +146,7 @@ class TopBar extends React.Component {
                 handleFullScreen();
               }}
             >
-              <Icon>fullscreen_exit</Icon>
+              <Icon className={classes.bounce}>fullscreen_exit</Icon>
             </IconButton>
           )}
           <Login />
