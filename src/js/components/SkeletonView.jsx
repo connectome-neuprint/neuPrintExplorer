@@ -51,7 +51,7 @@ const styles = theme => ({
     top: '1em',
     right: '1em'
   },
-  spindleToggle: {
+  bottomControls: {
     position: 'absolute',
     bottom: '0px',
     left: '1em',
@@ -75,7 +75,8 @@ class SkeletonView extends React.Component {
       bodies: Immutable.Map({}),
       compartments: Immutable.Map({}),
       loading: Immutable.Map({}),
-      spindleView: false
+      spindleView: false,
+      synapsesOnTop: false
     };
     this.skelRef = React.createRef();
   }
@@ -93,7 +94,10 @@ class SkeletonView extends React.Component {
         this.addCompartments(compIds, query.pm.dataSet);
       }
       if (query.sp) {
-        this.setState({spindleView: true });
+        this.setState({ spindleView: true });
+      }
+      if (query.sot) {
+        this.setState({ synapsesOnTop: true });
       }
     }
     this.createShark();
@@ -183,6 +187,12 @@ class SkeletonView extends React.Component {
         });
       });
 
+      // sharkViewer must rerender if the synapses-on-top toggle is all that changed
+      if (query.sot !== prevProps.query.sot) {
+        sharkViewer.setValues({ onTop: query.sot });
+        sharkViewer.render();
+      }
+
       if (!deepEqual(this.state, prevState)) {
         // only perform actions here that update the canvas rendering.
         const { bodies, compartments } = this.state;
@@ -212,7 +222,7 @@ class SkeletonView extends React.Component {
           this.unloadCompartment(compId);
         });
 
-             // render new bodies
+        // render new bodies
         const prevBodiesSet = new Set(Object.keys(prevBodies.toJS()));
         const newBodyIds = Object.keys(bodies.toJS()).filter(bodyId => !prevBodiesSet.has(bodyId));
 
@@ -393,6 +403,11 @@ class SkeletonView extends React.Component {
     actions.toggleSpindle(index);
   };
 
+  handleSynapsesOnTopToggle = () => {
+    const { actions, index } = this.props;
+    actions.toggleSynapsesOnTop(index);
+  }
+
   unloadCompartment(id) {
     const { sharkViewer } = this.state;
     sharkViewer.unloadCompartment(id);
@@ -422,7 +437,7 @@ class SkeletonView extends React.Component {
   unloadSynapse(bodyId, synapseId) {
     const { sharkViewer } = this.state;
     const name = `${bodyId}_${synapseId}`;
-    sharkViewer.unloadNeuron(name);
+    sharkViewer.unloadNeuron(name, true);
     sharkViewer.render();
     sharkViewer.render();
     // UGLY: there is a weird bug that means sometimes the scene is rendered blank.
@@ -574,9 +589,9 @@ class SkeletonView extends React.Component {
   renderSynapse(bodyId, synapseId, synapseData, moveCamera = false) {
     const { sharkViewer } = this.state;
     const name = `${bodyId}_${synapseId}`;
-    const exists = sharkViewer.scene.getObjectByName(name);
+    const exists = sharkViewer.neuronLoaded(name, true);
     if (!exists) {
-      sharkViewer.loadNeuron(name, synapseData.color, synapseData.swc, moveCamera);
+      sharkViewer.loadNeuron(name, synapseData.color, synapseData.swc, moveCamera, true);
       sharkViewer.render();
       sharkViewer.render();
       // UGLY: there is a weird bug that means sometimes the scene is rendered blank.
@@ -603,7 +618,7 @@ class SkeletonView extends React.Component {
         : body.get('swc');
 
       // If added, then add them to the scene.
-      const exists = sharkViewer.scene.getObjectByName(body.get('name'));
+      const exists = sharkViewer.neuronLoaded(body.get('name'));
       if (!exists) {
         sharkViewer.loadNeuron(body.get('name'), body.get('color'), swc, moveCamera);
       }
@@ -628,7 +643,7 @@ class SkeletonView extends React.Component {
     const { sharkViewer, db } = this.state;
     const moveCamera = false;
     rois.forEach(roi => {
-      const exists = sharkViewer.scene.getObjectByName(roi.get('name'));
+      const exists = sharkViewer.compartmentLoaded(roi.get('name'));
       if (!exists) {
         const reader = new FileReader();
 
@@ -644,7 +659,7 @@ class SkeletonView extends React.Component {
   }
 
   render() {
-    const { classes, query, neo4jsettings } = this.props;
+    const { classes, query, neo4jsettings, synapses } = this.props;
 
     const { compartments = '' } = query.pm;
 
@@ -693,8 +708,23 @@ class SkeletonView extends React.Component {
     );
 
     const spindleChecked = Boolean(query.sp);
+    const synapsesOnTopChecked = Boolean(query.sot);
 
-    const spindleToggle = (
+    // the synapses map never loses keys, so there are no synapses shown when 
+    // each of those keys is associated with nothing
+    let areSynapses = false;
+    synapses.forEach((value) => {
+      const ins = value.get('inputs');
+      if ((ins !== undefined) && (ins.count() > 0)) {
+        areSynapses = true;
+      }
+      const outs = value.get('outputs');
+      if ((outs !== undefined) && (outs.count() > 0)) {
+        areSynapses = true;
+      }
+    });
+
+    const bottomControls = (
       <FormGroup row>
         <FormControlLabel
           control={
@@ -702,6 +732,14 @@ class SkeletonView extends React.Component {
           }
           label="Spindle View"
         />
+        {areSynapses &&
+          <FormControlLabel
+            control={
+              <Switch onChange={this.handleSynapsesOnTopToggle} checked={synapsesOnTopChecked} color="primary" />
+            }
+            label="Synapses On Top"
+          />
+        }
       </FormGroup>
     );
 
@@ -709,7 +747,7 @@ class SkeletonView extends React.Component {
       <div className={classes.root}>
         <div className={classes.floater}>{chipsArray}</div>
         <div className={classes.compartments}>{compartmentSelection}</div>
-        <div className={classes.spindleToggle}>{spindleToggle}</div>
+        <div className={classes.bottomControls}>{bottomControls}</div>
         <div className={classes.skel} ref={this.skelRef} id="skeletonviewer" />
       </div>
     );
