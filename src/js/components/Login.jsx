@@ -81,16 +81,12 @@ class Login extends React.Component {
 
   logout = () => {
     const { logoutUser } = this.props;
-    const { history } = this.props;
     this.setState({ isLoggedIn: false });
-    // clear the login cookie here.
+    // clear the login cookie(s) here.
     Cookies.remove("neuPrintHTTP");
+    Cookies.remove("neuPrintHTTP", { path: '/', domain: '.janelia.org'});
     logoutUser();
-    fetch('/logout', {
-      method: 'POST',
-      credentials: 'include'
-    });
-    history.push('/');
+    window.location = '/';
   };
 
   launchUserPopup = event => {
