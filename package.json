@@ -74,6 +74,7 @@
     "deepmerge": "^2.2.1",
     "history": "^4.7.2",
     "immutable": "^4.0.0-rc.12",
+    "js-cookie": "^2.2.1",
     "pouchdb": "^7.0.0",
     "prettier": "^1.14.3",
     "prop-types": "^15.7.2",

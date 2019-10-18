@@ -16,6 +16,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Badge from '@material-ui/core/Badge';
 import Avatar from '@material-ui/core/Avatar';
+import Cookies from 'js-cookie';
 
 import C from '../reducers/constants';
 
@@ -82,6 +83,8 @@ class Login extends React.Component {
     const { logoutUser } = this.props;
     const { history } = this.props;
     this.setState({ isLoggedIn: false });
+    //clear the login cookie here.
+    Cookies.remove("neuPrintHTTP");
     logoutUser();
     fetch('/logout', {
       method: 'POST',
