@@ -168,8 +168,7 @@ Login.propTypes = {
   logoutUser: PropTypes.func.isRequired,
   loginUser: PropTypes.func.isRequired,
   setUserToken: PropTypes.func.isRequired,
-  userInfo: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired
+  userInfo: PropTypes.object.isRequired
 };
 
 const LoginState = (state) => ({
