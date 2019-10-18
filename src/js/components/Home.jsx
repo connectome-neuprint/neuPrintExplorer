@@ -53,7 +53,7 @@ const useCacheClear = myAction => {
 }
 
 function Home(props) {
-  const { classes, actions, ...passedProps } = props;
+  const { classes, actions, loggedIn, ...passedProps } = props;
 
 
 
@@ -99,7 +99,7 @@ function Home(props) {
           )}
         </Grid>
         <Grid item xs={2} />
-        {queryObject.dataset && (
+        {(queryObject.dataset && loggedIn) && (
           <Grid item xs={12}>
             <DataSetHome dataSet={queryObject.dataset} />
           </Grid>
@@ -108,7 +108,7 @@ function Home(props) {
       {queryObject.dataset && <Divider variant="middle" className={classes.sectionDivide} />}
       <Grid container spacing={24} justify="center" className={classes.container}>
         <Grid item xs={12} sm={12} md={6} lg={5}>
-          <ServerInfoCard {...passedProps} />
+          <ServerInfoCard loggedIn={loggedIn} {...passedProps} />
         </Grid>
         <Grid item xs={12} sm={12} md={6} lg={5}>
           <Hints {...passedProps} />
