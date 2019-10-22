@@ -1,4 +1,4 @@
-#neuroglancer-container {
+.neuroglancer-container, #neuroglancer-container {
   height: 88%;
 }
 .heatmapbutton {
