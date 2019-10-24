@@ -83,9 +83,11 @@ export function fetchData(params, plugin, tabPosition, token) {
       const currentCopy = clone(params);
       if (cachedCopy) {
         delete cachedCopy.visProps;
+        delete cachedCopy.result;
       }
       if (currentCopy) {
         delete currentCopy.visProps;
+        delete currentCopy.result;
       }
       if (isEqual(cachedCopy, currentCopy)) {
         dispatch(cacheHit());
