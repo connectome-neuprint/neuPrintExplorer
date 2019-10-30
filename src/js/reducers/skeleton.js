@@ -60,7 +60,7 @@ export default function skeletonReducer(state = skeletonState, action) {
           code: 'sk',
           ds: action.dataSet,
           pm: {
-            dataSet: action.dataSet,
+            dataset: action.dataSet,
             skip: true,
             bodyIds: action.id
           }

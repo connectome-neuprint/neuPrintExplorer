@@ -84,14 +84,14 @@ class SkeletonView extends React.Component {
   componentDidMount() {
     const { query } = this.props;
     // check for neurons and compartments here and load them into the state
-    if (query.pm.dataSet) {
+    if (query.pm.dataset) {
       if (query.pm.bodyIds) {
         const bodyIds = query.pm.bodyIds.toString().split(',');
-        this.addSkeletons(bodyIds, query.pm.dataSet);
+        this.addSkeletons(bodyIds, query.pm.dataset);
       }
       if (query.pm.compartments) {
         const compIds = query.pm.compartments.split(',');
-        this.addCompartments(compIds, query.pm.dataSet);
+        this.addCompartments(compIds, query.pm.dataset);
       }
       if (query.sp) {
         this.setState({ spindleView: true });
@@ -111,7 +111,7 @@ class SkeletonView extends React.Component {
     if (sharkViewer) {
       if (!deepEqual(this.props, prevProps)) {
         // only perform actions here that alter the state, no rendering or props changes
-        const { bodyIds = '', compartments: compartmentIds = '', dataSet } = query.pm;
+        const { bodyIds = '', compartments: compartmentIds = '', dataset: dataSet } = query.pm;
         const {
           bodyIds: prevBodyIds = '',
           compartments: prevCompartmentIds = ''
@@ -166,7 +166,7 @@ class SkeletonView extends React.Component {
         // load bodies that are new
         const prevBodySet = new Set(prevBodyIdList);
         const newBodyIds = bodyIdList.filter(bodyId => !prevBodySet.has(bodyId));
-        this.addSkeletons(newBodyIds, query.pm.dataSet);
+        this.addSkeletons(newBodyIds, query.pm.dataset);
 
         // load compartments that are new
         const prevCompartmentSet = new Set(prevCompartmentIdList);
@@ -338,7 +338,7 @@ class SkeletonView extends React.Component {
     const { bodies } = this.state;
     const updated = bodies.delete(id);
     this.setState({ bodies: updated });
-    actions.skeletonRemove(id, query.pm.dataSet, index);
+    actions.skeletonRemove(id, query.pm.dataset, index);
     // action passed in from Results that removes id from the url
   };
 
@@ -680,7 +680,7 @@ class SkeletonView extends React.Component {
         <ActionMenu
           key={name}
           color={currcolor}
-          dataSet={query.pm.dataSet}
+          dataSet={query.pm.dataset}
           isVisible={neuron.get('visible')}
           body={neuron}
           handleDelete={this.handleDelete}
@@ -702,7 +702,7 @@ class SkeletonView extends React.Component {
       <CompartmentSelection
         availableROIs={neo4jsettings.get('availableROIs')}
         selectedROIs={compartmentIds}
-        dataSet={query.pm.dataSet}
+        dataSet={query.pm.dataset}
         actions={compartmentActions}
       />
     );
