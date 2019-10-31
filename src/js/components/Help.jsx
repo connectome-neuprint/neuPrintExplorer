@@ -94,7 +94,6 @@ class Help extends React.Component {
     const { classes } = this.props;
     const { value, open } = this.state;
 
-    // <SwaggerUI url='/swagger.yaml' spec={object} />
     return (
       <div className={classes.root}>
         <AppBar position="static" color="default">
