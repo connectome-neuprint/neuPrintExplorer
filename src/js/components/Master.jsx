@@ -55,7 +55,9 @@ const Master = props => {
     if (!user.get('loggedIn')) {
       // TODO: pass current location information to redirect.
       if (user.get('loaded')) {
-        const redirectUrl = `${rest.location.pathname}${rest.location.search}`;
+        // have to encode the uri here to make sure the &'s are escaped. If they aren't
+        // they wont make it through the redirect code.
+        const redirectUrl = encodeURIComponent(`${rest.location.pathname}${rest.location.search}`);
         window.open(`/login?redirect=${redirectUrl}`, '_self');
       }
     }
