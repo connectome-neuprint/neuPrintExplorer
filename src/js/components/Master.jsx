@@ -4,6 +4,7 @@
 
 import React, { Suspense } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { Router, Route, Switch } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import history from '../history';
@@ -48,7 +49,31 @@ const styles = theme => ({
 });
 
 const Master = props => {
-  const { classes } = props;
+  const { classes, user } = props;
+
+  const PrivateRoute = ({ component: Component, ...rest }) => {
+    if (!user.get('loggedIn')) {
+      // TODO: pass current location information to redirect.
+      if (user.get('loaded')) {
+        const redirectUrl = `${rest.location.pathname}${rest.location.search}`;
+        window.open(`/login?redirect=${redirectUrl}`, '_self');
+      }
+    }
+
+    return (
+      <Route
+        {...rest}
+        render={privateProps =>
+          user.get('loggedIn', false) ? <Component {...privateProps} /> : <Home {...privateProps} />
+        }
+      />
+    );
+  };
+
+  PrivateRoute.propTypes = {
+    component: PropTypes.object.isRequired
+  };
+
   return (
     <Router history={history}>
       <div className={classes.root}>
@@ -60,11 +85,11 @@ const Master = props => {
           <Suspense fallback={<div>loading...</div>}>
             <Switch>
               <Route exact path="/" component={Home} />
-              <Route path="/results" component={Results} />
+              <PrivateRoute path="/results" component={Results} />
               <Route path="/help" component={Help} />
-              <Route path="/favorites" component={Favorites} />
+              <PrivateRoute path="/favorites" component={Favorites} />
               <Route path="/about" component={About} />
-              <Route path="/account" component={Account} />
+              <PrivateRoute path="/account" component={Account} />
               <Route path="/workstation" component={Workstation} />
               <Route component={NoMatch} />
             </Switch>
@@ -78,7 +103,12 @@ const Master = props => {
 };
 
 Master.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(Master);
+const MasterState = state => ({
+  user: state.user
+});
+
+export default withStyles(styles)(connect(MasterState)(Master));

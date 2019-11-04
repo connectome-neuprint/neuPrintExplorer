@@ -50,14 +50,23 @@ class Login extends React.Component {
   }
 
   fetchProfile = () => {
-    const { loginUser } = this.props;
+    const { loginUser, checkingUser, loginFailed } = this.props;
+    checkingUser();
     fetch('/profile', {
       credentials: 'include'
     })
-      .then(result => result.json())
+      .then(result => {
+        if (!result.ok) {
+          throw Error('failed to fetch login info');
+        }
+        return result.json();
+      })
       .then(userInfo => {
         loginUser(userInfo);
         this.setState({ isLoggedIn: true });
+      })
+      .catch(() => {
+        loginFailed();
       });
   };
 
@@ -144,6 +153,16 @@ class Login extends React.Component {
 }
 
 const LoginDispatch = dispatch => ({
+  checkingUser() {
+    dispatch({
+      type: C.LOGIN_CHECK
+    })
+  },
+  loginFailed() {
+    dispatch({
+      type: C.LOGIN_FAILED,
+    })
+  },
   loginUser(info) {
     dispatch({
       type: C.LOGIN_USER,
@@ -167,6 +186,8 @@ Login.propTypes = {
   classes: PropTypes.object.isRequired,
   logoutUser: PropTypes.func.isRequired,
   loginUser: PropTypes.func.isRequired,
+  loginFailed: PropTypes.func.isRequired,
+  checkingUser: PropTypes.func.isRequired,
   setUserToken: PropTypes.func.isRequired,
   userInfo: PropTypes.object.isRequired
 };
