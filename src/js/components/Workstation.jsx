@@ -19,7 +19,7 @@ export default function Workstation() {
         ds: dataset,
         pm: {
           all_segment: false,
-          dataSet: dataset,
+          dataset,
           neuron_id: bodyid
         }
       },
@@ -28,7 +28,7 @@ export default function Workstation() {
         ds: dataset,
         pm: {
           bodyIds: bodyid,
-          dataSet: dataset,
+          dataset,
           skip: true
         }
       }
