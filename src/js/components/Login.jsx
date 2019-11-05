@@ -84,8 +84,10 @@ class Login extends React.Component {
   };
 
   login = () => {
-    // TODO: redirect to current path
-    window.open('/login?redirect=/', '_self');
+    const { location } = this.props;
+    // redirect to current path to reduce friction when logging in.
+    const redirectUrl = encodeURIComponent(`${location.pathname}${location.search}`);
+    window.open(`/login?redirect=${redirectUrl}`, '_self');
   };
 
   logout = () => {
@@ -190,7 +192,8 @@ Login.propTypes = {
   loginFailed: PropTypes.func.isRequired,
   checkingUser: PropTypes.func.isRequired,
   setUserToken: PropTypes.func.isRequired,
-  userInfo: PropTypes.object.isRequired
+  userInfo: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired
 };
 
 const LoginState = (state) => ({
