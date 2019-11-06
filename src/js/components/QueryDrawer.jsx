@@ -10,7 +10,8 @@ import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';
 
 import Query from './Query';
-import { getSiteParams } from '../helpers/queryString';
+import QueryTypeSelection from './QueryTypeSelection';
+import { getSiteParams, setQueryString } from '../helpers/queryString';
 
 const drawerWidth = 400;
 
@@ -32,20 +33,38 @@ const QueryDrawer = props => {
   const openQuery = qsParams.get('q');
   const fullscreen = qsParams.get('rt');
 
-  if (openQuery && fullscreen !== 'full') {
-    return (
-      <div>
-        <Drawer
-          variant="permanent"
-          classes={{
-            paper: classes.drawerPaperQuery
-          }}
-        >
-          <div className={classes.toolbar} />
-          <Query />
-        </Drawer>
-      </div>
-    );
+  if (fullscreen !== 'full') {
+    if (openQuery === '1') {
+      return (
+        <div>
+          <Drawer
+            variant="permanent"
+            classes={{
+              paper: classes.drawerPaperQuery
+            }}
+          >
+            <div className={classes.toolbar} />
+            <Query />
+          </Drawer>
+        </div>
+      );
+    }
+    if (openQuery === '2') {
+      return (
+        <div>
+          <Drawer
+            variant="permanent"
+            classes={{
+              paper: classes.drawerPaperQuery
+            }}
+          >
+            <div className={classes.toolbar} />
+            <QueryTypeSelection />
+          </Drawer>
+        </div>
+      );
+
+    }
   }
   return null;
 };

@@ -9,7 +9,7 @@ import Select from 'react-select';
 import { withRouter } from 'react-router-dom';
 import slug from 'slugg';
 import Tooltip from '@material-ui/core/Tooltip';
-
+import Button from '@material-ui/core/Button';
 import InputLabel from '@material-ui/core/InputLabel';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
@@ -61,9 +61,9 @@ const styles = theme => ({
 });
 
 class Query extends React.Component {
-  setQuery = selectedQuery => {
-    setQueryString({ qt: selectedQuery.value });
-  };
+  handleQueryTypeSelection() {
+    setQueryString({ q: 2});
+  }
 
   render() {
     const { classes, pluginList, location } = this.props;
@@ -149,17 +149,12 @@ class Query extends React.Component {
             <Icon className={classes.arrow}>arrow_upward</Icon>
           </Typography>
         )}
-        <InputLabel htmlFor="controlled-open-select">Query Type</InputLabel>
-        <Select
-          classNamePrefix="custom-query"
-          className={classes.select}
-          value={{ label: queryName, value: queryName }}
-          onChange={this.setQuery}
-          options={queryOptions}
-        />
+        <Button variant="contained" color="primary" onClick={() => this.handleQueryTypeSelection()}>
+          Change Query Type
+        </Button>
 
         <Divider className={classes.divider} />
-
+        <Typography variant="h5">{queryName}</Typography>
         <QueryForm queryType={queryType} dataSet={dataSet} />
       </div>
     );
