@@ -25,6 +25,10 @@ const styles = theme => ({
   listSection: {
     backgroundColor: 'inherit'
   },
+  expander: {
+    borderTop: '1px solid #ccc',
+    borderBottom: '1px solid #ccc',
+  },
   ul: {
     backgroundColor: 'inherit',
     padding: 0
@@ -51,7 +55,7 @@ function QueryTypeSelection(props) {
       <Typography variant="h5" >
         Query Selection
       </Typography>
-      <Typography variant="p">Select a query from the choices below</Typography>
+      <Typography variant="body1">Select a query from the choices below</Typography>
       </div>
       <Divider />
       <List className={classes.root} subheader={<li />}>
@@ -66,8 +70,7 @@ function QueryTypeSelection(props) {
               <ListItemText primary={val.details.displayName} />
             </ListItem>
           ))}
-        <Divider />
-        <ListItem button onClick={() => setGOpen(!gopen)}>
+        <ListItem className={classes.expander} button onClick={() => setGOpen(!gopen)}>
           <ListItemText primary="General" />
           {gopen ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
@@ -84,7 +87,7 @@ function QueryTypeSelection(props) {
               </ListItem>
             ))}
         </Collapse>
-        <ListItem button onClick={handleExpand}>
+        <ListItem className={classes.expander} button onClick={handleExpand}>
           <ListItemText primary="Reconstruction Related" />
           {open ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
@@ -101,7 +104,7 @@ function QueryTypeSelection(props) {
               </ListItem>
             ))}
         </Collapse>
-        <ListItem button onClick={() => setVOpen(!vopen)}>
+        <ListItem  className={classes.expander} button onClick={() => setVOpen(!vopen)}>
           <ListItemText primary="Visualization" />
           {vopen ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
