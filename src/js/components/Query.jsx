@@ -62,7 +62,7 @@ const styles = theme => ({
 
 class Query extends React.Component {
   handleQueryTypeSelection() {
-    setQueryString({ q: 2});
+    setQueryString({ q: 2 });
   }
 
   render() {
@@ -70,6 +70,7 @@ class Query extends React.Component {
     const qsParams = getSiteParams(location);
 
     const queryType = qsParams.get('qt') || 'not selected';
+    const openQuery = qsParams.get('q');
     const queryName =
       pluginList
         .filter(plugin => slug(plugin.details.name) === queryType)
@@ -149,9 +150,15 @@ class Query extends React.Component {
             <Icon className={classes.arrow}>arrow_upward</Icon>
           </Typography>
         )}
-        <Button variant="contained" color="primary" onClick={() => this.handleQueryTypeSelection()}>
-          Change Query Type
-        </Button>
+        {openQuery !== '2' && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => this.handleQueryTypeSelection()}
+          >
+            Change Query Type
+          </Button>
+        )}
 
         <Divider className={classes.divider} />
         <Typography variant="h5">{queryName}</Typography>

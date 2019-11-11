@@ -8,10 +8,11 @@ import PropTypes from 'prop-types';
 
 import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';
+import Collapse from '@material-ui/core/Collapse';
 
 import Query from './Query';
 import QueryTypeSelection from './QueryTypeSelection';
-import { getSiteParams, setQueryString } from '../helpers/queryString';
+import { getSiteParams } from '../helpers/queryString';
 
 const drawerWidth = 400;
 
@@ -34,7 +35,7 @@ const QueryDrawer = props => {
   const fullscreen = qsParams.get('rt');
 
   if (fullscreen !== 'full') {
-    if (openQuery === '1') {
+    if (openQuery >= '1') {
       return (
         <div>
           <Drawer
@@ -44,26 +45,13 @@ const QueryDrawer = props => {
             }}
           >
             <div className={classes.toolbar} />
+            <Collapse in={openQuery === '2'} timeout="auto" unmountOnExit>
+              <QueryTypeSelection />
+            </Collapse>
             <Query />
           </Drawer>
         </div>
       );
-    }
-    if (openQuery === '2') {
-      return (
-        <div>
-          <Drawer
-            variant="permanent"
-            classes={{
-              paper: classes.drawerPaperQuery
-            }}
-          >
-            <div className={classes.toolbar} />
-            <QueryTypeSelection />
-          </Drawer>
-        </div>
-      );
-
     }
   }
   return null;
