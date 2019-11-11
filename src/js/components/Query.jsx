@@ -5,12 +5,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Select from 'react-select';
 import { withRouter } from 'react-router-dom';
 import slug from 'slugg';
-import Tooltip from '@material-ui/core/Tooltip';
 import Button from '@material-ui/core/Button';
-import InputLabel from '@material-ui/core/InputLabel';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
@@ -60,112 +57,47 @@ const styles = theme => ({
   }
 });
 
-class Query extends React.Component {
-  handleQueryTypeSelection() {
-    setQueryString({ q: 2 });
-  }
+function handleQueryTypeSelection() {
+  setQueryString({ q: 2 });
+}
 
-  render() {
-    const { classes, pluginList, location } = this.props;
-    const qsParams = getSiteParams(location);
+function Query(props) {
+  const { classes, pluginList, location } = props;
+  const qsParams = getSiteParams(location);
 
-    const queryType = qsParams.get('qt') || 'not selected';
-    const openQuery = qsParams.get('q');
-    const queryName =
-      pluginList
-        .filter(plugin => slug(plugin.details.name) === queryType)
-        .map(plugin => plugin.details.displayName)[0] || 'Select Query';
+  const queryType = qsParams.get('qt') || 'not selected';
+  const openQuery = qsParams.get('q');
+  const queryName =
+    pluginList
+      .filter(plugin => slug(plugin.details.name) === queryType)
+      .map(plugin => plugin.details.displayName)[0] || 'Select Query';
 
-    const generalOptions = pluginList
-      .filter(plugin => plugin.details.category === undefined)
-      .map(val => ({
-        value: slug(val.details.name),
-        label: val.details.experimental ? (
-          <div className={classes.experimentalPlugin}>
-            {val.details.displayName}
-            <Tooltip title="under development" placement="right">
-              <Icon style={{ margin: '4px', fontSize: '12px' }}>build</Icon>
-            </Tooltip>
-          </div>
-        ) : (
-          val.details.displayName
-        )
-      }));
+  const dataSet = qsParams.get('dataset') || '';
 
-    const reconOptions = pluginList
-      .filter(plugin => plugin.details.category === 'recon')
-      .map(val => ({
-        value: slug(val.details.name),
-        label: val.details.experimental ? (
-          <div className={classes.experimentalPlugin}>
-            {val.details.displayName}
-            <Tooltip title="under development" placement="right">
-              <Icon style={{ margin: '4px', fontSize: '12px' }}>build</Icon>
-            </Tooltip>
-          </div>
-        ) : (
-          val.details.displayName
-        )
-      }));
+  // TODO: fix default menu option (maybe make the custom query the default)
+  return (
+    <div className={classes.root}>
+      {dataSet === '' && (
+        <Typography className={classes.dataset} variant="h6">
+          Please select a data set above
+          <Icon className={classes.arrow}>arrow_upward</Icon>
+        </Typography>
+      )}
+      {openQuery !== '2' && (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => handleQueryTypeSelection()}
+        >
+          Change Query Type
+        </Button>
+      )}
 
-    const otherOptions = pluginList
-      .filter(plugin => plugin.details.category === 'visualization')
-      .map(val => ({
-        value: slug(val.details.name),
-        label: val.details.experimental ? (
-          <div className={classes.experimentalPlugin}>
-            {val.details.displayName}
-            <Tooltip title="under development" placement="right">
-              <Icon style={{ margin: '4px', fontSize: '12px' }}>build</Icon>
-            </Tooltip>
-          </div>
-        ) : (
-          val.details.displayName
-        )
-      }));
-
-    const queryOptions = [
-      {
-        label: 'General',
-        options: generalOptions
-      },
-      {
-        label: 'Reconstruction Related',
-        options: reconOptions
-      },
-      {
-        label: 'Visualization',
-        options: otherOptions
-      }
-    ];
-
-    const dataSet = qsParams.get('dataset') || '';
-
-    // TODO: fix default menu option (maybe make the custom query the default)
-    return (
-      <div className={classes.root}>
-        {dataSet === '' && (
-          <Typography className={classes.dataset} variant="h6">
-            Please select a data set above
-            <Icon className={classes.arrow}>arrow_upward</Icon>
-          </Typography>
-        )}
-        {openQuery !== '2' && (
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => this.handleQueryTypeSelection()}
-          >
-            Change Query Type
-          </Button>
-        )}
-
-        <Divider className={classes.divider} />
-        <Typography variant="h5">{queryName}</Typography>
-        <QueryForm queryType={queryType} dataSet={dataSet} />
-      </div>
-    );
-  }
+      <Divider className={classes.divider} />
+      <Typography variant="h5">{queryName}</Typography>
+      <QueryForm queryType={queryType} dataSet={dataSet} />
+    </div>
+  );
 }
 
 Query.propTypes = {
