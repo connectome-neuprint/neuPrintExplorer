@@ -3,7 +3,8 @@ import C from './constants';
 import query from './query';
 
 const state = Immutable.Map({
-  isQuerying: false
+  isQuerying: false,
+  tabs: Immutable.List()
 });
 
 // note: can't test equality of functions

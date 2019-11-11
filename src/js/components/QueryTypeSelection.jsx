@@ -7,11 +7,14 @@ import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import Icon from '@material-ui/core/Icon';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import Collapse from '@material-ui/core/Collapse';
 import Divider from '@material-ui/core/Divider';
 import { setQueryString } from '../helpers/queryString';
+import toggleTab from '../actions/query';
 
 const styles = theme => ({
   root: {
@@ -40,14 +43,7 @@ function handleClick(event, queryType) {
 }
 
 function QueryTypeSelection(props) {
-  const { classes, pluginList } = props;
-  const [open, setOpen] = React.useState(false);
-  const [gopen, setGOpen] = React.useState(false);
-  const [vopen, setVOpen] = React.useState(false);
-
-  function handleExpand() {
-    setOpen(!open);
-  }
+  const { classes, pluginList, tabs, actions } = props;
 
   return (
     <div>
@@ -67,14 +63,18 @@ function QueryTypeSelection(props) {
               key={`item-${slug(val.details.name)}`}
               onClick={event => handleClick(event, slug(val.details.name))}
             >
+              <ListItemIcon>
+                <Icon>arrow_forward</Icon>
+              </ListItemIcon>
               <ListItemText primary={val.details.displayName} />
             </ListItem>
           ))}
-        <ListItem className={classes.expander} button onClick={() => setGOpen(!gopen)}>
+
+        <ListItem className={classes.expander} button onClick={() => actions.toggleTab(0)}>
           <ListItemText primary="General" />
-          {gopen ? <ExpandLess /> : <ExpandMore />}
+          {tabs.get(0) ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
-        <Collapse in={gopen} timeout="auto" unmountOnExit>
+        <Collapse in={tabs.get(0)} timeout="auto" unmountOnExit>
           {pluginList
             .filter(plugin => plugin.details.category === undefined)
             .map(val => (
@@ -83,15 +83,19 @@ function QueryTypeSelection(props) {
                 key={`item-${slug(val.details.name)}`}
                 onClick={event => handleClick(event, slug(val.details.name))}
               >
+                <ListItemIcon>
+                  <Icon>arrow_forward</Icon>
+                </ListItemIcon>
                 <ListItemText primary={val.details.displayName} />
               </ListItem>
             ))}
         </Collapse>
-        <ListItem className={classes.expander} button onClick={handleExpand}>
+
+        <ListItem className={classes.expander} button onClick={() => actions.toggleTab(1)}>
           <ListItemText primary="Reconstruction Related" />
-          {open ? <ExpandLess /> : <ExpandMore />}
+          {tabs.get(1) ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
-        <Collapse in={open} timeout="auto" unmountOnExit>
+        <Collapse in={tabs.get(1)} timeout="auto" unmountOnExit>
           {pluginList
             .filter(plugin => plugin.details.category === 'recon')
             .map(val => (
@@ -100,15 +104,19 @@ function QueryTypeSelection(props) {
                 key={`item-${slug(val.details.name)}`}
                 onClick={event => handleClick(event, slug(val.details.name))}
               >
+                <ListItemIcon>
+                  <Icon>arrow_forward</Icon>
+                </ListItemIcon>
                 <ListItemText primary={val.details.displayName} />
               </ListItem>
             ))}
         </Collapse>
-        <ListItem  className={classes.expander} button onClick={() => setVOpen(!vopen)}>
+
+        <ListItem  className={classes.expander} button onClick={() => actions.toggleTab(2)}>
           <ListItemText primary="Visualization" />
-          {vopen ? <ExpandLess /> : <ExpandMore />}
+          {tabs.get(2) ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
-        <Collapse in={vopen} timeout="auto" unmountOnExit>
+        <Collapse in={tabs.get(2)} timeout="auto" unmountOnExit>
           {pluginList
             .filter(plugin => plugin.details.category === 'visualization')
             .map(val => (
@@ -117,10 +125,14 @@ function QueryTypeSelection(props) {
                 key={`item-${slug(val.details.name)}`}
                 onClick={event => handleClick(event, slug(val.details.name))}
               >
+                <ListItemIcon>
+                  <Icon>arrow_forward</Icon>
+                </ListItemIcon>
                 <ListItemText primary={val.details.displayName} />
               </ListItem>
             ))}
         </Collapse>
+
       </List>
     </div>
   );
@@ -128,11 +140,22 @@ function QueryTypeSelection(props) {
 
 QueryTypeSelection.propTypes = {
   classes: PropTypes.object.isRequired,
+  tabs: PropTypes.object.isRequired,
+  actions: PropTypes.object.isRequired,
   pluginList: PropTypes.arrayOf(PropTypes.func).isRequired
 };
 
 const QueryTypeState = state => ({
-  pluginList: state.app.get('pluginList')
+  pluginList: state.app.get('pluginList'),
+  tabs: state.query.get('tabs')
 });
 
-export default withStyles(styles)(connect(QueryTypeState)(QueryTypeSelection));
+const QueryTypeDispatch = (dispatch) => ({
+  actions: {
+    toggleTab: (id) => {
+      dispatch(toggleTab(id));
+    }
+  }
+});
+
+export default withStyles(styles)(connect(QueryTypeState, QueryTypeDispatch)(QueryTypeSelection));

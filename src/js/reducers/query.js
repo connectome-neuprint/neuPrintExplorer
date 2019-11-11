@@ -5,7 +5,8 @@ import Immutable from 'immutable';
 import C from './constants';
 
 const queryState = Immutable.Map({
-  isQuerying: false
+  isQuerying: false,
+  tabs: Immutable.List([])
 });
 
 export default function queryReducer(state = queryState, action) {
@@ -16,6 +17,9 @@ export default function queryReducer(state = queryState, action) {
     case C.PLUGIN_SUBMIT_ERROR:
     case C.PLUGIN_SAVE_RESPONSE: {
       return state.set('isQuerying', false);
+    }
+    case C.QUERY_TYPE_TAB_TOGGLE: {
+      return state.setIn(['tabs', action.id], action.status);
     }
     default: {
       return state;
