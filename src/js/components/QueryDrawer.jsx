@@ -24,7 +24,10 @@ const styles = theme => ({
     position: 'relative',
     width: drawerWidth
   },
-  toolbar: theme.mixins.toolbar
+  toolbar: theme.mixins.toolbar,
+  query: {
+    overflow: 'auto'
+  }
 });
 
 const QueryDrawer = props => {
@@ -45,10 +48,12 @@ const QueryDrawer = props => {
             }}
           >
             <div className={classes.toolbar} />
-            <Collapse in={openQuery === '2'} timeout="auto" unmountOnExit>
-              <QueryTypeSelection />
-            </Collapse>
-            <Query />
+            <div className={classes.query} >
+              <Collapse in={openQuery === '2'} timeout="auto" unmountOnExit>
+                <QueryTypeSelection />
+              </Collapse>
+              <Query />
+            </div>
           </Drawer>
         </div>
       );
