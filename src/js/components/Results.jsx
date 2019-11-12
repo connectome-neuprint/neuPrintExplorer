@@ -24,7 +24,6 @@ const styles = () => ({
 });
 
 class Results extends React.Component {
-
   handleResultSelection = (event, value) => {
     // set the tabs value in the query string to the value
     // passed in here.
@@ -57,32 +56,30 @@ class Results extends React.Component {
       return <Tab key={key} label="Unknown Plugin" />;
     });
 
-    const tabData = [
-      <Result key='changing' tabIndex={tabIndex} query={query} />
-    ];
+    const tabData = [<Result key="changing" tabIndex={tabIndex} query={query} />];
 
     // need to check for >= 0 here instead of just checking the Boolean value,
     // because the first tab index is 0, which evaluates to false.
     if (fixedTab >= 0) {
-      tabData.push(
-        <Result key='fixed' tabIndex={fixedTab} query={query} fixed />
-      );
+      tabData.push(<Result key="fixed" tabIndex={fixedTab} query={query} fixed />);
     }
 
     return (
       <div className={classes.resultContent}>
         {query.rt !== 'full' && (
           <AppBar position="static" color="default">
-            <Tabs
-              value={tabIndex}
-              onChange={this.handleResultSelection}
-              textColor="primary"
-              indicatorColor="primary"
-              variant="scrollable"
-              scrollButtons="auto"
-            >
-              {tabs}
-            </Tabs>
+            {tabs.length > 0 && (
+              <Tabs
+                value={tabIndex}
+                onChange={this.handleResultSelection}
+                textColor="primary"
+                indicatorColor="primary"
+                variant="scrollable"
+                scrollButtons="auto"
+              >
+                {tabs}
+              </Tabs>
+            )}
           </AppBar>
         )}
         <div className={classes.scroll}>{tabData}</div>
