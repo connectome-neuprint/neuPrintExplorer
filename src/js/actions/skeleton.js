@@ -4,11 +4,12 @@ import C from '../reducers/constants';
 
 const db = new PouchDB('neuprint_compartments');
 
-export function skeletonAddandOpen(id, dataSet) {
+export function skeletonAddandOpen(id, dataSet, tabIndex) {
   return {
     type: C.SKELETON_ADD_ID,
     id,
-    dataSet
+    dataSet,
+    tabIndex
   };
 }
 

@@ -336,6 +336,7 @@ class Result extends React.Component {
                 <ResultsTopBar
                   downloadEnabled={downloadEnabled}
                   saveEnabled={saveEnabled}
+                  addIdEnabled={Boolean(processingPlugin.details.visType === 'SkeletonView')}
                   downloadCallback={this.downloadFile}
                   name={combined.result.title || 'Error'}
                   index={tabIndex}

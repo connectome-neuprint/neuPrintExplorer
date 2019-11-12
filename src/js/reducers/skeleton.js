@@ -29,8 +29,9 @@ export default function skeletonReducer(state = skeletonState, action) {
       const current = getQueryObject('qr', []);
 
       // need to find the index of the tab we are going to update / replace.
-      let selectedIndex = -1;
-      let selected = null;
+      let selectedIndex = action.tabIndex || -1;
+      let selected = current[action.tabIndex];
+      let ftab = null;
 
       // find existing skeletonviewer tab
       current.forEach((tab, index) => {
@@ -49,9 +50,9 @@ export default function skeletonReducer(state = skeletonState, action) {
         bodyIds.push(action.id);
         selected.pm.bodyIds = bodyIds.join(',');
         current[selectedIndex] = selected;
-        setQueryString({
-          ftab: selectedIndex,
-        });
+        if (!action.tabIndex) {
+          ftab = selectedIndex;
+        }
       } else {
         // if none found, then add one to the querystring
         //   push the id into the bodyids list
@@ -65,14 +66,18 @@ export default function skeletonReducer(state = skeletonState, action) {
             bodyIds: action.id
           }
         });
-        setQueryString({
-          ftab: current.length - 1,
-        });
+        ftab = current.length - 1;
       }
 
-      setQueryString({
+      const newQuery = {
         qr: current
-      });
+      };
+
+      if (ftab) {
+        newQuery.ftab = ftab;
+      }
+
+      setQueryString(newQuery);
       return state;
     }
     case C.SKELETON_REMOVE: {

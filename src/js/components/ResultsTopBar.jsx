@@ -25,7 +25,8 @@ import { launchNotification } from 'actions/app';
 import { getQueryObject, setQueryString } from 'helpers/queryString';
 import C from '../reducers/constants';
 
-import CachedCounter from './CachedCounter';
+import CachedCounter from './ResultsTopBar/CachedCounter';
+import AddIdModal from './ResultsTopBar/AddIdModal';
 
 const styles = theme => ({
   root: {
@@ -50,6 +51,7 @@ class ResultsTopBar extends React.Component {
     super(props);
     this.state = {
       open: false,
+      addIdOpen: false,
       bookmarkname: ''
     };
   }
@@ -96,6 +98,10 @@ class ResultsTopBar extends React.Component {
     }
   };
 
+  handleAddId = () => {
+    this.setState({ addIdOpen: true });
+  };
+
   handleRefresh = () => {
     const { actions, index } = this.props;
     actions.refreshResult(index);
@@ -122,7 +128,7 @@ class ResultsTopBar extends React.Component {
     let tabIndex = query.tab > 0 ? query.tab - 1 : 0;
     // if window was split, then we show the other panel that we didn't close
     if (query.ftab >= 0) {
-      if (query.tab> query.ftab) {
+      if (query.tab > query.ftab) {
         tabIndex = query.ftab;
       } else {
         tabIndex = query.ftab > 0 ? query.ftab - 1 : 0;
@@ -170,11 +176,12 @@ class ResultsTopBar extends React.Component {
       downloadCallback,
       downloadEnabled,
       saveEnabled,
+      addIdEnabled,
       actions,
       fetchedTime,
       dataSet
     } = this.props;
-    const { open } = this.state;
+    const { open, addIdOpen } = this.state;
 
     return (
       <div className={classNames(classes.root, 'topresultbar')} style={{ backgroundColor: color }}>
@@ -182,7 +189,10 @@ class ResultsTopBar extends React.Component {
           <Typography variant="caption" color="inherit" className={classes.flex} noWrap>
             {dataSet} - {name}
             <br />
-            <span className={classes.cachedTime}> Loaded from server <CachedCounter fetchedTime={fetchedTime} key={index} /> ago </span>
+            <span className={classes.cachedTime}>
+              {' '}
+              Loaded from server <CachedCounter fetchedTime={fetchedTime} key={index} /> ago{' '}
+            </span>
           </Typography>
           <IconButton
             onClick={() => {
@@ -192,12 +202,19 @@ class ResultsTopBar extends React.Component {
           >
             <Icon style={{ fontSize: 18 }}>info</Icon>
           </IconButton>
-          <IconButton
-            aria-label="Refresh"
-            onClick={this.handleRefresh}
-          >
+          <IconButton aria-label="Refresh" onClick={this.handleRefresh}>
             <Icon style={{ fontSize: 18 }}>refresh</Icon>
           </IconButton>
+          {addIdEnabled && (
+            <IconButton aria-label="Add" onClick={this.handleAddId}>
+              <Icon style={{ fontSize: 18 }}>add</Icon>
+            </IconButton>
+          )}
+          <AddIdModal
+            open={addIdOpen}
+            index={index}
+            handleClose={() => this.setState({ addIdOpen: false })}
+          />
 
           {saveEnabled && (
             <IconButton aria-label="Add favorite" onClick={this.openPopup}>
@@ -319,6 +336,7 @@ ResultsTopBar.propTypes = {
   color: PropTypes.string,
   downloadCallback: PropTypes.func.isRequired,
   downloadEnabled: PropTypes.bool.isRequired,
+  addIdEnabled: PropTypes.bool,
   saveEnabled: PropTypes.bool.isRequired,
   queryStr: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
@@ -334,7 +352,8 @@ ResultsTopBar.propTypes = {
 ResultsTopBar.defaultProps = {
   color: '#cccccc',
   dataSet: 'loading',
-  fetchedTime: (new Date()).getTime()
+  fetchedTime: new Date().getTime(),
+  addIdEnabled: false
 };
 
 export default withStyles(styles)(
