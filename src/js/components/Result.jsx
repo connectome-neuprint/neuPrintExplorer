@@ -343,6 +343,7 @@ class Result extends React.Component {
                   queryStr={combined.result.debug}
                   color="#cccccc"
                   fixed={fixed}
+                  dataSet={resultsList[tabIndex].ds}
                 />
               ) : (
                 ''
@@ -427,6 +428,7 @@ class Result extends React.Component {
             queryStr="error"
             color="#ffcccc"
             fixed={fixed}
+            dataSet={resultsList[tabIndex].ds}
           />
           {/*
            Some of the error messages are returned from the server as plain text with

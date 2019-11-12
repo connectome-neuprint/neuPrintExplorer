@@ -171,7 +171,8 @@ class ResultsTopBar extends React.Component {
       downloadEnabled,
       saveEnabled,
       actions,
-      fetchedTime
+      fetchedTime,
+      dataSet
     } = this.props;
     const { open } = this.state;
 
@@ -179,7 +180,7 @@ class ResultsTopBar extends React.Component {
       <div className={classNames(classes.root, 'topresultbar')} style={{ backgroundColor: color }}>
         <Toolbar>
           <Typography variant="caption" color="inherit" className={classes.flex} noWrap>
-            {name}
+            {dataSet} - {name}
             <br />
             <span className={classes.cachedTime}> Loaded from server <CachedCounter fetchedTime={fetchedTime} key={index} /> ago </span>
           </Typography>
@@ -326,11 +327,13 @@ ResultsTopBar.propTypes = {
   token: PropTypes.string.isRequired,
   appDB: PropTypes.string.isRequired,
   results: PropTypes.object.isRequired,
-  fixed: PropTypes.bool.isRequired
+  fixed: PropTypes.bool.isRequired,
+  dataSet: PropTypes.string
 };
 
 ResultsTopBar.defaultProps = {
   color: '#cccccc',
+  dataSet: 'loading',
   fetchedTime: (new Date()).getTime()
 };
 
