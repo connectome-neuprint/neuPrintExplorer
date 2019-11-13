@@ -17,20 +17,20 @@ export function sortRois(a, b) {
 }
 
 class MetaInfo extends React.Component {
-  constructor(props) {
-    super(props);
-    this.updateDB(props.userInfo);
+  componentDidMount() {
+    const { userInfo } = this.props;
+    this.updateDB(userInfo);
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(prevProps) {
     const { userInfo, setNeoDatasets, setNeoServer } = this.props;
-    if (nextProps.userInfo === null && userInfo !== null) {
+    if (prevProps.userInfo !== userInfo) {
       setNeoDatasets([], {}, {}, {});
       setNeoServer('');
     }
 
-    if (!_.isEqual(nextProps.userInfo, userInfo)) {
-      this.updateDB(nextProps.userInfo);
+    if (!_.isEqual(prevProps.userInfo, userInfo)) {
+      this.updateDB(userInfo);
     }
   }
 
