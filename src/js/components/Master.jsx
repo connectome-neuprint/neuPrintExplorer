@@ -25,6 +25,7 @@ const Home = React.lazy(() => import('./Home'));
 const Favorites = React.lazy(() => import('./Favorites'));
 const NoMatch = React.lazy(() => import('./NoMatch'));
 const Workstation = React.lazy(() => import('./Workstation'));
+const Login = React.lazy(() => import('./LoginPage'));
 
 // adapted from material ui example
 const styles = theme => ({
@@ -66,7 +67,7 @@ const Master = props => {
       <Route
         {...rest}
         render={privateProps =>
-          user.get('loggedIn', false) ? <Component {...privateProps} /> : <Home {...privateProps} />
+          user.get('loggedIn', false) ? <Component {...privateProps} /> : <Login {...privateProps} />
         }
       />
     );
