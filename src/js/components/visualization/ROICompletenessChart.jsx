@@ -5,7 +5,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 function createDataTable(dataSet, roiInfo) {
   // sort by highest to lowest % complete
   // TODO: filter out any ROI that isn't at the super level.
-  const data = roiInfo.data.map(roi => {
+  const data = roiInfo.map(roi => {
     const [name, roipre, roipost, totalpre, totalpost] = roi;
     const postComplete = Math.round((roipost * 100) / totalpost);
     const preComplete = Math.round((roipre * 100) / totalpre);
@@ -67,17 +67,23 @@ function ROICompletenessChart(props) {
         }
 
         // filter out non super level ROIS
-        const filtered = resp
-        filtered.data = resp.data.filter(roi => superROIs.includes(roi[0]));
-        setRoiInfo(filtered);
+        setRoiInfo(resp.data);
       })
       .catch(error => {
         actions.metaInfoError(error);
       });
   }, [dataSet]);
 
-  if (roiInfo) {
-    return createDataTable(dataSet, roiInfo);
+  if (roiInfo && superROIs) {
+    // In some browsers the loading of the superROI data happens after the
+    // loading of the ROICompleteness info. This causes a bug, because the data
+    // is undefined. The fix is to store the data and only apply the filter
+    // when the superROIs have loaded. This is annoying as the filter has to be
+    // applied every time the component is loaded, but it is more reliable and
+    // doesn't fail due to timing issues. Ideal fix would be to filter this on
+    // the server
+    const filtered = roiInfo.filter(roi => superROIs.includes(roi[0]));
+    return createDataTable(dataSet, filtered);
   }
   return <p>loading</p>;
 }
