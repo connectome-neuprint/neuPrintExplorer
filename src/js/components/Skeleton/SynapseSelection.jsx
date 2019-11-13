@@ -113,6 +113,7 @@ class SynapseSelection extends React.Component {
 
     const inputMenuItems = Object.entries(ids)
       .sort((a, b) => b[1].weight - a[1].weight)
+      .slice(0,29)
       .map(entry => {
         const [id, synapseMeta] = entry;
         const checked = Boolean(synapseStateCheck.get(id, false));
