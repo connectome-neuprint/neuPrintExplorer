@@ -96,11 +96,11 @@ function loadSynapseError(bodyId, synapseId, error) {
 
 // output
 const tbarQuery =
-  'MATCH (n :`<DATASET>-Neuron` {bodyId: <TARGETBODYID>})<-[:From]-(cs :ConnectionSet)-[:To]->(m :`<DATASET>-Neuron` {bodyId: <OTHERBODYID>}) WITH cs MATCH (cs)-[:Contains]->(s :PreSyn) RETURN s.location.x AS x, s.location.y AS y, s.location.z AS z';
+  'MATCH (n :Neuron {bodyId: <TARGETBODYID>})-[:Contains]->(ss :SynapseSet)-[:ConnectsTo]->(:SynapseSet)<-[:Contains]-(m :Neuron {bodyId: <OTHERBODYID>}) WITH ss MATCH (ss)-[:Contains]->(s :Synapse) RETURN s.location.x AS x, s.location.y AS y, s.location.z AS z';
 
 // input
 const psdQuery =
-  'MATCH (n :`<DATASET>-Neuron` {bodyId: <TARGETBODYID>})<-[:To]-(cs :ConnectionSet)-[:From]->(m :`<DATASET>-Neuron` {bodyId: <OTHERBODYID>}) WITH cs MATCH (cs)-[:Contains]->(s :PostSyn) RETURN s.location.x AS x, s.location.y AS y, s.location.z AS z';
+  'MATCH (n :Neuron {bodyId: <TARGETBODYID>})-[:Contains]->(ss :SynapseSet)<-[:ConnectsTo]-(:SynapseSet)<-[:Contains]-(m :Neuron {bodyId: <OTHERBODYID>}) WITH ss MATCH (ss)-[:Contains]->(s :Synapse) RETURN s.location.x AS x, s.location.y AS y, s.location.z AS z';
 
 export function loadSynapse(bodyId, synapseId, dataSet, options = { isInput: true }) {
   return function loadSynapseAsync(dispatch) {
@@ -120,12 +120,10 @@ export function loadSynapse(bodyId, synapseId, dataSet, options = { isInput: tru
     if (options.isInput) {
       completeQuery = psdQuery
         .replace(/<OTHERBODYID>/g, synapseId)
-        .replace(/<DATASET>/g, dataSet)
         .replace(/<TARGETBODYID>/g, bodyId);
     } else {
       completeQuery = tbarQuery
         .replace(/<OTHERBODYID>/g, synapseId)
-        .replace(/<DATASET>/g, dataSet)
         .replace(/<TARGETBODYID>/g, bodyId);
     }
 
@@ -136,7 +134,8 @@ export function loadSynapse(bodyId, synapseId, dataSet, options = { isInput: tru
         Accept: 'application/json'
       },
       body: JSON.stringify({
-        cypher: completeQuery
+        cypher: completeQuery,
+	dataset: dataSet
       }),
       method: 'POST',
       credentials: 'include'

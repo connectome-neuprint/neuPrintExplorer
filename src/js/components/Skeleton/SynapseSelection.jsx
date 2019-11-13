@@ -24,7 +24,7 @@ const styles = () => ({
 });
 
 const cypherQuery =
-  'MATCH (n :`<DATASET>-Neuron` {bodyId: <BODYID>})-[x :ConnectsTo]-(m) RETURN x.weight AS weight, startnode(x).bodyId AS startId, startnode(x).type AS startType, endnode(x).bodyId AS endBody, endnode(x).type AS endType ORDER BY x.weight DESC';
+  'MATCH (n :Neuron {bodyId: <BODYID>})-[x :ConnectsTo]-(m) RETURN x.weight AS weight, startnode(x).bodyId AS startId, startnode(x).type AS startType, endnode(x).bodyId AS endBody, endnode(x).type AS endType ORDER BY x.weight DESC';
 
 class SynapseSelection extends React.Component {
   constructor(props) {
@@ -37,14 +37,15 @@ class SynapseSelection extends React.Component {
 
   componentDidMount() {
     const { body, dataSet } = this.props;
-    const finalQuery = cypherQuery.replace(/<DATASET>/, dataSet).replace(/<BODYID>/, body.get('name'));
+    const finalQuery = cypherQuery.replace(/<BODYID>/, body.get('name'));
     fetch('/api/custom/custom', {
       headers: {
         'content-type': 'application/json',
         Accept: 'application/json'
       },
       body: JSON.stringify({
-        cypher: finalQuery
+        cypher: finalQuery,
+	dataset: dataSet
       }),
       method: 'POST',
       credentials: 'include'
