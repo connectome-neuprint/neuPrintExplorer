@@ -22,7 +22,11 @@ export function skeletonRemove(id, dataSet, tabIndex) {
   };
 }
 
-function loadedSynapse(bodyId, synapseId, dataSet, response, options = { isInput: true}) {
+export const DefaultSynapseRadius = 40;
+export const MinSynapseRadius = 10;
+export const MaxSynapseRadius = 200;
+
+function loadedSynapse(bodyId, synapseId, dataSet, response, options = { isInput: true }) {
   return function loadedSynapseAsync(dispatch) {
     const data = {};
 
@@ -36,7 +40,7 @@ function loadedSynapse(bodyId, synapseId, dataSet, response, options = { isInput
         x: parseInt(row[0], 10),
         y: parseInt(row[1], 10),
         z: parseInt(row[2], 10),
-        radius: 40,
+        radius: options.radius ? options.radius : DefaultSynapseRadius,
         parent: -1
       };
     });
@@ -169,6 +173,14 @@ export function toggleSpindle(tabIndex) {
 export function toggleSynapsesOnTop(tabIndex) {
   return {
     type: C.SKELETON_SYNAPSES_ON_TOP_TOGGLE,
+    tabIndex
+  };
+}
+
+export function setSynapseRadius(radius, tabIndex) {
+  return {
+    type: C.SKELETON_SYNAPSE_RADIUS_SET,
+    synapseRadius: radius,
     tabIndex
   };
 }

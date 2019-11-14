@@ -14,7 +14,7 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Icon from '@material-ui/core/Icon';
 
-import { skeletonAddandOpen, skeletonRemove } from 'actions/skeleton';
+import { skeletonAddandOpen, skeletonRemove, DefaultSynapseRadius } from 'actions/skeleton';
 import { neuroglancerAddandOpen } from 'actions/neuroglancer';
 import { setFullScreen, clearFullScreen, setSelectedResult, launchNotification } from 'actions/app';
 import { setColumnStatus, initColumnStatus } from 'actions/visibleColumns';
@@ -357,6 +357,9 @@ class Result extends React.Component {
             if (processingPlugin.details.visType === 'SkeletonView') {
               const queryData = getQueryData(combined);
               const viewKey = `t${tabIndex}`;
+              const synapseRadius = (cachedResults && cachedResults.paramsPrivate && cachedResults.paramsPrivate.synapseRadius) ? 
+                cachedResults.paramsPrivate.synapseRadius : 
+                DefaultSynapseRadius;
               tabData = (
                 <ScrollManager scrollKey={viewKey}>
                   {({ connectScrollTarget }) => (
@@ -370,6 +373,7 @@ class Result extends React.Component {
                           key={viewKey}
                           neoServer={neoServer}
                           neo4jsettings={neo4jsettings}
+                          synapseRadius={synapseRadius}
                         />
                       </Suspense>
                     </div>

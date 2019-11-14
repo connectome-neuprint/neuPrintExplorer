@@ -60,13 +60,13 @@ class SynapseSelection extends React.Component {
   }
 
   handleToggle = id => {
-    const { body, isInput, actions, synapseState, dataSet } = this.props;
+    const { body, isInput, actions, synapseState, dataSet, synapseRadius } = this.props;
     // decide if this input/output
     const synapseType = isInput ? 'inputs' : 'outputs';
     if (synapseState.getIn([body.get('name'), synapseType, id])) {
       actions.removeSynapse(body.get('name'), id, isInput);
     } else {
-      actions.loadSynapse(body.get('name'), id, dataSet, { isInput });
+      actions.loadSynapse(body.get('name'), id, dataSet, { isInput, radius: synapseRadius });
     }
   };
 
@@ -147,6 +147,7 @@ SynapseSelection.propTypes = {
   body: PropTypes.object.isRequired,
   dataSet: PropTypes.string.isRequired,
   synapseState: PropTypes.object.isRequired,
+  synapseRadius: PropTypes.number.isRequired,
   actions: PropTypes.object.isRequired
 };
 

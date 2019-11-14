@@ -15,10 +15,13 @@ const resultsState = Immutable.Map({
 export default function resultsReducer(state = resultsState, action) {
   switch (action.type) {
     case C.PLUGIN_SUBMITTING: {
+      const old = state.getIn(['allResults', action.tabIndex], {});
+      const { paramsPrivate } = old;
       return state.setIn(['loading', action.tab], true)
         .setIn(['allResults', action.tab], {
           result: null,
           params: null,
+          paramsPrivate,
           label: 'Loading...',
           timestamp: ''
         })
@@ -32,9 +35,12 @@ export default function resultsReducer(state = resultsState, action) {
       return state.setIn(['loading', action.tab], false)
     }
     case C.PLUGIN_SAVE_RESPONSE: {
+      const old = state.getIn(['allResults', action.tabIndex], {});
+      const { paramsPrivate } = old;
       return state.setIn(['allResults', action.tabIndex], {
         result: action.response,
         params: action.params,
+        paramsPrivate,
         label: action.label,
         timestamp: (new Date()).getTime()
       })
@@ -58,6 +64,14 @@ export default function resultsReducer(state = resultsState, action) {
     case C.CLEAR_CACHE: {
       return state.set('allResults', Immutable.List([]));
     }
+    case C.SKELETON_SYNAPSE_RADIUS_SET: {
+      const old = state.getIn(['allResults', action.tabIndex], {});
+      const { paramsPrivate } = old;
+      return state.setIn(['allResults', action.tabIndex, 'paramsPrivate'], {
+        ...paramsPrivate, 
+        synapseRadius: action.synapseRadius
+      });
+  }
     default: {
       return state;
     }

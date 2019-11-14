@@ -8,8 +8,8 @@ const SynapseSelectionState = state => ({
 
 const SynapseSelectionDispatch = dispatch => ({
   actions: {
-    loadSynapse : (bodyId, synapseId, dataSet, isInput) => {
-      dispatch(loadSynapse(bodyId, synapseId, dataSet, isInput));
+    loadSynapse : (bodyId, synapseId, dataSet, options) => {
+      dispatch(loadSynapse(bodyId, synapseId, dataSet, options));
     },
     removeSynapse : (bodyId, synapseId, isInput) => {
       dispatch(removeSynapse(bodyId, synapseId, isInput));
