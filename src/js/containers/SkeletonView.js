@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { skeletonRemove, toggleSpindle, toggleSynapsesOnTop  } from 'actions/skeleton';
+import { skeletonRemove, toggleSpindle, toggleSynapsesOnTop, setSynapseRadius } from 'actions/skeleton';
 import { getQueryObject, setQueryString } from 'helpers/queryString';
 
 import SkeletonView from '../components/SkeletonView';
@@ -20,6 +20,9 @@ const SkeletonViewDispatch = dispatch => ({
     },
     toggleSynapsesOnTop: (tabIndex) => {
       dispatch(toggleSynapsesOnTop(tabIndex))
+    },
+    setSynapseRadius: (radius, tabIndex) => {
+      dispatch(setSynapseRadius(radius, tabIndex));
     }
   }
 });

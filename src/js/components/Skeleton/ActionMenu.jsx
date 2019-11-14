@@ -74,7 +74,7 @@ class ActionMenu extends React.Component {
   };
 
   render() {
-    const { classes, body, color, isVisible, dataSet } = this.props;
+    const { classes, body, color, synapseRadius, isVisible, dataSet } = this.props;
     const { anchorEl } = this.state;
 
     return (
@@ -114,10 +114,10 @@ class ActionMenu extends React.Component {
             className={classes.popover}
           >
             <Grid item xs={4}>
-              <SynapseSelection isInput body={body} dataSet={dataSet} />
+              <SynapseSelection isInput body={body} dataSet={dataSet} synapseRadius={synapseRadius} />
             </Grid>
             <Grid item xs={4}>
-              <SynapseSelection isInput={false} body={body} dataSet={dataSet} />
+              <SynapseSelection isInput={false} body={body} dataSet={dataSet} synapseRadius={synapseRadius} />
             </Grid>
             <Grid item xs={3}>
               <Typography variant="subtitle2">Change Color:</Typography>
@@ -138,6 +138,7 @@ ActionMenu.propTypes = {
   body: PropTypes.object.isRequired,
   dataSet: PropTypes.string.isRequired,
   color: PropTypes.string.isRequired,
+  synapseRadius: PropTypes.number.isRequired,
   classes: PropTypes.object.isRequired,
   isVisible: PropTypes.bool.isRequired,
   handleDelete: PropTypes.func.isRequired,

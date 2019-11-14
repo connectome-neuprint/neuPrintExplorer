@@ -5,10 +5,15 @@ import Immutable from 'immutable';
 import PouchDB from 'pouchdb';
 import deepEqual from 'deep-equal';
 
+// TODO: Advance the version of Material-UI to get Slider from core.
+import Slider from '@material-ui/lab/Slider';
+
 import Switch from '@material-ui/core/Switch';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { withStyles } from '@material-ui/core/styles';
+
+import { MinSynapseRadius, MaxSynapseRadius } from 'actions/skeleton';
 
 import ActionMenu from './Skeleton/ActionMenu';
 
@@ -55,7 +60,28 @@ const styles = theme => ({
     position: 'absolute',
     bottom: '0px',
     left: '1em',
-    zIndex: 2
+    zIndex: 2,
+    width: '100%'
+  },
+
+  // The Material-UI Slider in the FormGroup called "bottomControls" is not styled correctly when
+  // it is in a FormControlLabel.  A work-around is to put it in a span and give that span
+  // some of the styling from the FormControlLabel source code.
+
+  bottomControlsSlider: {
+    flex: 1,
+    display: 'inline-flex',
+    alignItems: 'center',
+    fontSize: '0.875rem', 
+    marginLeft: -11, 
+    marginRight: 16,
+    minWidth: '150px', 
+    maxWidth: '400px',
+    padding: theme.spacing.unit
+  },
+  bottomControlsSliderLabel: {
+    whiteSpace: 'nowrap',
+    padding: theme.spacing.unit
   }
 });
 
@@ -71,6 +97,7 @@ class SkeletonView extends React.Component {
     super(props);
     this.state = {
       sharkViewer: null,
+      sharkViewerSynapseRadius: 0,
       db: new PouchDB('neuprint_compartments'),
       bodies: Immutable.Map({}),
       compartments: Immutable.Map({}),
@@ -93,22 +120,17 @@ class SkeletonView extends React.Component {
         const compIds = query.pm.compartments.split(',');
         this.addCompartments(compIds, query.pm.dataset);
       }
-      if (query.sp) {
-        this.setState({ spindleView: true });
-      }
-      if (query.sot) {
-        this.setState({ synapsesOnTop: true });
-      }
     }
     this.createShark();
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { query, synapses } = this.props;
+    const { query, synapses, synapseRadius } = this.props;
     // TODO: check to see if the synapse selection has changed. If so, update
     // the viewer to show the changes.
     const { sharkViewer } = this.state;
     if (sharkViewer) {
+      const synapseRadiusChanged = this.synapseRadiusDidChange(synapseRadius);
       if (!deepEqual(this.props, prevProps)) {
         // only perform actions here that alter the state, no rendering or props changes
         const { bodyIds = '', compartments: compartmentIds = '', dataset: dataSet } = query.pm;
@@ -141,17 +163,20 @@ class SkeletonView extends React.Component {
           this.removeSkeleton(missingId);
         });
 
-        // compare items in prevProps.synapse with props.synapse to figure out which inputs
+        // Compare items in prevProps.synapse with props.synapse to figure out which inputs
         // have been removed.
+        // If the synapse radius changed, there is no need to render when unloading synapses
+        // because rendering will happen when the synapses are loaded with the new radius.
+        const render = !synapseRadiusChanged;
         prevProps.synapses.forEach((value, bodyId) => {
           value.get('inputs', Immutable.Map({})).forEach((status, inputId) => {
-            if (!synapses.getIn([bodyId, 'inputs', inputId])) {
-              this.unloadSynapse(bodyId, inputId);
+            if (synapseRadiusChanged || !synapses.getIn([bodyId, 'inputs', inputId])) {
+              this.unloadSynapse(bodyId, inputId, render);
             }
           });
           value.get('outputs', Immutable.Map({})).forEach((status, outputId) => {
-            if (!synapses.getIn([bodyId, 'outputs', outputId])) {
-              this.unloadSynapse(bodyId, outputId);
+            if (synapseRadiusChanged || !synapses.getIn([bodyId, 'outputs', outputId])) {
+              this.unloadSynapse(bodyId, outputId, render);
             }
           });
         });
@@ -174,16 +199,15 @@ class SkeletonView extends React.Component {
           compartmentId => !prevCompartmentSet.has(compartmentId)
         );
         this.addCompartments(newCompartmentIds, dataSet);
-
       }
 
       // render synapses that are new, ie those that are in props, but not prevProps
       synapses.forEach((value, bodyId) => {
         value.get('inputs', Immutable.Map({})).forEach((inputMeta, inputId) => {
-          this.renderSynapse(bodyId, inputId, inputMeta);
+          this.renderSynapse(bodyId, inputId, inputMeta, false, synapseRadiusChanged);
         });
         value.get('outputs', Immutable.Map({})).forEach((outputMeta, outputId) => {
-          this.renderSynapse(bodyId, outputId, outputMeta);
+          this.renderSynapse(bodyId, outputId, outputMeta, false, synapseRadiusChanged);
         });
       });
 
@@ -408,6 +432,11 @@ class SkeletonView extends React.Component {
     actions.toggleSynapsesOnTop(index);
   }
 
+  handleSynapseSizeChange = (event, value) => {
+    const { actions, index } = this.props;
+    actions.setSynapseRadius(value, index);
+  }
+
   unloadCompartment(id) {
     const { sharkViewer } = this.state;
     sharkViewer.unloadCompartment(id);
@@ -434,18 +463,20 @@ class SkeletonView extends React.Component {
     }, 200);
   }
 
-  unloadSynapse(bodyId, synapseId) {
+  unloadSynapse(bodyId, synapseId, render = true) {
     const { sharkViewer } = this.state;
     const name = `${bodyId}_${synapseId}`;
     sharkViewer.unloadNeuron(name, true);
-    sharkViewer.render();
-    sharkViewer.render();
-    // UGLY: there is a weird bug that means sometimes the scene is rendered blank.
-    // it seems to be some sort of timing issue, and adding a delayed render seems
-    // to fix it.
-    setTimeout(() => {
+    if (render) {
       sharkViewer.render();
-    }, 200);
+      sharkViewer.render();
+      // UGLY: there is a weird bug that means sometimes the scene is rendered blank.
+      // it seems to be some sort of timing issue, and adding a delayed render seems
+      // to fix it.
+      setTimeout(() => {
+        sharkViewer.render();
+      }, 200);
+    }
   }
 
   removeCompartmentsFromState(ids) {
@@ -586,12 +617,34 @@ class SkeletonView extends React.Component {
     this.setState({ outputs: updated });
   }
 
-  renderSynapse(bodyId, synapseId, synapseData, moveCamera = false) {
+  synapseRadiusDidChange(newRadius) {
+    const { sharkViewerSynapseRadius } = this.state;
+    if (newRadius !== sharkViewerSynapseRadius) {
+      // Save in the state the radius that is used to create the data passed to sharkViewer.
+      // Doing so makes it possible to detect when that radius has changed and the data 
+      // needs to be passed again.  Trying to detect the change by only comparing props
+      // does not always work, since componentDidUpdate sometimes waits for sharkViewer
+      // to be created.
+      this.setState({ sharkViewerSynapseRadius: newRadius });
+      return true;
+    }
+    return false;
+  }
+
+  renderSynapse(bodyId, synapseId, synapseData, moveCamera = false, radiusChange = false) {
     const { sharkViewer } = this.state;
+    const { synapseRadius } = this.props;
     const name = `${bodyId}_${synapseId}`;
     const exists = sharkViewer.neuronLoaded(name, true);
     if (!exists) {
-      sharkViewer.loadNeuron(name, synapseData.color, synapseData.swc, moveCamera, true);
+      const swc = radiusChange
+        ? objectMap(synapseData.swc, value => {
+            const updatedValue = value;
+            updatedValue.radius = synapseRadius;
+            return updatedValue;
+          })
+        : synapseData.swc;
+      sharkViewer.loadNeuron(name, synapseData.color, swc, moveCamera, true);
       sharkViewer.render();
       sharkViewer.render();
       // UGLY: there is a weird bug that means sometimes the scene is rendered blank.
@@ -659,7 +712,7 @@ class SkeletonView extends React.Component {
   }
 
   render() {
-    const { classes, query, neo4jsettings, synapses } = this.props;
+    const { classes, query, neo4jsettings, synapses, synapseRadius } = this.props;
 
     const { compartments = '' } = query.pm;
 
@@ -680,6 +733,7 @@ class SkeletonView extends React.Component {
         <ActionMenu
           key={name}
           color={currcolor}
+          synapseRadius={synapseRadius}
           dataSet={query.pm.dataset}
           isVisible={neuron.get('visible')}
           body={neuron}
@@ -733,12 +787,26 @@ class SkeletonView extends React.Component {
           label="Spindle View"
         />
         {areSynapses &&
-          <FormControlLabel
-            control={
-              <Switch onChange={this.handleSynapsesOnTopToggle} checked={synapsesOnTopChecked} color="primary" />
-            }
-            label="Synapses On Top"
-          />
+          <React.Fragment>
+            <FormControlLabel
+              control={
+                <Switch onChange={this.handleSynapsesOnTopToggle} checked={synapsesOnTopChecked} color="primary" />
+              }
+              label="Synapses On Top"
+            />
+            <span className={classes.bottomControlsSlider} >
+              <Slider 
+                value={synapseRadius}
+                onChange={this.handleSynapseSizeChange}         
+                min={MinSynapseRadius} 
+                max={MaxSynapseRadius} 
+                step={1} 
+                color="primary" />
+              <span className={classes.bottomControlsSliderLabel} >
+                Synapse Size
+              </span>
+            </span>
+          </React.Fragment>
         }
       </FormGroup>
     );
@@ -760,7 +828,8 @@ SkeletonView.propTypes = {
   classes: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired,
   neo4jsettings: PropTypes.object.isRequired,
-  synapses: PropTypes.object.isRequired
+  synapses: PropTypes.object.isRequired,
+  synapseRadius: PropTypes.number.isRequired
 };
 
 export default withStyles(styles)(SkeletonView);
