@@ -26,7 +26,8 @@ const styles = theme => ({
   },
   toolbar: theme.mixins.toolbar,
   query: {
-    overflow: 'auto'
+    overflow: 'auto',
+    flex: 'auto'
   }
 });
 
