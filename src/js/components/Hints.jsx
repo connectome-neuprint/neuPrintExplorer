@@ -21,7 +21,7 @@ const styles = theme => ({
 const HintText = [
   <Typography>
     Explore high-level region-to-region projectome-level connectivity as an entry point to analysis
-    with the <a href="/?openQuery=true&Query%5BqueryType%5D=ROI%20Connectivity">ROI Connectivity</a>{' '}
+    with the <a href="/?openQuery=true&Query%5BqueryType%5D=ROI%20Connectivity">Brain Region Connectivity</a>{' '}
     query.
   </Typography>,
   <Typography>
