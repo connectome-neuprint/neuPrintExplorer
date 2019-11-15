@@ -96,6 +96,7 @@ class QueryForm extends React.Component {
       actions,
       dataSet,
       availableROIs,
+       superROIsByDataSet,
       isQuerying,
       neoServerSettings
     } = this.props;
@@ -118,9 +119,14 @@ class QueryForm extends React.Component {
     }
 
     let currROIs = [];
+    let superROIs = [];
 
     if (dataSet in availableROIs) {
       currROIs = availableROIs[dataSet];
+    }
+
+    if (dataSet in superROIsByDataSet) {
+      superROIs = superROIsByDataSet[dataSet];
     }
 
     return (
@@ -149,6 +155,7 @@ class QueryForm extends React.Component {
             datasetstr={dataSet}
             dataSet={dataSet}
             availableROIs={currROIs}
+            superROIs={superROIs}
             disable={isQuerying}
             isQuerying={isQuerying}
             neoServerSettings={neoServerSettings}
@@ -174,7 +181,8 @@ QueryForm.propTypes = {
   actions: PropTypes.object.isRequired,
   allResults: PropTypes.object.isRequired,
   neoServerSettings: PropTypes.object.isRequired,
-  availableROIs: PropTypes.object.isRequired
+  availableROIs: PropTypes.object.isRequired,
+  superROIsByDataSet: PropTypes.object.isRequired
 };
 
 const QueryFormState = state => ({
@@ -184,7 +192,8 @@ const QueryFormState = state => ({
   userInfo: state.user.get('userInfo'),
   allResults: state.results.get('allResults'),
   neoServerSettings: state.neo4jsettings,
-  availableROIs: state.neo4jsettings.get('availableROIs')
+  availableROIs: state.neo4jsettings.get('availableROIs'),
+  superROIsByDataSet: state.neo4jsettings.get('superROIs')
 });
 
 const QueryFormDispatch = dispatch => ({
