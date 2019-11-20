@@ -242,7 +242,8 @@ class Result extends React.Component {
       showCypher,
       visibleColumns,
       tabIndex,
-      fixed
+      fixed,
+      user
     } = this.props;
 
     const query = getQueryObject();
@@ -397,6 +398,7 @@ class Result extends React.Component {
                         neoServer={neoServer}
                         neo4jsettings={neo4jsettings}
                         visibleColumns={visibleColumns.get(tabIndex, Immutable.List([]))}
+                        user={user}
                       />
                     </div>
                   )}
@@ -470,7 +472,8 @@ Result.propTypes = {
   showCypher: PropTypes.bool.isRequired,
   visibleColumns: PropTypes.object.isRequired,
   tabIndex: PropTypes.number.isRequired,
-  fixed: PropTypes.bool
+  fixed: PropTypes.bool,
+  user: PropTypes.object.isRequired
 };
 
 Result.defaultProps = {
@@ -494,7 +497,8 @@ const ResultState = state => ({
   neo4jsettings: state.neo4jsettings,
   token: state.user.get('token'),
   neoServer: state.neo4jsettings.get('neoServer'),
-  visibleColumns: state.visibleColumns.get('tab')
+  visibleColumns: state.visibleColumns.get('tab'),
+  user: state.user
 });
 
 const ResultDispatch = dispatch => ({
