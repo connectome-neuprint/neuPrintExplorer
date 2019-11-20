@@ -12,6 +12,14 @@ function generateGraph(rois, dataSet, mouseOver, mouseOut) {
   let maxWeight = 0;
   let maxCount = 0;
 
+  if (!roiNames) {
+    return (
+      <div>
+        <p>Failed to load roi information</p>
+      </div>
+    );
+  }
+
   // loop over to set weight color thresholds
   roiNames.forEach(input => {
     roiNames.forEach(output => {
@@ -66,7 +74,7 @@ function generateGraph(rois, dataSet, mouseOver, mouseOut) {
       pathname: '/results',
       search: getQueryString()
     });
-  };
+  }
 
   return (
     <React.Fragment>
@@ -81,7 +89,7 @@ function generateGraph(rois, dataSet, mouseOver, mouseOut) {
         onFocus={mouseOver}
         onMouseOut={mouseOut}
         onBlur={mouseOver}
-        maxColor='#396a9f'
+        maxColor="#396a9f"
       />
     </React.Fragment>
   );
@@ -126,7 +134,7 @@ ConnectivityHeatMap.propTypes = {
   dataSet: PropTypes.string.isRequired,
   actions: PropTypes.object.isRequired,
   mouseOver: PropTypes.func.isRequired,
-  mouseOut: PropTypes.func.isRequired,
+  mouseOut: PropTypes.func.isRequired
 };
 
 export default ConnectivityHeatMap;
