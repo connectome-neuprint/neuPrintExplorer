@@ -35,7 +35,7 @@ export default function resultsReducer(state = resultsState, action) {
       return state.setIn(['loading', action.tab], false)
     }
     case C.PLUGIN_SAVE_RESPONSE: {
-      const old = state.getIn(['allResults', action.tabIndex], {});
+      const old = state.getIn(['allResults', action.tabIndex], {}) || {};
       const { paramsPrivate } = old;
       return state.setIn(['allResults', action.tabIndex], {
         result: action.response,
