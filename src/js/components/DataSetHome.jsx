@@ -1,11 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@material-ui/core/Grid';
+import { withStyles } from '@material-ui/core/styles';
 import ROICompletenessChart from 'containers/visualization/ROICompletenessChart';
 import Connectivity from 'components/Connectivity';
 
+const styles = () => ({
+  connectivity: {
+    position: 'relative',
+  }
+});
+
 function DataSetHome(props) {
-  const { dataSet } = props;
+  const { dataSet, classes } = props;
   return (
     <Grid container spacing={24} justify="center">
       <Grid item sm={4}>
@@ -21,7 +28,7 @@ function DataSetHome(props) {
           </Grid>
         </Grid>
       </Grid>
-      <Grid item sm={8}>
+      <Grid item sm={8} className={classes.connectivity} >
         <Connectivity dataSet={dataSet} />
       </Grid>
     </Grid>
@@ -29,7 +36,8 @@ function DataSetHome(props) {
 }
 
 DataSetHome.propTypes = {
-  dataSet: PropTypes.string.isRequired
+  dataSet: PropTypes.string.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
-export default DataSetHome;
+export default withStyles(styles)(DataSetHome);

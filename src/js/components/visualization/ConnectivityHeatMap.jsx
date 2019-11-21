@@ -2,9 +2,22 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import HeatMap from '@neuprint/react-heatmap';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { withStyles } from '@material-ui/core/styles';
 
 import { getQueryString, setSearchQueryString } from 'helpers/queryString';
 import history from '../../history';
+
+
+const styles = () => ({
+  loader: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginTop: '-40px',
+    marginLeft: '-40px'
+  }
+});
 
 function generateGraph(rois, dataSet, mouseOver, mouseOut) {
   const roiNames = rois.roi_names;
@@ -96,7 +109,7 @@ function generateGraph(rois, dataSet, mouseOver, mouseOut) {
 }
 
 function ConnectivityHeatMap(props) {
-  const { dataSet, actions, mouseOver, mouseOut } = props;
+  const { dataSet, actions, mouseOver, mouseOut, classes } = props;
   const [roiInfo, setRoiInfo] = useState(0);
 
   useEffect(() => {
@@ -127,14 +140,15 @@ function ConnectivityHeatMap(props) {
     return generateGraph(roiInfo, dataSet, mouseOver, mouseOut);
   }
   // return the loading statement
-  return <p>loading ConnectivityHeatMap for {dataSet}</p>;
+  return <CircularProgress className={classes.loader} />;
 }
 
 ConnectivityHeatMap.propTypes = {
   dataSet: PropTypes.string.isRequired,
   actions: PropTypes.object.isRequired,
   mouseOver: PropTypes.func.isRequired,
-  mouseOut: PropTypes.func.isRequired
+  mouseOut: PropTypes.func.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
-export default ConnectivityHeatMap;
+export default withStyles(styles)(ConnectivityHeatMap);
