@@ -16,6 +16,10 @@ const styles = () => ({
     left: '50%',
     marginTop: '-40px',
     marginLeft: '-40px'
+  },
+  loading: {
+    position: 'relative',
+    height: '100%'
   }
 });
 
@@ -140,7 +144,11 @@ function ConnectivityHeatMap(props) {
     return generateGraph(roiInfo, dataSet, mouseOver, mouseOut);
   }
   // return the loading statement
-  return <CircularProgress className={classes.loader} />;
+  return (
+    <div className={classes.loading}>
+      <CircularProgress className={classes.loader} />
+    </div>
+  );
 }
 
 ConnectivityHeatMap.propTypes = {
