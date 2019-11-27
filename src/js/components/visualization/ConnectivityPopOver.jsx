@@ -17,6 +17,8 @@ function ConnectivityPopOver(props) {
   const { contents, target, classes } = props;
   if (contents) {
     const coords = target.getBoundingClientRect();
+    // TODO: if coordinates are too close to the window edge, then flip the
+    // pop up to the other side of the mouse cursor.
     return (
       <div className={classes.popover} style={{ top: coords.y + 20, left: coords.x + 20 }}>
         <p>
