@@ -96,7 +96,10 @@ class Login extends React.Component {
     // clear the login cookie(s) here.
     Cookies.remove("neuPrintHTTP");
     Cookies.remove("neuPrintHTTP", { path: '/', domain: '.janelia.org'});
+    Cookies.remove("neuPrintHTTP", { path: '/', domain: window.location.hostname});
     Cookies.remove("flyem-services");
+    Cookies.remove("flyem-services", { path: '/', domain: '.janelia.org'});
+    Cookies.remove("flyem-services", { path: '/', domain: window.location.hostname});
     logoutUser();
     window.location = '/';
   };
