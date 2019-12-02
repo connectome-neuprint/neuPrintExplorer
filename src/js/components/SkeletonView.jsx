@@ -72,10 +72,10 @@ const styles = theme => ({
     flex: 1,
     display: 'inline-flex',
     alignItems: 'center',
-    fontSize: '0.875rem', 
-    marginLeft: -11, 
+    fontSize: '0.875rem',
+    marginLeft: -11,
     marginRight: 16,
-    minWidth: '150px', 
+    minWidth: '150px',
     maxWidth: '400px',
     padding: theme.spacing.unit
   },
@@ -621,7 +621,7 @@ class SkeletonView extends React.Component {
     const { sharkViewerSynapseRadius } = this.state;
     if (newRadius !== sharkViewerSynapseRadius) {
       // Save in the state the radius that is used to create the data passed to sharkViewer.
-      // Doing so makes it possible to detect when that radius has changed and the data 
+      // Doing so makes it possible to detect when that radius has changed and the data
       // needs to be passed again.  Trying to detect the change by only comparing props
       // does not always work, since componentDidUpdate sometimes waits for sharkViewer
       // to be created.
@@ -764,7 +764,7 @@ class SkeletonView extends React.Component {
     const spindleChecked = Boolean(query.sp);
     const synapsesOnTopChecked = Boolean(query.sot);
 
-    // the synapses map never loses keys, so there are no synapses shown when 
+    // the synapses map never loses keys, so there are no synapses shown when
     // each of those keys is associated with nothing
     let areSynapses = false;
     synapses.forEach((value) => {
@@ -795,12 +795,12 @@ class SkeletonView extends React.Component {
               label="Synapses On Top"
             />
             <span className={classes.bottomControlsSlider} >
-              <Slider 
+              <Slider
                 value={synapseRadius}
-                onChange={this.handleSynapseSizeChange}         
-                min={MinSynapseRadius} 
-                max={MaxSynapseRadius} 
-                step={1} 
+                onChange={this.handleSynapseSizeChange}
+                min={MinSynapseRadius}
+                max={MaxSynapseRadius}
+                step={1}
                 color="primary" />
               <span className={classes.bottomControlsSliderLabel} >
                 Synapse Size
