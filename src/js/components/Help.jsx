@@ -149,7 +149,7 @@ class Help extends React.Component {
             <div className={classes.flex}>
               <Button onClick={this.handleOpen}>
                 <img
-                  src="https://raw.githubusercontent.com/connectome-neuprint/neuPrint/master/pgmv1.png"
+                  src="/public/datamodel.png"
                   alt="Neo4j graph model diagram"
                   className={classes.img}
                 />
@@ -163,7 +163,7 @@ class Help extends React.Component {
                 <div className={classes.graphModel}>
                   <Button onClick={this.handleClose}>
                     <img
-                      src="https://raw.githubusercontent.com/connectome-neuprint/neuPrint/master/pgmv1.png"
+                      src="/public/datamodel.png"
                       alt="Neo4j graph model diagram"
                       className={classes.img}
                     />
