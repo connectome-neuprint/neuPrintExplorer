@@ -13,7 +13,6 @@ import 'swagger-ui/dist/swagger-ui.css';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import AppBar from '@material-ui/core/AppBar';
-import Slides from './Slides';
 
 function TabContainer(props) {
   const { children } = props;
@@ -69,7 +68,7 @@ class Help extends React.Component {
 
   componentDidUpdate() {
     const { value } = this.state;
-    if (value === 1) {
+    if (value === 3) {
       SwaggerUi({
         dom_id: '#swaggerContainer',
         url: '/api/help/swagger.yaml',
@@ -98,16 +97,18 @@ class Help extends React.Component {
       <div className={classes.root}>
         <AppBar position="static" color="default">
           <Tabs value={value} onChange={this.handleChange}>
-            <Tab label="Model Overview" />
-            <Tab label="neuPrint API" />
-            <Tab label="Slides" />
+            <Tab label="Overview" />
+            <Tab label="Basic Analysis" />
+            <Tab label="Batch Analysis" />
+            <Tab label="Programmer's Interface" />
+            <Tab label="Technical Details" />
           </Tabs>
         </AppBar>
 
         {value === 0 && (
           <TabContainer>
             <div className={classes.roottext}>
-              <Typography variant="h6">Graph Data Model</Typography>
+              <Typography variant="h6">Overview</Typography>
               <Typography>
                 The data is stored in Neo4j, a graph database, and is accessible through custom
                 Cypher queries. This app provides a series of interfaces to simplify common access
@@ -174,15 +175,28 @@ class Help extends React.Component {
         )}
         {value === 1 && (
           <TabContainer>
-            <div id="swaggerContainer" />
+            <div className={classes.roottext}>
+              <Typography>tutorial videos and biological terms</Typography>
+            </div>
           </TabContainer>
         )}
         {value === 2 && (
           <TabContainer>
             <div className={classes.roottext}>
-              <Typography>The following slides describe how data is stored in Neo4j.</Typography>
+              <Typography>data modelling and batch analysis</Typography>
             </div>
-            <Slides />
+          </TabContainer>
+        )}
+        {value === 3 && (
+          <TabContainer>
+            <div id="swaggerContainer" />
+          </TabContainer>
+        )}
+        {value === 4 && (
+          <TabContainer>
+            <div className={classes.roottext}>
+              <Typography>low-level technical details. neuprint paper link, how to download.</Typography>
+            </div>
           </TabContainer>
         )}
       </div>
