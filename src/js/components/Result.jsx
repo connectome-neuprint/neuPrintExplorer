@@ -358,8 +358,8 @@ class Result extends React.Component {
             if (processingPlugin.details.visType === 'SkeletonView') {
               const queryData = getQueryData(combined);
               const viewKey = `t${tabIndex}`;
-              const synapseRadius = (cachedResults && cachedResults.paramsPrivate && cachedResults.paramsPrivate.synapseRadius) ? 
-                cachedResults.paramsPrivate.synapseRadius : 
+              const synapseRadius = (cachedResults && cachedResults.paramsPrivate && cachedResults.paramsPrivate.synapseRadius) ?
+                cachedResults.paramsPrivate.synapseRadius :
                 DefaultSynapseRadius;
               tabData = (
                 <ScrollManager scrollKey={viewKey}>

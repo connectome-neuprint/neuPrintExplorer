@@ -712,7 +712,7 @@ class SkeletonView extends React.Component {
   }
 
   render() {
-    const { classes, query, neo4jsettings, synapses, synapseRadius } = this.props;
+    const { classes, query, neo4jsettings, synapses, synapseRadius, hideControls } = this.props;
 
     const { compartments = '' } = query.pm;
 
@@ -811,6 +811,14 @@ class SkeletonView extends React.Component {
       </FormGroup>
     );
 
+    if (hideControls) {
+      return (
+        <div className={classes.root}>
+          <div className={classes.skel} ref={this.skelRef} id="skeletonviewer" />
+        </div>
+      );
+    }
+
     return (
       <div className={classes.root}>
         <div className={classes.floater}>{chipsArray}</div>
@@ -829,7 +837,12 @@ SkeletonView.propTypes = {
   actions: PropTypes.object.isRequired,
   neo4jsettings: PropTypes.object.isRequired,
   synapses: PropTypes.object.isRequired,
+  hideControls: PropTypes.bool,
   synapseRadius: PropTypes.number.isRequired
+};
+
+SkeletonView.defaultProps = {
+  hideControls: false
 };
 
 export default withStyles(styles)(SkeletonView);
