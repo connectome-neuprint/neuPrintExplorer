@@ -4,6 +4,8 @@ import Grid from '@material-ui/core/Grid';
 import ROICompletenessChart from 'containers/visualization/ROICompletenessChart';
 import Connectivity from 'components/Connectivity';
 
+import DataSetLogo from './DataSetLogo';
+
 function DataSetHome(props) {
   const { dataSet } = props;
   return (
@@ -11,7 +13,7 @@ function DataSetHome(props) {
       <Grid item sm={4}>
         <Grid container spacing={24} justify="center">
           <Grid item xs={12}>
-            <p>Meta Info for {dataSet}</p>
+            <DataSetLogo dataSet={dataSet} />
           </Grid>
           <Grid item xs={12}>
             <p>Stats for {dataSet}</p>
