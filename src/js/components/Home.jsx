@@ -17,6 +17,7 @@ import { getQueryObject } from 'helpers/queryString';
 import { clearResultsCache } from 'actions/plugins';
 
 import ServerInfoCard from './ServerInfoCard';
+import DataSetLogo from './DataSetLogo';
 import News from './News';
 import Hints from './Hints';
 import DataSetHome from './DataSetHome';
@@ -83,7 +84,6 @@ function Home(props) {
   return (
     <div className={classes.root}>
       <Grid container spacing={24} justify="center" className={classes.container}>
-        <Grid item xs={2} />
         <Grid item xs={8} className={classes.roottext}>
           <Typography variant="h3">Analysis tools for connectomics</Typography>
           <Typography className={classes.description}>
@@ -98,7 +98,9 @@ function Home(props) {
             </Typography>
           )}
         </Grid>
-        <Grid item xs={2} />
+        <Grid item xs={4}>
+          <DataSetLogo dataSet={queryObject.dataset} />
+        </Grid>
         {(queryObject.dataset && loggedIn) && (
           <Grid item xs={12}>
             <DataSetHome dataSet={queryObject.dataset} />

@@ -1,10 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
 
-export default function DataSetLogo(props) {
+const styles = () => ({
+  wrapper: {
+    position: 'relative',
+    height: '150px',
+    display: 'table-cell'
+  },
+  title: {
+    width: '100%',
+    background: 'hsla(0, 0%, 0%, 0.5)',
+    padding: '0.3em 1em',
+    color: 'hsl(0, 0%, 100%)',
+    position: 'absolute',
+    bottom: 0,
+    textAlign: 'center',
+    fontWeight: 'bold'
+  },
+  image: {
+    maxWidth: '100%',
+    maxHeight: '100%'
+  }
+});
+
+function DataSetLogo(props) {
   const [imgUrl, setImageUrl] = useState(null);
 
-  const { dataSet } = props;
+  const { dataSet, classes } = props;
   const altText = `data set logo for ${dataSet}`;
 
   useEffect(() => {
@@ -26,7 +49,12 @@ export default function DataSetLogo(props) {
   }, []);
 
   if (imgUrl) {
-    return <img style={{ maxWidth: '100%' }} src={imgUrl} alt={altText} />;
+    return (
+      <div className={classes.wrapper}>
+        <p className={classes.title}>Data set: {dataSet}</p>
+        <img className={classes.image} src={imgUrl} alt={altText} />
+      </div>
+    );
   }
   return React.Fragment;
 }
@@ -34,3 +62,5 @@ export default function DataSetLogo(props) {
 DataSetLogo.propTypes = {
   dataSet: PropTypes.string.isRequired
 };
+
+export default withStyles(styles)(DataSetLogo);
