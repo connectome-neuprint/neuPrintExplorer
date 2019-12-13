@@ -46,7 +46,7 @@ function NeuronOfTheDay(props) {
     <Grid container spacing={24}>
       <Grid item xs={12}>
         <p>
-          Neuron of the Day - <Link to={cellTypeLink}>{data.info.typename}</Link>
+          Cell Type of the Day - <Link to={cellTypeLink}>{data.info.typename}</Link>
         </p>
       </Grid>
       <Grid item xs={12} style={{ height: '200px' }}>
