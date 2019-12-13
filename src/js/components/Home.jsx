@@ -21,6 +21,7 @@ import DataSetLogo from './DataSetLogo';
 import News from './News';
 import Hints from './Hints';
 import DataSetHome from './DataSetHome';
+import NeuronOfTheDay from './NeuronOfTheDay';
 
 
 import './Home.css';
@@ -101,8 +102,11 @@ function Home(props) {
         <Grid item xs={4}>
           <DataSetLogo dataSet={queryObject.dataset} />
         </Grid>
+        <Grid item sm={12} md={4}>
+          <NeuronOfTheDay dataSet={queryObject.dataset} />
+        </Grid>
         {(queryObject.dataset && loggedIn) && (
-          <Grid item xs={12}>
+          <Grid item sm={12} md={8}>
             <DataSetHome dataSet={queryObject.dataset} />
           </Grid>
         )}

@@ -127,3 +127,14 @@ export function getSiteParams(location) {
     }) || {};
   return Immutable.fromJS(decoded);
 }
+
+export function addSearchToQuery(newData) {
+  const currentPluginQuery = getPluginQueryObject();
+  currentPluginQuery.push(newData);
+  const tab = currentPluginQuery.length - 1;
+
+  const currentQuery = getQueryObject();
+  const updatedData = merge(currentQuery, {'qr': currentPluginQuery, tab }, { arrayMerge: overwriteMerge });
+  const updatedQuery = qs.stringify(updatedData);
+  return updatedQuery;
+}
