@@ -2,12 +2,26 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+
 import Grid from '@material-ui/core/Grid';
+import Card from '@material-ui/core/Card';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import CardHeader from '@material-ui/core/CardHeader';
+import CardContent from '@material-ui/core/CardContent';
+import { withStyles } from '@material-ui/core/styles';
+
 import { SunburstFormatter, SkeletonFormatter } from '@neuprint/support';
 import { addSearchToQuery } from 'helpers/queryString';
 
+const styles = theme => ({
+  typeName: {
+    padding: theme.spacing.unit * 2
+  }
+});
+
 function NeuronOfTheDay(props) {
-  const { dataSet, superROIs } = props;
+  const { dataSet, superROIs, classes } = props;
 
   const [data, setData] = useState(null);
 
@@ -45,19 +59,41 @@ function NeuronOfTheDay(props) {
   return (
     <Grid container spacing={24}>
       <Grid item xs={12}>
-        <p>
+        <Paper className={classes.typeName}>
           Cell Type of the Day - <Link to={cellTypeLink}>{data.info.typename}</Link>
-        </p>
+        </Paper>
       </Grid>
-      <Grid item xs={12} style={{ height: '200px' }}>
-        <SkeletonFormatter rawData={data.skeleton.data} />
+      <Grid item xs={12}>
+        <Card>
+          <CardHeader
+            title={<Typography vairant="p">Example Neuron Morphology</Typography>}
+            className="homeCardHeader"
+          />
+          <CardContent>
+            <div style={{ height: '300px' }}>
+              <SkeletonFormatter rawData={data.skeleton.data} />
+            </div>
+          </CardContent>
+        </Card>
       </Grid>
-      <Grid item xs={12} style={{ height: '200px' }}>
-        <SunburstFormatter
-          bodyId={data.info.bodyid}
-          rawData={data.connectivity.data}
-          superROIs={superROIs[dataSet]}
-        />
+      <Grid item xs={12} style={{ height: '400px' }}>
+        <Card>
+          <CardHeader
+            title={
+              <Typography variant="p">
+                Synapse Connectivity (broken down by cell type and region)
+              </Typography>
+            }
+            className="homeCardHeader"
+          />
+          <CardContent>
+            <SunburstFormatter
+              bodyId={data.info.bodyid}
+              rawData={data.connectivity.data}
+              superROIs={superROIs[dataSet]}
+            />
+          </CardContent>
+        </Card>
       </Grid>
     </Grid>
   );
@@ -65,14 +101,17 @@ function NeuronOfTheDay(props) {
 
 NeuronOfTheDay.propTypes = {
   dataSet: PropTypes.string.isRequired,
-  superROIs: PropTypes.object.isRequired
+  superROIs: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
 const NeuronState = state => ({
   superROIs: state.neo4jsettings.get('superROIs')
 });
 
-export default connect(
-  NeuronState,
-  null
-)(NeuronOfTheDay);
+export default withStyles(styles)(
+  connect(
+    NeuronState,
+    null
+  )(NeuronOfTheDay)
+);
