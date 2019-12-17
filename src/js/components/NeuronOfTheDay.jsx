@@ -66,7 +66,7 @@ function NeuronOfTheDay(props) {
       <Grid item xs={12}>
         <Card>
           <CardHeader
-            title={<Typography vairant="p">Example Neuron Morphology</Typography>}
+            title={<Typography variant="body1">Example Neuron Morphology</Typography>}
             className="homeCardHeader"
           />
           <CardContent>
@@ -80,7 +80,7 @@ function NeuronOfTheDay(props) {
         <Card>
           <CardHeader
             title={
-              <Typography variant="p">
+              <Typography variant="body1">
                 Synapse Connectivity (broken down by cell type and region)
               </Typography>
             }

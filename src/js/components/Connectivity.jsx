@@ -32,7 +32,7 @@ class Connectivity extends React.Component {
     return (
       <Card>
         <CardHeader
-          title={<Typography variant="p">Brain Region Connectivity</Typography>}
+          title={<Typography variant="body1">Brain Region Connectivity</Typography>}
           className="homeCardHeader"
         />
         <CardContent>
