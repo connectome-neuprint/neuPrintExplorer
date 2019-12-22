@@ -10,3 +10,7 @@
 .celltype .heatmap {
   overflow: auto;
 }
+
+.celltype {
+  padding: 1em;
+}
