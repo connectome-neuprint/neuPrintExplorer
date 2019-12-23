@@ -71,7 +71,7 @@ function NeuronOfTheDay(props) {
           />
           <CardContent>
             <div style={{ height: '300px' }}>
-              <SkeletonFormatter rawData={data.skeleton.data} />
+              {data.skeleton && <SkeletonFormatter rawData={data.skeleton.data} />}
             </div>
           </CardContent>
         </Card>

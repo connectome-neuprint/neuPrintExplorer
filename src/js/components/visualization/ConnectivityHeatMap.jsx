@@ -107,6 +107,7 @@ function generateGraph(rois, dataSet, mouseOver, mouseOut) {
         onMouseOut={mouseOut}
         onBlur={mouseOver}
         maxColor="#396a9f"
+        textLabels={false}
       />
     </React.Fragment>
   );
