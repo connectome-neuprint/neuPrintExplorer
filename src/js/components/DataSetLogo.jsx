@@ -43,7 +43,9 @@ function DataSetLogo(props) {
       .then(result => result.json())
       .then(resp => {
         if (!('message' in resp)) {
-          setImageUrl(resp.data[0][0]);
+          if (resp.data && resp.data[0]) {
+            setImageUrl(resp.data[0][0]);
+          }
         }
       });
   }, []);
