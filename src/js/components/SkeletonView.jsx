@@ -128,7 +128,7 @@ class SkeletonView extends React.Component {
     const { query, synapses, synapseRadius } = this.props;
     // TODO: check to see if the synapse selection has changed. If so, update
     // the viewer to show the changes.
-    const { sharkViewer } = this.state;
+    const { sharkViewer, bodies } = this.state;
     if (sharkViewer) {
       const synapseRadiusChanged = this.synapseRadiusDidChange(synapseRadius);
       if (!deepEqual(this.props, prevProps)) {
@@ -203,11 +203,21 @@ class SkeletonView extends React.Component {
 
       // render synapses that are new, ie those that are in props, but not prevProps
       synapses.forEach((value, bodyId) => {
+        const isVisible = bodies.get(bodyId, Immutable.Map({})).get('visible');
+
         value.get('inputs', Immutable.Map({})).forEach((inputMeta, inputId) => {
-          this.renderSynapse(bodyId, inputId, inputMeta, false, synapseRadiusChanged);
+          if (isVisible) {
+            this.renderSynapse(bodyId, inputId, inputMeta, false, synapseRadiusChanged);
+          } else {
+            this.unloadSynapse(bodyId, inputId);
+          }
         });
         value.get('outputs', Immutable.Map({})).forEach((outputMeta, outputId) => {
-          this.renderSynapse(bodyId, outputId, outputMeta, false, synapseRadiusChanged);
+          if (isVisible) {
+            this.renderSynapse(bodyId, outputId, outputMeta, false, synapseRadiusChanged);
+          } else {
+            this.unloadSynapse(bodyId, outputId);
+          }
         });
       });
 
@@ -219,7 +229,7 @@ class SkeletonView extends React.Component {
 
       if (!deepEqual(this.state, prevState)) {
         // only perform actions here that update the canvas rendering.
-        const { bodies, compartments } = this.state;
+        const { compartments } = this.state;
         const { bodies: prevBodies, compartments: prevCompartments } = prevState;
 
         // un-render missing bodies
@@ -277,7 +287,6 @@ class SkeletonView extends React.Component {
       }
 
       if (query.sp !== prevProps.query.sp) {
-        const { bodies } = this.state;
         bodies.forEach(bodyId => {
           // unload all the bodies
           this.unloadBody(bodyId.get('name'));
@@ -632,11 +641,13 @@ class SkeletonView extends React.Component {
   }
 
   renderSynapse(bodyId, synapseId, synapseData, moveCamera = false, radiusChange = false) {
-    const { sharkViewer } = this.state;
+    const { sharkViewer, bodies } = this.state;
     const { synapseRadius } = this.props;
     const name = `${bodyId}_${synapseId}`;
     const exists = sharkViewer.neuronLoaded(name, true);
-    if (!exists) {
+    const isVisible = bodies.get(bodyId).get('visible');
+
+    if (!exists && isVisible) {
       const swc = radiusChange
         ? objectMap(synapseData.swc, value => {
             const updatedValue = value;
@@ -645,11 +656,19 @@ class SkeletonView extends React.Component {
           })
         : synapseData.swc;
       sharkViewer.loadNeuron(name, synapseData.color, swc, moveCamera, true);
+      sharkViewer.setNeuronVisible(name, isVisible);
       sharkViewer.render();
       sharkViewer.render();
       // UGLY: there is a weird bug that means sometimes the scene is rendered blank.
       // it seems to be some sort of timing issue, and adding a delayed render seems
       // to fix it.
+      setTimeout(() => {
+        sharkViewer.render();
+      }, 200);
+    } else if (exists && !isVisible) {
+      // the neuron has been hidden, so hide the synapses as well.
+      sharkViewer.unloadNeuron(name);
+      sharkViewer.render();
       setTimeout(() => {
         sharkViewer.render();
       }, 200);
