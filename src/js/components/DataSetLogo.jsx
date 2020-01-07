@@ -33,7 +33,7 @@ function DataSetLogo(props) {
   useEffect(() => {
     fetch('/api/custom/custom', {
       credentials: 'include',
-      body: JSON.stringify({ cypher: `MATCH (m :${dataSet}_Meta) RETURN m.logo` }),
+      body: JSON.stringify({ cypher: `MATCH (m :Meta) RETURN m.logo` }),
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
