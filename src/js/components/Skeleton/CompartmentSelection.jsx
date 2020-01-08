@@ -27,7 +27,10 @@ class CompartmentSelection extends React.Component {
 
   handleROIChange = chosen => {
     const {actions} = this.props;
-    const chosenList = chosen.map(item => item.value);
+    let chosenList = [];
+    if (chosen) {
+      chosenList = chosen.map(item => item.value);
+    }
     actions.setROIs(chosenList);
   };
 
