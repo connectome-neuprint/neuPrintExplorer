@@ -29,6 +29,9 @@ export default function neo4jreducer(state = neo4jsettingsState, action) {
     case C.SET_NEO_MESHINFO: {
       return state.set('meshInfo', action.dataSets);
     }
+    case C.SET_NEO_ROIINFO: {
+      return state.set('roiInfo', action.rois);
+    }
     case C.SET_NEO_SERVER_PUBLIC: {
       return state.set('publicState', action.publicState);
     }

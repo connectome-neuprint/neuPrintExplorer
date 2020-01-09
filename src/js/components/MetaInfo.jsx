@@ -35,7 +35,7 @@ class MetaInfo extends React.Component {
   }
 
   updateDB = () => {
-    const { setNeoDatasets, setNeoServer, setNeoServerPublic, setMeshInfo } = this.props;
+    const { setRoiInfo, setNeoDatasets, setNeoServer, setNeoServerPublic, setMeshInfo } = this.props;
     fetch('/api/dbmeta/datasets', {
       credentials: 'include'
     })
@@ -86,6 +86,24 @@ class MetaInfo extends React.Component {
         setNeoServerPublic(resp.IsPublic);
       });
 
+   fetch('/api/custom/custom', {
+      credentials: 'include',
+      body: JSON.stringify({ cypher: 'MATCH (n:Meta) RETURN n.roiInfo' }),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      }
+    })
+      .then(result => result.json())
+      .then(resp => {
+        if (!('message' in resp)) {
+          if (resp.data && resp.data[0]) {
+            setRoiInfo(JSON.parse(resp.data[0][0]));
+          }
+        }
+      });
+
 
     fetch('/api/custom/custom', {
       credentials: 'include',
@@ -121,6 +139,7 @@ MetaInfo.propTypes = {
   setNeoServer: PropTypes.func.isRequired,
   setNeoServerPublic: PropTypes.func.isRequired,
   setMeshInfo: PropTypes.func.isRequired,
+  setRoiInfo: PropTypes.func.isRequired,
   userInfo: PropTypes.object.isRequired
 };
 
@@ -154,6 +173,12 @@ const MetaInfoDispatch = dispatch => ({
     dispatch({
       type: C.SET_NEO_MESHINFO,
       dataSets
+    });
+  },
+  setRoiInfo(rois) {
+    dispatch({
+      type: C.SET_NEO_ROIINFO,
+      rois
     });
   }
 });
