@@ -11,6 +11,7 @@ const state = Immutable.Map({
     uuid: 'existingversion'
   },
   meshInfo: {},
+  roiInfo: {},
   neoServer: 'foobar',
   publicState: false
 });
@@ -21,6 +22,7 @@ const initialState = Immutable.Map({
   superROIs: {},
   datasetInfo: {},
   meshInfo: {},
+  roiInfo: {},
   neoServer: '',
   publicState: false
 });
@@ -47,6 +49,7 @@ describe('neo4jsettings Reducer', () => {
           uuid: 'newversion'
         },
         meshInfo: {},
+        roiInfo: {},
         neoServer: '',
         publicState: false
       })
@@ -61,6 +64,7 @@ describe('neo4jsettings Reducer', () => {
           uuid: 'newversion'
         },
         meshInfo: {},
+        roiInfo: {},
         neoServer: 'foobar',
         publicState: false
       })

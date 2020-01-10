@@ -10,6 +10,7 @@ const neo4jsettingsState = Immutable.Map({
   superROIs: {},
   datasetInfo: {},
   meshInfo: {},
+  roiInfo: {},
   neoServer: '',
   publicState: false
 });
