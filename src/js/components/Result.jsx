@@ -313,14 +313,15 @@ class Result extends React.Component {
             combinedQuery = JSON.parse(cachedResults.result.data).params;
           }
 
-          const currentResult = currentPlugin.processResults(
-            combinedQuery,
-            resultsCopy,
+          const currentResult = currentPlugin.processResults({
+            query: combinedQuery,
+            apiResponse: resultsCopy,
             actions,
-            this.submit,
-            PUBLIC, // PUBLIC indicates this is a public version of the application
-            processingPlugin
-          );
+            submitFunc: this.submit,
+            isPublic: PUBLIC, // PUBLIC indicates this is a public version of the application
+            originalPlugin: processingPlugin,
+            roiLookup: neo4jsettings.get('roiInfo')
+          });
 
           const combined = Object.assign(combinedQuery, { result: currentResult });
 
