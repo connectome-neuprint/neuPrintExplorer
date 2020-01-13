@@ -42,11 +42,10 @@ function HelpMain(props) {
           <a href="https://github.com/connectome-neuprint/neuprint">neuprint</a>
         </Typography>
         <br />
-        <Typography>
-          For new neuPrintExplorer users please examine the quick guide below.
-        </Typography>
       </div>
+      <Typography>For new neuPrintExplorer users, please examine the quick guide below</Typography>
       <HelpTutorial />
+      <Typography>Shows how connectomic data is represented in neuPrint</Typography>
       <div className={classes.flex}>
         <Button onClick={() => setOpen(true)}>
           <img
