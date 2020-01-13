@@ -9,19 +9,19 @@ const styles = () => ({
   }
 });
 
-function HelpBatch(props) {
+function HelpVideos(props) {
   const { classes } = props;
   return (
     <div style={{ padding: 8 * 3, width: '100%' }}>
       <div className={classes.roottext}>
-        <Typography>data modelling and batch analysis</Typography>
+        <Typography>Tutorial videos highlighting different aspects of neuPrintExplorer</Typography>
       </div>
     </div>
   );
 }
 
-HelpBatch.propTypes = {
+HelpVideos.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(HelpBatch);
+export default withStyles(styles)(HelpVideos);

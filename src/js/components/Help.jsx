@@ -9,9 +9,7 @@ import Tab from '@material-ui/core/Tab';
 import AppBar from '@material-ui/core/AppBar';
 import { Switch, Route, Link } from 'react-router-dom';
 import HelpMain from './Help/HelpMain';
-import HelpBasic from './Help/Basic';
-import HelpBatch from './Help/Batch';
-import HelpDetails from './Help/Details';
+import HelpDetails from './Help/Videos';
 import HelpApi from './Help/Api';
 
 const styles = theme => ({
@@ -46,49 +44,47 @@ const styles = theme => ({
 
 const locationValueMap = {
   '/help': 0,
-  '/help/basic': 1,
-  '/help/batch': 2,
-  '/help/api': 3,
-  '/help/details': 4
+  '/help/api': 1,
+  '/help/videos': 2
 };
 
 function Help(props) {
-    const { classes, location } = props;
+  const { classes, location } = props;
 
-    const value = locationValueMap[location.pathname];
-    const queryString = location.search;
+  const value = locationValueMap[location.pathname];
+  const queryString = location.search;
 
-    return (
-      <div className={classes.root}>
-        <AppBar position="static" color="default">
-          <Tabs value={value} >
-            <Tab label="Overview" component={Link} to={{ pathname: '/help', search: queryString }} />
-            <Tab label="Basic Analysis" component={Link} to={{ pathname: '/help/basic', search: queryString }} />
-            <Tab label="Batch Analysis" component={Link} to={{ pathname: '/help/batch', search: queryString }} />
-            <Tab label="Programmer's Interface" component={Link} to={{ pathname: '/help/api', search: queryString }} />
-            <Tab label="Technical Details" component={Link} to={{ pathname: '/help/details', search: queryString }} />
-          </Tabs>
-        </AppBar>
+  return (
+    <div className={classes.root}>
+      <AppBar position="static" color="default">
+        <Tabs value={value}>
+          <Tab label="Overview" component={Link} to={{ pathname: '/help', search: queryString }} />
+          <Tab
+            label="Programmer's Interface"
+            component={Link}
+            to={{ pathname: '/help/api', search: queryString }}
+          />
+          <Tab
+            label="Video Tutorials"
+            component={Link}
+            to={{ pathname: '/help/videos', search: queryString }}
+          />
+        </Tabs>
+      </AppBar>
 
-        <Switch>
-          <Route exact path="/help">
-            <HelpMain />
-          </Route>
-          <Route path="/help/basic">
-            <HelpBasic />
-          </Route>
-          <Route path="/help/batch">
-            <HelpBatch />
-          </Route>
-          <Route path="/help/api">
-            <HelpApi />
-          </Route>
-          <Route path="/help/details">
-            <HelpDetails />
-          </Route>
-        </Switch>
-      </div>
-    );
+      <Switch>
+        <Route exact path="/help">
+          <HelpMain />
+        </Route>
+        <Route path="/help/api">
+          <HelpApi />
+        </Route>
+        <Route path="/help/videos">
+          <HelpDetails />
+        </Route>
+      </Switch>
+    </div>
+  );
 }
 
 Help.propTypes = {
