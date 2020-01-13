@@ -4,6 +4,7 @@ import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
+import HelpTutorial from './HelpTutorial';
 
 const styles = () => ({
   roottext: {
@@ -40,7 +41,12 @@ function HelpMain(props) {
           launch their own neuPrint ecosystem locally, please consulting the github page for{' '}
           <a href="https://github.com/connectome-neuprint/neuprint">neuprint</a>
         </Typography>
+        <br />
+        <Typography>
+          For new neuPrintExplorer users please examine the quick guide below.
+        </Typography>
       </div>
+      <HelpTutorial />
       <div className={classes.flex}>
         <Button onClick={() => setOpen(true)}>
           <img
