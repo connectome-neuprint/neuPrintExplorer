@@ -45,7 +45,7 @@ class SynapseSelection extends React.Component {
       },
       body: JSON.stringify({
         cypher: finalQuery,
-	dataset: dataSet
+	      dataset: dataSet
       }),
       method: 'POST',
       credentials: 'include'

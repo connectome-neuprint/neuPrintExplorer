@@ -20,6 +20,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 
 import MetaInfo from './MetaInfo';
 import Login from './Login';
+import BrainRegions from './BrainRegions';
 import { getSiteParams, setQueryString } from '../helpers/queryString';
 
 import './TopBar.css';
@@ -88,6 +89,13 @@ function handleFullScreen() {
 }
 
 class TopBar extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showBrainRegions: false
+    };
+  }
+
   handleChange = selectedDataSet => {
     const { location } = this.props;
 
@@ -105,8 +113,14 @@ class TopBar extends React.Component {
     });
   };
 
+  handleRegionClick = () => {
+    const { showBrainRegions } = this.state;
+    this.setState({ showBrainRegions: !showBrainRegions });
+  };
+
   render() {
     const { classes, availableDatasets, loggedIn, location } = this.props;
+    const { showBrainRegions } = this.state;
     const qsParams = getSiteParams(location);
 
     const dataSetOptions = availableDatasets.map(dataset => ({
@@ -120,6 +134,7 @@ class TopBar extends React.Component {
 
     return (
       <AppBar position="absolute" className={classes.appBar}>
+        {showBrainRegions && <BrainRegions onClose={this.handleRegionClick} dataSet={datasetstr} />}
         {loggedIn && <MetaInfo />}
         <Toolbar>
           <Tooltip title={VERSION} placement="bottom" enterDelay={300}>
@@ -141,7 +156,9 @@ class TopBar extends React.Component {
             />
           )}
           <div className={classes.grow} />
-          <Button className={classes.button}>Brain Regions</Button>
+          <Button className={classes.button} onClick={this.handleRegionClick}>
+            Brain Regions
+          </Button>
           {fullscreen === 'full' && (
             <IconButton
               className={classes.button}
