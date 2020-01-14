@@ -41,7 +41,7 @@ function NeuronOfTheDay(props) {
       });
   }, [dataSet]);
 
-  if (!data || !superROIs) {
+  if (!data || !superROIs || !superROIs[dataSet]) {
     return <p>Loading...</p>;
   }
 
