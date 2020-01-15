@@ -1,6 +1,6 @@
 {
   "name": "neuPrintExplorer",
-  "version": "1.27.0",
+  "version": "1.28.1",
   "description": "Application to query connectome results stored in neo4j",
   "main": "./src/js/app.js",
   "repository": {
@@ -62,7 +62,7 @@
     "@material-ui/core": "^3.9.3",
     "@material-ui/icons": "^3.0.1",
     "@material-ui/lab": "^3.0.0-alpha.30",
-    "@neuprint/queries": "^9.1.0",
+    "@neuprint/queries": "^9.1.1",
     "@neuprint/react-heatmap": "^0.5.0",
     "@neuprint/react-skeleton": "0.0.1",
     "@neuprint/react-sunburst": "^1.0.2",

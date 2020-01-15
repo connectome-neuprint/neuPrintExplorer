@@ -773,7 +773,8 @@ class SkeletonView extends React.Component {
 
     const compartmentSelection = (
       <CompartmentSelection
-        availableROIs={neo4jsettings.get('superROIs')}
+        availableROIs={neo4jsettings.get('availableROIs')}
+        superROIs={neo4jsettings.get('superROIs')}
         selectedROIs={compartmentIds}
         dataSet={query.pm.dataset}
         actions={compartmentActions}
