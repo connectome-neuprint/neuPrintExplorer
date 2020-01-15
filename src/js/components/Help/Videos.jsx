@@ -26,7 +26,18 @@ function HelpVideos(props) {
             title="Getting started"
             width="560"
             height="315"
-            src="https://www.youtube.com/embed/-BHftRHDQtc"
+            src="https://www.youtube.com/embed/I9O3rAwnU9M"
+            frameBorder="0"
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </Grid>
+        <Grid item xs>
+          <iframe
+            title="Finding neurons"
+            width="560"
+            height="315"
+            src="https://www.youtube.com/embed/0vasrGS7Wks"
             frameBorder="0"
             allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
