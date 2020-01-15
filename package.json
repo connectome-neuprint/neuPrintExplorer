@@ -92,6 +92,7 @@
     "react-dom": "^16.11.0",
     "react-fast-compare": "^2.0.4",
     "react-google-login": "^3.0.10",
+    "react-pdf": "^4.1.0",
     "react-redux": "^7.1.0",
     "react-router": "^5.0.0",
     "react-router-dom": "^5.0.0",

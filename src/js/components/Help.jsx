@@ -11,6 +11,7 @@ import { Switch, Route, Link } from 'react-router-dom';
 import HelpMain from './Help/HelpMain';
 import HelpDetails from './Help/Videos';
 import HelpApi from './Help/Api';
+import HelpBrainRegions from './Help/BrainRegions';
 
 const styles = theme => ({
   root: {
@@ -45,7 +46,8 @@ const styles = theme => ({
 const locationValueMap = {
   '/help': 0,
   '/help/api': 1,
-  '/help/videos': 2
+  '/help/videos': 2,
+  '/help/brainregions': 3
 };
 
 function Help(props) {
@@ -69,6 +71,11 @@ function Help(props) {
             component={Link}
             to={{ pathname: '/help/videos', search: queryString }}
           />
+          <Tab
+            label="Brain Regions"
+            component={Link}
+            to={{ pathname: '/help/brainregions', search: queryString }}
+          />
         </Tabs>
       </AppBar>
 
@@ -81,6 +88,9 @@ function Help(props) {
         </Route>
         <Route path="/help/videos">
           <HelpDetails />
+        </Route>
+        <Route path="/help/brainregions">
+          <HelpBrainRegions />
         </Route>
       </Switch>
     </div>
