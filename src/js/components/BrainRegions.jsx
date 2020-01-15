@@ -13,7 +13,7 @@ function buildRoiTree(roiTree, treeRef) {
   // set the dimensions and margins of the diagram
   const margin = { top: 40, right: 90, bottom: 50, left: 90 };
   const width = 5000 - margin.left - margin.right;
-  const height =2000 - margin.top - margin.bottom;
+  const height = 2000 - margin.top - margin.bottom;
 
   // declares a tree layout and assigns the size
   const treemap = d3.tree().size([width, height]);
@@ -47,31 +47,14 @@ function buildRoiTree(roiTree, treeRef) {
   const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
 
   // adds the links between the nodes
-  const link = g
-    .selectAll('.link')
+  g.selectAll('.link')
     .data(nodes.descendants().slice(1))
     .enter()
     .append('path')
     .attr('class', 'link')
-    .attr('d', function(d) {
-      return (
-        'M' +
-        d.x +
-        ',' +
-        d.y +
-        'C' +
-        d.x +
-        ',' +
-        (d.y + d.parent.y) / 2 +
-        ' ' +
-        d.parent.x +
-        ',' +
-        (d.y + d.parent.y) / 2 +
-        ' ' +
-        d.parent.x +
-        ',' +
-        d.parent.y
-      );
+    .attr('d', (d) => {
+      const path =`M${d.x},${d.y}C${d.x},${(d.y + d.parent.y) / 2} ${d.parent.x},${(d.y + d.parent.y) / 2} ${d.parent.x},${d.parent.y}`;
+      return path;
     });
 
   // adds each node as a group
@@ -80,12 +63,8 @@ function buildRoiTree(roiTree, treeRef) {
     .data(nodes.descendants())
     .enter()
     .append('g')
-    .attr('class', function(d) {
-      return `node ${d.children ? 'node--internal' : 'node--leaf'}`;
-    })
-    .attr('transform', function(d) {
-      return `translate(${d.x}, ${d.y})`;
-    });
+    .attr('class', d => `node ${d.children ? 'node--internal' : 'node--leaf'}`)
+    .attr('transform', d => `translate(${d.x}, ${d.y})`);
 
   // adds the circle to the node
   node.append('circle').attr('r', 10);
@@ -94,13 +73,9 @@ function buildRoiTree(roiTree, treeRef) {
   node
     .append('text')
     .attr('dy', '.35em')
-    .attr('y', function(d) {
-      return d.children ? -20 : 20;
-    })
+    .attr('y', d => (d.children ? -20 : 20))
     .style('text-anchor', 'middle')
-    .text(function(d) {
-      return d.data.name;
-    });
+    .text(d => d.data.name);
 }
 
 export default function BrainRegions(props) {
