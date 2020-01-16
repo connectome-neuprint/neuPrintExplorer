@@ -1,6 +1,6 @@
 {
   "name": "neuPrintExplorer",
-  "version": "1.28.1",
+  "version": "1.30.1",
   "description": "Application to query connectome results stored in neo4j",
   "main": "./src/js/app.js",
   "repository": {
@@ -58,11 +58,12 @@
     "webpack-merge": "^4.1.4"
   },
   "dependencies": {
+    "@janelia-flyem/react-neuroglancer": "^1.3.0",
     "@janelia/sharkviewer": "^1.3.0",
     "@material-ui/core": "^3.9.3",
     "@material-ui/icons": "^3.0.1",
     "@material-ui/lab": "^3.0.0-alpha.30",
-    "@neuprint/queries": "^9.1.1",
+    "@neuprint/queries": "^9.1.2",
     "@neuprint/react-heatmap": "^0.5.0",
     "@neuprint/react-skeleton": "0.0.1",
     "@neuprint/react-sunburst": "^1.0.2",
@@ -73,6 +74,7 @@
     "classnames": "^2.2.6",
     "clone": "^2.1.2",
     "colormap": "^2.3.0",
+    "d3": "^5.15.0",
     "date-fns": "^1.30.1",
     "deep-equal": "^1.0.1",
     "deepmerge": "^2.2.1",
@@ -91,6 +93,7 @@
     "react-dom": "^16.11.0",
     "react-fast-compare": "^2.0.4",
     "react-google-login": "^3.0.10",
+    "react-pdf": "^4.1.0",
     "react-redux": "^7.1.0",
     "react-router": "^5.0.0",
     "react-router-dom": "^5.0.0",
