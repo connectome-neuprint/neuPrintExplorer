@@ -121,7 +121,7 @@ class Login extends React.Component {
     return (
       <div className={classes.buttonWrap}>
         {!isLoggedIn ? (
-          <Button className={classNames(classes.buttonBasic, 'pulse')} onClick={this.login}>
+          <Button variant="contained" color="primary" className={classNames(classes.buttonBasic, 'pulse')} onClick={this.login}>
             LOGIN
           </Button>
         ) : (

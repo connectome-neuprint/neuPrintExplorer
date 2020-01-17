@@ -8,6 +8,8 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import ComputerIcon from '@material-ui/icons/Computer';
 
+import Login from './Login';
+
 const styles = theme => ({
   title: {
     marginBottom: 16,
@@ -76,8 +78,9 @@ function ServerInfoCard (props) {
     <Card>
         <CardHeader title="Logged Out" />
         <CardContent>
-          <Typography component="p">
-            Please log in at the top of the page to access the data.
+          <Typography component="h5">
+            Please log in to access the data.
+            <Login/>
           </Typography>
         </CardContent>
     </Card>
