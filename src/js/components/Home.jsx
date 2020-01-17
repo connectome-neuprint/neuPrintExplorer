@@ -73,7 +73,9 @@ function Home(props) {
     useCacheClear(actions.clearResultsCache);
   }
 
-  const defaultDS = Object.keys(datasetInfo)[0];
+  const dataSetNames = Object.keys(datasetInfo) || [];
+
+  const defaultDS = dataSetNames.sort()[0];
 
   if (!defaultDS) {
     return(
