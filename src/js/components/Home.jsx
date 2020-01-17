@@ -55,7 +55,7 @@ const useCacheClear = myAction => {
 }
 
 function Home(props) {
-  const { classes, actions, loggedIn, ...passedProps } = props;
+  const { classes, actions, loggedIn, datasetInfo, ...passedProps } = props;
 
 
 
@@ -73,13 +73,23 @@ function Home(props) {
     useCacheClear(actions.clearResultsCache);
   }
 
-  if (!queryObject.dataset || !queryObject.qt) {
-    return (
-      <Redirect to={{
-        pathname: "/",
-        search: "?dataset=hemibrain&qt=findneurons"
-      }} />
+  const defaultDS = Object.keys(datasetInfo)[0];
+
+  if (!defaultDS) {
+    return(
+      <div className={classes.root}>
+        <p>Loading...</p>
+      </div>
     );
+  }
+
+  if (!queryObject.dataset || !queryObject.qt) {
+      return (
+        <Redirect to={{
+          pathname: "/",
+          search: `?dataset=${defaultDS}&qt=findneurons`
+        }} />
+      );
   }
 
   return (
@@ -114,7 +124,7 @@ function Home(props) {
       {queryObject.dataset && <Divider variant="middle" className={classes.sectionDivide} />}
       <Grid container spacing={24} justify="center" className={classes.container}>
         <Grid item xs={12} sm={12} md={6} lg={5}>
-          <ServerInfoCard loggedIn={loggedIn} {...passedProps} />
+          <ServerInfoCard loggedIn={loggedIn} datasetInfo={datasetInfo} {...passedProps} />
         </Grid>
         <Grid item xs={12} sm={12} md={6} lg={5}>
           <Hints {...passedProps} />
