@@ -77,7 +77,8 @@ function Home(props) {
 
   const defaultDS = dataSetNames.sort()[0];
 
-  if (!defaultDS) {
+  // show the loading page if we are logged in and there isn't a default dataset ready
+  if (loggedIn && !defaultDS) {
     return(
       <div className={classes.root}>
         <p>Loading...</p>
