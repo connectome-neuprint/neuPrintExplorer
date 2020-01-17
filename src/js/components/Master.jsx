@@ -14,6 +14,7 @@ import SideBar from './SideBar';
 import QueryDrawer from './QueryDrawer';
 import Errors from './Errors';
 import Notification from './Notification';
+import ErrorBoundary from './ErrorBoundary';
 
 import './Master.css';
 
@@ -80,26 +81,28 @@ const Master = props => {
   return (
     <Router history={history}>
       <div className={classes.root}>
-        <TopBar />
-        <SideBar />
-        <QueryDrawer />
-        <main className={classes.content}>
-          <div className={classes.toolbar} />
-          <Suspense fallback={<div>loading...</div>}>
-            <Switch>
-              <Route exact path="/" component={Home} />
-              <PrivateRoute path="/results" component={Results} />
-              <Route path="/help" component={Help} />
-              <PrivateRoute path="/favorites" component={Favorites} />
-              <Route path="/about" component={About} />
-              <PrivateRoute path="/account" component={Account} />
-              <Route path="/workstation" component={Workstation} />
-              <Route component={NoMatch} />
-            </Switch>
-          </Suspense>
-        </main>
-        <Errors />
-        <Notification />
+        <ErrorBoundary>
+          <TopBar />
+          <SideBar />
+          <QueryDrawer />
+          <main className={classes.content}>
+            <div className={classes.toolbar} />
+            <Suspense fallback={<div>loading...</div>}>
+              <Switch>
+                <Route exact path="/" component={Home} />
+                <PrivateRoute path="/results" component={Results} />
+                <Route path="/help" component={Help} />
+                <PrivateRoute path="/favorites" component={Favorites} />
+                <Route path="/about" component={About} />
+                <PrivateRoute path="/account" component={Account} />
+                <Route path="/workstation" component={Workstation} />
+                <Route component={NoMatch} />
+              </Switch>
+            </Suspense>
+          </main>
+          <Errors />
+          <Notification />
+        </ErrorBoundary>
       </div>
     </Router>
   );
