@@ -31,11 +31,6 @@ const copyWebpackPlugin = new CopyWebpackPlugin([
     to: 'async_computation.bundle.js',
     toType: 'file'
   },
-  {
-    from: 'node_modules/@janelia-flyem/neuroglancer/dist/module/tfjs-library.bundle.js',
-    to: 'tfjs-library.bundle.js',
-    toType: 'file'
-  },
 ]);
 
 module.exports = {
@@ -80,6 +75,11 @@ module.exports = {
         use: ['source-map-loader'],
         exclude: [/node_modules\/@janelia-flyem\/neuroglancer/, /node_modules\/swagger-client/],
         enforce: 'pre'
+      },
+      {
+          test: /\.svg$/,
+          loader: require.resolve('svg-inline-loader'),
+          options: {removeSVGTagAttrs: false, removeTags: true}
       },
       {
         test: /\.css$/,

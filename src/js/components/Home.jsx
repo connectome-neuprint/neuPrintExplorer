@@ -23,7 +23,6 @@ import Hints from './Hints';
 import DataSetHome from './DataSetHome';
 import NeuronOfTheDay from './NeuronOfTheDay';
 
-
 import './Home.css';
 
 const styles = theme => ({
@@ -49,15 +48,13 @@ const styles = theme => ({
 });
 
 const useCacheClear = myAction => {
-  useEffect( () => {
+  useEffect(() => {
     myAction();
-  }, [])
-}
+  }, []);
+};
 
 function Home(props) {
-  const { classes, actions, loggedIn, ...passedProps } = props;
-
-
+  const { classes, actions, loggedIn, datasetInfo, ...passedProps } = props;
 
   // if we have a dataset selected then show that homepage.
   const queryObject = getQueryObject();
@@ -73,19 +70,34 @@ function Home(props) {
     useCacheClear(actions.clearResultsCache);
   }
 
-  if (!queryObject.dataset || !queryObject.qt) {
+  const dataSetNames = Object.keys(datasetInfo) || [];
+
+  const defaultDS = dataSetNames.sort()[0];
+
+  // show the loading page if we are logged in and there isn't a default dataset ready
+  if (loggedIn && !defaultDS) {
     return (
-      <Redirect to={{
-        pathname: "/",
-        search: "?dataset=hemibrain&qt=findneurons"
-      }} />
+      <div className={classes.root}>
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (loggedIn && (!queryObject.dataset || !queryObject.qt)) {
+    return (
+      <Redirect
+        to={{
+          pathname: '/',
+          search: `?dataset=${defaultDS}&qt=findneurons`
+        }}
+      />
     );
   }
 
   return (
     <div className={classes.root}>
       <Grid container spacing={24} justify="center" className={classes.container}>
-        <Grid item xs={8} className={classes.roottext}>
+        <Grid item xs={loggedIn ? 8 : 12} className={classes.roottext}>
           <Typography variant="h3">Analysis tools for connectomics</Typography>
           <Typography className={classes.description}>
             neuPrintExplorer provides tools to query and visualize connectomic data stored in{' '}
@@ -99,13 +111,17 @@ function Home(props) {
             </Typography>
           )}
         </Grid>
-        <Grid item xs={4}>
-          <DataSetLogo dataSet={queryObject.dataset} />
-        </Grid>
-        <Grid item sm={12} md={4}>
-          <NeuronOfTheDay dataSet={queryObject.dataset} />
-        </Grid>
-        {(queryObject.dataset && loggedIn) && (
+        {loggedIn && (
+          <Grid item xs={4}>
+            <DataSetLogo dataSet={queryObject.dataset} />
+          </Grid>
+        )}
+        {loggedIn && (
+          <Grid item sm={12} md={4}>
+            <NeuronOfTheDay dataSet={queryObject.dataset} />
+          </Grid>
+        )}
+        {queryObject.dataset && loggedIn && (
           <Grid item sm={12} md={8}>
             <DataSetHome dataSet={queryObject.dataset} />
           </Grid>
@@ -114,7 +130,7 @@ function Home(props) {
       {queryObject.dataset && <Divider variant="middle" className={classes.sectionDivide} />}
       <Grid container spacing={24} justify="center" className={classes.container}>
         <Grid item xs={12} sm={12} md={6} lg={5}>
-          <ServerInfoCard loggedIn={loggedIn} {...passedProps} />
+          <ServerInfoCard loggedIn={loggedIn} datasetInfo={datasetInfo} {...passedProps} />
         </Grid>
         <Grid item xs={12} sm={12} md={6} lg={5}>
           <Hints {...passedProps} />
@@ -142,7 +158,7 @@ const HomeDispatch = dispatch => ({
       dispatch(clearResultsCache());
     }
   }
-})
+});
 
 Home.propTypes = {
   location: PropTypes.shape({

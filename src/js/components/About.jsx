@@ -96,83 +96,88 @@ class About extends React.Component {
       .then(result => result.json())
       .then(result => {
         const fulllist = [];
-        const repoedges = result.data.organization.repositories.edges;
-        repoedges.forEach(repoedge => {
-          const reponame = repoedge.node.name;
-          const issuelist = [];
-          const { edges } = repoedge.node.issues;
-          edges.forEach(issue => {
-            const labelList = [];
-            const tagList = [];
-            if (issue.node.labels.edges.length > 0) {
-              const labels = issue.node.labels.edges;
-              labels.forEach(labeledge => {
-                const { name } = labeledge.label;
-                labelList.push(name);
-                const divid = name + issue.node.number;
-                let txtcolor = 'black';
-                if (darkLabels.includes(name)) {
-                  txtcolor = 'white';
-                }
-                const tagstyle = {
-                  borderRadius: '10px',
-                  paddingLeft: '4px',
-                  paddingRight: '4px',
-                  marginLeft: '5px',
-                  float: 'left',
-                  fontFamily: 'sans-serif',
-                  color: txtcolor,
-                  textIndent: 'initial',
-                  backgroundColor: labelcolor[name]
-                };
-                tagList.push(
-                  <div key={divid} style={tagstyle}>
-                    <span>{labeledge.label.name}</span>
-                  </div>
+        if (
+          result &&
+          result.data &&
+          result.data.organization &&
+          result.data.organization.repositories
+        ) {
+          const repoedges = result.data.organization.repositories.edges;
+          repoedges.forEach(repoedge => {
+            const reponame = repoedge.node.name;
+            const issuelist = [];
+            const { edges } = repoedge.node.issues;
+            edges.forEach(issue => {
+              const labelList = [];
+              const tagList = [];
+              if (issue.node.labels.edges.length > 0) {
+                const labels = issue.node.labels.edges;
+                labels.forEach(labeledge => {
+                  const { name } = labeledge.label;
+                  labelList.push(name);
+                  const divid = name + issue.node.number;
+                  let txtcolor = 'black';
+                  if (darkLabels.includes(name)) {
+                    txtcolor = 'white';
+                  }
+                  const tagstyle = {
+                    borderRadius: '10px',
+                    paddingLeft: '4px',
+                    paddingRight: '4px',
+                    marginLeft: '5px',
+                    float: 'left',
+                    fontFamily: 'sans-serif',
+                    color: txtcolor,
+                    textIndent: 'initial',
+                    backgroundColor: labelcolor[name]
+                  };
+                  tagList.push(
+                    <div key={divid} style={tagstyle}>
+                      <span>{labeledge.label.name}</span>
+                    </div>
+                  );
+                });
+              }
+              issuelist.push([
+                issue.node.title,
+                issue.node.url,
+                issue.node.number,
+                issue.node.body,
+                tagList
+              ]);
+            });
+            if (issuelist.length > 0) {
+              const listItems = issuelist.map(issue => {
+                const [title, url, number, body, tags] = issue;
+                return (
+                  <li key={number.toString() + title}>
+                    <div style={{ float: 'left' }}>
+                      <Tooltip title={body} placement="bottom" enterDelay={100}>
+                        <a
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ color: 'darkblue' }}
+                        >
+                          <Typography variant="body1">{title}</Typography>
+                        </a>
+                      </Tooltip>
+                    </div>
+                    <div style={{ float: 'left' }}>{tags}</div>
+                    <div style={{ clear: 'both' }} />
+                  </li>
                 );
               });
-            }
-            issuelist.push([
-              issue.node.title,
-              issue.node.url,
-              issue.node.number,
-              issue.node.body,
-              tagList
-            ]);
-          });
-          if (issuelist.length > 0) {
-            const listItems = issuelist.map(issue => {
-              const [title, url, number, body, tags] = issue;
-              return (
-                <li key={number.toString() + title}>
-                  <div style={{ float: 'left' }}>
-                    <Tooltip title={body} placement="bottom" enterDelay={100}>
-                      <a
-                        href={url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ color: 'darkblue' }}
-                      >
-                        <Typography variant="body1">{title}</Typography>
-                      </a>
-                    </Tooltip>
-                  </div>
-                  <div style={{ float: 'left' }}>{tags}</div>
-                  <div style={{ clear: 'both' }} />
-                </li>
+              const listing = (
+                <div key={reponame}>
+                  <Typography variant="body1">{reponame}</Typography>
+                  <ul>{listItems}</ul>
+                </div>
               );
-            });
-            const listing = (
-              <div key={reponame}>
-                <Typography variant="body1">
-                  {reponame}
-                </Typography>
-                <ul>{listItems}</ul>
-              </div>
-            );
-            fulllist.push(listing);
-          }
-        });
+              fulllist.push(listing);
+            }
+          });
+        }
         if (fulllist.length === 0) {
           this.setState({
             data: 'No user issues found'
