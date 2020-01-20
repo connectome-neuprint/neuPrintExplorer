@@ -35,11 +35,12 @@ function HelpMain(props) {
         <Typography>
           neuPrint is a set of connectome analysis tools. This web application allows users to
           explore connectome data interactively. To start exploring the available datasets, please
-          login using any google credential above. For more technical details of neuPrint and the
-          underlying data representation please consult the{' '}
-          <a href="public/neuprintuserguide_010820.pdf">user guide</a>. For those that want to
-          launch their own neuPrint ecosystem locally, please consulting the github page for{' '}
-          <a href="https://github.com/connectome-neuprint/neuprint">neuprint</a>
+          login using any google credential above. For more instruction on how to use neuPrint and
+          the underlying data representation please consult the{' '}
+          <a href="public/neuprintuserguide_010820.pdf">user guide</a>. A technical neuPrint paper
+          exists <a href="https://www.biorxiv.org/content/10.1101/2020.01.16.909465v1">here</a>. For
+          those that want to launch their own neuPrint ecosystem locally, please consulting the
+          github page for <a href="https://github.com/connectome-neuprint/neuprint">neuprint</a>.
         </Typography>
         <br />
       </div>
