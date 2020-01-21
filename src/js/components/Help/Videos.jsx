@@ -43,7 +43,18 @@ function HelpVideos(props) {
             allowFullScreen
           />
         </Grid>
-        <Grid item xs>
+        <Grid item sm={6}>
+          <iframe
+            title="Providing reconstruction feedback"
+            width="560"
+            height="315"
+            src="https://www.youtube.com/embed/YduG2hl-4VE"
+            frameBorder="0"
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </Grid>
+        <Grid item sm={6}>
           <iframe
             title="Common connectivity query"
             width="560"
