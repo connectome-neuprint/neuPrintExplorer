@@ -21,7 +21,7 @@ function HelpVideos(props) {
         <Typography>Tutorial videos highlighting different aspects of neuPrintExplorer</Typography>
       </div>
       <Grid container spacing={24}>
-        <Grid item xs>
+        <Grid item sm={12} lg={6}>
           <iframe
             title="Getting started"
             width="560"
@@ -32,7 +32,7 @@ function HelpVideos(props) {
             allowFullScreen
           />
         </Grid>
-        <Grid item xs>
+        <Grid item sm={12} lg={6}>
           <iframe
             title="Finding neurons"
             width="560"
@@ -43,7 +43,7 @@ function HelpVideos(props) {
             allowFullScreen
           />
         </Grid>
-        <Grid item sm={6}>
+        <Grid item sm={12} lg={6}>
           <iframe
             title="Providing reconstruction feedback"
             width="560"
@@ -54,7 +54,7 @@ function HelpVideos(props) {
             allowFullScreen
           />
         </Grid>
-        <Grid item sm={6}>
+        <Grid item sm={12} lg={6}>
           <iframe
             title="Common connectivity query"
             width="560"
