@@ -402,10 +402,9 @@ class SkeletonView extends React.Component {
       return;
     }
     const { neo4jsettings } = this.props;
-    const meshHost = neo4jsettings.get('meshInfo')[dataSet];
     const { uuid } = neo4jsettings.get('datasetInfo')[dataSet];
 
-    if (meshHost && uuid) {
+    if (uuid) {
       fetch(`/api/roimeshes/mesh/${dataSet}/${id}`, {
         headers: {
           'Content-Type': 'text/plain',
