@@ -78,8 +78,8 @@ function ServerInfoCard (props) {
     <Card>
         <CardHeader title="Logged Out" />
         <CardContent>
-          <Typography component="h5">
-            Please log in to access the data.
+          <Typography component="h4">
+            Please log in with a google account to access the data.
             <Login/>
           </Typography>
         </CardContent>

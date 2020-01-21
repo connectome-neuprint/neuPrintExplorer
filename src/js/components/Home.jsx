@@ -44,6 +44,10 @@ const styles = theme => ({
   sectionDivide: {
     width: '100%',
     margin: '2em 0'
+  },
+  video: {
+    marginBottom: theme.spacing.unit * 2,
+    textAlign: 'center'
   }
 });
 
@@ -104,7 +108,7 @@ function Home(props) {
             <a href="https://github.com/janelia-flyem/neuPrint">neuPrint</a>, which uses a neo4j
             graph database.
           </Typography>
-          {!queryObject.q && (
+          {loggedIn && !queryObject.q && (
             <Typography variant="h6">
               Use the search icon <Icon>search</Icon> in the menu on the{' '}
               <Link to="/?q=1">left</Link> to query the database.
@@ -127,6 +131,20 @@ function Home(props) {
           </Grid>
         )}
       </Grid>
+      {!loggedIn && (
+        <Grid item xs={12} className={classes.video}>
+          <iframe
+            title="Getting started"
+            width="560"
+            height="315"
+            src="https://www.youtube.com/embed/I9O3rAwnU9M"
+            srcDoc="<style>*{padding:0;margin:0;overflow:hidden}html,body{height:100%}img,span{position:absolute;width:100%;top:0;bottom:0;margin:auto}span{height:1.5em;text-align:center;font:48px/1.5 sans-serif;color:white;text-shadow:0 0 0.5em black}</style><a href=https://www.youtube.com/embed/I9O3rAwnU9M?autoplay=1><img src=https://img.youtube.com/vi/I9O3rAwnU9M/hqdefault.jpg alt='Introduction to neuPrint Explorer'><span>▶</span></a>"
+            frameBorder="0"
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </Grid>
+      )}
       {queryObject.dataset && <Divider variant="middle" className={classes.sectionDivide} />}
       <Grid container spacing={24} justify="center" className={classes.container}>
         <Grid item xs={12} sm={12} md={6} lg={5}>
