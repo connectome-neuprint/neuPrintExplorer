@@ -117,7 +117,7 @@ function Home(props) {
         </Grid>
         {loggedIn && (
           <Grid item xs={4}>
-            <DataSetLogo dataSet={queryObject.dataset} />
+            <DataSetLogo dataSet={queryObject.dataset} datasetInfo={datasetInfo} />
           </Grid>
         )}
         {loggedIn && (

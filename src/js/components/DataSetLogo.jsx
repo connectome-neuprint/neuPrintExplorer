@@ -27,7 +27,7 @@ const styles = () => ({
 function DataSetLogo(props) {
   const [imgUrl, setImageUrl] = useState(null);
 
-  const { dataSet, classes } = props;
+  const { dataSet, classes, datasetInfo } = props;
   const altText = `data set logo for ${dataSet}`;
 
   useEffect(() => {
@@ -50,11 +50,18 @@ function DataSetLogo(props) {
       });
   }, []);
 
+  let linkUrl = '';
+  if (datasetInfo && Object.prototype.hasOwnProperty.call(datasetInfo, dataSet)) {
+    linkUrl = datasetInfo[dataSet].info;
+  }
+
   if (imgUrl) {
     return (
       <div className={classes.wrapper}>
         <p className={classes.title}>Data set: {dataSet}</p>
-        <img className={classes.image} src={imgUrl} alt={altText} />
+        <a href={linkUrl}>
+          <img className={classes.image} src={imgUrl} alt={altText} />
+        </a>
       </div>
     );
   }
@@ -62,7 +69,8 @@ function DataSetLogo(props) {
 }
 
 DataSetLogo.propTypes = {
-  dataSet: PropTypes.string.isRequired
+  dataSet: PropTypes.string.isRequired,
+  datasetInfo: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(DataSetLogo);
