@@ -6,6 +6,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { Document, Page } from 'react-pdf';
 import * as d3 from 'd3';
 import './BrainRegions.css';
 
@@ -52,8 +53,10 @@ function buildRoiTree(roiTree, treeRef) {
     .enter()
     .append('path')
     .attr('class', 'link')
-    .attr('d', (d) => {
-      const path =`M${d.x},${d.y}C${d.x},${(d.y + d.parent.y) / 2} ${d.parent.x},${(d.y + d.parent.y) / 2} ${d.parent.x},${d.parent.y}`;
+    .attr('d', d => {
+      const path = `M${d.x},${d.y}C${d.x},${(d.y + d.parent.y) / 2} ${d.parent.x},${(d.y +
+        d.parent.y) /
+        2} ${d.parent.x},${d.parent.y}`;
       return path;
     });
 
@@ -79,6 +82,29 @@ function buildRoiTree(roiTree, treeRef) {
 }
 
 export default function BrainRegions(props) {
+  const { onClose } = props;
+  return (
+    <Dialog fullWidth maxWidth="lg" open onClose={onClose}>
+      <DialogTitle>Brain regions</DialogTitle>
+      <DialogContent>
+        <Document file="/public/brainregions.pdf">
+          <Page pageNumber={1} scale={1.5} />
+        </Document>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="primary">
+          Close
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
+BrainRegions.propTypes = {
+  onClose: PropTypes.func.isRequired,
+};
+
+function BrainRegionsTree(props) {
   const { onClose, dataSet } = props;
 
   const treeRef = useRef(null);
@@ -123,7 +149,7 @@ export default function BrainRegions(props) {
   );
 }
 
-BrainRegions.propTypes = {
+BrainRegionsTree.propTypes = {
   onClose: PropTypes.func.isRequired,
   dataSet: PropTypes.string.isRequired
 };
