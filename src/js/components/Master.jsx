@@ -55,7 +55,6 @@ const Master = props => {
 
   const PrivateRoute = ({ component: Component, ...rest }) => {
     if (!user.get('loggedIn')) {
-      // TODO: pass current location information to redirect.
       if (user.get('loaded')) {
         // have to encode the uri here to make sure the &'s are escaped. If they aren't
         // they wont make it through the redirect code.
@@ -78,6 +77,11 @@ const Master = props => {
     component: PropTypes.object.isRequired
   };
 
+  // TODO: Have a router switch for logged in vs logged out users.
+  // - loggedIn application has all the details and code we need for the full
+  // site.
+  // - loggedOut has basic help text and tutorial videos, but none of the heavy
+  // lifting code.
   return (
     <Router history={history}>
       <div className={classes.root}>
