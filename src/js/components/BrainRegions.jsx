@@ -10,6 +10,30 @@ import { Document, Page } from 'react-pdf';
 import * as d3 from 'd3';
 import './BrainRegions.css';
 
+
+export default function BrainRegions(props) {
+  const { onClose } = props;
+  return (
+    <Dialog fullWidth maxWidth="lg" open onClose={onClose}>
+      <DialogTitle>Brain regions</DialogTitle>
+      <DialogContent>
+        <Document file="/public/brainregions.pdf">
+          <Page pageNumber={1} scale={1.1} />
+        </Document>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="primary">
+          Close
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
+BrainRegions.propTypes = {
+  onClose: PropTypes.func.isRequired,
+};
+
 function buildRoiTree(roiTree, treeRef) {
   // set the dimensions and margins of the diagram
   const margin = { top: 40, right: 90, bottom: 50, left: 90 };
@@ -80,29 +104,6 @@ function buildRoiTree(roiTree, treeRef) {
     .style('text-anchor', 'middle')
     .text(d => d.data.name);
 }
-
-export default function BrainRegions(props) {
-  const { onClose } = props;
-  return (
-    <Dialog fullWidth maxWidth="lg" open onClose={onClose}>
-      <DialogTitle>Brain regions</DialogTitle>
-      <DialogContent>
-        <Document file="/public/brainregions.pdf">
-          <Page pageNumber={1} scale={1.5} />
-        </Document>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} color="primary">
-          Close
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-}
-
-BrainRegions.propTypes = {
-  onClose: PropTypes.func.isRequired,
-};
 
 function BrainRegionsTree(props) {
   const { onClose, dataSet } = props;
