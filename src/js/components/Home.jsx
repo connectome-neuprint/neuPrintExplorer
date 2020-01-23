@@ -58,7 +58,7 @@ const useCacheClear = myAction => {
 };
 
 function Home(props) {
-  const { classes, actions, loggedIn, datasetInfo, ...passedProps } = props;
+  const { classes, actions, loggedIn, datasetInfo } = props;
 
   // if we have a dataset selected then show that homepage.
   const queryObject = getQueryObject();
@@ -148,13 +148,13 @@ function Home(props) {
       {queryObject.dataset && <Divider variant="middle" className={classes.sectionDivide} />}
       <Grid container spacing={24} justify="center" className={classes.container}>
         <Grid item xs={12} sm={12} md={6} lg={5}>
-          <ServerInfoCard loggedIn={loggedIn} datasetInfo={datasetInfo} {...passedProps} />
+          <ServerInfoCard {...props} />
         </Grid>
         <Grid item xs={12} sm={12} md={6} lg={5}>
-          <Hints {...passedProps} />
+          <Hints />
         </Grid>
         <Grid item xs={12} sm={12} md={6} lg={5}>
-          <News {...passedProps} />
+          <News />
         </Grid>
       </Grid>
     </div>
