@@ -6,7 +6,7 @@ import qs from 'qs';
 export default function Workstation() {
   // build the search string based on the props passed in.
 
-  const { dataset = 'hemibrain', bodyid, tab = 0, ftab = 1 } = getQueryObject();
+  const { dataset = 'hemibrain:v1.0', bodyid, tab = 0, ftab = 1 } = getQueryObject();
 
   // set up the two tabs, one for the skeleton and one for the find neurons tab.
   const redirectQuery = {
