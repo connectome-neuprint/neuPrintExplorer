@@ -82,6 +82,7 @@ const Master = props => {
   // site.
   // - loggedOut has basic help text and tutorial videos, but none of the heavy
   // lifting code.
+  // eg: return user ? <AuthenticatedApp /> : <UnauthenticatedApp />
   return (
     <Router history={history}>
       <div className={classes.root}>
