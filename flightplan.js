@@ -1,30 +1,64 @@
 var plan = require('flightplan');
 
 var config = {
-  projectDir: '/opt/www/neuprintexplorer',  // location on the remote server
+  projectDir: '/opt/www/neuprintexplorer', // location on the remote server
   keepReleases: 3
 };
 
-plan.target('production', {
-  host: 'emdata1',
-  username: 'deploy',
-  agent: process.env.SSH_AUTH_SOCK
-},
-{
-  // Shouldn't be overridden, so please don't try.
-  gitCheck: true
-});
+plan.target(
+  'internal',
+  {
+    host: 'emdata1',
+    username: 'deploy',
+    agent: process.env.SSH_AUTH_SOCK
+  },
+  {
+    // Shouldn't be overridden, so please don't try.
+    gitCheck: true
+  }
+);
 
-plan.target('staging', {
-  host: 'emdata4',
-  username: 'deploy',
-  agent: process.env.SSH_AUTH_SOCK
-},
-{
-  // Shouldn't be overridden, so please don't try.
-  gitCheck: true
-});
+plan.target(
+  'production',
+  [
+    {
+      host: '35.245.234.228',
+      username: 'flyem',
+      agent: process.env.SSH_AUTH_SOCK
+    },
+    {
+      host: '35.245.44.215',
+      username: 'flyem',
+      agent: process.env.SSH_AUTH_SOCK
+    },
+    {
+      host: '35.221.11.230',
+      username: 'flyem',
+      agent: process.env.SSH_AUTH_SOCK
+    },
+    {
+      host: '35.245.7.20',
+      username: 'flyem',
+      agent: process.env.SSH_AUTH_SOCK
+    }
+  ],
+  {
+    gitCheck: true
+  }
+);
 
+plan.target(
+  'staging',
+  {
+    host: 'emdata4',
+    username: 'deploy',
+    agent: process.env.SSH_AUTH_SOCK
+  },
+  {
+    // Shouldn't be overridden, so please don't try.
+    gitCheck: true
+  }
+);
 
 // Check if there are files that have not been committed to git. This stops
 // us from deploying code in an inconsistent state. It also prevents slapdash
@@ -33,7 +67,7 @@ plan.target('staging', {
 plan.local('deploy', function(local) {
   if (plan.runtime.options.gitCheck) {
     local.log('checking git status...');
-    var result = local.exec('git status --porcelain', {silent: true});
+    var result = local.exec('git status --porcelain', { silent: true });
 
     if (result.stdout) {
       local.log(result.stdout);
@@ -44,31 +78,29 @@ plan.local('deploy', function(local) {
   }
 });
 
-
 plan.remote('deploy', function(remote) {
-  config.deployTo = config.projectDir + '/releases/' + (new Date().getTime());
+  config.deployTo = config.projectDir + '/releases/' + new Date().getTime();
   remote.log('Creating webroot');
   remote.exec('mkdir -p ' + config.deployTo);
 });
 
-plan.local('deploy', function (local) {
+plan.local('deploy', function(local) {
   local.log('Building the production code');
   local.exec('npm run build');
 });
 
 // grab a list of files in the build directory and copy it.
-plan.local('deploy', function (local) {
+plan.local('deploy', function(local) {
   local.with('cd build', () => {
     local.log('Transferring website files');
-    var files = local.exec('find . -type f -print0', {silent: true});
+    var files = local.exec('find . -type f -print0', { silent: true });
     local.transfer(files, config.deployTo + '/');
   });
 });
 
-plan.remote('deploy',function (remote) {
+plan.remote('deploy', function(remote) {
   remote.log('Linking to new release');
-  remote.exec('ln -nfs ' + config.deployTo + ' ' +
-    config.projectDir + '/current');
+  remote.exec('ln -nfs ' + config.deployTo + ' ' + config.projectDir + '/current');
 
   remote.log('Checking for stale releases');
   var releases = getReleases(remote);
@@ -78,9 +110,9 @@ plan.remote('deploy',function (remote) {
     remote.log('Removing ' + removeCount + ' stale release(s)');
 
     releases = releases.slice(0, removeCount);
-    releases = releases.map(function (item) {
+    releases = releases.map(function(item) {
       return config.projectDir + '/releases/' + item;
-      });
+    });
 
     remote.exec('rm -rf ' + releases.join(' '));
   }
@@ -93,23 +125,28 @@ plan.remote('rollback', function(remote) {
     var oldCurrent = releases.pop();
     var newCurrent = releases.pop();
     remote.log('Linking current to ' + newCurrent);
-    remote.exec('ln -nfs ' + config.projectDir + '/releases/' + newCurrent + ' '
-      + config.projectDir + '/current');
+    remote.exec(
+      'ln -nfs ' +
+        config.projectDir +
+        '/releases/' +
+        newCurrent +
+        ' ' +
+        config.projectDir +
+        '/current'
+    );
 
     remote.log('Removing ' + oldCurrent);
     remote.exec('rm -rf ' + config.projectDir + '/releases/' + oldCurrent);
   }
-
 });
 
-plan.remote(['default','uptime'], function(remote) {
+plan.remote(['default', 'uptime'], function(remote) {
   remote.exec('uptime');
   remote.exec('whoami');
 });
 
 function getReleases(remote) {
-  var releases = remote.exec('ls ' + config.projectDir +
-    '/releases', {silent: true});
+  var releases = remote.exec('ls ' + config.projectDir + '/releases', { silent: true });
 
   if (releases.code === 0) {
     releases = releases.stdout.trim().split('\n');
