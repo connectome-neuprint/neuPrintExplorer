@@ -10,6 +10,19 @@ const styles = () => ({
   },
   roottext: {
     flex: 1
+  },
+  video: {
+    position: 'relative',
+    paddingBottom: '56.25%',
+    width: '100%',
+    height: '0'
+  },
+  iframe: {
+    position: 'absolute',
+    top: '0',
+    left: '0',
+    width: '100%',
+    height: '100%'
   }
 });
 
@@ -18,52 +31,78 @@ function HelpVideos(props) {
   return (
     <div className={classes.root} style={{ padding: 8 * 3, width: '100%' }}>
       <div className={classes.roottext}>
-        <Typography>Tutorial videos highlighting different aspects of neuPrintExplorer</Typography>
+        <Typography variant="h4" gutterBottom>Tutorial videos highlighting different aspects of neuPrintExplorer</Typography>
       </div>
       <Grid container spacing={24}>
-        <Grid item sm={12} lg={6}>
-          <iframe
-            title="Getting started"
-            width="560"
-            height="315"
-            src="https://www.youtube.com/embed/I9O3rAwnU9M"
-            frameBorder="0"
-            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
+        <Grid item xs={12} sm={12} lg={6}>
+          <div className={classes.video}>
+            <iframe
+              className={classes.iframe}
+              title="Getting started"
+              width="560"
+              height="315"
+              src="https://www.youtube.com/embed/FlpMlS9lixk"
+              frameBorder="0"
+              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
         </Grid>
-        <Grid item sm={12} lg={6}>
-          <iframe
-            title="Finding neurons"
-            width="560"
-            height="315"
-            src="https://www.youtube.com/embed/0vasrGS7Wks"
-            frameBorder="0"
-            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
+        <Grid item xs={12} sm={12} lg={6}>
+          <div className={classes.video}>
+            <iframe
+              className={classes.iframe}
+              title="Finding neurons"
+              width="560"
+              height="315"
+              src="https://www.youtube.com/embed/94DydJL_zlk"
+              frameBorder="0"
+              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
         </Grid>
-        <Grid item sm={12} lg={6}>
-          <iframe
-            title="Providing reconstruction feedback"
-            width="560"
-            height="315"
-            src="https://www.youtube.com/embed/n2cwzaSO9I0"
-            frameBorder="0"
-            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
+        <Grid item xs={12} sm={12} lg={6}>
+          <div className={classes.video}>
+            <iframe
+              className={classes.iframe}
+              title="Providing reconstruction feedback"
+              width="560"
+              height="315"
+              src="https://www.youtube.com/embed/n2cwzaSO9I0"
+              frameBorder="0"
+              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
         </Grid>
-        <Grid item sm={12} lg={6}>
-          <iframe
-            title="Common connectivity query"
-            width="560"
-            height="315"
-            src="https://www.youtube.com/embed/VAtI6V86qlY"
-            frameBorder="0"
-            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
+        <Grid item xs={12} sm={12} lg={6}>
+          <div className={classes.video}>
+            <iframe
+              className={classes.iframe}
+              title="Common connectivity query"
+              width="560"
+              height="315"
+              src="https://www.youtube.com/embed/VAtI6V86qlY"
+              frameBorder="0"
+              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        </Grid>
+        <Grid item xs={12} sm={12} lg={6}>
+          <div className={classes.video}>
+            <iframe
+              className={classes.iframe}
+              title="Shortest Path Query"
+              width="560"
+              height="315"
+              src="https://www.youtube.com/embed/XMzQVTfNoYA"
+              frameBorder="0"
+              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
         </Grid>
       </Grid>
     </div>
