@@ -33,7 +33,7 @@ plan.target(
       agent: process.env.SSH_AUTH_SOCK,
       failsafe: true
     },
-    {
+    /* {
       host: '35.221.11.230',
       username: 'flyem',
       agent: process.env.SSH_AUTH_SOCK,
@@ -44,7 +44,7 @@ plan.target(
       username: 'flyem',
       agent: process.env.SSH_AUTH_SOCK,
       failsafe: true
-    }
+    } */
   ],
   {
     gitCheck: true,
