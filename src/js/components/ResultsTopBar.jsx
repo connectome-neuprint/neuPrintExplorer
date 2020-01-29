@@ -127,7 +127,7 @@ class ResultsTopBar extends React.Component {
     // the tab before the one that was just removed.
     let tabIndex = query.tab > 0 ? query.tab - 1 : 0;
     // if window was split, then we show the other panel that we didn't close
-    if (query.ftab >= 0) {
+    if (Number.isInteger(query.ftab) && query.ftab >= 0) {
       if (query.tab > query.ftab) {
         tabIndex = query.ftab;
       } else {
