@@ -8,7 +8,7 @@ import deepEqual from 'deep-equal';
 
 const styles = () => ({
   select: {
-    width: '10em'
+    width: '12em'
   }
 });
 
