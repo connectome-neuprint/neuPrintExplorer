@@ -331,6 +331,8 @@ class Result extends React.Component {
           const saveEnabled =
             currentPlugin.details.save !== undefined ? currentPlugin.details.save : true;
 
+          const download3DCallback = typeof currentPlugin.download3DSeed === 'function' ? currentPlugin.download3DSeed(combined) : null;
+
           if (combined && combined.code === processingPlugin.details.abbr) {
             // show the header information if not in full screen mode.
             const tabDataHeader =
@@ -340,6 +342,7 @@ class Result extends React.Component {
                   saveEnabled={saveEnabled}
                   addIdEnabled={Boolean(processingPlugin.details.visType === 'SkeletonView')}
                   downloadCallback={this.downloadFile}
+                  download3DCallback={download3DCallback}
                   name={combined.result.title || 'Error'}
                   index={tabIndex}
                   fetchedTime={cachedResults.timestamp || null}

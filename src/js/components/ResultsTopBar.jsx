@@ -19,6 +19,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContentText from '@material-ui/core/DialogContentText';
+import ThreeDRotation from '@material-ui/icons/ThreeDRotation';
 
 import { authError, reAuth } from 'actions/user';
 import { launchNotification } from 'actions/app';
@@ -175,6 +176,7 @@ class ResultsTopBar extends React.Component {
       index,
       downloadCallback,
       downloadEnabled,
+      download3DCallback,
       saveEnabled,
       addIdEnabled,
       actions,
@@ -278,6 +280,18 @@ class ResultsTopBar extends React.Component {
             <Icon style={{ fontSize: 18 }}>fullscreen</Icon>
           </IconButton>
 
+          {download3DCallback && (
+          <IconButton
+            className={classes.button}
+            aria-label="Download VR viewer seed"
+              onClick={() => {
+                download3DCallback(index);
+              }}
+          >
+            <ThreeDRotation style={{ fontSize: 18 }}/>
+          </IconButton>
+          )}
+
           <IconButton
             className={classes.button}
             aria-label="Close Window"
@@ -336,6 +350,7 @@ ResultsTopBar.propTypes = {
   color: PropTypes.string,
   downloadCallback: PropTypes.func.isRequired,
   downloadEnabled: PropTypes.bool.isRequired,
+  download3DCallback: PropTypes.func,
   addIdEnabled: PropTypes.bool,
   saveEnabled: PropTypes.bool.isRequired,
   queryStr: PropTypes.string.isRequired,
@@ -353,7 +368,8 @@ ResultsTopBar.defaultProps = {
   color: '#cccccc',
   dataSet: 'loading',
   fetchedTime: new Date().getTime(),
-  addIdEnabled: false
+  addIdEnabled: false,
+  download3DCallback: null
 };
 
 export default withStyles(styles)(
