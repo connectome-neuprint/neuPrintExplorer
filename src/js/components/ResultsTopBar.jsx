@@ -181,7 +181,8 @@ class ResultsTopBar extends React.Component {
       addIdEnabled,
       actions,
       fetchedTime,
-      dataSet
+      dataSet,
+      isAdmin
     } = this.props;
     const { open, addIdOpen } = this.state;
 
@@ -280,7 +281,7 @@ class ResultsTopBar extends React.Component {
             <Icon style={{ fontSize: 18 }}>fullscreen</Icon>
           </IconButton>
 
-          {download3DCallback && (
+          {(isAdmin && download3DCallback) && (
           <IconButton
             className={classes.button}
             aria-label="Download VR viewer seed"
@@ -309,6 +310,7 @@ class ResultsTopBar extends React.Component {
 
 const ResultsTopBarState = state => ({
   token: state.user.get('token'),
+  isAdmin: state.user.get('userInfo').AuthLevel === 'admin',
   results: state.results.get('allResults'),
   appDB: state.app.get('appDB')
 });
@@ -358,6 +360,7 @@ ResultsTopBar.propTypes = {
   fetchedTime: PropTypes.number,
   index: PropTypes.number.isRequired,
   token: PropTypes.string.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
   appDB: PropTypes.string.isRequired,
   results: PropTypes.object.isRequired,
   fixed: PropTypes.bool.isRequired,
