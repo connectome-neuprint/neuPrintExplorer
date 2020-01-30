@@ -43,6 +43,7 @@ class Login extends React.Component {
       isLoggedIn: false,
       userTarget: null,
       openUser: false,
+      useAvatarImg: true
     };
 
     this.fetchProfile();
@@ -114,21 +115,41 @@ class Login extends React.Component {
 
   render() {
     const { classes, userInfo } = this.props;
-    const { isLoggedIn, userTarget, openUser } = this.state;
+    const { isLoggedIn, userTarget, openUser, useAvatarImg } = this.state;
 
-    const badgeVis = userInfo.AuthLevel !== 'admin'
+    const badgeVis = userInfo.AuthLevel !== 'admin';
+
+    const avatar = useAvatarImg ? (
+      <Avatar
+        alt="Click for Menu"
+        src={userInfo.ImageURL}
+        onError={() => this.setState({ useAvatarImg: false })}
+      />
+    ) : (
+      <Avatar className={classes.avatar}>{userInfo.Email.charAt(0).toUpperCase()}</Avatar>
+    );
 
     return (
       <div className={classes.buttonWrap}>
         {!isLoggedIn ? (
-          <Button variant="contained" color="primary" className={classNames(classes.buttonBasic, 'pulse')} onClick={this.login}>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classNames(classes.buttonBasic, 'pulse')}
+            onClick={this.login}
+          >
             LOGIN
           </Button>
         ) : (
           <div>
-            <Badge className={classes.adminIcon} invisible={badgeVis} badgeContent="A" color="secondary">
+            <Badge
+              className={classes.adminIcon}
+              invisible={badgeVis}
+              badgeContent="A"
+              color="secondary"
+            >
               <Fab size="small" onClick={this.launchUserPopup} color="primary">
-                <Avatar alt="Click for Menu" src={userInfo.ImageURL} />
+                {avatar}
               </Fab>
             </Badge>
             <Menu
