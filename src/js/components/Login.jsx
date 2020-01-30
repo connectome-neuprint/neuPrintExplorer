@@ -1,6 +1,6 @@
 /*
  * Manages login to http service.
-*/
+ */
 
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -33,7 +33,7 @@ const styles = theme => ({
       backgroundColor: 'rgba(0, 0, 0, 0.12)'
     }
   },
-  buttonFont: theme.typography.button,
+  buttonFont: theme.typography.button
 });
 
 class Login extends React.Component {
@@ -95,12 +95,12 @@ class Login extends React.Component {
     const { logoutUser } = this.props;
     this.setState({ isLoggedIn: false });
     // clear the login cookie(s) here.
-    Cookies.remove("neuPrintHTTP");
-    Cookies.remove("neuPrintHTTP", { path: '/', domain: '.janelia.org'});
-    Cookies.remove("neuPrintHTTP", { path: '/', domain: window.location.hostname});
-    Cookies.remove("flyem-services");
-    Cookies.remove("flyem-services", { path: '/', domain: '.janelia.org'});
-    Cookies.remove("flyem-services", { path: '/', domain: window.location.hostname});
+    Cookies.remove('neuPrintHTTP');
+    Cookies.remove('neuPrintHTTP', { path: '/', domain: '.janelia.org' });
+    Cookies.remove('neuPrintHTTP', { path: '/', domain: window.location.hostname });
+    Cookies.remove('flyem-services');
+    Cookies.remove('flyem-services', { path: '/', domain: '.janelia.org' });
+    Cookies.remove('flyem-services', { path: '/', domain: window.location.hostname });
     logoutUser();
     window.location = '/';
   };
@@ -167,10 +167,9 @@ class Login extends React.Component {
               onClose={this.closeUser}
             >
               <MenuItem onClick={this.logout}>Logout</MenuItem>
-              <MenuItem
-                component={NavLink}
-                to={{ pathname: '/account'}}
-              >Account</MenuItem>
+              <MenuItem component={NavLink} to={{ pathname: '/account' }}>
+                Account
+              </MenuItem>
             </Menu>
           </div>
         )}
@@ -183,12 +182,12 @@ const LoginDispatch = dispatch => ({
   checkingUser() {
     dispatch({
       type: C.LOGIN_CHECK
-    })
+    });
   },
   loginFailed() {
     dispatch({
-      type: C.LOGIN_FAILED,
-    })
+      type: C.LOGIN_FAILED
+    });
   },
   loginUser(info) {
     dispatch({
@@ -220,8 +219,8 @@ Login.propTypes = {
   location: PropTypes.object.isRequired
 };
 
-const LoginState = (state) => ({
-  userInfo: state.user.get('userInfo'),
+const LoginState = state => ({
+  userInfo: state.user.get('userInfo')
 });
 
 export default withRouter(
