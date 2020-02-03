@@ -99,7 +99,8 @@ function Help(props) {
 
 Help.propTypes = {
   location: PropTypes.shape({
-    search: PropTypes.string.isRequired
+    search: PropTypes.string.isRequired,
+    pathname: PropTypes.string.isRequired
   }).isRequired,
   classes: PropTypes.object.isRequired
 };
