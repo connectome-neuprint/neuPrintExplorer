@@ -2,7 +2,7 @@
  * Side drawer pop out for queries.
  */
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 
@@ -10,9 +10,11 @@ import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';
 import Collapse from '@material-ui/core/Collapse';
 
-import Query from './Query';
 import QueryTypeSelection from './QueryTypeSelection';
 import { getSiteParams } from '../helpers/queryString';
+
+
+const Query = React.lazy(() => import('./Query'));
 
 const drawerWidth = 400;
 
@@ -53,7 +55,9 @@ const QueryDrawer = props => {
               <Collapse in={openQuery === '2'} timeout="auto" unmountOnExit>
                 <QueryTypeSelection />
               </Collapse>
-              <Query />
+              <Suspense fallback={<div>loading...</div>}>
+                <Query />
+              </Suspense>
             </div>
           </Drawer>
         </div>
