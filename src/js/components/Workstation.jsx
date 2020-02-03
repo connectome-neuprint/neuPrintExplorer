@@ -1,35 +1,47 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Redirect } from 'react-router';
 import { getQueryObject } from 'helpers/queryString';
 import qs from 'qs';
 
-export default function Workstation() {
+export default function Workstation(props) {
   // build the search string based on the props passed in.
 
-  const { dataset = 'hemibrain:v1.0', bodyid, tab = 0, ftab = 1 } = getQueryObject();
+  const { availableDatasets } = props;
+
+  const { dataset, bodyid, tab = 0, ftab = 1 } = getQueryObject();
+
+  // Can't do the redirect unless we have a dataset provided or a default loaded.
+  if (!dataset && availableDatasets.length === 0) {
+    return (
+      <p>loading</p>
+    );
+  }
+
+  const defaultDataset = availableDatasets.sort()[0];
 
   // set up the two tabs, one for the skeleton and one for the find neurons tab.
   const redirectQuery = {
     q: 0,
     tab,
     ftab,
-    dataset,
+    dataset: dataset || defaultDataset,
     qr: [
       {
         code: 'fn',
-        ds: dataset,
+        ds: dataset || defaultDataset,
         pm: {
           all_segment: false,
-          dataset,
+          dataset: dataset || defaultDataset,
           neuron_id: bodyid
         }
       },
       {
         code: 'sk',
-        ds: dataset,
+        ds: dataset || defaultDataset,
         pm: {
           bodyIds: bodyid,
-          dataset,
+          dataset: dataset || defaultDataset,
           skip: true
         }
       }
@@ -49,3 +61,7 @@ export default function Workstation() {
     />
   );
 }
+
+Workstation.propTypes = {
+  availableDatasets: PropTypes.arrayOf(PropTypes.string).isRequired
+};

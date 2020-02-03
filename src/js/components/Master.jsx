@@ -25,7 +25,7 @@ const Account = React.lazy(() => import('./Account'));
 const Home = React.lazy(() => import('./Home'));
 const Favorites = React.lazy(() => import('./Favorites'));
 const NoMatch = React.lazy(() => import('./NoMatch'));
-const Workstation = React.lazy(() => import('./Workstation'));
+const Workstation = React.lazy(() => import('../containers/Workstation'));
 const Login = React.lazy(() => import('./LoginPage'));
 
 // adapted from material ui example
