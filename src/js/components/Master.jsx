@@ -101,6 +101,7 @@ const Master = props => {
                 <Route path="/about" component={About} />
                 <PrivateRoute path="/account" component={Account} />
                 <Route path="/workstation" component={Workstation} />
+                <Route path="/view" component={Workstation} />
                 <Route component={NoMatch} />
               </Switch>
             </Suspense>
