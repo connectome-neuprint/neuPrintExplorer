@@ -115,7 +115,7 @@
   },
   "scripts": {
     "pretest": "eslint --ext .jsx,.js src/js/",
-    "test": "jest -i",
+    "test": "jest --maxWorkers=4",
     "test-watch": "jest --watch",
     "preversion": "npm test",
     "dev-server": "webpack-dev-server --open",
