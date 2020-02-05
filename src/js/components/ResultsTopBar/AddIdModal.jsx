@@ -49,7 +49,7 @@ export default function AddIdModal(props) {
           Cancel
         </Button>
         <Button onClick={addBodyId} color="primary">
-          Save
+          Show
         </Button>
       </DialogActions>
     </Dialog>

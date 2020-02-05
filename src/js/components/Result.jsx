@@ -332,6 +332,7 @@ class Result extends React.Component {
             currentPlugin.details.save !== undefined ? currentPlugin.details.save : true;
 
           const download3DCallback = typeof currentPlugin.download3DSeed === 'function' ? currentPlugin.download3DSeed(combined) : null;
+          const clipboardCallback = typeof currentPlugin.clipboardCallback === 'function' ? currentPlugin.clipboardCallback(combined) : null;
 
           if (combined && combined.code === processingPlugin.details.abbr) {
             // show the header information if not in full screen mode.
@@ -343,10 +344,13 @@ class Result extends React.Component {
                   addIdEnabled={Boolean(processingPlugin.details.visType === 'SkeletonView')}
                   downloadCallback={this.downloadFile}
                   download3DCallback={download3DCallback}
+                  clipboardCallback={clipboardCallback}
+                  visibleColumns={visibleColumns.get(tabIndex, Immutable.List([]))}
                   name={combined.result.title || 'Error'}
                   index={tabIndex}
                   fetchedTime={cachedResults.timestamp || null}
                   queryStr={combined.result.debug}
+                  resultData={combined.result}
                   color="#cccccc"
                   fixed={fixed}
                   dataSet={resultsList[tabIndex].ds}

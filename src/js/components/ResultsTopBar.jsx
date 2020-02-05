@@ -20,6 +20,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import ThreeDRotation from '@material-ui/icons/ThreeDRotation';
+import Assignment from '@material-ui/icons/Assignment';
 
 import { authError, reAuth } from 'actions/user';
 import { launchNotification } from 'actions/app';
@@ -28,6 +29,7 @@ import C from '../reducers/constants';
 
 import CachedCounter from './ResultsTopBar/CachedCounter';
 import AddIdModal from './ResultsTopBar/AddIdModal';
+import CopyToClipboardModal from './ResultsTopBar/CopyToClipboardModal';
 
 const styles = theme => ({
   root: {
@@ -53,6 +55,7 @@ class ResultsTopBar extends React.Component {
     this.state = {
       open: false,
       addIdOpen: false,
+      copyToClipboardOpen: false,
       bookmarkname: ''
     };
   }
@@ -101,6 +104,10 @@ class ResultsTopBar extends React.Component {
 
   handleAddId = () => {
     this.setState({ addIdOpen: true });
+  };
+
+  handleCopyToClipboard = () => {
+    this.setState({ copyToClipboardOpen: true });
   };
 
   handleRefresh = () => {
@@ -177,13 +184,16 @@ class ResultsTopBar extends React.Component {
       downloadCallback,
       downloadEnabled,
       download3DCallback,
+      clipboardCallback,
       saveEnabled,
       addIdEnabled,
       actions,
       fetchedTime,
-      dataSet
+      dataSet,
+      visibleColumns,
+      resultData
     } = this.props;
-    const { open, addIdOpen } = this.state;
+    const { open, addIdOpen, copyToClipboardOpen } = this.state;
 
     return (
       <div className={classNames(classes.root, 'topresultbar')} style={{ backgroundColor: color }}>
@@ -204,6 +214,28 @@ class ResultsTopBar extends React.Component {
           >
             <Icon style={{ fontSize: 18 }}>info</Icon>
           </IconButton>
+
+          {clipboardCallback && resultData && (
+            <IconButton
+              className={classes.button}
+              aria-label="Copy results to clipboard"
+              onClick={() => {
+                this.handleCopyToClipboard();
+              }}
+            >
+              <Assignment style={{ fontSize: 18 }} />
+            </IconButton>
+          )}
+          {clipboardCallback && resultData && (
+            <CopyToClipboardModal
+              open={copyToClipboardOpen}
+              visibleColumns={visibleColumns}
+              resultData={resultData}
+              callback={clipboardCallback}
+              handleClose={() => this.setState({ copyToClipboardOpen: false })}
+            />
+          )}
+
           <IconButton aria-label="Refresh" onClick={this.handleRefresh}>
             <Icon style={{ fontSize: 18 }}>refresh</Icon>
           </IconButton>
@@ -281,15 +313,15 @@ class ResultsTopBar extends React.Component {
           </IconButton>
 
           {download3DCallback && (
-          <IconButton
-            className={classes.button}
-            aria-label="Download VR viewer seed"
+            <IconButton
+              className={classes.button}
+              aria-label="Download VR viewer seed"
               onClick={() => {
                 download3DCallback(index);
               }}
-          >
-            <ThreeDRotation style={{ fontSize: 18 }}/>
-          </IconButton>
+            >
+              <ThreeDRotation style={{ fontSize: 18 }} />
+            </IconButton>
           )}
 
           <IconButton
@@ -352,6 +384,9 @@ ResultsTopBar.propTypes = {
   downloadCallback: PropTypes.func.isRequired,
   downloadEnabled: PropTypes.bool.isRequired,
   download3DCallback: PropTypes.func,
+  clipboardCallback: PropTypes.func,
+  visibleColumns: PropTypes.object,
+  resultData: PropTypes.object,
   addIdEnabled: PropTypes.bool,
   saveEnabled: PropTypes.bool.isRequired,
   queryStr: PropTypes.string.isRequired,
@@ -370,12 +405,12 @@ ResultsTopBar.defaultProps = {
   dataSet: 'loading',
   fetchedTime: new Date().getTime(),
   addIdEnabled: false,
-  download3DCallback: null
+  download3DCallback: null,
+  clipboardCallback: null,
+  visibleColumns: null,
+  resultData: null
 };
 
 export default withStyles(styles)(
-  connect(
-    ResultsTopBarState,
-    ResultsTopBarDispatch
-  )(ResultsTopBar)
+  connect(ResultsTopBarState, ResultsTopBarDispatch)(ResultsTopBar)
 );
