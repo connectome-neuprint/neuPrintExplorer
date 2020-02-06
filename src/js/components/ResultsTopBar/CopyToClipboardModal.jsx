@@ -59,7 +59,9 @@ class CopyToClipboardModal extends React.Component {
       return null;
     }
 
-    const options = resultData.columns.map((column, index) => {
+    const columnData = resultData.data ? resultData.data[0].columns : resultData.columns;
+
+    const options = columnData.map((column, index) => {
       // if visible columns, check that the current column should be visible
       // and change the name if required.
       if (!visibleColumns || visibleColumns.size > 0) {
@@ -118,7 +120,7 @@ class CopyToClipboardModal extends React.Component {
           </Button>
           <Button
             onClick={this.handleCSV}
-            disabled={selectedColumns.length < 1}
+            disabled={selectedColumns.filter(item => item).length < 1}
             color="primary"
             variant="outlined"
           >
@@ -126,7 +128,7 @@ class CopyToClipboardModal extends React.Component {
           </Button>
           <Button
             onClick={this.handleList}
-            disabled={selectedColumns.length !== 1}
+            disabled={selectedColumns.filter(item => item).length !== 1}
             color="primary"
             variant="outlined"
           >
