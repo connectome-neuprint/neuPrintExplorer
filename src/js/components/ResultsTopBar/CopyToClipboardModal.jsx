@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogActions from '@material-ui/core/DialogActions';
 import Dialog from '@material-ui/core/Dialog';
 import Button from '@material-ui/core/Button';
@@ -21,21 +22,33 @@ class CopyToClipboardModal extends React.Component {
     };
   }
 
-  handleExport = () => {
+  handleCSV = () => {
     const { handleClose, callback } = this.props;
     const { selectedColumns } = this.state;
-    const csv = callback(selectedColumns)
-    // TODO: copy CSV to clipboard.
+    const csv = callback(selectedColumns);
     const result = copy(csv);
     if (result) {
       handleClose();
     }
   };
 
+  handleList = () => {
+    const { handleClose, callback } = this.props;
+    const { selectedColumns } = this.state;
+    const csv = callback(selectedColumns);
+    const list = csv.replace(/\n/g,',');
+    const result = copy(list);
+    if (result) {
+      handleClose();
+    }
+  }
+
+
+
   handleToggle = index => {
-    const {selectedColumns} = this.state;
+    const { selectedColumns } = this.state;
     selectedColumns[index] = !selectedColumns[index];
-    this.setState({selectedColumns});
+    this.setState({ selectedColumns });
   };
 
   render() {
@@ -47,7 +60,6 @@ class CopyToClipboardModal extends React.Component {
     }
 
     const options = resultData.columns.map((column, index) => {
-
       // if visible columns, check that the current column should be visible
       // and change the name if required.
       if (visibleColumns) {
@@ -69,7 +81,6 @@ class CopyToClipboardModal extends React.Component {
             </ListItemSecondaryAction>
           </ListItem>
         );
-
       }
       // no visibleColumn data, so just use the column names from the result data.
       return (
@@ -93,16 +104,33 @@ class CopyToClipboardModal extends React.Component {
         open={open}
         onClose={handleClose}
       >
-        <DialogTitle id="confirmation-dialog-title">Select Columns To Copy</DialogTitle>
+        <DialogTitle id="confirmation-dialog-title">Copy Columns to Clipboard</DialogTitle>
         <DialogContent>
+          <DialogContentText>
+            Select the columns you wish to copy to your clipboard. Only one column can be selected
+            if copying as a list.
+          </DialogContentText>
           <List>{options}</List>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={this.handleExport} color="primary">
-            Copy To Clipboard
+          <Button
+            onClick={this.handleCSV}
+            disabled={selectedColumns.length < 1}
+            color="primary"
+            variant="outlined"
+          >
+            Copy As CSV
+          </Button>
+          <Button
+            onClick={this.handleList}
+            disabled={selectedColumns.length !== 1}
+            color="primary"
+            variant="outlined"
+          >
+            Copy As List
           </Button>
         </DialogActions>
       </Dialog>
