@@ -62,7 +62,7 @@ class CopyToClipboardModal extends React.Component {
     const options = resultData.columns.map((column, index) => {
       // if visible columns, check that the current column should be visible
       // and change the name if required.
-      if (visibleColumns) {
+      if (!visibleColumns || visibleColumns.size > 0) {
         const mappedColumn = visibleColumns.get(index);
 
         if (!mappedColumn.status) {
@@ -90,7 +90,7 @@ class CopyToClipboardModal extends React.Component {
             <Checkbox
               color="primary"
               onChange={() => this.handleToggle(index)}
-              checked={selectedColumns[index]}
+              checked={selectedColumns[index] || false}
             />
           </ListItemSecondaryAction>
         </ListItem>
