@@ -80,6 +80,21 @@ plan.target(
   }
 );
 
+plan.target(
+  'examples',
+  {
+    host: '35.245.181.251',
+    username: 'flyem',
+    agent: process.env.SSH_AUTH_SOCK
+  },
+  {
+    // Shouldn't be overridden, so please don't try.
+    gitCheck: false,
+    projectDir: '/opt/www/neuprintexplorer', // location on the remote server
+  }
+);
+
+
 
 // Check if there are files that have not been committed to git. This stops
 // us from deploying code in an inconsistent state. It also prevents slapdash
