@@ -89,7 +89,7 @@ plan.target(
   },
   {
     // Shouldn't be overridden, so please don't try.
-    gitCheck: false,
+    gitCheck: true,
     projectDir: '/opt/www/neuprintexplorer', // location on the remote server
   }
 );
