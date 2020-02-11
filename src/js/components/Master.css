@@ -2,3 +2,12 @@ body {
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
 }
 
+
+/* -- hides the status messages from neuroglancer
+ * These messages do nothing to help the end user and frequently
+ * get in the way of the page display.
+ * */
+#statusContainer {
+  display: none;
+}
+
