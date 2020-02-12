@@ -855,7 +855,7 @@ class SkeletonView extends React.Component {
     return (
       <div className={classes.root}>
         {!showMenu && <div className={classes.floater}>{chipsArray}</div>}
-        <ActionDrawer bodies={bodies} open={showMenu} showHandler={this.handleShowMenu} />
+        <ActionDrawer bodies={bodies} open={showMenu} showHandler={this.handleShowMenu}/>
         <div className={classes.compartments}>{compartmentSelection}</div>
         <div className={classes.bottomControls}>{bottomControls}</div>
         <div className={classes.skel} ref={this.skelRef} id="skeletonviewer" />

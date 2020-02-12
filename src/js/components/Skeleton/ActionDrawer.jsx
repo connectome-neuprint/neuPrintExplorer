@@ -29,11 +29,14 @@ const styles = () => ({
     width: '20px',
     border: '1px solid #ccc',
     padding: '1px'
+  },
+  notShown: {
+    color: '#ccc'
   }
 });
 
 function ActionDrawer(props) {
-  const { open, showHandler, classes, bodies } = props;
+  const { open, showHandler, bodyHideHandler, classes, bodies } = props;
 
   const bodyList = bodies
     .map(body => {
@@ -41,24 +44,22 @@ function ActionDrawer(props) {
       const colorBoxStyle = {
         backgroundColor: body.get('color')
       };
+      const visible = body.get('visible', false) ? '' : classes.notShown;
       return (
         <React.Fragment key={name}>
           <ListItem>
             <ListItemText>
-              <Button className={classes.button}>{name}</Button>
-              <IconButton aria-label="Delete" className={classes.margin}>
-                <div className={classes.colorBox} style={colorBoxStyle} />
-              </IconButton>
-              <IconButton aria-label="Delete" className={classes.margin}>
-                <DeleteIcon fontSize="small" />
-              </IconButton>
-              <IconButton aria-label="Delete" className={classes.margin}>
-                <Icon style={{ fontSize: '1.5rem' }}>file_download</Icon>
-              </IconButton>
-              <IconButton aria-label="Delete" className={classes.margin}>
-                <DeleteIcon fontSize="small" />
-              </IconButton>
+              <Button onClick={bodyHideHandler} className={visible}>{name}</Button>
             </ListItemText>
+            <IconButton aria-label="Delete" className={classes.margin}>
+              <div className={classes.colorBox} style={colorBoxStyle} />
+            </IconButton>
+            <IconButton aria-label="Delete" className={classes.margin}>
+              <Icon style={{ fontSize: '1.5rem' }}>file_download</Icon>
+            </IconButton>
+            <IconButton aria-label="Delete" className={classes.margin}>
+              <DeleteIcon fontSize="small" />
+            </IconButton>
           </ListItem>
           <Divider />
         </React.Fragment>
@@ -99,6 +100,7 @@ function ActionDrawer(props) {
 ActionDrawer.propTypes = {
   open: PropTypes.bool.isRequired,
   showHandler: PropTypes.func.isRequired,
+  bodyHideHandler: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
   bodies: PropTypes.object.isRequired
 };
