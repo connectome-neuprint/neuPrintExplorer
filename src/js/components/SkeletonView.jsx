@@ -11,12 +11,14 @@ import Slider from '@material-ui/lab/Slider';
 import Switch from '@material-ui/core/Switch';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Chip from '@material-ui/core/Chip';
 import { withStyles } from '@material-ui/core/styles';
+
+import { pickTextColorBasedOnBgColorAdvanced } from '@neuprint/support';
 
 import { MinSynapseRadius, MaxSynapseRadius } from 'actions/skeleton';
 
-import ActionMenu from './Skeleton/ActionMenu';
-
+import ActionDrawer from './Skeleton/ActionDrawer';
 import CompartmentSelection from './Skeleton/CompartmentSelection';
 
 const styles = theme => ({
@@ -102,6 +104,7 @@ class SkeletonView extends React.Component {
       bodies: Immutable.Map({}),
       compartments: Immutable.Map({}),
       loading: Immutable.Map({}),
+      showMenu: false,
       spindleView: false,
       synapsesOnTop: false
     };
@@ -310,9 +313,7 @@ class SkeletonView extends React.Component {
         const coords = sharkViewer.cameraCoords();
         const target = sharkViewer.cameraTarget();
 
-        const coordinateString = `${coords.x},${coords.y},${coords.z},${target.x},${target.y},${
-          target.z
-        }`;
+        const coordinateString = `${coords.x},${coords.y},${coords.z},${target.x},${target.y},${target.z}`;
         const tabData = actions.getQueryObject('qr', []);
         // if we have switched tabs and not removed the skeleton tab then we
         // need to keep track of the camera position.
@@ -329,12 +330,15 @@ class SkeletonView extends React.Component {
   createShark = () => {
     const { query } = this.props;
     import('@janelia/sharkviewer').then(SharkViewer => {
-      const sharkViewer = new SharkViewer.default({ // eslint-disable-line new-cap
+      const sharkViewer = new SharkViewer.default({
+        // eslint-disable-line new-cap
         dom_element: 'skeletonviewer',
         WIDTH: this.skelRef.current.clientWidth,
         HEIGHT: this.skelRef.current.clientHeight,
         // on_select_node: (id, sampleNumber, event, coords) => { console.log(id, sampleNumber, event, coords) },
-        on_toggle_node: (id) => { this.handleClick(id) }
+        on_toggle_node: id => {
+          this.handleClick(id);
+        }
       });
       sharkViewer.init();
       sharkViewer.animate();
@@ -375,7 +379,12 @@ class SkeletonView extends React.Component {
     // action passed in from Results that removes id from the url
   };
 
-  handleClick = (id) => {
+  handleShowMenu = () => {
+    const { showMenu } = this.state;
+    this.setState({ showMenu: !showMenu });
+  };
+
+  handleClick = id => {
     const { bodies } = this.state;
     const visible = !bodies.getIn([id, 'visible']);
     const updated = bodies.setIn([id, 'visible'], visible);
@@ -438,12 +447,12 @@ class SkeletonView extends React.Component {
   handleSynapsesOnTopToggle = () => {
     const { actions, index } = this.props;
     actions.toggleSynapsesOnTop(index);
-  }
+  };
 
   handleSynapseSizeChange = (event, value) => {
     const { actions, index } = this.props;
     actions.setSynapseRadius(value, index);
-  }
+  };
 
   unloadCompartment(id) {
     const { sharkViewer } = this.state;
@@ -732,6 +741,8 @@ class SkeletonView extends React.Component {
   render() {
     const { classes, query, neo4jsettings, synapses, synapseRadius, hideControls } = this.props;
 
+    const { showMenu } = this.state;
+
     const { compartments = '' } = query.pm;
 
     const compartmentIds = compartments.split(',').filter(x => x);
@@ -748,16 +759,16 @@ class SkeletonView extends React.Component {
       const name = neuron.get('name');
 
       return (
-        <ActionMenu
+        <Chip
           key={name}
-          color={currcolor}
-          synapseRadius={synapseRadius}
-          dataSet={query.pm.dataset}
-          isVisible={neuron.get('visible')}
-          body={neuron}
-          handleDelete={this.handleDelete}
-          handleClick={this.handleClick}
-          handleChangeColor={this.handleChangeColor}
+          label={name}
+          onDelete={() => this.handleDelete(name.toString())}
+          onClick={this.handleShowMenu}
+          className={classes.chip}
+          style={{
+            background: currcolor,
+            color: pickTextColorBasedOnBgColorAdvanced(currcolor, '#fff', '#000')
+          }}
         />
       );
     });
@@ -786,13 +797,13 @@ class SkeletonView extends React.Component {
     // the synapses map never loses keys, so there are no synapses shown when
     // each of those keys is associated with nothing
     let areSynapses = false;
-    synapses.forEach((value) => {
+    synapses.forEach(value => {
       const ins = value.get('inputs');
-      if ((ins !== undefined) && (ins.count() > 0)) {
+      if (ins !== undefined && ins.count() > 0) {
         areSynapses = true;
       }
       const outs = value.get('outputs');
-      if ((outs !== undefined) && (outs.count() > 0)) {
+      if (outs !== undefined && outs.count() > 0) {
         areSynapses = true;
       }
     });
@@ -805,28 +816,31 @@ class SkeletonView extends React.Component {
           }
           label="Spindle View"
         />
-        {areSynapses &&
+        {areSynapses && (
           <React.Fragment>
             <FormControlLabel
               control={
-                <Switch onChange={this.handleSynapsesOnTopToggle} checked={synapsesOnTopChecked} color="primary" />
+                <Switch
+                  onChange={this.handleSynapsesOnTopToggle}
+                  checked={synapsesOnTopChecked}
+                  color="primary"
+                />
               }
               label="Synapses On Top"
             />
-            <span className={classes.bottomControlsSlider} >
+            <span className={classes.bottomControlsSlider}>
               <Slider
                 value={synapseRadius}
                 onChange={this.handleSynapseSizeChange}
                 min={MinSynapseRadius}
                 max={MaxSynapseRadius}
                 step={1}
-                color="primary" />
-              <span className={classes.bottomControlsSliderLabel} >
-                Synapse Size
-              </span>
+                color="primary"
+              />
+              <span className={classes.bottomControlsSliderLabel}>Synapse Size</span>
             </span>
           </React.Fragment>
-        }
+        )}
       </FormGroup>
     );
 
@@ -840,7 +854,8 @@ class SkeletonView extends React.Component {
 
     return (
       <div className={classes.root}>
-        <div className={classes.floater}>{chipsArray}</div>
+        {!showMenu && <div className={classes.floater}>{chipsArray}</div>}
+        <ActionDrawer bodies={bodies} open={showMenu} showHandler={this.handleShowMenu} />
         <div className={classes.compartments}>{compartmentSelection}</div>
         <div className={classes.bottomControls}>{bottomControls}</div>
         <div className={classes.skel} ref={this.skelRef} id="skeletonviewer" />
