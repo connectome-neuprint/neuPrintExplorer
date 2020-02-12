@@ -36,28 +36,36 @@ const styles = () => ({
 });
 
 function ActionDrawer(props) {
-  const { open, showHandler, bodyHideHandler, classes, bodies } = props;
+  const { open, showHandler, bodyHideHandler, bodyDeleteHandler, classes, bodies } = props;
 
   const bodyList = bodies
     .map(body => {
-      const name = body.get('name');
+      const name = body.get('name').toString();
+      const dataSet = body.get('dataSet');
       const colorBoxStyle = {
         backgroundColor: body.get('color')
       };
       const visible = body.get('visible', false) ? '' : classes.notShown;
+      const swcDownload = `/api/skeletons/skeleton/${dataSet}/${name}?format=swc`;
       return (
         <React.Fragment key={name}>
           <ListItem>
             <ListItemText>
-              <Button onClick={bodyHideHandler} className={visible}>{name}</Button>
+              <Button onClick={() => bodyHideHandler(name)} className={visible}>
+                {name}
+              </Button>
             </ListItemText>
-            <IconButton aria-label="Delete" className={classes.margin}>
+            <IconButton aria-label="Change color" className={classes.margin}>
               <div className={classes.colorBox} style={colorBoxStyle} />
             </IconButton>
-            <IconButton aria-label="Delete" className={classes.margin}>
+            <IconButton download href={swcDownload} aria-label="Download" className={classes.margin}>
               <Icon style={{ fontSize: '1.5rem' }}>file_download</Icon>
             </IconButton>
-            <IconButton aria-label="Delete" className={classes.margin}>
+            <IconButton
+              onClick={() => bodyDeleteHandler(name)}
+              aria-label="Delete"
+              className={classes.margin}
+            >
               <DeleteIcon fontSize="small" />
             </IconButton>
           </ListItem>
@@ -101,6 +109,7 @@ ActionDrawer.propTypes = {
   open: PropTypes.bool.isRequired,
   showHandler: PropTypes.func.isRequired,
   bodyHideHandler: PropTypes.func.isRequired,
+  bodyDeleteHandler: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
   bodies: PropTypes.object.isRequired
 };

@@ -753,7 +753,7 @@ class SkeletonView extends React.Component {
       // gray out the chip if it is not active.
       let currcolor = neuron.get('color');
       if (!neuron.get('visible')) {
-        currcolor = 'gray';
+        currcolor = '#aaa';
       }
 
       const name = neuron.get('name');
@@ -855,7 +855,13 @@ class SkeletonView extends React.Component {
     return (
       <div className={classes.root}>
         {!showMenu && <div className={classes.floater}>{chipsArray}</div>}
-        <ActionDrawer bodies={bodies} open={showMenu} showHandler={this.handleShowMenu}/>
+        <ActionDrawer
+          bodies={bodies}
+          open={showMenu}
+          showHandler={this.handleShowMenu}
+          bodyHideHandler={this.handleClick}
+          bodyDeleteHandler={this.handleDelete}
+        />
         <div className={classes.compartments}>{compartmentSelection}</div>
         <div className={classes.bottomControls}>{bottomControls}</div>
         <div className={classes.skel} ref={this.skelRef} id="skeletonviewer" />
