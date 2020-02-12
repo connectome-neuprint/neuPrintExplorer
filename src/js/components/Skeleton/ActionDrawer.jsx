@@ -3,9 +3,14 @@ import PropTypes from 'prop-types';
 import Drawer from '@material-ui/core/Drawer';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
+import Icon from '@material-ui/core/Icon';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import DeleteIcon from '@material-ui/icons/Delete';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = () => ({
@@ -15,16 +20,52 @@ const styles = () => ({
   },
   close: {
     float: 'right'
+  },
+  button: {
+    margin: '0.3em 0 0.3em 0.5em'
+  },
+  colorBox: {
+    height: '20px',
+    width: '20px',
+    border: '1px solid #ccc',
+    padding: '1px'
   }
 });
 
 function ActionDrawer(props) {
   const { open, showHandler, classes, bodies } = props;
 
-  const bodyList = bodies.map(body => {
-    const name = body.get('name');
-    return <p>{name}</p>;
-  });
+  const bodyList = bodies
+    .map(body => {
+      const name = body.get('name');
+      const colorBoxStyle = {
+        backgroundColor: body.get('color')
+      };
+      return (
+        <React.Fragment key={name}>
+          <ListItem>
+            <ListItemText>
+              <Button className={classes.button}>{name}</Button>
+              <IconButton aria-label="Delete" className={classes.margin}>
+                <div className={classes.colorBox} style={colorBoxStyle} />
+              </IconButton>
+              <IconButton aria-label="Delete" className={classes.margin}>
+                <DeleteIcon fontSize="small" />
+              </IconButton>
+              <IconButton aria-label="Delete" className={classes.margin}>
+                <Icon style={{ fontSize: '1.5rem' }}>file_download</Icon>
+              </IconButton>
+              <IconButton aria-label="Delete" className={classes.margin}>
+                <DeleteIcon fontSize="small" />
+              </IconButton>
+            </ListItemText>
+          </ListItem>
+          <Divider />
+        </React.Fragment>
+      );
+    })
+    .valueSeq()
+    .toArray();
 
   return (
     <Drawer open={open} onClose={showHandler} variant="persistent">
@@ -41,19 +82,15 @@ function ActionDrawer(props) {
         <Typography variant="h5" gutterBottom>
           Skeleton Options
         </Typography>
-        <Button color="primary" variant="outlined">Show all</Button>
-        <Button color="primary" variant="outlined">Hide all</Button>
+        <Button className={classes.button} color="primary" variant="outlined">
+          Show all
+        </Button>
+        <Button className={classes.button} color="primary" variant="outlined">
+          Hide all
+        </Button>
+        <Typography variant="subtitle2">Click on a body id to toggle visibility</Typography>
         <Divider />
-
-        <p>List of Bodys</p>
-        <ul>
-          <li>Synapse menu in exapnder</li>
-          <li>Download link</li>
-          <li>Show/Hide option</li>
-          <li>Change color</li>
-          <li>Remove from the display</li>
-        </ul>
-        {bodyList}
+        <List>{bodyList}</List>
       </div>
     </Drawer>
   );
