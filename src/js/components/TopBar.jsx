@@ -148,6 +148,7 @@ class TopBar extends React.Component {
           </Tooltip>
           {loggedIn && (
             <Select
+              inputId='dataSetSelect'
               className={classes.search}
               styles={selectStyles}
               value={{ value: datasetstr, label: datasetstr }}
