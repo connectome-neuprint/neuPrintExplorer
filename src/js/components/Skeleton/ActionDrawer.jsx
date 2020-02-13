@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import Drawer from '@material-ui/core/Drawer';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
@@ -12,6 +13,8 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { withStyles } from '@material-ui/core/styles';
+
+import ColorPickerModal from './ColorPickerModal';
 
 const styles = () => ({
   drawer: {
@@ -43,6 +46,7 @@ function ActionDrawer(props) {
     showHandler,
     bodyHideHandler,
     bodyDeleteHandler,
+    handleChangeColor,
     classes,
     bodies
   } = props;
@@ -51,9 +55,6 @@ function ActionDrawer(props) {
     .map(body => {
       const name = body.get('name').toString();
       const dataSet = body.get('dataSet');
-      const colorBoxStyle = {
-        backgroundColor: body.get('color')
-      };
       const visible = body.get('visible', false) ? '' : classes.notShown;
       const swcDownload = `/api/skeletons/skeleton/${dataSet}/${name}?format=swc`;
       return (
@@ -64,9 +65,11 @@ function ActionDrawer(props) {
                 {name}
               </Button>
             </ListItemText>
-            <IconButton aria-label="Change color" className={classes.margin}>
-              <div className={classes.colorBox} style={colorBoxStyle} />
-            </IconButton>
+            <ColorPickerModal
+              bodyId={name}
+              currentColor={body.get('color', '#aaa')}
+              handleChangeColor={handleChangeColor}
+            />
             <IconButton
               download
               href={swcDownload}
@@ -124,6 +127,7 @@ ActionDrawer.propTypes = {
   showHandler: PropTypes.func.isRequired,
   showAll: PropTypes.func.isRequired,
   hideAll: PropTypes.func.isRequired,
+  handleChangeColor: PropTypes.func.isRequired,
   bodyHideHandler: PropTypes.func.isRequired,
   bodyDeleteHandler: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
