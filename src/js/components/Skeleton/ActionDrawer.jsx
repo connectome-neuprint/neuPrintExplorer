@@ -36,7 +36,16 @@ const styles = () => ({
 });
 
 function ActionDrawer(props) {
-  const { open, showHandler, bodyHideHandler, bodyDeleteHandler, classes, bodies } = props;
+  const {
+    open,
+    showAll,
+    hideAll,
+    showHandler,
+    bodyHideHandler,
+    bodyDeleteHandler,
+    classes,
+    bodies
+  } = props;
 
   const bodyList = bodies
     .map(body => {
@@ -58,7 +67,12 @@ function ActionDrawer(props) {
             <IconButton aria-label="Change color" className={classes.margin}>
               <div className={classes.colorBox} style={colorBoxStyle} />
             </IconButton>
-            <IconButton download href={swcDownload} aria-label="Download" className={classes.margin}>
+            <IconButton
+              download
+              href={swcDownload}
+              aria-label="Download"
+              className={classes.margin}
+            >
               <Icon style={{ fontSize: '1.5rem' }}>file_download</Icon>
             </IconButton>
             <IconButton
@@ -91,10 +105,10 @@ function ActionDrawer(props) {
         <Typography variant="h5" gutterBottom>
           Skeleton Options
         </Typography>
-        <Button className={classes.button} color="primary" variant="outlined">
+        <Button onClick={showAll} className={classes.button} color="primary" variant="outlined">
           Show all
         </Button>
-        <Button className={classes.button} color="primary" variant="outlined">
+        <Button onClick={hideAll} className={classes.button} color="primary" variant="outlined">
           Hide all
         </Button>
         <Typography variant="subtitle2">Click on a body id to toggle visibility</Typography>
@@ -108,6 +122,8 @@ function ActionDrawer(props) {
 ActionDrawer.propTypes = {
   open: PropTypes.bool.isRequired,
   showHandler: PropTypes.func.isRequired,
+  showAll: PropTypes.func.isRequired,
+  hideAll: PropTypes.func.isRequired,
   bodyHideHandler: PropTypes.func.isRequired,
   bodyDeleteHandler: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,

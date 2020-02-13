@@ -384,6 +384,24 @@ class SkeletonView extends React.Component {
     this.setState({ showMenu: !showMenu });
   };
 
+  handleShowAll = () => {
+    const { bodies } = this.state;
+    // loop over all the bodies and set visible to true
+    const updated = bodies.map(body => body.set('visible', true))
+    //
+    this.setState({ bodies: updated });
+  }
+
+  handleHideAll = () => {
+    const { bodies } = this.state;
+    // loop over all the bodies and set visible to true
+    const updated = bodies.map(body => body.set('visible', false))
+    //
+    this.setState({ bodies: updated });
+  }
+
+
+
   handleClick = id => {
     const { bodies } = this.state;
     const visible = !bodies.getIn([id, 'visible']);
@@ -861,6 +879,8 @@ class SkeletonView extends React.Component {
           showHandler={this.handleShowMenu}
           bodyHideHandler={this.handleClick}
           bodyDeleteHandler={this.handleDelete}
+          showAll={this.handleShowAll}
+          hideAll={this.handleHideAll}
         />
         <div className={classes.compartments}>{compartmentSelection}</div>
         <div className={classes.bottomControls}>{bottomControls}</div>
