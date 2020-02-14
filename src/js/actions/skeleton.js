@@ -128,7 +128,7 @@ export function loadSynapse(bodyId, synapseId, dataSet, options = { isInput: tru
     }
 
     // fetch swc data
-    fetch('/api/custom/custom', {
+    fetch('/api/custom/custom?np_explorer=load_synapse', {
       headers: {
         'content-type': 'application/json',
         Accept: 'application/json'

@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import SynapseSelection from 'components/Skeleton/SynapseSelection';
+import SynapseUpdater from 'components/Skeleton/SynapseUpdater';
 import { loadSynapse, removeSynapse } from 'actions/skeleton';
 
 const SynapseSelectionState = state => ({
@@ -20,4 +20,4 @@ const SynapseSelectionDispatch = dispatch => ({
 export default connect(
   SynapseSelectionState,
   SynapseSelectionDispatch
-)(SynapseSelection);
+)(SynapseUpdater);

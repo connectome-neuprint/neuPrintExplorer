@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useReducer } from 'react';
 import PropTypes from 'prop-types';
+import Immutable from 'immutable';
 
 import Drawer from '@material-ui/core/Drawer';
 import Divider from '@material-ui/core/Divider';
@@ -15,8 +16,9 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { withStyles } from '@material-ui/core/styles';
 
 import ColorPickerModal from './ColorPickerModal';
+import SynapseSelectionMenu from './SynapseSelectionMenu';
 
-const styles = () => ({
+const styles = theme => ({
   drawer: {
     width: '455px',
     marginTop: '70px'
@@ -35,10 +37,34 @@ const styles = () => ({
   },
   notShown: {
     color: '#ccc'
+  },
+  header: {
+    paddingLeft: theme.spacing.unit * 2
   }
 });
 
+const initialState = Immutable.Map({});
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'addBody':
+      return state.set(action.id, true);
+    case 'removeBody':
+      return state.delete(action.id);
+    case 'updateBody': {
+      if (action.status) {
+        return state.set(action.id, true);
+      }
+      return state.delete(action.id);
+    }
+    default:
+      return state;
+  }
+}
+
 function ActionDrawer(props) {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
   const {
     open,
     showAll,
@@ -79,6 +105,13 @@ function ActionDrawer(props) {
               <Icon style={{ fontSize: '1.5rem' }}>file_download</Icon>
             </IconButton>
             <IconButton
+              onClick={() => dispatch({ type: 'updateBody', id: name, status: !state.has(name) })}
+              aria-label="Synapses"
+              className={classes.margin}
+            >
+              <Icon style={{ fontSize: '1.5rem' }}>share</Icon>
+            </IconButton>
+            <IconButton
               onClick={() => bodyDeleteHandler(name)}
               aria-label="Delete"
               className={classes.margin}
@@ -86,6 +119,7 @@ function ActionDrawer(props) {
               <DeleteIcon fontSize="small" />
             </IconButton>
           </ListItem>
+          <SynapseSelectionMenu open={state.has(name)} bodyId={name} dataSet={dataSet} />
           <Divider />
         </React.Fragment>
       );
@@ -105,16 +139,19 @@ function ActionDrawer(props) {
         >
           <CloseIcon />
         </IconButton>
-        <Typography variant="h5" gutterBottom>
+        <Typography variant="h5" gutterBottom className={classes.header}>
           Skeleton Options
         </Typography>
+        <Typography variant="subtitle2" className={classes.header}>
+          Click on a body id to toggle visibility
+        </Typography>
+
         <Button onClick={showAll} className={classes.button} color="primary" variant="outlined">
           Show all
         </Button>
         <Button onClick={hideAll} className={classes.button} color="primary" variant="outlined">
           Hide all
         </Button>
-        <Typography variant="subtitle2">Click on a body id to toggle visibility</Typography>
         <Divider />
         <List>{bodyList}</List>
       </div>
