@@ -104,6 +104,21 @@ function HelpVideos(props) {
             />
           </div>
         </Grid>
+        <Grid item xs={12} sm={12} lg={6}>
+          <div className={classes.video}>
+            <iframe
+              className={classes.iframe}
+              title="How to Write Custom Queries"
+              width="560"
+              height="315"
+              src="https://www.youtube.com/embed/_zszVTKhzNA"
+              frameBorder="0"
+              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        </Grid>
+
       </Grid>
     </div>
   );
