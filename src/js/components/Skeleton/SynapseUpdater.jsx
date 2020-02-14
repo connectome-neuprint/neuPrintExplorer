@@ -8,7 +8,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Button from '@material-ui/core/Button';
 
 export default function SynapseUpdater(props) {
-  const { synapse, isInput, actions, synapseState, bodyId, dataSet } = props;
+  const { synapse, isInput, actions, synapseState, bodyId, dataSet, synapseRadius } = props;
   const [id, synapseMeta] = synapse;
 
   const synapseType = isInput ? 'inputs' : 'outputs';
@@ -30,7 +30,7 @@ export default function SynapseUpdater(props) {
     if (synapseState.getIn([bodyId, synapseType, id])) {
       actions.removeSynapse(bodyId, id, isInput);
     } else {
-      actions.loadSynapse(bodyId, id, dataSet, { isInput });
+      actions.loadSynapse(bodyId, id, dataSet, { isInput, radius: synapseRadius });
     }
   }
 
@@ -54,7 +54,8 @@ SynapseUpdater.propTypes = {
   actions: PropTypes.object.isRequired,
   bodyId: PropTypes.string.isRequired,
   dataSet: PropTypes.string.isRequired,
-  synapseState: PropTypes.object.isRequired
+  synapseState: PropTypes.object.isRequired,
+  synapseRadius: PropTypes.number.isRequired
 };
 
 SynapseUpdater.defaultProps = {

@@ -880,6 +880,7 @@ class SkeletonView extends React.Component {
           bodyHideHandler={this.handleClick}
           bodyDeleteHandler={this.handleDelete}
           handleChangeColor={this.handleChangeColor}
+          synapseRadius={synapseRadius}
           showAll={this.handleShowAll}
           hideAll={this.handleHideAll}
         />

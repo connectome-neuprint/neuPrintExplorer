@@ -73,6 +73,7 @@ function ActionDrawer(props) {
     bodyHideHandler,
     bodyDeleteHandler,
     handleChangeColor,
+    synapseRadius,
     classes,
     bodies
   } = props;
@@ -119,7 +120,7 @@ function ActionDrawer(props) {
               <DeleteIcon fontSize="small" />
             </IconButton>
           </ListItem>
-          <SynapseSelectionMenu open={state.has(name)} bodyId={name} dataSet={dataSet} />
+          <SynapseSelectionMenu open={state.has(name)} bodyId={name} dataSet={dataSet} synapseRadius={synapseRadius} />
           <Divider />
         </React.Fragment>
       );
@@ -167,6 +168,7 @@ ActionDrawer.propTypes = {
   handleChangeColor: PropTypes.func.isRequired,
   bodyHideHandler: PropTypes.func.isRequired,
   bodyDeleteHandler: PropTypes.func.isRequired,
+  synapseRadius: PropTypes.number.isRequired,
   classes: PropTypes.object.isRequired,
   bodies: PropTypes.object.isRequired
 };

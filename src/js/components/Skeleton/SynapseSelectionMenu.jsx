@@ -9,7 +9,7 @@ const cypherQuery =
   'MATCH (n :Neuron {bodyId: <BODYID>})-[x :ConnectsTo]-(m) RETURN x.weight AS weight, startnode(x).bodyId AS startId, startnode(x).type AS startType, endnode(x).bodyId AS endBody, endnode(x).type AS endType ORDER BY x.weight DESC';
 
 export default function SynapseSelectionMenu(props) {
-  const { open, bodyId, dataSet } = props;
+  const { open, bodyId, dataSet, synapseRadius } = props;
 
   if (!open) {
     return null;
@@ -79,6 +79,7 @@ export default function SynapseSelectionMenu(props) {
           isInput
           bodyId={bodyId}
           dataSet={dataSet}
+          synapseRadius={synapseRadius}
         />
       ));
     const synapseOutputs = Object.entries(synapses.outputs)
@@ -91,6 +92,7 @@ export default function SynapseSelectionMenu(props) {
           isInput={false}
           bodyId={bodyId}
           dataSet={dataSet}
+          synapseRadius={synapseRadius}
         />
       ));
 
@@ -110,5 +112,6 @@ export default function SynapseSelectionMenu(props) {
 SynapseSelectionMenu.propTypes = {
   open: PropTypes.bool.isRequired,
   bodyId: PropTypes.string.isRequired,
+  synapseRadius: PropTypes.number.isRequired,
   dataSet: PropTypes.string.isRequired
 };
