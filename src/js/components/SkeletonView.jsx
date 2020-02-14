@@ -330,8 +330,7 @@ class SkeletonView extends React.Component {
   createShark = () => {
     const { query } = this.props;
     import('@janelia/sharkviewer').then(SharkViewer => {
-      const sharkViewer = new SharkViewer.default({
-        // eslint-disable-line new-cap
+      const sharkViewer = new SharkViewer.default({ // eslint-disable-line new-cap
         dom_element: 'skeletonviewer',
         WIDTH: this.skelRef.current.clientWidth,
         HEIGHT: this.skelRef.current.clientHeight,
