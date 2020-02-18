@@ -12,6 +12,7 @@ import HelpMain from './Help/HelpMain';
 import HelpDetails from './Help/Videos';
 import HelpApi from './Help/Api';
 import HelpBrainRegions from './Help/BrainRegions';
+import CypherExamples from './Help/CypherExamples';
 
 const styles = theme => ({
   root: {
@@ -47,7 +48,8 @@ const locationValueMap = {
   '/help': 0,
   '/help/api': 1,
   '/help/videos': 2,
-  '/help/brainregions': 3
+  '/help/brainregions': 3,
+  '/help/cypherexamples': 4
 };
 
 function Help(props) {
@@ -76,6 +78,11 @@ function Help(props) {
             component={Link}
             to={{ pathname: '/help/brainregions', search: queryString }}
           />
+          <Tab
+            label="Cypher Examples"
+            component={Link}
+            to={{ pathname: '/help/cypherexamples', search: queryString }}
+          />
         </Tabs>
       </AppBar>
 
@@ -91,6 +98,9 @@ function Help(props) {
         </Route>
         <Route path="/help/brainregions">
           <HelpBrainRegions />
+        </Route>
+        <Route path="/help/cypherexamples">
+          <CypherExamples />
         </Route>
       </Switch>
     </div>
