@@ -106,7 +106,8 @@ class SkeletonView extends React.Component {
       loading: Immutable.Map({}),
       showMenu: false,
       spindleView: false,
-      synapsesOnTop: false
+      synapsesOnTop: false,
+      loadingError: null
     };
     this.skelRef = React.createRef();
   }
@@ -330,7 +331,8 @@ class SkeletonView extends React.Component {
   createShark = () => {
     const { query } = this.props;
     import('@janelia/sharkviewer').then(SharkViewer => {
-      const sharkViewer = new SharkViewer.default({ // eslint-disable-line new-cap
+      const sharkViewer = new SharkViewer.default({
+        // eslint-disable-line new-cap
         dom_element: 'skeletonviewer',
         WIDTH: this.skelRef.current.clientWidth,
         HEIGHT: this.skelRef.current.clientHeight,
@@ -386,20 +388,18 @@ class SkeletonView extends React.Component {
   handleShowAll = () => {
     const { bodies } = this.state;
     // loop over all the bodies and set visible to true
-    const updated = bodies.map(body => body.set('visible', true))
+    const updated = bodies.map(body => body.set('visible', true));
     //
     this.setState({ bodies: updated });
-  }
+  };
 
   handleHideAll = () => {
     const { bodies } = this.state;
     // loop over all the bodies and set visible to true
-    const updated = bodies.map(body => body.set('visible', false))
+    const updated = bodies.map(body => body.set('visible', false));
     //
     this.setState({ bodies: updated });
-  }
-
-
+  };
 
   handleClick = id => {
     const { bodies } = this.state;
@@ -427,7 +427,7 @@ class SkeletonView extends React.Component {
     if (id === '') {
       return;
     }
-    const { neo4jsettings } = this.props;
+    const { neo4jsettings, actions } = this.props;
     const { uuid } = neo4jsettings.get('datasetInfo')[dataSet];
 
     if (uuid) {
@@ -443,7 +443,10 @@ class SkeletonView extends React.Component {
         .then(result => {
           this.skeletonLoadedCompartment(id, result);
         })
-        .catch(error => this.setState({ loadingError: error }));
+        .catch(error => {
+          this.setState({ loadingError: error });
+          actions.metaInfoError('Failed to load mesh from server');
+        });
     }
   };
 
@@ -556,6 +559,8 @@ class SkeletonView extends React.Component {
     if (bodyId === '') {
       return;
     }
+
+    const { actions } = this.props;
     // TODO: check if we have a cached copy of the data and skip the fetch if we do.
     // document key should be sk_<id>
     //
@@ -580,7 +585,10 @@ class SkeletonView extends React.Component {
         }
         this.skeletonLoaded(bodyId, dataSet, result);
       })
-      .catch(error => this.setState({ loadingError: error }));
+      .catch(error => {
+        this.setState({ loadingError: error });
+        actions.metaInfoError('Failed to load skeleton from server.');
+      });
   }
 
   addSkeletons(bodyIds, dataSet) {

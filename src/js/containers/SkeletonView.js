@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import { skeletonRemove, toggleSpindle, toggleSynapsesOnTop, setSynapseRadius } from 'actions/skeleton';
 import { getQueryObject, setQueryString } from 'helpers/queryString';
+import { metaInfoError } from '@neuprint/support';
 
 import SkeletonView from '../components/SkeletonView';
 
@@ -23,6 +24,9 @@ const SkeletonViewDispatch = dispatch => ({
     },
     setSynapseRadius: (radius, tabIndex) => {
       dispatch(setSynapseRadius(radius, tabIndex));
+    },
+    metaInfoError: error => {
+      dispatch(metaInfoError(error));
     }
   }
 });
