@@ -4,6 +4,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 
 import SynapseSelection from 'containers/Skeleton/SynapseSelection';
+import ToggleSynapses from 'containers/Skeleton/ToggleSynapses';
 
 const cypherQuery =
   'MATCH (n :Neuron {bodyId: <BODYID>})-[x :ConnectsTo]-(m) RETURN x.weight AS weight, startnode(x).bodyId AS startId, startnode(x).type AS startType, endnode(x).bodyId AS endBody, endnode(x).type AS endType ORDER BY x.weight DESC';
@@ -82,6 +83,10 @@ export default function SynapseSelectionMenu(props) {
           synapseRadius={synapseRadius}
         />
       ));
+    const inputList = Object.entries(synapses.inputs)
+      .sort((a, b) => b[1].weight - a[1].weight)
+      .slice(0, 10).map(entry => entry[0]);;
+
     const synapseOutputs = Object.entries(synapses.outputs)
       .sort((a, b) => b[1].weight - a[1].weight)
       .slice(0, 10) // pick the top ten for display
@@ -96,11 +101,28 @@ export default function SynapseSelectionMenu(props) {
         />
       ));
 
+    const outputList = Object.entries(synapses.outputs)
+      .sort((a, b) => b[1].weight - a[1].weight)
+      .slice(0, 10).map(entry => entry[0]);;
+
     return (
       <React.Fragment>
         <ListItem>Inputs</ListItem>
+        <ToggleSynapses
+          synapseList={inputList}
+          bodyId={bodyId}
+          dataSet={dataSet}
+          synapseRadius={synapseRadius}
+        />
         <List>{synapseInputs}</List>
         <ListItem>Outputs</ListItem>
+        <ToggleSynapses
+          synapseList={outputList}
+          bodyId={bodyId}
+          dataSet={dataSet}
+          synapseRadius={synapseRadius}
+          isInput={false}
+        />
         <List>{synapseOutputs}</List>
       </React.Fragment>
     );
