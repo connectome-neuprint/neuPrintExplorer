@@ -714,6 +714,14 @@ class SkeletonView extends React.Component {
       const body = bodies.get(id);
 
       const swc = query.sp
+        /* The JSON.parse(JSON.stringify(object)) call in the following code is needed to
+         * create a deep clone of the object, referenced here as 'Native deep cloning':
+         * https://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-deep-clone-an-object-in-javascript
+         * It can be used since we are using only numbers and strings in our swc object.
+         * Removing this would cause us to update the original object and then we would
+         * no longer be able to revert back to the original swc file with variable radii
+         * for the synapses.
+        */
         ? objectMap(JSON.parse(JSON.stringify(body.get('swc'))), value => {
             const updatedValue = value;
             updatedValue.radius = 1;
