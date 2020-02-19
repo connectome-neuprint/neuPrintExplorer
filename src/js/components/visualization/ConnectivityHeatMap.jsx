@@ -8,6 +8,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { getQueryString, setSearchQueryString } from 'helpers/queryString';
 import history from '../../history';
 
+import HeatMapLoading from './HeatMapLoading.png';
 
 const styles = () => ({
   loader: {
@@ -19,11 +20,17 @@ const styles = () => ({
   },
   loading: {
     position: 'relative',
-    height: '100%'
+    height: '100%',
+    minHeight: '300px'
+  },
+  failed: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%'
   }
 });
 
-function generateGraph(rois, dataSet, mouseOver, mouseOut) {
+function generateGraph(rois, dataSet, mouseOver, mouseOut, classes) {
   const roiNames = rois.roi_names;
 
   let maxWeight = 0;
@@ -31,8 +38,9 @@ function generateGraph(rois, dataSet, mouseOver, mouseOut) {
 
   if (!roiNames) {
     return (
-      <div>
-        <p>Failed to load roi information</p>
+      <div className={classes.loading}>
+        <img src={HeatMapLoading} alt="heatmap loading in grey squares"/>
+        <p className={classes.failed}>Failed to load roi information</p>
       </div>
     );
   }
@@ -114,8 +122,9 @@ function generateGraph(rois, dataSet, mouseOver, mouseOut) {
 }
 
 function ConnectivityHeatMap(props) {
-  const { dataSet, actions, mouseOver, mouseOut, classes } = props;
+  const { dataSet, mouseOver, mouseOut, classes } = props;
   const [roiInfo, setRoiInfo] = useState(0);
+  const [loadingError, setLoadingError] = useState(null);
 
   useEffect(() => {
     const QueryUrl = `/api/cached/roiconnectivity?dataset=${dataSet}`;
@@ -137,16 +146,26 @@ function ConnectivityHeatMap(props) {
         setRoiInfo(resp);
       })
       .catch(error => {
-        actions.metaInfoError(error);
+        setLoadingError(error);
       });
   }, [dataSet]);
 
+  if (loadingError) {
+    return (
+      <div className={classes.loading}>
+        <img src={HeatMapLoading} alt="heatmap loading in grey squares"/>
+        <p className={classes.failed}>Failed to load.</p>
+      </div>
+    );
+  }
+
   if (roiInfo) {
-    return generateGraph(roiInfo, dataSet, mouseOver, mouseOut);
+    return generateGraph(roiInfo, dataSet, mouseOver, mouseOut, classes);
   }
   // return the loading statement
   return (
     <div className={classes.loading}>
+      <img src={HeatMapLoading} alt="heatmap loading in grey squares"/>
       <CircularProgress className={classes.loader} />
     </div>
   );
@@ -154,7 +173,6 @@ function ConnectivityHeatMap(props) {
 
 ConnectivityHeatMap.propTypes = {
   dataSet: PropTypes.string.isRequired,
-  actions: PropTypes.object.isRequired,
   mouseOver: PropTypes.func.isRequired,
   mouseOut: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired

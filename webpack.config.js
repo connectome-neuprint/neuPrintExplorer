@@ -82,6 +82,10 @@ module.exports = {
           options: {removeSVGTagAttrs: false, removeTags: true}
       },
       {
+        test: /\.(png|svg|jpg|gif)$/,
+        use: ['file-loader']
+      },
+      {
         test: /\.css$/,
         use: [MiniCssExtractPlugin.loader, 'css-loader']
       }

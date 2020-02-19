@@ -17,6 +17,9 @@ class News extends React.Component {
     fetch('/public/news.json')
       .then(resp => resp.json())
       .then(data => this.setState({newsItems: data.items}))
+      .catch(() => {
+        this.setState({newsItems: ['Error loading news items.']})
+      });
   }
 
   render() {

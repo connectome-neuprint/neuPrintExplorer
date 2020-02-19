@@ -24,6 +24,7 @@ function NeuronOfTheDay(props) {
   const { dataSet, superROIs, classes } = props;
 
   const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetch(`/api/cached/dailytype?dataset=${dataSet}`, {
@@ -38,11 +39,35 @@ function NeuronOfTheDay(props) {
         if (!('message' in resp)) {
           setData(resp);
         }
+      })
+      .catch(err => {
+        setError(err);
       });
   }, [dataSet]);
 
+
+  if (error) {
+    return (
+    <Grid container spacing={24}>
+      <Grid item xs={12}>
+        <Paper className={classes.typeName}>
+          Cell Type of the Day - failed to load.
+        </Paper>
+      </Grid>
+    </Grid>
+    );
+  }
+
   if (!data || !superROIs || !superROIs[dataSet]) {
-    return <p>Loading...</p>;
+     return (
+    <Grid container spacing={24}>
+      <Grid item xs={12}>
+        <Paper className={classes.typeName}>
+          Cell Type of the Day - Loading...
+        </Paper>
+      </Grid>
+    </Grid>
+    );
   }
 
   const newQuery = addSearchToQuery({

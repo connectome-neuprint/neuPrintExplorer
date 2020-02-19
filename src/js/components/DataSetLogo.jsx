@@ -47,6 +47,9 @@ function DataSetLogo(props) {
             setImageUrl(resp.data[0][0]);
           }
         }
+      })
+      .catch(() => {
+        setImageUrl(null);
       });
   }, []);
 
