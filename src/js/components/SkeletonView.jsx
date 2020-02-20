@@ -174,12 +174,22 @@ class SkeletonView extends React.Component {
         const render = !synapseRadiusChanged;
         prevProps.synapses.forEach((value, bodyId) => {
           value.get('inputs', Immutable.Map({})).forEach((status, inputId) => {
-            if (synapseRadiusChanged || !synapses.getIn([bodyId, 'inputs', inputId])) {
+            const currentColor = synapses.getIn([bodyId, 'inputs', inputId, 'color']);
+            let colorChanged = false;
+            if (currentColor && status.color !== currentColor) {
+              colorChanged = true;
+            }
+            if (synapseRadiusChanged || !synapses.getIn([bodyId, 'inputs', inputId]) || colorChanged) {
               this.unloadSynapse(bodyId, inputId, render);
             }
           });
           value.get('outputs', Immutable.Map({})).forEach((status, outputId) => {
-            if (synapseRadiusChanged || !synapses.getIn([bodyId, 'outputs', outputId])) {
+            const currentColor = synapses.getIn([bodyId, 'outputs', outputId, 'color']);
+            let colorChanged = false;
+            if (currentColor && status.color !== currentColor) {
+              colorChanged = true;
+            }
+            if (synapseRadiusChanged || !synapses.getIn([bodyId, 'outputs', outputId]) || colorChanged) {
               this.unloadSynapse(bodyId, outputId, render);
             }
           });

@@ -22,6 +22,27 @@ export function skeletonRemove(id, dataSet, tabIndex) {
   };
 }
 
+export function updateSynapseColor(bodyId, synapseId, options) {
+  return function updateSynapseColorAsync(dispatch) {
+    const colorStringId = options.isInput ? `input_${synapseId}` : `output_${synapseId}`;
+    db.get(colorStringId)
+      .then(doc => {
+        const updated = doc;
+        updated.color = options.color;
+        return db.put(updated);
+      })
+      .then(() => {
+        dispatch({
+          type: C.SKELETON_SYNAPSE_COLOR_UPDATE,
+          synapseId,
+          bodyId,
+          synapseType: options.isInput ? 'inputs' : 'outputs',
+          color: options.color || '#ff0000' // default color is bright red.
+        });
+      });
+  };
+}
+
 export const DefaultSynapseRadius = 40;
 export const MinSynapseRadius = 10;
 export const MaxSynapseRadius = 200;
@@ -61,11 +82,18 @@ function loadedSynapse(bodyId, synapseId, dataSet, response, options = { isInput
     db.get(colorStringId)
       .then(doc => {
         const { color } = doc;
-        dispatchedObject.color = color;
+        if (options.color) {
+          dispatchedObject.color = options.color;
+          const updated = doc;
+          updated.color = options.color;
+          db.put(updated);
+        } else {
+          dispatchedObject.color = color;
+        }
         dispatch(dispatchedObject);
       })
       .catch(() => {
-        const color = randomColor({ luminosity: 'light', hue: 'random' });
+        const color = options.color || randomColor({ luminosity: 'light', hue: 'random' });
         db.put({
           _id: colorStringId,
           color
@@ -74,8 +102,8 @@ function loadedSynapse(bodyId, synapseId, dataSet, response, options = { isInput
           dispatch(dispatchedObject);
         });
       });
-    }
-  }
+  };
+}
 
 function loadingSynapse(bodyId, synapseId) {
   return {
@@ -135,7 +163,7 @@ export function loadSynapse(bodyId, synapseId, dataSet, options = { isInput: tru
       },
       body: JSON.stringify({
         cypher: completeQuery,
-	dataset: dataSet
+        dataset: dataSet
       }),
       method: 'POST',
       credentials: 'include'

@@ -28,9 +28,12 @@ function ColorPickerModal(props) {
 
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const colorBoxStyle = {
-    backgroundColor: currentColor
-  };
+  const colorBoxStyle = {};
+  const sketchColor = currentColor || randomColor({ luminosity: 'light', hue: 'random' });
+
+  if (currentColor) {
+    colorBoxStyle.backgroundColor = currentColor;
+  }
 
   function changeColor(newColor) {
     handleChangeColor(bodyId, newColor.hex);
@@ -48,7 +51,7 @@ function ColorPickerModal(props) {
         onClose={() => setAnchorEl(null)}
       >
         <SketchPicker
-          color={currentColor}
+          color={sketchColor}
           onChangeComplete={changeColor}
           presetColors={presetColors}
         />
@@ -58,10 +61,14 @@ function ColorPickerModal(props) {
 }
 
 ColorPickerModal.propTypes = {
-  currentColor: PropTypes.string.isRequired,
+  currentColor: PropTypes.string,
   bodyId: PropTypes.string.isRequired,
   handleChangeColor: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired
+};
+
+ColorPickerModal.defaultProps = {
+  currentColor: null
 };
 
 export default withStyles(styles)(ColorPickerModal);

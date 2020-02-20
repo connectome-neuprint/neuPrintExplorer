@@ -125,12 +125,16 @@ export default function skeletonReducer(state = skeletonState, action) {
       }
       return state;
     }
+    case C.SKELETON_SYNAPSE_COLOR_UPDATE: {
+      const updated = state.setIn(['synapses', action.bodyId, action.synapseType, action.synapseId, 'color'], action.color);
+      return updated;
+    }
     case C.SKELETON_SYNAPSES_ON_TOP_TOGGLE: {
        // grab the tab data
        const current = getQueryObject('qr', []);
        // need to find the index of the tab we are going to update / replace.
        const selected = current[action.tabIndex];
- 
+
        if (selected) {
          // get current display state
          const synapsesOnTopState = selected.sot || 0;
