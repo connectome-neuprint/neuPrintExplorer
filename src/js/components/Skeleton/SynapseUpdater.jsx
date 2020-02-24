@@ -5,11 +5,27 @@ import Immutable from 'immutable';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Button from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles';
 
 import ColorPickerModal from './ColorPickerModal';
 
-export default function SynapseUpdater(props) {
-  const { synapse, isInput, actions, synapseState, bodyId, dataSet, synapseRadius } = props;
+const styles = () => ({
+  bodyIdText: {
+    fontSize: '0.8em'
+  }
+});
+
+function SynapseUpdater(props) {
+  const {
+    synapse,
+    isInput,
+    actions,
+    synapseState,
+    bodyId,
+    dataSet,
+    synapseRadius,
+    classes
+  } = props;
   const [id, synapseMeta] = synapse;
 
   const synapseType = isInput ? 'inputs' : 'outputs';
@@ -40,9 +56,10 @@ export default function SynapseUpdater(props) {
     <ListItem key={id}>
       <ListItemText>
         <Button onClick={handleToggle} style={visible}>
-          {id}({synapseMeta.type}) {synapseMeta.weight}{' '}
+          {synapseMeta.type} - <span className={classes.bodyIdText}> {id} </span>
         </Button>
       </ListItemText>
+      {synapseMeta.weight}
       <ColorPickerModal
         bodyId={id}
         currentColor={synapseState.getIn([bodyId, synapseType, id, 'color'])}
@@ -52,10 +69,13 @@ export default function SynapseUpdater(props) {
   );
 }
 
+export default withStyles(styles)(SynapseUpdater);
+
 SynapseUpdater.propTypes = {
   synapse: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object])).isRequired,
   isInput: PropTypes.bool,
   actions: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired,
   bodyId: PropTypes.string.isRequired,
   dataSet: PropTypes.string.isRequired,
   synapseState: PropTypes.object.isRequired,
