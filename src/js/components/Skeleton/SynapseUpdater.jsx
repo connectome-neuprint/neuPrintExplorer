@@ -56,7 +56,7 @@ function SynapseUpdater(props) {
     <ListItem key={id}>
       <ListItemText>
         <Button onClick={handleToggle} style={visible}>
-          {synapseMeta.type} - <span className={classes.bodyIdText}> {id} </span>
+          {synapseMeta.type} - <span className={classes.bodyIdText}>{id}</span>
         </Button>
       </ListItemText>
       {synapseMeta.weight}

@@ -13,6 +13,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import DeleteIcon from '@material-ui/icons/Delete';
+import Tooltip from '@material-ui/core/Tooltip';
 import { withStyles } from '@material-ui/core/styles';
 
 import ColorPickerModal from './ColorPickerModal';
@@ -97,30 +98,41 @@ function ActionDrawer(props) {
               currentColor={body.get('color', '#aaa')}
               handleChangeColor={handleChangeColor}
             />
-            <IconButton
-              download
-              href={swcDownload}
-              aria-label="Download"
-              className={classes.margin}
-            >
-              <Icon style={{ fontSize: '1.5rem' }}>file_download</Icon>
-            </IconButton>
-            <IconButton
-              onClick={() => dispatch({ type: 'updateBody', id: name, status: !state.has(name) })}
-              aria-label="Synapses"
-              className={classes.margin}
-            >
-              <Icon style={{ fontSize: '1.5rem' }}>share</Icon>
-            </IconButton>
-            <IconButton
-              onClick={() => bodyDeleteHandler(name)}
-              aria-label="Delete"
-              className={classes.margin}
-            >
-              <DeleteIcon fontSize="small" />
-            </IconButton>
+            <Tooltip title="Download" placement="top">
+              <IconButton
+                download
+                href={swcDownload}
+                aria-label="Download"
+                className={classes.margin}
+              >
+                <Icon style={{ fontSize: '1.5rem' }}>file_download</Icon>
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Synapse Selection" placement="top">
+              <IconButton
+                onClick={() => dispatch({ type: 'updateBody', id: name, status: !state.has(name) })}
+                aria-label="Synapses"
+                className={classes.margin}
+              >
+                <Icon style={{ fontSize: '1.5rem' }}>sync_alt</Icon>
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Remove" placement="top">
+              <IconButton
+                onClick={() => bodyDeleteHandler(name)}
+                aria-label="Delete"
+                className={classes.margin}
+              >
+                <DeleteIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
           </ListItem>
-          <SynapseSelectionMenu open={state.has(name)} bodyId={name} dataSet={dataSet} synapseRadius={synapseRadius} />
+          <SynapseSelectionMenu
+            open={state.has(name)}
+            bodyId={name}
+            dataSet={dataSet}
+            synapseRadius={synapseRadius}
+          />
           <Divider />
         </React.Fragment>
       );

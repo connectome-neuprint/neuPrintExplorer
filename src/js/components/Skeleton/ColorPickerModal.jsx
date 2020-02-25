@@ -5,6 +5,7 @@ import randomColor from 'randomcolor';
 
 import Popover from '@material-ui/core/Popover';
 import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = () => ({
@@ -21,8 +22,6 @@ for (let i = 0; i < 15; i += 1) {
   presetColors[i] = randomColor({ luminosity: 'light', hue: 'random' });
 }
 
-
-
 function ColorPickerModal(props) {
   const { currentColor, classes, handleChangeColor, bodyId } = props;
 
@@ -37,13 +36,15 @@ function ColorPickerModal(props) {
 
   function changeColor(newColor) {
     handleChangeColor(bodyId, newColor.hex);
-  };
+  }
 
   return (
     <React.Fragment>
-      <IconButton onClick={event => setAnchorEl(event.currentTarget)} aria-label="Change color">
-        <div className={classes.colorBox} style={colorBoxStyle} />
-      </IconButton>
+      <Tooltip title="Change Color" placement="top">
+        <IconButton onClick={event => setAnchorEl(event.currentTarget)} aria-label="Change color">
+          <div className={classes.colorBox} style={colorBoxStyle} />
+        </IconButton>
+      </Tooltip>
       <Popover
         id="simple-menu"
         anchorEl={anchorEl}
