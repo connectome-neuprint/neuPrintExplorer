@@ -86,7 +86,7 @@ class MetaInfo extends React.Component {
         setNeoServerPublic(resp.IsPublic);
       });
 
-   fetch('/api/custom/custom', {
+   fetch('/api/custom/custom?np_explorer=meta_roi_info', {
       credentials: 'include',
       body: JSON.stringify({ cypher: 'MATCH (n:Meta) RETURN n.roiInfo' }),
       method: 'POST',
@@ -105,7 +105,7 @@ class MetaInfo extends React.Component {
       });
 
 
-    fetch('/api/custom/custom', {
+    fetch('/api/custom/custom?np_explorer=meta_dataset_and_host', {
       credentials: 'include',
       body: JSON.stringify({ cypher: 'MATCH (n:Meta) RETURN n.dataset, n.meshHost' }),
       method: 'POST',

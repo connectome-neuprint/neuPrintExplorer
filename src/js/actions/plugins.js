@@ -103,7 +103,8 @@ export function fetchData(params, plugin, tabPosition, token) {
 
     const fetchParams = plugin.fetchParameters(parameters, token);
     // build the query url. Use the custom one by default.
-    let queryUrl = fetchParams.queryUrl || '/api/custom/custom';
+    const customUrl = `/api/custom/custom?np_explorer=plugin_${plugin.details.name}`;
+    let queryUrl = fetchParams.queryUrl || customUrl;
     if (fetchParams.queryString) {
       queryUrl = `/api${fetchParams.queryString}`;
     }

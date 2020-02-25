@@ -31,7 +31,7 @@ function DataSetLogo(props) {
   const altText = `data set logo for ${dataSet}`;
 
   useEffect(() => {
-    fetch('/api/custom/custom', {
+    fetch('/api/custom/custom?np_explorer=dataset_logo', {
       credentials: 'include',
       body: JSON.stringify({ cypher: `MATCH (m :Meta) RETURN m.logo` }),
       method: 'POST',

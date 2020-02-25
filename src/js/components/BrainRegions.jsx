@@ -112,7 +112,7 @@ function BrainRegionsTree(props) {
 
   const [roiTree, setRoiTree] = useState();
   useEffect(() => {
-    const QueryUrl = '/api/custom/custom';
+    const QueryUrl = '/api/custom/custom?np_explorer=roi_hierarchy';
     const QueryParameters = {
       headers: {
         'content-type': 'application/json',
