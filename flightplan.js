@@ -14,7 +14,7 @@ plan.target(
   {
     // Shouldn't be overridden, so please don't try.
     gitCheck: true,
-    projectDir: '/opt/www/neuprintexplorer', // location on the remote server
+    projectDir: '/opt/www/neuprintexplorer' // location on the remote server
   }
 );
 
@@ -32,7 +32,7 @@ plan.target(
       username: 'flyem',
       agent: process.env.SSH_AUTH_SOCK,
       failsafe: true
-    },
+    }
     /* {
       host: '35.221.11.230',
       username: 'flyem',
@@ -48,7 +48,7 @@ plan.target(
   ],
   {
     gitCheck: true,
-    projectDir: '/opt/www/neuprintexplorer', // location on the remote server
+    projectDir: '/opt/www/neuprintexplorer' // location on the remote server
   }
 );
 
@@ -62,7 +62,7 @@ plan.target(
   {
     // Shouldn't be overridden, so please don't try.
     gitCheck: false,
-    projectDir: '/opt/www/npexplorer_staging', // location on the remote server
+    projectDir: '/opt/www/npexplorer_staging' // location on the remote server
   }
 );
 
@@ -76,7 +76,7 @@ plan.target(
   {
     // Shouldn't be overridden, so please don't try.
     gitCheck: true,
-    projectDir: '/opt/www/neuprintexplorer', // location on the remote server
+    projectDir: '/opt/www/neuprintexplorer' // location on the remote server
   }
 );
 
@@ -90,11 +90,53 @@ plan.target(
   {
     // Shouldn't be overridden, so please don't try.
     gitCheck: true,
-    projectDir: '/opt/www/neuprintexplorer', // location on the remote server
+    projectDir: '/opt/www/neuprintexplorer' // location on the remote server
   }
 );
 
+plan.target(
+  'all',
+  [
+    {
+      host: 'emdata1',
+      username: 'deploy',
+      agent: process.env.SSH_AUTH_SOCK
+    },
 
+    {
+      host: '35.245.234.228',
+      username: 'flyem',
+      agent: process.env.SSH_AUTH_SOCK,
+      failsafe: true
+    },
+    {
+      host: '35.245.44.215',
+      username: 'flyem',
+      agent: process.env.SSH_AUTH_SOCK,
+      failsafe: true
+    },
+    {
+      host: 'emdata1',
+      username: 'deploy',
+      agent: process.env.SSH_AUTH_SOCK
+    },
+    {
+      host: '35.194.68.179',
+      username: 'flyem',
+      agent: process.env.SSH_AUTH_SOCK
+    },
+    {
+      host: '35.245.181.251',
+      username: 'flyem',
+      agent: process.env.SSH_AUTH_SOCK
+    }
+  ],
+  {
+    // Shouldn't be overridden, so please don't try.
+    gitCheck: true,
+    projectDir: '/opt/www/neuprintexplorer' // location on the remote server
+  }
+);
 
 // Check if there are files that have not been committed to git. This stops
 // us from deploying code in an inconsistent state. It also prevents slapdash
@@ -182,7 +224,9 @@ plan.remote(['default', 'uptime'], function(remote) {
 });
 
 function getReleases(remote) {
-  var releases = remote.exec('ls ' + plan.runtime.options.projectDir + '/releases', { silent: true });
+  var releases = remote.exec('ls ' + plan.runtime.options.projectDir + '/releases', {
+    silent: true
+  });
 
   if (releases.code === 0) {
     releases = releases.stdout.trim().split('\n');
