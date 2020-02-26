@@ -116,11 +116,6 @@ plan.target(
       failsafe: true
     },
     {
-      host: 'emdata1',
-      username: 'deploy',
-      agent: process.env.SSH_AUTH_SOCK
-    },
-    {
       host: '35.194.68.179',
       username: 'flyem',
       agent: process.env.SSH_AUTH_SOCK
