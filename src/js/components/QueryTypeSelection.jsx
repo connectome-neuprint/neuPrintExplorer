@@ -30,7 +30,7 @@ const styles = theme => ({
   },
   expander: {
     borderTop: '1px solid #ccc',
-    borderBottom: '1px solid #ccc',
+    borderBottom: '1px solid #ccc'
   },
   ul: {
     backgroundColor: 'inherit',
@@ -47,11 +47,9 @@ function QueryTypeSelection(props) {
 
   return (
     <div>
-      <div className={classes.header} >
-      <Typography variant="h5" >
-        Query Selection
-      </Typography>
-      <Typography variant="body1">Select a query from the choices below</Typography>
+      <div className={classes.header}>
+        <Typography variant="h5">Query Selection</Typography>
+        <Typography variant="body1">Select a query from the choices below</Typography>
       </div>
       <Divider />
       <List className={classes.root} subheader={<li />}>
@@ -112,7 +110,7 @@ function QueryTypeSelection(props) {
             ))}
         </Collapse>
 
-        <ListItem  className={classes.expander} button onClick={() => actions.toggleTab(2)}>
+        <ListItem className={classes.expander} button onClick={() => actions.toggleTab(2)}>
           <ListItemText primary="Visualization" />
           {tabs.get(2) ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
@@ -132,7 +130,6 @@ function QueryTypeSelection(props) {
               </ListItem>
             ))}
         </Collapse>
-
       </List>
     </div>
   );
@@ -142,7 +139,7 @@ QueryTypeSelection.propTypes = {
   classes: PropTypes.object.isRequired,
   tabs: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired,
-  pluginList: PropTypes.arrayOf(PropTypes.func).isRequired
+  pluginList: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.func, PropTypes.object])).isRequired
 };
 
 const QueryTypeState = state => ({
@@ -150,9 +147,9 @@ const QueryTypeState = state => ({
   tabs: state.query.get('tabs')
 });
 
-const QueryTypeDispatch = (dispatch) => ({
+const QueryTypeDispatch = dispatch => ({
   actions: {
-    toggleTab: (id) => {
+    toggleTab: id => {
       dispatch(toggleTab(id));
     }
   }

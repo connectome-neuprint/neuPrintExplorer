@@ -24,7 +24,7 @@ import './Login.css';
 
 const styles = theme => ({
   buttonBasic: {
-    padding: `0 ${theme.spacing.unit}px`,
+    padding: `0 ${theme.spacing(1)}px`,
     minWidth: 1,
     color: '#fff'
   },

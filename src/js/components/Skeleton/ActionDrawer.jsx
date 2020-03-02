@@ -40,7 +40,7 @@ const styles = theme => ({
     color: '#ccc'
   },
   header: {
-    paddingLeft: theme.spacing.unit * 2
+    paddingLeft: theme.spacing(2)
   }
 });
 

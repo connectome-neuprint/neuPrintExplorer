@@ -27,7 +27,7 @@ import DeleteButton from './Favorites/DeleteButton';
 const styles = theme => ({
   root: {
     overflow: 'auto',
-    padding: theme.spacing.unit * 3
+    padding: theme.spacing(3)
   },
   table: {
     minWidth: 500
@@ -42,7 +42,7 @@ class Favorites extends React.Component {
     super(props, context);
     this.state = {
       page: 0,
-      rowsPerPage: 5,
+      rowsPerPage: 10,
       favoritesLoaded: false,
       favoritesLoading: false,
       favoritesArr: [],
@@ -227,7 +227,7 @@ class Favorites extends React.Component {
             <TableFooter>
               <TableRow>
                 <TablePagination
-                  colSpan={2}
+                  colSpan={3}
                   count={favoritesArr.length}
                   rowsPerPage={rowsPerPage}
                   page={page}
@@ -248,7 +248,7 @@ class Favorites extends React.Component {
             <TableFooter>
               <TableRow>
                 <TablePagination
-                  colSpan={2}
+                  colSpan={3}
                   count={searchesArr.length}
                   rowsPerPage={rowsPerPage}
                   page={page}

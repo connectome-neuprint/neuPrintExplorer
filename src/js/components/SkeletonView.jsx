@@ -5,8 +5,7 @@ import Immutable from 'immutable';
 import PouchDB from 'pouchdb';
 import deepEqual from 'deep-equal';
 
-// TODO: Advance the version of Material-UI to get Slider from core.
-import Slider from '@material-ui/lab/Slider';
+import Slider from '@material-ui/core/Slider';
 
 import Switch from '@material-ui/core/Switch';
 import FormGroup from '@material-ui/core/FormGroup';
@@ -30,14 +29,14 @@ const styles = theme => ({
   },
   floater: {
     zIndex: 2,
-    padding: theme.spacing.unit,
+    padding: theme.spacing(1),
     position: 'absolute',
     display: 'flex', // keeps the chips in a vertical column instead of a row.
     flexDirection: 'column'
   },
   compartments: {
     zIndex: 2,
-    padding: theme.spacing.unit,
+    padding: theme.spacing(1),
     position: 'absolute',
     top: 0,
     right: 0
@@ -50,7 +49,7 @@ const styles = theme => ({
     position: 'relative'
   },
   chip: {
-    margin: theme.spacing.unit / 2
+    margin: theme.spacing(0.5)
   },
   minimize: {
     zIndex: 2,
@@ -79,11 +78,11 @@ const styles = theme => ({
     marginRight: 16,
     minWidth: '150px',
     maxWidth: '400px',
-    padding: theme.spacing.unit
+    padding: theme.spacing(1)
   },
   bottomControlsSliderLabel: {
     whiteSpace: 'nowrap',
-    padding: theme.spacing.unit
+    padding: theme.spacing(1)
   }
 });
 
@@ -873,6 +872,7 @@ class SkeletonView extends React.Component {
             <span className={classes.bottomControlsSlider}>
               <Slider
                 value={synapseRadius}
+                valueLabelDisplay="auto"
                 onChange={this.handleSynapseSizeChange}
                 min={MinSynapseRadius}
                 max={MaxSynapseRadius}

@@ -90,7 +90,11 @@ class Results extends React.Component {
 
 Results.propTypes = {
   allResults: PropTypes.object.isRequired,
-  pluginList: PropTypes.arrayOf(PropTypes.func).isRequired,
+  pluginList: PropTypes.arrayOf(
+    PropTypes.oneOfType([
+      PropTypes.func,
+      PropTypes.object,
+    ])).isRequired,
   classes: PropTypes.object.isRequired
 };
 

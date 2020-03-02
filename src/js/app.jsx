@@ -4,7 +4,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import Master from './components/Master';
 import { setAppDb } from './actions/app';
 import AppReducers from './reducers';
@@ -31,14 +31,6 @@ const theme = createMuiTheme({
       contrastText: '#000000'
     }
   },
-  overrides: {
-    MuiTableCell: {
-      paddingDense: {
-        paddingRight: '10px',
-        paddingLeft: '10px'
-      }
-    }
-  }
 });
 
 // eslint-disable-next-line  no-underscore-dangle
@@ -79,11 +71,11 @@ function loadInterface() {
   ReactDOM.render(
     <React.Fragment>
       <CssBaseline />
-      <MuiThemeProvider theme={theme}>
+      <ThemeProvider theme={theme}>
         <Provider store={store}>
           <Master />
         </Provider>
-      </MuiThemeProvider>
+      </ThemeProvider>
     </React.Fragment>,
     document.getElementById('analyzer')
   );

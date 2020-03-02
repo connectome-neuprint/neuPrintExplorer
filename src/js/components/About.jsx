@@ -14,7 +14,7 @@ const styles = theme => ({
   root: {
     flexGrow: 1,
     overflow: 'auto',
-    margin: theme.spacing.unit * 2
+    margin: theme.spacing(2)
   },
   centered: {
     textAlign: 'center'

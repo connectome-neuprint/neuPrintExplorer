@@ -30,13 +30,13 @@ const styles = theme => ({
     flexWrap: 'wrap',
     display: 'flex',
     overflow: 'auto',
-    padding: theme.spacing.unit * 3
+    padding: theme.spacing(3)
   },
   roottext: {
     textAlign: 'center'
   },
   description: {
-    margin: theme.spacing.unit * 2
+    margin: theme.spacing(2)
   },
   container: {
     alignContent: 'flex-start'
@@ -46,7 +46,7 @@ const styles = theme => ({
     margin: '2em 0'
   },
   video: {
-    marginBottom: theme.spacing.unit * 2,
+    marginBottom: theme.spacing(2),
     textAlign: 'center'
   }
 });
@@ -100,7 +100,7 @@ function Home(props) {
 
   return (
     <div className={classes.root}>
-      <Grid container spacing={24} justify="center" className={classes.container}>
+      <Grid container spacing={4} justify="center" className={classes.container}>
         <Grid item xs={loggedIn ? 8 : 12} className={classes.roottext}>
           <Typography variant="h3">Analysis tools for connectomics</Typography>
           <Typography className={classes.description}>
@@ -146,7 +146,7 @@ function Home(props) {
         </Grid>
       )}
       {queryObject.dataset && <Divider variant="middle" className={classes.sectionDivide} />}
-      <Grid container spacing={24} justify="center" className={classes.container}>
+      <Grid container spacing={4} justify="center" className={classes.container}>
         <Grid item xs={12} sm={12} md={6} lg={5}>
           <ServerInfoCard loggedIn={loggedIn} datasetInfo={datasetInfo} {...rest} />
         </Grid>

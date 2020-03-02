@@ -25,8 +25,8 @@ import {
 
 const styles = theme => ({
   divider: {
-    marginTop: theme.spacing.unit,
-    marginBottom: theme.spacing.unit
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1)
   }
 });
 
@@ -175,7 +175,11 @@ class QueryForm extends React.Component {
 QueryForm.propTypes = {
   queryType: PropTypes.string.isRequired,
   userInfo: PropTypes.object.isRequired,
-  pluginList: PropTypes.arrayOf(PropTypes.func).isRequired,
+  pluginList: PropTypes.arrayOf(
+    PropTypes.oneOfType([
+      PropTypes.func,
+      PropTypes.object,
+    ])).isRequired,
   dataSet: PropTypes.string.isRequired,
   isQuerying: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired,

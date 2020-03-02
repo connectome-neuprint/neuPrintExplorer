@@ -52,7 +52,7 @@ const mapStateToProps = state => ({
 
 const styles = theme => ({
   root: {
-    padding: `${theme.spacing.unit}px`
+    padding: theme.spacing(1)
   },
   avatar: {
     margin: 10
@@ -61,11 +61,11 @@ const styles = theme => ({
     display: 'none'
   },
   account: {
-    padding: `${theme.spacing.unit * 2}px`,
-    marginBottom: `${theme.spacing.unit}px`
+    padding: theme.spacing(2),
+    marginBottom: theme.spacing(1)
   },
   token: {
-    padding: `${theme.spacing.unit * 2}px`,
+    padding: theme.spacing(2),
     wordBreak: 'break-all'
   }
 });

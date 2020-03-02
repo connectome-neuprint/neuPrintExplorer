@@ -20,7 +20,7 @@ const styles = theme => ({
     position: 'relative',
     width: '100%',
     height: '100%',
-    padding: theme.spacing.unit * 3
+    padding: theme.spacing(3)
   },
   roottext: {
     flex: 1

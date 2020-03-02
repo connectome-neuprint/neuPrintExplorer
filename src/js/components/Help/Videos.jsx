@@ -33,7 +33,7 @@ function HelpVideos(props) {
       <div className={classes.roottext}>
         <Typography variant="h4" gutterBottom>Tutorial videos highlighting different aspects of neuPrintExplorer</Typography>
       </div>
-      <Grid container spacing={24}>
+      <Grid container spacing={4}>
         <Grid item xs={12} sm={12} lg={6}>
           <div className={classes.video}>
             <iframe

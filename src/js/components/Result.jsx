@@ -39,7 +39,7 @@ const SkeletonView = React.lazy(() => import('../containers/SkeletonView'));
 
 const styles = theme => ({
   root: {
-    padding: theme.spacing.unit,
+    padding: theme.spacing(1),
     outline: 0
   },
   resultContent: {
@@ -55,7 +55,7 @@ const styles = theme => ({
     overflow: 'auto'
   },
   errorText: {
-    marginLeft: theme.spacing.unit * 2,
+    marginLeft: theme.spacing(2),
     maxWidth: '800px',
     overflow: 'auto',
     overflowWrap: 'normal',
@@ -63,7 +63,7 @@ const styles = theme => ({
     whiteSpace: 'pre-wrap'
   },
   empty: {
-    padding: theme.spacing.unit * 3
+    padding: theme.spacing(3)
   },
   scroll: {
     overflow: 'auto',
@@ -467,7 +467,11 @@ Result.propTypes = {
     search: PropTypes.string.isRequired
   }).isRequired,
   allResults: PropTypes.object.isRequired,
-  pluginList: PropTypes.arrayOf(PropTypes.func).isRequired,
+  pluginList: PropTypes.arrayOf(
+    PropTypes.oneOfType([
+      PropTypes.func,
+      PropTypes.object,
+    ])).isRequired,
   viewPlugins: PropTypes.object.isRequired,
   loadingError: PropTypes.object,
   loading: PropTypes.object.isRequired,

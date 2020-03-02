@@ -16,7 +16,7 @@ import { addSearchToQuery } from 'helpers/queryString';
 
 const styles = theme => ({
   typeName: {
-    padding: theme.spacing.unit * 2
+    padding: theme.spacing(2)
   }
 });
 
@@ -48,7 +48,7 @@ function NeuronOfTheDay(props) {
 
   if (error) {
     return (
-    <Grid container spacing={24}>
+    <Grid container spacing={4}>
       <Grid item xs={12}>
         <Paper className={classes.typeName}>
           Cell Type of the Day - failed to load.
@@ -60,7 +60,7 @@ function NeuronOfTheDay(props) {
 
   if (!data || !superROIs || !superROIs[dataSet]) {
      return (
-    <Grid container spacing={24}>
+    <Grid container spacing={4}>
       <Grid item xs={12}>
         <Paper className={classes.typeName}>
           Cell Type of the Day - Loading...
@@ -82,7 +82,7 @@ function NeuronOfTheDay(props) {
   const cellTypeLink = `/results?${newQuery}`;
 
   return (
-    <Grid container spacing={24}>
+    <Grid container spacing={4}>
       <Grid item xs={12}>
         <Paper className={classes.typeName}>
           Cell Type of the Day - <Link to={cellTypeLink}>{data.info.typename}</Link>

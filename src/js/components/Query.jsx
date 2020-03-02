@@ -20,15 +20,11 @@ import './Query.css';
 
 const styles = theme => ({
   root: {
-    padding: theme.spacing.unit * 3
+    padding: theme.spacing(3)
   },
   divider: {
-    marginTop: theme.spacing.unit,
-    marginBottom: theme.spacing.unit
-  },
-  chips: {
-    display: 'flex',
-    flexWrap: 'wrap'
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1)
   },
   arrow: {
     position: 'absolute',
@@ -40,12 +36,9 @@ const styles = theme => ({
     background: theme.palette.common.white,
     color: theme.palette.error.dark,
     fontWeight: 'bold',
-    borderRadius: theme.spacing.unit * 2,
-    marginBottom: theme.spacing.unit * 2,
+    borderRadius: theme.spacing(2),
+    marginBottom: theme.spacing(2),
     position: 'relative'
-  },
-  chip: {
-    margin: theme.spacing.unit / 4
   },
   select: {
     fontFamily: theme.typography.fontFamily,
@@ -101,7 +94,11 @@ function Query(props) {
 }
 
 Query.propTypes = {
-  pluginList: PropTypes.arrayOf(PropTypes.func).isRequired,
+  pluginList: PropTypes.arrayOf(
+    PropTypes.oneOfType([
+      PropTypes.func,
+      PropTypes.object,
+    ])).isRequired,
   classes: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired
 };
