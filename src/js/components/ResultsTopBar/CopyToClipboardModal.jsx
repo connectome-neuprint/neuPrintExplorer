@@ -59,7 +59,11 @@ class CopyToClipboardModal extends React.Component {
       return null;
     }
 
-    const columnData = resultData.data ? resultData.data[0].columns : resultData.columns;
+    let columnData = resultData.columns;
+
+    if (resultData.data && resultData.data[0].columns) {
+      columnData = resultData.data[0].columns;
+    }
 
     const options = columnData.map((column, index) => {
       // if visible columns, check that the current column should be visible
