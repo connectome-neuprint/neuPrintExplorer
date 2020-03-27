@@ -44,6 +44,7 @@ const styles = theme => ({
   skel: {
     width: '100%',
     height: '100%',
+    outline: 'none',
     background: '#ddd',
     zIndex: 1,
     position: 'relative'
