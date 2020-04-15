@@ -4,15 +4,16 @@
 
 import React, { Suspense } from 'react';
 import { withRouter } from 'react-router';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import Drawer from '@material-ui/core/Drawer';
+import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Collapse from '@material-ui/core/Collapse';
 
 import QueryTypeSelection from './QueryTypeSelection';
 import { getSiteParams } from '../helpers/queryString';
-
 
 const Query = React.lazy(() => import('./Query'));
 
@@ -30,15 +31,33 @@ const styles = theme => ({
   query: {
     overflow: 'auto',
     flex: 'auto'
+  },
+  loggedOut: {
+    margin: '1em'
   }
 });
 
 const QueryDrawer = props => {
-  const { classes, location } = props;
+  const { classes, location, loggedIn } = props;
   const qsParams = getSiteParams(location);
 
   const openQuery = qsParams.get('q');
   const fullscreen = qsParams.get('rt');
+
+  const content = loggedIn ? (
+    <div className={classes.query}>
+      <Collapse in={openQuery === '2'} timeout="auto" unmountOnExit>
+        <QueryTypeSelection />
+      </Collapse>
+      <Suspense fallback={<div>loading...</div>}>
+        <Query />
+      </Suspense>
+    </div>
+  ) : (
+    <Typography className={classes.loggedOut} variant="h6">
+      Please login to query the data.
+    </Typography>
+  );
 
   if (fullscreen !== 'full') {
     if (openQuery >= '1') {
@@ -51,14 +70,7 @@ const QueryDrawer = props => {
             }}
           >
             <div className={classes.toolbar} />
-            <div className={classes.query} >
-              <Collapse in={openQuery === '2'} timeout="auto" unmountOnExit>
-                <QueryTypeSelection />
-              </Collapse>
-              <Suspense fallback={<div>loading...</div>}>
-                <Query />
-              </Suspense>
-            </div>
+            {content}
           </Drawer>
         </div>
       );
@@ -69,7 +81,12 @@ const QueryDrawer = props => {
 
 QueryDrawer.propTypes = {
   classes: PropTypes.object.isRequired,
-  location: PropTypes.object.isRequired
+  location: PropTypes.object.isRequired,
+  loggedIn: PropTypes.bool.isRequired
 };
 
-export default withRouter(withStyles(styles)(QueryDrawer));
+const QueryDrawerState = state => ({
+  loggedIn: state.user.get('loggedIn')
+});
+
+export default withRouter(withStyles(styles)(connect(QueryDrawerState)(QueryDrawer)));
