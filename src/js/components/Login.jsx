@@ -16,7 +16,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Badge from '@material-ui/core/Badge';
 import Avatar from '@material-ui/core/Avatar';
-import Cookies from 'js-cookie';
 
 import C from '../reducers/constants';
 
@@ -94,13 +93,6 @@ class Login extends React.Component {
   logout = () => {
     const { logoutUser } = this.props;
     this.setState({ isLoggedIn: false });
-    // clear the login cookie(s) here.
-    Cookies.remove('neuPrintHTTP');
-    Cookies.remove('neuPrintHTTP', { path: '/', domain: '.janelia.org' });
-    Cookies.remove('neuPrintHTTP', { path: '/', domain: window.location.hostname });
-    Cookies.remove('flyem-services');
-    Cookies.remove('flyem-services', { path: '/', domain: '.janelia.org' });
-    Cookies.remove('flyem-services', { path: '/', domain: window.location.hostname });
     logoutUser();
     window.location = '/';
   };
