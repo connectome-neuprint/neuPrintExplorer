@@ -1,5 +1,11 @@
 import { connect } from 'react-redux';
-import { skeletonRemove, toggleSpindle, toggleSynapsesOnTop, setSynapseRadius } from 'actions/skeleton';
+import {
+  skeletonRemove,
+  toggleSpindle,
+  toggleSynapsesOnTop,
+  setSynapseRadius
+} from 'actions/skeleton';
+import { logoutUser } from 'actions/user';
 import { getQueryObject, setQueryString } from 'helpers/queryString';
 import { metaInfoError } from '@neuprint/support';
 
@@ -16,22 +22,22 @@ const SkeletonViewDispatch = dispatch => ({
     skeletonRemove: (id, dataSet, tabIndex) => {
       dispatch(skeletonRemove(id, dataSet, tabIndex));
     },
-    toggleSpindle: (tabIndex) => {
+    toggleSpindle: tabIndex => {
       dispatch(toggleSpindle(tabIndex));
     },
-    toggleSynapsesOnTop: (tabIndex) => {
-      dispatch(toggleSynapsesOnTop(tabIndex))
+    toggleSynapsesOnTop: tabIndex => {
+      dispatch(toggleSynapsesOnTop(tabIndex));
     },
     setSynapseRadius: (radius, tabIndex) => {
       dispatch(setSynapseRadius(radius, tabIndex));
     },
     metaInfoError: error => {
       dispatch(metaInfoError(error));
+    },
+    logoutUser: () => {
+      dispatch(logoutUser());
     }
   }
 });
 
-export default connect(
-  SkeletonViewState,
-  SkeletonViewDispatch,
-)(SkeletonView);
+export default connect(SkeletonViewState, SkeletonViewDispatch)(SkeletonView);

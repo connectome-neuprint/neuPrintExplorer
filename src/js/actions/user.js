@@ -7,6 +7,12 @@ export function authError(error) {
   };
 }
 
+export function logoutUser() {
+  return {
+    type: C.LOGOUT_USER
+  };
+}
+
 export function reAuth() {
   return {
     type: C.LOGOUT_USER

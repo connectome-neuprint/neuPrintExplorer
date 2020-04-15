@@ -587,16 +587,28 @@ class SkeletonView extends React.Component {
       method: 'GET',
       credentials: 'include'
     })
-      .then(result => result.json())
+      .then(result => {
+        if (result.status === 401) {
+          throw Error("Unauthorized");
+        }
+        return result.json();
+      })
       .then(result => {
         if ('error' in result) {
-          throw result.error;
+          throw Error(result.error);
         }
         this.skeletonLoaded(bodyId, dataSet, result);
       })
       .catch(error => {
-        this.setState({ loadingError: error });
-        actions.metaInfoError('Failed to load skeleton from server.');
+        this.setState({ loadingError: error.message });
+        if (error.message === "Unauthorized") {
+          // if we get here, then need to force login again.
+          actions.metaInfoError('Login Expired. Please sign in again.');
+          actions.logoutUser();
+          window.location = '/';
+        } else {
+          actions.metaInfoError('Failed to load skeleton from server.');
+        }
       });
   }
 
