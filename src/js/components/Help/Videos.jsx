@@ -31,7 +31,9 @@ function HelpVideos(props) {
   return (
     <div className={classes.root} style={{ padding: 8 * 3, width: '100%' }}>
       <div className={classes.roottext}>
-        <Typography variant="h4" gutterBottom>Tutorial videos highlighting different aspects of neuPrintExplorer</Typography>
+        <Typography variant="h4" gutterBottom>
+          Tutorial videos highlighting different aspects of neuPrintExplorer
+        </Typography>
       </div>
       <Grid container spacing={4}>
         <Grid item xs={12} sm={12} lg={6}>
@@ -118,7 +120,20 @@ function HelpVideos(props) {
             />
           </div>
         </Grid>
-
+        <Grid item xs={12} sm={12} lg={6}>
+          <div className={classes.video}>
+            <iframe
+              className={classes.iframe}
+              title="NeuronBridge and GAL4 Lines"
+              width="560"
+              height="315"
+              src="https://www.youtube.com/embed/G0KWulZHvk0"
+              frameBorder="0"
+              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        </Grid>
       </Grid>
     </div>
   );
