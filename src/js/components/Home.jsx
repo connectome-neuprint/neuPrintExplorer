@@ -76,7 +76,9 @@ function Home(props) {
 
   const dataSetNames = Object.keys(datasetInfo) || [];
 
-  const defaultDS = dataSetNames.sort()[0];
+  const defaultDS = dataSetNames.sort(
+    (a, b) => (new Date(datasetInfo[b].lastmod) - new Date(datasetInfo[a].lastmod))
+  )[0];
 
   // show the loading page if we are logged in and there isn't a default dataset ready
   if (loggedIn && !defaultDS) {
@@ -193,9 +195,4 @@ Home.propTypes = {
   actions: PropTypes.object.isRequired
 };
 
-export default withStyles(styles, { withTheme: true })(
-  connect(
-    HomeState,
-    HomeDispatch
-  )(Home)
-);
+export default withStyles(styles, { withTheme: true })(connect(HomeState, HomeDispatch)(Home));
