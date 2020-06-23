@@ -1,0 +1,11 @@
+[
+  {
+    "dataset": "hemibrain:v1.1",
+    "notes": [
+      "Re-organizes cell types: increases the number of neurons with neuron type classification and provides more robust morphology and connectivity based groupings (note: some neurons are in different groups than in v1.0)",
+      "Systematically applies 'final' names to neuron cell types.  There are no longer *_pct types; all cell types are ‘final’.  In some cases, we provide synonyms or other notes in the neuprint field called ‘notes’.",
+      "Some QC was applied to various neuronal pathways, particularly those with low connection weights."
+    ]
+  },
+  { "dataset": "hemibrain:v1.0.1", "notes": ["initial release"] }
+]

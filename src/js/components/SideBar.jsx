@@ -16,6 +16,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Icon from '@material-ui/core/Icon';
 import Divider from '@material-ui/core/Divider';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import Contact from './Contact';
 import { getSiteParams, setQueryString } from '../helpers/queryString';
@@ -84,9 +85,11 @@ class SideBar extends React.Component {
         <div className={classes.toolbar} />
         <MenuList component="nav">
           <MenuItem button onClick={this.toggleQuery} selected={openQuery}>
-            <ListItemIcon>
-              <Icon>search</Icon>
-            </ListItemIcon>
+            <Tooltip title="Search Input" aria-label="Search Input" placement="top-end">
+              <ListItemIcon>
+                <Icon>search</Icon>
+              </ListItemIcon>
+            </Tooltip>
             <ListItemText primary="Search" />
           </MenuItem>
 
@@ -98,9 +101,11 @@ class SideBar extends React.Component {
             to={{ pathname: '/', search: queryString }}
             button
           >
-            <ListItemIcon>
-              <Icon>home</Icon>
-            </ListItemIcon>
+            <Tooltip title="Home" aria-label="Home" placement="top-end">
+              <ListItemIcon>
+                <Icon>home</Icon>
+              </ListItemIcon>
+            </Tooltip>
             <ListItemText primary="Home" />
           </MenuItem>
 
@@ -110,9 +115,11 @@ class SideBar extends React.Component {
             to={{ pathname: '/results', search: queryString }}
             button
           >
-            <ListItemIcon>
-              <Icon>storages</Icon>
-            </ListItemIcon>
+            <Tooltip title="Search Results" aria-label="Search Results" placement="top-end">
+              <ListItemIcon>
+                <Icon>storages</Icon>
+              </ListItemIcon>
+            </Tooltip>
             <ListItemText primary="Results" />
           </MenuItem>
 
@@ -122,9 +129,11 @@ class SideBar extends React.Component {
             to={{ pathname: '/favorites', search: queryString }}
             button
           >
-            <ListItemIcon>
-              <Icon>star</Icon>
-            </ListItemIcon>
+            <Tooltip title="Favorites" aria-label="Favorites" placement="top-end">
+              <ListItemIcon>
+                <Icon>star</Icon>
+              </ListItemIcon>
+            </Tooltip>
             <ListItemText primary="Favorites" />
           </MenuItem>
 
@@ -134,10 +143,26 @@ class SideBar extends React.Component {
             to={{ pathname: '/help', search: queryString }}
             button
           >
-            <ListItemIcon>
-              <Icon>info</Icon>
-            </ListItemIcon>
+            <Tooltip title="Help" aria-label="Help" placement="top-end">
+              <ListItemIcon>
+                <Icon>info</Icon>
+              </ListItemIcon>
+            </Tooltip>
             <ListItemText primary="Help" />
+          </MenuItem>
+
+          <MenuItem
+            selected={/^\/releasenotes/.test(location.pathname)}
+            component={NavLink}
+            to={{ pathname: '/releasenotes', search: queryString }}
+            button
+          >
+            <Tooltip title="Release Notes" aria-label="Release Notes" placement="top-end">
+              <ListItemIcon>
+                <Icon>list</Icon>
+              </ListItemIcon>
+            </Tooltip>
+            <ListItemText primary="Release Notes" />
           </MenuItem>
         </MenuList>
         <Contact />
