@@ -6,14 +6,16 @@ import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles(theme => createStyles({
-  centered: {
-    textAlign: 'center'
-  },
-  notepaper: {
-    margin: theme.spacing(2)
-  }
-}));
+const useStyles = makeStyles(theme =>
+  createStyles({
+    centered: {
+      textAlign: 'center'
+    },
+    notepaper: {
+      margin: theme.spacing(2)
+    }
+  })
+);
 
 export default function ReleaseNotes() {
   const [releaseNotes, setReleaseNotes] = useState(null);
@@ -41,15 +43,21 @@ export default function ReleaseNotes() {
     const matchedDataSet = releaseNotes.filter(note => note.dataset === key);
     if (matchedDataSet.length > 0) {
       const formattedNotes = matchedDataSet[0].notes.map(note => <li key={note}>{note}</li>);
+      const formattedLinks = Object.keys(matchedDataSet[0].links).map(link => (
+        <li key={link}>
+          <a href={matchedDataSet[0].links[link]}>{link}</a>
+        </li>
+      ));
 
       return (
         <Grid key={key} item xs={12} className={classes.notepaper}>
           <Card>
             <CardContent>
-              <Typography variant="h4">
-                {matchedDataSet[0].dataset}
-              </Typography>
+              <Typography variant="h4">{matchedDataSet[0].dataset}</Typography>
+              <Typography variant="h5">Notes</Typography>
               <ul>{formattedNotes}</ul>
+              <Typography variant="h5">Links</Typography>
+              <ul>{formattedLinks}</ul>
             </CardContent>
           </Card>
         </Grid>

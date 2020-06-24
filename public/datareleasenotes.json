@@ -4,8 +4,20 @@
     "notes": [
       "Re-organizes cell types: increases the number of neurons with neuron type classification and provides more robust morphology and connectivity based groupings (note: some neurons are in different groups than in v1.0)",
       "Systematically applies 'final' names to neuron cell types.  There are no longer *_pct types; all cell types are ‘final’.  In some cases, we provide synonyms or other notes in the neuprint field called ‘notes’.",
-      "Some QC was applied to various neuronal pathways, particularly those with low connection weights."
-    ]
+      "Some QC was applied to various neuronal pathways, particularly those with low connection weights",
+      "Boundary between FB and BU(R) has been adjusted to reflect neuron innervating patterns",
+      "Boundaries of EB and FB subareas have been refined",
+      "AL glomeruli are added (only those identifiable in the dataset)"
+    ],
+    "links": {
+      "Errata": "https://docs.google.com/document/d/1vae3ClHR8z8uekqwrOHtqiux3oY5-Y_xw6W2srCi3PI/edit?usp=sharing"
+    }
   },
-  { "dataset": "hemibrain:v1.0.1", "notes": ["initial release"] }
+  {
+    "dataset": "hemibrain:v1.0.1",
+    "notes": ["initial release"],
+    "links": {
+      "Errata": "https://docs.google.com/document/d/1vae3ClHR8z8uekqwrOHtqiux3oY5-Y_xw6W2srCi3PI/edit?usp=sharing"
+    }
+  }
 ]
