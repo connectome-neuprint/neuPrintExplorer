@@ -8,6 +8,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import AppBar from '@material-ui/core/AppBar';
 import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
 import { Switch, Route, Link } from 'react-router-dom';
 import HelpMain from './Help/HelpMain';
 import HelpDetails from './Help/Videos';
@@ -42,7 +43,11 @@ const styles = theme => ({
     maxWidth: '100%',
     minWidth: '500px'
   },
-  bold: { fontWeight: 'bold', display: 'inline' }
+  bold: { fontWeight: 'bold', display: 'inline' },
+  contact: {
+    padding: '1em',
+    marginBottom: '1em'
+  }
 });
 
 const locationValueMap = {
@@ -61,19 +66,23 @@ function Help(props) {
 
   return (
     <div className={classes.root}>
-      <Typography variant="h5">Contact us:</Typography>
-      <ul>
-        <li>
-          Email: <a href="mailto:neuprint@janelia.hhmi.org">neuprint@janelia.hhmi.org</a>
-        </li>
-        <li>
-          Issues:{' '}
-          <a href="https://github.com/connectome-neuprint/neuPrintExplorer/issues">Github Issues</a>
-        </li>
-        <li>
-          Forum: <a href="https://groups.google.com/forum/#!forum/neuprint">Google Groups</a>
-        </li>
-      </ul>
+      <Paper className={classes.contact}>
+        <Typography variant="h5">Contact us:</Typography>
+        <ul>
+          <li>
+            Email: <a href="mailto:neuprint@janelia.hhmi.org">neuprint@janelia.hhmi.org</a>
+          </li>
+          <li>
+            Issues:{' '}
+            <a href="https://github.com/connectome-neuprint/neuPrintExplorer/issues">
+              Github Issues
+            </a>
+          </li>
+          <li>
+            Forum: <a href="https://groups.google.com/forum/#!forum/neuprint">Google Groups</a>
+          </li>
+        </ul>
+      </Paper>
 
       <AppBar position="static" color="default">
         <Tabs value={value}>
