@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import clone from 'clone';
 import Immutable from 'immutable';
 import { withRouter } from 'react-router';
+import Papa from 'papaparse';
 
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
@@ -187,21 +188,22 @@ class Result extends React.Component {
         const resultsCopy = clone(results);
         csvData = currentPlugin.processDownload(resultsCopy);
       } else {
-        csvData = `${results.result.columns.toString()}\n`;
-        results.result.data.forEach(row => {
-          const filteredRow = row.map(item => {
+        csvData = results.result.data.map(row =>
+          row.map(item => {
             if (item === null) return '';
             if (item.csvValue !== undefined) return item.csvValue;
             if (item.sortBy !== undefined) return item.sortBy;
             if (item.value !== undefined) return item.value;
             return item;
-          });
-          csvData += `${filteredRow.toString()}\n`;
-        });
+          })
+        );
+        csvData.unshift(results.result.columns);
       }
 
+      const unparsed = Papa.unparse(csvData);
+
       const element = document.createElement('a');
-      const file = new Blob([csvData], { type: 'text/csv' });
+      const file = new Blob([unparsed], { type: 'text/csv' });
       element.href = URL.createObjectURL(file);
       element.download = 'results.csv';
       document.body.appendChild(element);
@@ -331,8 +333,14 @@ class Result extends React.Component {
           const saveEnabled =
             currentPlugin.details.save !== undefined ? currentPlugin.details.save : true;
 
-          const download3DCallback = typeof currentPlugin.download3DSeed === 'function' ? currentPlugin.download3DSeed(combined) : null;
-          const clipboardCallback = typeof currentPlugin.clipboardCallback === 'function' ? currentPlugin.clipboardCallback(combined) : null;
+          const download3DCallback =
+            typeof currentPlugin.download3DSeed === 'function'
+              ? currentPlugin.download3DSeed(combined)
+              : null;
+          const clipboardCallback =
+            typeof currentPlugin.clipboardCallback === 'function'
+              ? currentPlugin.clipboardCallback(combined)
+              : null;
 
           if (combined && combined.code === processingPlugin.details.abbr) {
             // show the header information if not in full screen mode.
@@ -366,9 +374,12 @@ class Result extends React.Component {
             if (processingPlugin.details.visType === 'SkeletonView') {
               const queryData = getQueryData(combined);
               const viewKey = `t${tabIndex}`;
-              const synapseRadius = (cachedResults && cachedResults.paramsPrivate && cachedResults.paramsPrivate.synapseRadius) ?
-                cachedResults.paramsPrivate.synapseRadius :
-                DefaultSynapseRadius;
+              const synapseRadius =
+                cachedResults &&
+                cachedResults.paramsPrivate &&
+                cachedResults.paramsPrivate.synapseRadius
+                  ? cachedResults.paramsPrivate.synapseRadius
+                  : DefaultSynapseRadius;
               tabData = (
                 <ScrollManager scrollKey={viewKey}>
                   {({ connectScrollTarget }) => (
@@ -467,11 +478,7 @@ Result.propTypes = {
     search: PropTypes.string.isRequired
   }).isRequired,
   allResults: PropTypes.object.isRequired,
-  pluginList: PropTypes.arrayOf(
-    PropTypes.oneOfType([
-      PropTypes.func,
-      PropTypes.object,
-    ])).isRequired,
+  pluginList: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.func, PropTypes.object])).isRequired,
   viewPlugins: PropTypes.object.isRequired,
   loadingError: PropTypes.object,
   loading: PropTypes.object.isRequired,
@@ -558,11 +565,4 @@ const ResultDispatch = dispatch => ({
   }
 });
 
-export default withRouter(
-  withStyles(styles)(
-    connect(
-      ResultState,
-      ResultDispatch
-    )(Result)
-  )
-);
+export default withRouter(withStyles(styles)(connect(ResultState, ResultDispatch)(Result)));
