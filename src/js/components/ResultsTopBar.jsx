@@ -13,6 +13,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
+import Tooltip from '@material-ui/core/Tooltip';
 import { withStyles } from '@material-ui/core/styles';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -206,25 +207,29 @@ class ResultsTopBar extends React.Component {
               Loaded from server <CachedCounter fetchedTime={fetchedTime} key={index} /> ago{' '}
             </span>
           </Typography>
-          <IconButton
-            onClick={() => {
-              actions.toggleCypherDisplay();
-            }}
-            aria-label="Show Query"
-          >
-            <Icon style={{ fontSize: 18 }}>info</Icon>
-          </IconButton>
+          <Tooltip title="Show Cypher Query">
+            <IconButton
+              onClick={() => {
+                actions.toggleCypherDisplay();
+              }}
+              aria-label="Show Query"
+            >
+              <Icon style={{ fontSize: 18 }}>info</Icon>
+            </IconButton>
+          </Tooltip>
 
           {clipboardCallback && resultData && (
-            <IconButton
-              className={classes.button}
-              aria-label="Copy results to clipboard"
-              onClick={() => {
-                this.handleCopyToClipboard();
-              }}
-            >
-              <Assignment style={{ fontSize: 18 }} />
-            </IconButton>
+            <Tooltip title="Copy to clipboard">
+              <IconButton
+                className={classes.button}
+                aria-label="Copy results to clipboard"
+                onClick={() => {
+                  this.handleCopyToClipboard();
+                }}
+              >
+                <Assignment style={{ fontSize: 18 }} />
+              </IconButton>
+            </Tooltip>
           )}
           {clipboardCallback && resultData && (
             <CopyToClipboardModal
@@ -236,13 +241,17 @@ class ResultsTopBar extends React.Component {
             />
           )}
 
-          <IconButton aria-label="Refresh" onClick={this.handleRefresh}>
-            <Icon style={{ fontSize: 18 }}>refresh</Icon>
-          </IconButton>
-          {addIdEnabled && (
-            <IconButton aria-label="Add" onClick={this.handleAddId}>
-              <Icon style={{ fontSize: 18 }}>add</Icon>
+          <Tooltip title="reload results">
+            <IconButton aria-label="Refresh" onClick={this.handleRefresh}>
+              <Icon style={{ fontSize: 18 }}>refresh</Icon>
             </IconButton>
+          </Tooltip>
+          {addIdEnabled && (
+            <Tooltip title="Add body id">
+              <IconButton aria-label="Add" onClick={this.handleAddId}>
+                <Icon style={{ fontSize: 18 }}>add</Icon>
+              </IconButton>
+            </Tooltip>
           )}
           <AddIdModal
             open={addIdOpen}
@@ -251,21 +260,25 @@ class ResultsTopBar extends React.Component {
           />
 
           {saveEnabled && (
-            <IconButton aria-label="Add favorite" onClick={this.openPopup}>
-              <Icon style={{ fontSize: 18 }}>star</Icon>
-            </IconButton>
+            <Tooltip title="Add to favorites">
+              <IconButton aria-label="Add favorite" onClick={this.openPopup}>
+                <Icon style={{ fontSize: 18 }}>star</Icon>
+              </IconButton>
+            </Tooltip>
           )}
 
           {saveEnabled && (
-            <IconButton
-              className={classes.button}
-              aria-label="Save"
-              onClick={() => {
-                this.handleSaveResults(index);
-              }}
-            >
-              <Icon style={{ fontSize: 18 }}>save</Icon>
-            </IconButton>
+            <Tooltip title="Add to saved searches">
+              <IconButton
+                className={classes.button}
+                aria-label="Save"
+                onClick={() => {
+                  this.handleSaveResults(index);
+                }}
+              >
+                <Icon style={{ fontSize: 18 }}>save</Icon>
+              </IconButton>
+            </Tooltip>
           )}
 
           <Dialog open={open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
@@ -292,47 +305,55 @@ class ResultsTopBar extends React.Component {
           </Dialog>
 
           {downloadEnabled && (
+            <Tooltip title="Download results">
+              <IconButton
+                className={classes.button}
+                aria-label="Download data"
+                onClick={() => {
+                  downloadCallback(index);
+                }}
+              >
+                <Icon style={{ fontSize: 18 }}>file_download</Icon>
+              </IconButton>
+            </Tooltip>
+          )}
+          <Tooltip title="Fullscreen">
             <IconButton
               className={classes.button}
-              aria-label="Download data"
+              aria-label="Full Screen"
               onClick={() => {
-                downloadCallback(index);
+                this.handleFullScreen(index);
               }}
             >
-              <Icon style={{ fontSize: 18 }}>file_download</Icon>
+              <Icon style={{ fontSize: 18 }}>fullscreen</Icon>
             </IconButton>
-          )}
-          <IconButton
-            className={classes.button}
-            aria-label="Full Screen"
-            onClick={() => {
-              this.handleFullScreen(index);
-            }}
-          >
-            <Icon style={{ fontSize: 18 }}>fullscreen</Icon>
-          </IconButton>
+          </Tooltip>
 
           {download3DCallback && (
-            <IconButton
-              className={classes.button}
-              aria-label="Download VR viewer seed"
-              onClick={() => {
-                download3DCallback(index);
-              }}
-            >
-              <ThreeDRotation style={{ fontSize: 18 }} />
-            </IconButton>
+            <Tooltip title="Download VR viewer seed">
+              <IconButton
+                className={classes.button}
+                aria-label="Download VR viewer seed"
+                onClick={() => {
+                  download3DCallback(index);
+                }}
+              >
+                <ThreeDRotation style={{ fontSize: 18 }} />
+              </IconButton>
+            </Tooltip>
           )}
 
-          <IconButton
-            className={classes.button}
-            aria-label="Close Window"
-            onClick={() => {
-              this.handleRemoveResult(index);
-            }}
-          >
-            <Icon style={{ fontSize: 18 }}>close</Icon>
-          </IconButton>
+          <Tooltip title="Close tab">
+            <IconButton
+              className={classes.button}
+              aria-label="Close tab"
+              onClick={() => {
+                this.handleRemoveResult(index);
+              }}
+            >
+              <Icon style={{ fontSize: 18 }}>close</Icon>
+            </IconButton>
+          </Tooltip>
         </Toolbar>
       </div>
     );
