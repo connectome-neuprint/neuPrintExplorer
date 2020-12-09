@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/connectome-neuprint/neuPrintExplorer.svg?branch=master)](https://travis-ci.org/connectome-neuprint/neuPrintExplorer)
 [![GitHub issues](https://img.shields.io/github/issues/connectome-neuprint/neuPrintExplorer.svg)](https://GitHub.com/connectome-neuprint/neuPrintExplorer/issues/)
 
-neuPrintExplorer is a single page web application that provides simple interfaces to query an EM connectome stored in [neuPrint](https://github.com/connectome-neuprint/neuPrint), which uses the graph database Neo4j.  It contains
+neuPrintExplorer is a single page web application that provides simple interfaces to query an EM connectome stored in [neuPrint+](https://github.com/connectome-neuprint/neuPrint), which uses the graph database Neo4j.  It contains
 a number of plugins to facilitate different types of queries.
 The application is written using REACT+Redux and Material-UI.
 
