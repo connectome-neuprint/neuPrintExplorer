@@ -46,7 +46,7 @@ function HelpMain(props) {
       </div>
       <Typography>For new neuPrintExplorer users, please examine the quick guide below</Typography>
       <HelpTutorial />
-      <Typography>Shows how connectomic data is represented in neuPrint</Typography>
+      <Typography>Shows how connectomic data is represented in neuPrint+</Typography>
       <div className={classes.flex}>
         <Button onClick={() => setOpen(true)}>
           <img
