@@ -13,7 +13,7 @@ globals:
     routerHelper: true
     Set: true
 parser:
-    babel-eslint
+    "@babel/eslint-parser"
 plugins:
     - "react"
 settings:
