@@ -2,9 +2,12 @@
 [![Build Status](https://travis-ci.org/connectome-neuprint/neuPrintExplorer.svg?branch=master)](https://travis-ci.org/connectome-neuprint/neuPrintExplorer)
 [![GitHub issues](https://img.shields.io/github/issues/connectome-neuprint/neuPrintExplorer.svg)](https://GitHub.com/connectome-neuprint/neuPrintExplorer/issues/)
 
-neuPrintExplorer is a single page web application that provides simple interfaces to query an EM connectome stored in [neuPrint+](https://github.com/connectome-neuprint/neuPrint), which uses the graph database Neo4j.  It contains
-a number of plugins to facilitate different types of queries.
-The application is written using REACT+Redux and Material-UI.
+### "exploring inter and intra cellular interactions"
+
+neuPrintExplorer is a single page web application that provides simple interfaces to query
+an EM connectome stored in [neuPrint+](https://github.com/connectome-neuprint/neuPrint),
+which uses the graph database Neo4j.  It contains a number of plugins to facilitate different
+types of queries. The application is written using REACT+Redux and Material-UI.
 
 ## Installation
 
@@ -12,7 +15,7 @@ The application is written using REACT+Redux and Material-UI.
     % cd neuPrintExplorer
 
 To build the package for development:
-    
+
     % npm install
     % npm run dev
 
@@ -21,10 +24,10 @@ To build for production:
     % npm install
     % npm run build
 
-    
+
 Finally, you will need plugins to perform the queries and display
 the results. Core plugins can be found in their own repository at:
-[neuPrintExplorerPlugins](https://github.com/connectome-neuprint/neuPrintExplorerPlugins). 
+[neuPrintExplorerPlugins](https://github.com/connectome-neuprint/neuPrintExplorerPlugins).
 These are marked as a dependency for neuPrintExplorer, so they will get installed
 at the same time. If you wish to make changes to the plugins and test them
 localy, without publishing them to npm, you will need to clone the repository
