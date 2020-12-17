@@ -137,18 +137,21 @@ class TopBar extends React.Component {
         {showBrainRegions && <BrainRegions onClose={this.handleRegionClick} dataSet={datasetstr} />}
         {loggedIn && <MetaInfo />}
         <Toolbar>
-          <Tooltip title={VERSION} placement="bottom" enterDelay={300}>
-            <Link to="/">
-              <img
-                alt="neuprintexplorer logo - home link"
-                src="/public/neuprintexplorerw.png"
-                className={classes.img}
-              />
-            </Link>
-          </Tooltip>
+          <div>
+            <Tooltip title={VERSION} placement="bottom" enterDelay={300}>
+              <Link to="/">
+                <img
+                  alt="neuprintexplorer logo - home link"
+                  src="/public/neuprintexplorerw.png"
+                  className={classes.img}
+                />
+              </Link>
+            </Tooltip>
+            <p style={{margin: 0, marginTop: '-7px'}}> exploring inter and intra cellular interactions</p>
+          </div>
           {loggedIn && (
             <Select
-              inputId='dataSetSelect'
+              inputId="dataSetSelect"
               className={classes.search}
               styles={selectStyles}
               value={{ value: datasetstr, label: datasetstr }}
@@ -198,11 +201,4 @@ const TopBarState = state => ({
   availableDatasets: state.neo4jsettings.get('availableDatasets')
 });
 
-export default withRouter(
-  withStyles(styles)(
-    connect(
-      TopBarState,
-      null
-    )(TopBar)
-  )
-);
+export default withRouter(withStyles(styles)(connect(TopBarState, null)(TopBar)));
