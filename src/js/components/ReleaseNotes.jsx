@@ -39,7 +39,7 @@ export default function ReleaseNotes() {
     return <p>Loading...</p>;
   }
 
-  const notesPerDataSet = Object.keys(datasetInfo).map(key => {
+  const notesPerDataSet = Object.entries(datasetInfo).sort((a,b) => (new Date(b[1].lastmod) - new Date(a[1].lastmod))).map((k) => k[0]).map(key => {
     const matchedDataSet = releaseNotes.filter(note => note.dataset === key);
     if (matchedDataSet.length > 0) {
       const formattedNotes = matchedDataSet[0].notes.map(note => <li key={note}>{note}</li>);
@@ -53,7 +53,7 @@ export default function ReleaseNotes() {
         <Grid key={key} item xs={12} className={classes.notepaper}>
           <Card>
             <CardContent>
-              <Typography variant="h4">{matchedDataSet[0].dataset}</Typography>
+              <Typography variant="h4">{matchedDataSet[0].dataset} - {matchedDataSet[0].date}</Typography>
               <Typography variant="h5">Notes</Typography>
               <ul>{formattedNotes}</ul>
               <Typography variant="h5">Links</Typography>
