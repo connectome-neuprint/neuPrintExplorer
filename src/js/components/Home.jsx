@@ -104,11 +104,12 @@ function Home(props) {
     <div className={classes.root}>
       <Grid container spacing={4} justify="center" className={classes.container}>
         <Grid item xs={loggedIn ? 8 : 12} className={classes.roottext}>
-          <Typography variant="h3">Analysis tools for connectomics</Typography>
+          <Typography variant="h3">Analysis tools for connectomics and more</Typography>
           <Typography className={classes.description}>
-            neuPrintExplorer provides tools to query and visualize connectomic data stored in{' '}
-            <a href="https://github.com/janelia-flyem/neuPrint">neuPrint</a>, which uses a neo4j
-            graph database.
+            neuPrintExplorer provides tools to query and visualize inter and intra
+            cellular interactions data stored in{' '}
+            <a href="https://github.com/janelia-flyem/neuPrint">neuPrint+</a>, which
+            uses a neo4j graph database.
           </Typography>
           {loggedIn && !queryObject.q && (
             <Typography variant="h6">
@@ -140,7 +141,7 @@ function Home(props) {
             width="560"
             height="315"
             src="https://www.youtube.com/embed/I9O3rAwnU9M"
-            srcDoc="<style>*{padding:0;margin:0;overflow:hidden}html,body{height:100%}img,span{position:absolute;width:100%;top:0;bottom:0;margin:auto}span{height:1.5em;text-align:center;font:48px/1.5 sans-serif;color:white;text-shadow:0 0 0.5em black}</style><a href=https://www.youtube.com/embed/I9O3rAwnU9M?autoplay=1><img src=https://img.youtube.com/vi/I9O3rAwnU9M/hqdefault.jpg alt='Introduction to neuPrint Explorer'><span>▶</span></a>"
+            srcDoc="<style>*{padding:0;margin:0;overflow:hidden}html,body{height:100%}img,span{position:absolute;width:100%;top:0;bottom:0;margin:auto}span{height:1.5em;text-align:center;font:48px/1.5 sans-serif;color:white;text-shadow:0 0 0.5em black}</style><a href=https://www.youtube.com/embed/I9O3rAwnU9M?autoplay=1><img src=https://img.youtube.com/vi/I9O3rAwnU9M/hqdefault.jpg alt='Introduction to neuPrintExplorer'><span>▶</span></a>"
             frameBorder="0"
             allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen

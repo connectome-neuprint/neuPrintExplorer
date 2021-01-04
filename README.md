@@ -37,7 +37,7 @@ and link them into your development copy of neuPrintExplorer. Please see the [RE
 ## Running
 
 This app is dependent on [neuPrintHTTP](https://github.com/connectome-neuprint/neuPrintHTTP), which is an http REST
-API for connectomics that connects to neuPrint and also serves this static application.  To launch neuPrintHTTP and
+API for connectomics that connects to neuPrint+ and also serves this static application.  To launch neuPrintHTTP and
 the web application:
 
     % neuPrintHTTP -port 11000 config.json

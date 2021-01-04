@@ -200,7 +200,7 @@ class About extends React.Component {
     return (
       <div className={classes.root}>
         <Typography variant="h3" className={classes.centered}>
-          neuPrint Explorer
+          neuPrintExplorer
         </Typography>
         <Typography variant="body1" className={classes.centered}>
           Version: {VERSION}
@@ -208,8 +208,9 @@ class About extends React.Component {
         <Divider light className={classes.spaced} />
         <Typography variant="h6">About</Typography>
         <Typography variant="body1" className={classes.spaced}>
-          neuPrint Explorer is web based tool to query and visualize connectomic data stored in
-          neuPrint, a neo4j graph database of the connectome.{' '}
+          neuPrintExplorer is web based tool to query and visualize
+          inter and intra cellular interaction data stored in
+          neuPrint+, a neo4j graph database.{' '}
         </Typography>
 
         <Typography variant="h6">Log an issue</Typography>

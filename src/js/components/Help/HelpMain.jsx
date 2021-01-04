@@ -41,12 +41,12 @@ function HelpMain(props) {
         <Typography>
           This web application allows users to
           explore connectome data interactively. To start exploring the available datasets, please
-          login using any google credential above. For more instructions on how to use neuPrint and
+          login using any google credential above. For more instructions on how to use neuPrint+ and
           the underlying data representation please consult the{' '}
           <a href="public/neuprintuserguide.pdf">user guide</a>. A technical neuPrint paper
           exists <a href="https://www.biorxiv.org/content/10.1101/2020.01.16.909465v1">here</a>. For
-          those that want to launch their own neuPrint ecosystem locally, please consult the
-          github page for <a href="https://github.com/connectome-neuprint/neuprint">neuPrint</a>.
+          those that want to launch their own neuPrint+ ecosystem locally, please consult the
+          github page for <a href="https://github.com/connectome-neuprint/neuprint">neuPrint+</a>.
         </Typography>
         <br />
       </div>

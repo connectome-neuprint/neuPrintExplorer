@@ -37,7 +37,7 @@ function ServerInfoCard(props) {
       return (
         <Card>
           <CardHeader
-            title="neuPrint Server Information"
+            title="neuPrint+ Server Information"
             className="homeCardHeader"
             avatar={<ComputerIcon color="primary" />}
           />
