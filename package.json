@@ -124,7 +124,7 @@
     "test-watch": "jest --watch",
     "preversion": "npm test",
     "dev-server": "webpack-dev-server --open",
-    "dev": "webpack",
+    "dev": "docker-compose up -d && webpack",
     "build": "webpack --config webpack.prod.js",
     "size": "size-limit",
     "build-analysis": "webpack --config webpack.analysis.js",
