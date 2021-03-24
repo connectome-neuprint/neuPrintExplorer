@@ -6,3 +6,4 @@ coverage
 plugins/*
 view-plugins/*
 neuprint_compartments
+neuprinthttp-config.json

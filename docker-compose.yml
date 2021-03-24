@@ -1,0 +1,17 @@
+version: '3.7'
+
+services:
+  neuprinthttp:
+    image: gcr.io/flyem-public/connectome-neuprint/neuprinthttp:1.2.2
+    networks:
+      - neuprint-net
+    ports:
+      - 11000:11000
+    volumes:
+      - ./neuprinthttp-config.json:/app/config/config.json
+      - ./build:/app/www/neuprintexplorer
+    command: ./neuPrintHTTP -port 11000 -proxy-port 11000 -public_read /app/config/config.json
+
+networks:
+  neuprint-net:
+
