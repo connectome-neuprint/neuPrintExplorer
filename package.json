@@ -97,6 +97,7 @@
     "randomcolor": "^0.5.3",
     "react": "^16.13.1",
     "react-color": "^2.18.1",
+    "react-cookie": "^4.0.3",
     "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.13.1",
     "react-fast-compare": "^2.0.4",

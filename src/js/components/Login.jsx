@@ -6,7 +6,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { NavLink, withRouter } from 'react-router-dom';
-
+import { withCookies, Cookies } from 'react-cookie';
 import classNames from 'classnames';
 
 import { withStyles } from '@material-ui/core/styles';
@@ -45,8 +45,12 @@ class Login extends React.Component {
       useAvatarImg: true
     };
 
-    this.fetchProfile();
-    this.fetchToken();
+    // only bother fetching these if there is a login cookie to pass along
+    // with the request.
+    if (props.cookies.get('flyem-services') || props.cookies.get('neuPrintHTTP')) {
+      this.fetchProfile();
+      this.fetchToken();
+    }
   }
 
   fetchProfile = () => {
@@ -208,7 +212,8 @@ Login.propTypes = {
   checkingUser: PropTypes.func.isRequired,
   setUserToken: PropTypes.func.isRequired,
   userInfo: PropTypes.object.isRequired,
-  location: PropTypes.object.isRequired
+  location: PropTypes.object.isRequired,
+  cookies: PropTypes.instanceOf(Cookies).isRequired
 };
 
 const LoginState = state => ({
@@ -216,10 +221,5 @@ const LoginState = state => ({
 });
 
 export default withRouter(
-  withStyles(styles)(
-    connect(
-      LoginState,
-      LoginDispatch
-    )(Login)
-  )
+  withCookies(withStyles(styles)(connect(LoginState, LoginDispatch)(Login)))
 );

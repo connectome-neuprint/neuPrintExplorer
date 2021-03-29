@@ -5,6 +5,8 @@ import thunk from 'redux-thunk';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { CookiesProvider } from 'react-cookie';
+
 import Master from './components/Master';
 import { setAppDb } from './actions/app';
 import AppReducers from './reducers';
@@ -30,7 +32,7 @@ const theme = createMuiTheme({
       dark: '#67a900',
       contrastText: '#000000'
     }
-  },
+  }
 });
 
 // eslint-disable-next-line  no-underscore-dangle
@@ -71,11 +73,13 @@ function loadInterface() {
   ReactDOM.render(
     <React.Fragment>
       <CssBaseline />
-      <ThemeProvider theme={theme}>
-        <Provider store={store}>
-          <Master />
-        </Provider>
-      </ThemeProvider>
+      <CookiesProvider>
+        <ThemeProvider theme={theme}>
+          <Provider store={store}>
+            <Master />
+          </Provider>
+        </ThemeProvider>
+      </CookiesProvider>
     </React.Fragment>,
     document.getElementById('analyzer')
   );
