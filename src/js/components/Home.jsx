@@ -60,6 +60,8 @@ const useCacheClear = myAction => {
 function Home(props) {
   const { classes, actions, loggedIn, datasetInfo, ...rest } = props;
 
+  const { authLevel, publicState } = rest;
+
   // if we have a dataset selected then show that homepage.
   const queryObject = getQueryObject();
 
@@ -80,16 +82,7 @@ function Home(props) {
     (a, b) => (new Date(datasetInfo[b].lastmod) - new Date(datasetInfo[a].lastmod))
   )[0];
 
-  // show the loading page if we are logged in and there isn't a default dataset ready
-  if (loggedIn && !defaultDS) {
-    return (
-      <div className={classes.root}>
-        <p>Loading...</p>
-      </div>
-    );
-  }
-
-  if (loggedIn && (!queryObject.dataset || !queryObject.qt)) {
+  if (loggedIn && (!queryObject.dataset || !queryObject.qt) && defaultDS) {
     return (
       <Redirect
         to={{
@@ -123,11 +116,11 @@ function Home(props) {
             <DataSetLogo dataSet={queryObject.dataset} datasetInfo={datasetInfo} />
           </Grid>
         )}
-        {loggedIn && (
+        {(loggedIn && (authLevel.match(/^readwrite|admin$/) || publicState)) ? (
           <Grid item sm={12} md={4}>
             <NeuronOfTheDay dataSet={queryObject.dataset} />
           </Grid>
-        )}
+        ) : null}
         {queryObject.dataset && loggedIn && (
           <Grid item sm={12} md={8}>
             <DataSetHome dataSet={queryObject.dataset} />
