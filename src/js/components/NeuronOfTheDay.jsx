@@ -27,46 +27,48 @@ function NeuronOfTheDay(props) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(`/api/cached/dailytype?dataset=${dataSet}`, {
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json'
-      }
-    })
-      .then(result => result.json())
-      .then(resp => {
-        if (!('message' in resp)) {
-          setData(resp);
+    if (dataSet) {
+      fetch(`/api/cached/dailytype?dataset=${dataSet}`, {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
         }
       })
-      .catch(err => {
-        setError(err);
-      });
+        .then(result => {
+          if (result.status !== 200) {
+            throw new Error('Server Response was not ok');
+          }
+          return result.json();
+        })
+        .then(resp => {
+          if (!('message' in resp)) {
+            setData(resp);
+          }
+        })
+        .catch(err => {
+          setError(err);
+        });
+    }
   }, [dataSet]);
-
 
   if (error) {
     return (
-    <Grid container spacing={4}>
-      <Grid item xs={12}>
-        <Paper className={classes.typeName}>
-          Cell Type of the Day - failed to load.
-        </Paper>
+      <Grid container spacing={4}>
+        <Grid item xs={12}>
+          <Paper className={classes.typeName}>Cell Type of the Day - failed to load.</Paper>
+        </Grid>
       </Grid>
-    </Grid>
     );
   }
 
   if (!data || !superROIs || !superROIs[dataSet]) {
-     return (
-    <Grid container spacing={4}>
-      <Grid item xs={12}>
-        <Paper className={classes.typeName}>
-          Cell Type of the Day - Loading...
-        </Paper>
+    return (
+      <Grid container spacing={4}>
+        <Grid item xs={12}>
+          <Paper className={classes.typeName}>Cell Type of the Day - Loading...</Paper>
+        </Grid>
       </Grid>
-    </Grid>
     );
   }
 
@@ -134,9 +136,4 @@ const NeuronState = state => ({
   superROIs: state.neo4jsettings.get('superROIs')
 });
 
-export default withStyles(styles)(
-  connect(
-    NeuronState,
-    null
-  )(NeuronOfTheDay)
-);
+export default withStyles(styles)(connect(NeuronState, null)(NeuronOfTheDay));
