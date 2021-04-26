@@ -20,7 +20,7 @@ const styles = () => ({
   },
   image: {
     maxWidth: '100%',
-    maxHeight: '100%'
+    maxHeight: '220px'
   }
 });
 
