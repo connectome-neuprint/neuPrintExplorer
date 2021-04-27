@@ -51,7 +51,7 @@ function DataSetLogo(props) {
       .catch(() => {
         setImageUrl(null);
       });
-  }, []);
+  }, [dataSet]);
 
   let linkUrl = '';
   if (datasetInfo && Object.prototype.hasOwnProperty.call(datasetInfo, dataSet)) {
