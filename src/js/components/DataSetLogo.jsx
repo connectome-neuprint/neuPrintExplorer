@@ -33,7 +33,7 @@ function DataSetLogo(props) {
   useEffect(() => {
     fetch('/api/custom/custom?np_explorer=dataset_logo', {
       credentials: 'include',
-      body: JSON.stringify({ cypher: `MATCH (m :Meta) RETURN m.logo` }),
+      body: JSON.stringify({ cypher: `MATCH (m :Meta) RETURN m.logo`, dataset: dataSet }),
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
