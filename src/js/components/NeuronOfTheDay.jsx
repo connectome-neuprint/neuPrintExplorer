@@ -28,6 +28,7 @@ function NeuronOfTheDay(props) {
 
   useEffect(() => {
     if (dataSet) {
+      setError(null);
       fetch(`/api/cached/dailytype?dataset=${dataSet}`, {
         credentials: 'include',
         headers: {
