@@ -1,1 +1,0 @@
-../node_modules/@janelia-flyem/neuroglancer/dist/module/chunk_worker.bundle.js
