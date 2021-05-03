@@ -17,20 +17,21 @@ const miniCssExtractPlugin = new MiniCssExtractPlugin({
 const copyWebpackPlugin = new CopyWebpackPlugin([
   { from: 'public', to: 'public', toType: 'dir' },
   {
-    from: 'node_modules/@janelia-flyem/neuroglancer/dist/module/chunk_worker.bundle.js',
+    from: 'node_modules/@janelia-flyem/react-neuroglancer/node_modules/@janelia-flyem/neuroglancer/dist/module/chunk_worker.bundle.js',
     to: 'chunk_worker.bundle.js',
     toType: 'file'
   },
   {
-    from: 'node_modules/@janelia-flyem/neuroglancer/dist/module/draco.bundle.js',
-    to: 'draco.bundle.js',
-    toType: 'file'
-  },
-  {
-    from: 'node_modules/@janelia-flyem/neuroglancer/dist/module/async_computation.bundle.js',
+    from: 'node_modules/@janelia-flyem/react-neuroglancer/node_modules/@janelia-flyem/neuroglancer/dist/module/async_computation.bundle.js',
     to: 'async_computation.bundle.js',
     toType: 'file'
   },
+  {
+    from: 'node_modules/@janelia-flyem/react-neuroglancer/node_modules/@janelia-flyem/neuroglancer/dist/module/main.css',
+    to: 'ng.css',
+    toType: 'file'
+  },
+
 ]);
 
 module.exports = {
