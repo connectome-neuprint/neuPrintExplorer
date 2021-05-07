@@ -197,6 +197,16 @@ export function toggleSpindle(tabIndex) {
   };
 }
 
+export function toggleAxisLines(tabIndex) {
+  // TODO: data loading should be done here and not in the state of the Skeleton
+  // component. This way we don't get out of sync.
+  return {
+    type: C.AXIS_LINE_TOGGLE,
+    tabIndex
+  };
+}
+
+
 export function toggleSynapsesOnTop(tabIndex) {
   return {
     type: C.SKELETON_SYNAPSES_ON_TOP_TOGGLE,

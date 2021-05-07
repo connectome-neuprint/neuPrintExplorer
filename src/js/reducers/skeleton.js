@@ -125,6 +125,23 @@ export default function skeletonReducer(state = skeletonState, action) {
       }
       return state;
     }
+    case C.AXIS_LINE_TOGGLE: {
+       // grab the tab data
+      const current = getQueryObject('qr', []);
+      // need to find the index of the tab we are going to update / replace.
+      const selected = current[action.tabIndex];
+
+      if (selected) {
+        // get current spindle display state
+        const spindleState = selected.ax || 0;
+        selected.ax = !spindleState ? 1 : 0;
+        current[action.tabIndex] = selected;
+        setQueryString({
+          qr: current,
+        });
+      }
+      return state;
+    }
     case C.SKELETON_SYNAPSE_COLOR_UPDATE: {
       const updated = state.setIn(['synapses', action.bodyId, action.synapseType, action.synapseId, 'color'], action.color);
       return updated;

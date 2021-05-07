@@ -300,6 +300,10 @@ class SkeletonView extends React.Component {
         this.renderCompartments(newCompartments);
       }
 
+      // the axis lines are the first child element added to the scene
+      // so we can toggle the visibility of them this way.
+      sharkViewer.scene.children[0].visible = !query.ax;
+
       if (query.sp !== prevProps.query.sp) {
         bodies.forEach(bodyId => {
           // unload all the bodies
@@ -343,6 +347,7 @@ class SkeletonView extends React.Component {
     import('@janelia/sharkviewer').then(SharkViewer => {
       const sharkViewer = new SharkViewer.default({ // eslint-disable-line new-cap
         dom_element: 'skeletonviewer',
+				showAxes: 10000,
         WIDTH: this.skelRef.current.clientWidth,
         HEIGHT: this.skelRef.current.clientHeight,
         // on_select_node: (id, sampleNumber, event, coords) => { console.log(id, sampleNumber, event, coords) },
@@ -352,6 +357,8 @@ class SkeletonView extends React.Component {
       });
       sharkViewer.init();
       sharkViewer.animate();
+
+			window.s = sharkViewer;
 
       if (query.pm.coordinates) {
         const coords = query.pm.coordinates.split(',');
@@ -432,6 +439,15 @@ class SkeletonView extends React.Component {
       });
   };
 
+  handleReset = (e) => {
+    // reset the view to the original view when the first neuron was loaded?
+    // pick the first neuron in the scene and center the camera around that?
+    if (e.key === "r" && (!e.metaKey && !e.shiftKey)) {
+      const { sharkViewer } = this.state;
+      sharkViewer.resetAroundFirstNeuron();
+    }
+  }
+
   addCompartment = (id, dataSet) => {
     if (id === '') {
       return;
@@ -471,6 +487,11 @@ class SkeletonView extends React.Component {
   handleSpindleToggle = () => {
     const { actions, index } = this.props;
     actions.toggleSpindle(index);
+  };
+
+  handleAxisLines = () => {
+    const { actions, index } = this.props;
+    actions.toggleAxisLines(index);
   };
 
   handleSynapsesOnTopToggle = () => {
@@ -709,7 +730,7 @@ class SkeletonView extends React.Component {
             return updatedValue;
           })
         : synapseData.swc;
-      sharkViewer.loadNeuron(name, synapseData.color, swc, moveCamera, true);
+      sharkViewer.loadNeuron(name, synapseData.color, swc, moveCamera, true, true);
       sharkViewer.setNeuronVisible(name, isVisible);
       sharkViewer.render();
       sharkViewer.render();
@@ -754,11 +775,11 @@ class SkeletonView extends React.Component {
       // If added, then add them to the scene.
       const exists = sharkViewer.neuronLoaded(body.get('name'));
       if (!exists) {
-        sharkViewer.loadNeuron(body.get('name'), body.get('color'), swc, moveCamera);
+        sharkViewer.loadNeuron(body.get('name'), body.get('color'), swc, moveCamera, false, true);
       }
       if (colorChange) {
         this.unloadBody(body.get('name'));
-        sharkViewer.loadNeuron(body.get('name'), body.get('color'), swc, moveCamera);
+        sharkViewer.loadNeuron(body.get('name'), body.get('color'), swc, moveCamera, false, true);
       }
       // if hidden, then hide them.
       sharkViewer.setNeuronVisible(body.get('name'), body.get('visible'));
@@ -846,6 +867,7 @@ class SkeletonView extends React.Component {
     );
 
     const spindleChecked = Boolean(query.sp);
+    const AxisChecked = !query.ax;
     const synapsesOnTopChecked = Boolean(query.sot);
 
     // the synapses map never loses keys, so there are no synapses shown when
@@ -870,6 +892,13 @@ class SkeletonView extends React.Component {
           }
           label="Spindle View"
         />
+        <FormControlLabel
+          control={
+            <Switch onChange={this.handleAxisLines} checked={AxisChecked} color="primary" />
+          }
+          label="Axis Lines"
+        />
+
         {areSynapses && (
           <React.Fragment>
             <FormControlLabel
@@ -907,8 +936,9 @@ class SkeletonView extends React.Component {
       );
     }
 
+    /* eslint-disable jsx-a11y/no-static-element-interactions */
     return (
-      <div className={classes.root}>
+      <div className={classes.root} onKeyDown={this.handleReset}>
         {!showMenu && <div className={classes.floater}>{chipsArray}</div>}
         <ActionDrawer
           bodies={bodies}
@@ -926,6 +956,7 @@ class SkeletonView extends React.Component {
         <div className={classes.skel} ref={this.skelRef} id="skeletonviewer" />
       </div>
     );
+    /* eslint-enable jsx-a11y/no-static-element-interactions */
   }
 }
 

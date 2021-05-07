@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import {
   skeletonRemove,
   toggleSpindle,
+  toggleAxisLines,
   toggleSynapsesOnTop,
   setSynapseRadius
 } from 'actions/skeleton';
@@ -24,6 +25,9 @@ const SkeletonViewDispatch = dispatch => ({
     },
     toggleSpindle: tabIndex => {
       dispatch(toggleSpindle(tabIndex));
+    },
+    toggleAxisLines: tabIndex => {
+      dispatch(toggleAxisLines(tabIndex));
     },
     toggleSynapsesOnTop: tabIndex => {
       dispatch(toggleSynapsesOnTop(tabIndex));
