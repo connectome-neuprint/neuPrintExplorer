@@ -11,6 +11,7 @@ import Switch from '@material-ui/core/Switch';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Chip from '@material-ui/core/Chip';
+import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 
 import { pickTextColorBasedOnBgColorAdvanced } from '@neuprint/support';
@@ -57,6 +58,9 @@ const styles = theme => ({
     position: 'absolute',
     top: '1em',
     right: '1em'
+  },
+  resetButton: {
+    marginRight: '1em'
   },
   bottomControls: {
     position: 'absolute',
@@ -179,7 +183,11 @@ class SkeletonView extends React.Component {
             if (currentColor && status.color !== currentColor) {
               colorChanged = true;
             }
-            if (synapseRadiusChanged || !synapses.getIn([bodyId, 'inputs', inputId]) || colorChanged) {
+            if (
+              synapseRadiusChanged ||
+              !synapses.getIn([bodyId, 'inputs', inputId]) ||
+              colorChanged
+            ) {
               this.unloadSynapse(bodyId, inputId, render);
             }
           });
@@ -189,7 +197,11 @@ class SkeletonView extends React.Component {
             if (currentColor && status.color !== currentColor) {
               colorChanged = true;
             }
-            if (synapseRadiusChanged || !synapses.getIn([bodyId, 'outputs', outputId]) || colorChanged) {
+            if (
+              synapseRadiusChanged ||
+              !synapses.getIn([bodyId, 'outputs', outputId]) ||
+              colorChanged
+            ) {
               this.unloadSynapse(bodyId, outputId, render);
             }
           });
@@ -302,7 +314,10 @@ class SkeletonView extends React.Component {
 
       // the axis lines are the first child element added to the scene
       // so we can toggle the visibility of them this way.
-      sharkViewer.scene.children[0].visible = !query.ax;
+      sharkViewer.axesScene.children.forEach(child => {
+        child.visible = !query.ax // eslint-disable-line no-param-reassign
+        return null;
+      });
 
       if (query.sp !== prevProps.query.sp) {
         bodies.forEach(bodyId => {
@@ -347,7 +362,7 @@ class SkeletonView extends React.Component {
     import('@janelia/sharkviewer').then(SharkViewer => {
       const sharkViewer = new SharkViewer.default({ // eslint-disable-line new-cap
         dom_element: 'skeletonviewer',
-				showAxes: 10000,
+        showAxes: 10000,
         WIDTH: this.skelRef.current.clientWidth,
         HEIGHT: this.skelRef.current.clientHeight,
         // on_select_node: (id, sampleNumber, event, coords) => { console.log(id, sampleNumber, event, coords) },
@@ -358,7 +373,7 @@ class SkeletonView extends React.Component {
       sharkViewer.init();
       sharkViewer.animate();
 
-			window.s = sharkViewer;
+      window.s = sharkViewer;
 
       if (query.pm.coordinates) {
         const coords = query.pm.coordinates.split(',');
@@ -439,14 +454,18 @@ class SkeletonView extends React.Component {
       });
   };
 
-  handleReset = (e) => {
+  handleResetKey = e => {
+    if (e.key === 'r' && !e.metaKey && !e.shiftKey) {
+      this.handleReset();
+    }
+  };
+
+  handleReset = () => {
     // reset the view to the original view when the first neuron was loaded?
     // pick the first neuron in the scene and center the camera around that?
-    if (e.key === "r" && (!e.metaKey && !e.shiftKey)) {
-      const { sharkViewer } = this.state;
-      sharkViewer.resetAroundFirstNeuron();
-    }
-  }
+    const { sharkViewer } = this.state;
+    sharkViewer.resetAroundFirstNeuron();
+  };
 
   addCompartment = (id, dataSet) => {
     if (id === '') {
@@ -610,7 +629,7 @@ class SkeletonView extends React.Component {
     })
       .then(result => {
         if (result.status === 401) {
-          throw Error("Unauthorized");
+          throw Error('Unauthorized');
         }
         return result.json();
       })
@@ -622,7 +641,7 @@ class SkeletonView extends React.Component {
       })
       .catch(error => {
         this.setState({ loadingError: error.message });
-        if (error.message === "Unauthorized") {
+        if (error.message === 'Unauthorized') {
           // if we get here, then need to force login again.
           actions.metaInfoError('Login Expired. Please sign in again.');
           actions.logoutUser();
@@ -757,15 +776,15 @@ class SkeletonView extends React.Component {
       const body = bodies.get(id);
 
       const swc = query.sp
-        /* The JSON.parse(JSON.stringify(object)) call in the following code is needed to
-         * create a deep clone of the object, referenced here as 'Native deep cloning':
-         * https://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-deep-clone-an-object-in-javascript
-         * It can be used since we are using only numbers and strings in our swc object.
-         * Removing this would cause us to update the original object and then we would
-         * no longer be able to revert back to the original swc file with variable radii
-         * for the synapses.
-        */
-        ? objectMap(JSON.parse(JSON.stringify(body.get('swc'))), value => {
+        ? /* The JSON.parse(JSON.stringify(object)) call in the following code is needed to
+           * create a deep clone of the object, referenced here as 'Native deep cloning':
+           * https://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-deep-clone-an-object-in-javascript
+           * It can be used since we are using only numbers and strings in our swc object.
+           * Removing this would cause us to update the original object and then we would
+           * no longer be able to revert back to the original swc file with variable radii
+           * for the synapses.
+           */
+          objectMap(JSON.parse(JSON.stringify(body.get('swc'))), value => {
             const updatedValue = value;
             updatedValue.radius = 1;
             return updatedValue;
@@ -886,6 +905,14 @@ class SkeletonView extends React.Component {
 
     const bottomControls = (
       <FormGroup row>
+        <Button
+          className={classes.resetButton}
+          variant="outlined"
+          color="primary"
+          onClick={this.handleReset}
+        >
+          Reset View
+        </Button>
         <FormControlLabel
           control={
             <Switch onChange={this.handleSpindleToggle} checked={spindleChecked} color="primary" />
@@ -893,12 +920,9 @@ class SkeletonView extends React.Component {
           label="Spindle View"
         />
         <FormControlLabel
-          control={
-            <Switch onChange={this.handleAxisLines} checked={AxisChecked} color="primary" />
-          }
+          control={<Switch onChange={this.handleAxisLines} checked={AxisChecked} color="primary" />}
           label="Axis Lines"
         />
-
         {areSynapses && (
           <React.Fragment>
             <FormControlLabel
@@ -938,7 +962,7 @@ class SkeletonView extends React.Component {
 
     /* eslint-disable jsx-a11y/no-static-element-interactions */
     return (
-      <div className={classes.root} onKeyDown={this.handleReset}>
+      <div className={classes.root} onKeyDown={this.handleResetKey}>
         {!showMenu && <div className={classes.floater}>{chipsArray}</div>}
         <ActionDrawer
           bodies={bodies}
