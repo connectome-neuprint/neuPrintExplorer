@@ -373,8 +373,6 @@ class SkeletonView extends React.Component {
       sharkViewer.init();
       sharkViewer.animate();
 
-      window.s = sharkViewer;
-
       if (query.pm.coordinates) {
         const coords = query.pm.coordinates.split(',');
         const target = {
