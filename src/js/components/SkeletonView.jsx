@@ -286,7 +286,9 @@ class SkeletonView extends React.Component {
         const prevBodiesSet = new Set(Object.keys(prevBodies.toJS()));
         const newBodyIds = Object.keys(bodies.toJS()).filter(bodyId => !prevBodiesSet.has(bodyId));
 
-        const moveCamera = !query.pm.coordinates;
+        // move the camera only if there are no coordinates in the url and
+        // this is the first body to be added to the scene.
+        const moveCamera = !query.pm.coordinates && prevBodiesSet.size < 1;
 
         this.renderBodies(newBodyIds, moveCamera);
 
