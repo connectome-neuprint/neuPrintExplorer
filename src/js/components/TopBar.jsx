@@ -119,11 +119,10 @@ class TopBar extends React.Component {
   };
 
   render() {
-    const { classes, availableDatasets, loggedIn, location } = this.props;
+    const { classes, loggedIn, location, datasetInfo } = this.props;
     const { showBrainRegions } = this.state;
     const qsParams = getSiteParams(location);
-
-    const dataSetOptions = availableDatasets.map(dataset => ({
+    const dataSetOptions = Object.keys(datasetInfo).filter(dataset => datasetInfo[dataset].hidden !== true).map(dataset => ({
       value: dataset,
       label: dataset
     }));
@@ -192,13 +191,13 @@ TopBar.propTypes = {
   classes: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   loggedIn: PropTypes.bool.isRequired,
-  availableDatasets: PropTypes.arrayOf(PropTypes.string).isRequired
+  datasetInfo: PropTypes.object.isRequired
 };
 
 const TopBarState = state => ({
   userInfo: state.user.userInfo,
   loggedIn: state.user.get('loggedIn'),
-  availableDatasets: state.neo4jsettings.get('availableDatasets')
+  datasetInfo: state.neo4jsettings.get('datasetInfo')
 });
 
 export default withRouter(withStyles(styles)(connect(TopBarState, null)(TopBar)));

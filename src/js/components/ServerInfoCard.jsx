@@ -25,7 +25,6 @@ function ServerInfoCard(props) {
   const {
     classes,
     neoServer,
-    availableDatasets,
     datasetInfo,
     loggedIn,
     authLevel,
@@ -47,7 +46,7 @@ function ServerInfoCard(props) {
             </Typography>
             <Typography component="p">available datasets:</Typography>
             <div className={classes.padLeft}>
-              {availableDatasets.map(item => (
+              {Object.keys(datasetInfo).filter(dataset => datasetInfo[dataset].hidden !== true).map(item => (
                 <div key={item}>
                   <Typography>
                     <b>{item}</b>
@@ -101,7 +100,6 @@ ServerInfoCard.propTypes = {
   classes: PropTypes.object.isRequired,
   loggedIn: PropTypes.bool.isRequired,
   authLevel: PropTypes.string.isRequired,
-  availableDatasets: PropTypes.arrayOf(PropTypes.string).isRequired,
   datasetInfo: PropTypes.object.isRequired,
   neoServer: PropTypes.string.isRequired,
   publicState: PropTypes.bool.isRequired
