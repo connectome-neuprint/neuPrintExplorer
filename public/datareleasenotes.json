@@ -1,10 +1,11 @@
 [
   {
-    "dataset": "hemibrain:v1.2",
+    "dataset": "hemibrain:v1.2.1",
     "date": "2020-12-22",
     "notes": [
       "Mitochondria data has been released in the neuprint+ data model. More details will be provided in an upcoming paper.",
-      "neuprint+ is backwards compatible with neuprint but some features involving mitochondria and sub-cellular search might not work with older releases"
+      "neuprint+ is backwards compatible with neuprint but some features involving mitochondria and sub-cellular search might not work with older releases",
+      "improved the accuracy of synapse-to-mito distances. See Errata document for more details."
     ],
     "links": {
       "Errata": "https://docs.google.com/document/d/1vae3ClHR8z8uekqwrOHtqiux3oY5-Y_xw6W2srCi3PI/edit?usp=sharing"
