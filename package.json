@@ -1,6 +1,6 @@
 {
   "name": "neuPrintExplorer",
-  "version": "1.54.8",
+  "version": "1.54.9",
   "description": "Application to query connectome results stored in neo4j",
   "main": "./src/js/app.js",
   "repository": {
