@@ -13,7 +13,8 @@ const state = Immutable.Map({
   meshInfo: {},
   roiInfo: {},
   neoServer: 'foobar',
-  publicState: false
+  publicState: false,
+  publicStateLoaded: false
 });
 
 const initialState = Immutable.Map({
@@ -24,7 +25,8 @@ const initialState = Immutable.Map({
   meshInfo: {},
   roiInfo: {},
   neoServer: '',
-  publicState: false
+  publicState: false,
+  publicStateLoaded: false
 });
 
 describe('neo4jsettings Reducer', () => {
@@ -51,7 +53,8 @@ describe('neo4jsettings Reducer', () => {
         meshInfo: {},
         roiInfo: {},
         neoServer: '',
-        publicState: false
+        publicState: false,
+        publicStateLoaded: false
       })
     );
     expect(neo4jsettings(state, action)).toEqual(
@@ -66,7 +69,8 @@ describe('neo4jsettings Reducer', () => {
         meshInfo: {},
         roiInfo: {},
         neoServer: 'foobar',
-        publicState: false
+        publicState: false,
+        publicStateLoaded: false
       })
     );
   });

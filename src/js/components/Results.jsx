@@ -33,7 +33,12 @@ class Results extends React.Component {
   };
 
   render() {
-    const { allResults, pluginList, classes, authLevel, publicState, loggedIn } = this.props;
+    const { allResults, pluginList, classes, authLevel, publicState, publicLoaded, loggedIn } = this.props;
+
+
+    if (!publicLoaded) {
+      return (<p>loading...</p>);
+    }
 
     if (!publicState) {
       // only redirect if the server is not in public read mode
@@ -111,13 +116,15 @@ Results.propTypes = {
   classes: PropTypes.object.isRequired,
   authLevel: PropTypes.string.isRequired,
   loggedIn: PropTypes.bool.isRequired,
-  publicState: PropTypes.bool.isRequired
+  publicState: PropTypes.bool.isRequired,
+  publicLoaded: PropTypes.bool.isRequired
 };
 
 const ResultsState = state => ({
   pluginList: state.app.get('pluginList'),
   allResults: state.results.get('allResults'),
   publicState: state.neo4jsettings.get('publicState'),
+  publicLoaded: state.neo4jsettings.get('publicStateLoaded'),
   loggedIn: state.user.get('loggedIn'),
   authLevel: state.user.get('userInfo').AuthLevel || 'none'
 });

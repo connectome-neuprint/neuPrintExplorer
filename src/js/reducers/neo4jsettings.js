@@ -12,7 +12,8 @@ const neo4jsettingsState = Immutable.Map({
   meshInfo: {},
   roiInfo: {},
   neoServer: '',
-  publicState: false
+  publicState: false,
+  publicStateLoaded: false
 });
 
 export default function neo4jreducer(state = neo4jsettingsState, action) {
@@ -35,6 +36,9 @@ export default function neo4jreducer(state = neo4jsettingsState, action) {
     }
     case C.SET_NEO_SERVER_PUBLIC: {
       return state.set('publicState', action.publicState);
+    }
+    case C.SET_NEO_SERVER_PUBLIC_LOADED: {
+      return state.set('publicStateLoaded', action.loaded);
     }
     default: {
       return state;

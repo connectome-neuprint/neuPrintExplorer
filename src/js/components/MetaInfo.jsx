@@ -35,7 +35,7 @@ class MetaInfo extends React.Component {
   }
 
   updateDB = () => {
-    const { setRoiInfo, setNeoDatasets, setNeoServer, setNeoServerPublic, setMeshInfo } = this.props;
+    const { setRoiInfo, setNeoDatasets, setNeoServer, setNeoServerPublic, setMeshInfo, setNeoServerPublicLoaded } = this.props;
     fetch('/api/dbmeta/datasets', {
       credentials: 'include'
     })
@@ -85,6 +85,7 @@ class MetaInfo extends React.Component {
       .then(result => result.json())
       .then(resp => {
         setNeoServerPublic(resp.IsPublic);
+        setNeoServerPublicLoaded();
       });
 
    fetch('/api/custom/custom?np_explorer=meta_roi_info', {
@@ -139,6 +140,7 @@ MetaInfo.propTypes = {
   setNeoDatasets: PropTypes.func.isRequired,
   setNeoServer: PropTypes.func.isRequired,
   setNeoServerPublic: PropTypes.func.isRequired,
+  setNeoServerPublicLoaded: PropTypes.func.isRequired,
   setMeshInfo: PropTypes.func.isRequired,
   setRoiInfo: PropTypes.func.isRequired,
   userInfo: PropTypes.object.isRequired
@@ -164,6 +166,13 @@ const MetaInfoDispatch = dispatch => ({
       publicState
     });
   },
+  setNeoServerPublicLoaded() {
+    dispatch({
+      type: C.SET_NEO_SERVER_PUBLIC_LOADED,
+      loaded: true
+    });
+  },
+
   setNeoServer(server) {
     dispatch({
       type: C.SET_NEO_SERVER,
