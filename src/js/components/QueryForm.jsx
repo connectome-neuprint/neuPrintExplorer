@@ -17,6 +17,7 @@ import { formError, pluginResponseError } from 'actions/plugins';
 import { metaInfoError, launchNotification } from 'actions/app';
 import {
   getQueryString,
+  getQueryObject,
   getSiteParams,
   setPluginQueryString,
   getPluginQueryObject,
@@ -99,10 +100,19 @@ class QueryForm extends React.Component {
       superROIsByDataSet,
       roiInfo,
       isQuerying,
+      allResults,
       neoServerSettings
     } = this.props;
     const { openSnack, hasError } = this.state;
 
+    const query = getQueryObject();
+    const tabIndex = parseInt(query.tab || 0, 10);
+
+    let cypher = '';
+
+    if (allResults.get(tabIndex) && allResults.get(tabIndex).result) {
+      cypher = allResults.get(tabIndex).result.debug;
+    }
 
     // assume the first query is the default
     const CurrentQuery = this.findCurrentPlugin();
@@ -165,6 +175,7 @@ class QueryForm extends React.Component {
             submit={this.submit}
             isPublic={PUBLIC} // indicates whether or not the application is in public mode
             key={dataSet}
+            cypherFromOpenTab={cypher}
           />
         )}
       </div>
