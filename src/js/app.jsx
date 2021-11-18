@@ -66,6 +66,15 @@ loadPlugins(store);
 const appDB = document.getElementById('analyzer').getAttribute('appdb');
 store.dispatch(setAppDb(appDB));
 
+if (process.env.NODE_ENV === 'development') {
+  /* eslint-disable-next-line global-require */
+  const { worker } = require('../mocks/browser');
+  worker.start({
+    onUnhandledRequest: 'bypass',
+  });
+}
+
+
 /*
  * Load interface into a DIV anchored by analyzer.
  */

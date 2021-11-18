@@ -10,6 +10,7 @@ services:
     volumes:
       - ./neuprinthttp-config.json:/app/config/config.json
       - ./build:/app/www/neuprintexplorer
+      - ./certs:/app/certs
     #command: ./neuPrintHTTP -port 11000 -proxy-port 11000 -public_read /app/config/config.json
     command: ./neuPrintHTTP -port 11000 -proxy-port 11000 /app/config/config.json
 networks:

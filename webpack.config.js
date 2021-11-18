@@ -31,6 +31,11 @@ const copyWebpackPlugin = new CopyWebpackPlugin([
     to: 'ng.css',
     toType: 'file'
   },
+  {
+    from: 'public/mockServiceWorker.js',
+    to: 'mockServiceWorker.js',
+    toType: 'file'
+  },
 
 ]);
 
