@@ -1,0 +1,137 @@
+{
+  "layers": [
+    {
+      "type": "image",
+      "source": {
+        "url": "precomputed://gs://cns-halfbrain-clahe-yz-cl035",
+        "subsources": {
+          "default": true
+        },
+        "enableDefaultSubsources": false
+      },
+      "tab": "source",
+      "name": "vnc-greyscalejpeg"
+    },
+    {
+      "type": "segmentation",
+      "source": {
+        "url": "dvid://https://emdata6-erivan.janelia.org/5a7d0c59a918400181aaac6144f4ede2/segmentation?dvid-service=https://ngsupport-bmcp5imp6q-uk.a.run.app",
+        "subsources": {
+          "default": true,
+          "meshes": true,
+          "skeletons": true
+        },
+        "enableDefaultSubsources": false
+      },
+      "tab": "source",
+      "objectAlpha": 0.5,
+      "name": "vnc"
+    },
+    {
+      "type": "segmentation",
+      "source": {
+        "url": "precomputed://gs://flyem-cns-roi-7c971aa681da83f9a074a1f0e8ef60f4/halfbrain-all_brain",
+        "subsources": {
+          "default": true,
+          "properties": true,
+          "mesh": true
+        },
+        "enableDefaultSubsources": false
+      },
+      "pick": false,
+      "tab": "source",
+      "selectedAlpha": 0,
+      "saturation": 0,
+      "meshSilhouetteRendering": 4,
+      "segments": ["1"],
+      "segmentDefaultColor": "#ffffff",
+      "name": "all_brain"
+    },
+    {
+      "type": "segmentation",
+      "source": {
+        "url": "precomputed://gs://flyem-cns-roi-7c971aa681da83f9a074a1f0e8ef60f4/halfbrain-roi",
+        "subsources": {
+          "default": true,
+          "properties": true,
+          "mesh": true
+        },
+        "enableDefaultSubsources": false
+      },
+      "pick": false,
+      "tab": "segments",
+      "selectedAlpha": 0,
+      "saturation": 0.5,
+      "meshSilhouetteRendering": 4,
+      "segments": [
+        "1",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "2",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "3",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+      ],
+      "name": "neuropil",
+      "visible": false
+    },
+    {
+      "type": "segmentation",
+      "source": {
+        "url": "precomputed://gs://flyem-cns-roi-7c971aa681da83f9a074a1f0e8ef60f4/defects",
+        "subsources": {
+          "default": true,
+          "properties": true,
+          "mesh": true
+        },
+        "enableDefaultSubsources": false
+      },
+      "pick": false,
+      "tab": "segments",
+      "meshSilhouetteRendering": 2.1,
+      "segments": ["1", "2", "3"],
+      "segmentDefaultColor": "#ffff00",
+      "name": "defects"
+    },
+    {
+      "type": "annotation",
+      "source": "dvid://https://emdata6-erivan.janelia.org/601af/synapses_v1",
+      "tab": "source",
+      "shader": "#uicontrol float radius slider(min=3, max=20, step=1, default=5)\n#uicontrol float opacity slider(min=0, max=1, step=0.1, default=1)\n#uicontrol float opacity3D slider(min=0, max=1, step=0.1, default=1)\n#uicontrol vec3 tbarColor color(default=\"#FFFF00\")\n#uicontrol vec3 psdColor color(default=\"#808080\")\n\t\nvoid main() {\n  setPointMarkerSize(radius);\n  float finalOpacity = PROJECTION_VIEW ? opacity3D : opacity;\n  setPointMarkerBorderColor(vec4(0, 0, 0, finalOpacity));\n  if (prop_rendering_attribute() == 4) {\n\tsetColor(vec4(tbarColor, finalOpacity));\n  } else if (prop_rendering_attribute() == 5) {\n\tsetColor(vec4(psdColor, finalOpacity));\n  } else {\n\tsetColor(vec4(defaultColor(), finalOpacity));\n  }\n}\n",
+      "linkedSegmentationLayer": {
+        "segments": "dvid-ept"
+      },
+      "filterBySegmentation": ["segments"],
+      "name": "tbars_v0"
+    }
+  ]
+}
