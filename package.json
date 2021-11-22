@@ -72,7 +72,7 @@
     "@neuprint/queries": "^11.0.3",
     "@neuprint/react-heatmap": "^0.5.1",
     "@neuprint/support": "^1.4.4",
-    "@neuprint/views": "^9.0.7",
+    "@neuprint/views": "^9.1.0",
     "ajv": "^6.12.5",
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "classnames": "^2.2.6",
