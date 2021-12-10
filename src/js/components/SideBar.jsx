@@ -1,8 +1,7 @@
 /*
  * Side bar that contains navigation items and search window anchor.
  */
-
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { NavLink } from 'react-router-dom';
@@ -15,13 +14,15 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Icon from '@material-ui/core/Icon';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import Divider from '@material-ui/core/Divider';
 import Tooltip from '@material-ui/core/Tooltip';
 
 import Contact from './Contact';
 import { getSiteParams, setQueryString } from '../helpers/queryString';
 
-const drawerWidth = 400;
+const drawerWidth = 200;
 
 // adapted from material ui example
 const styles = theme => ({
@@ -39,7 +40,8 @@ const styles = theme => ({
     })
   },
   drawerPaperClose: {
-    overflowX: 'hidden',
+    height: '100vh',
+    position: 'relative',
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
@@ -49,12 +51,22 @@ const styles = theme => ({
   toolbar: theme.mixins.toolbar
 });
 
-class SideBar extends React.Component {
-  toggleQuery = () => {
-    const { location } = this.props;
-    const qsParams = getSiteParams(location);
+function SideBar({ classes, location }) {
+  const [open, setOpen] = useState(false);
 
-    const openQuery = qsParams.get('q');
+  const qsParams = getSiteParams(location);
+  if (qsParams.get('rt') === 'full') {
+    return '';
+  }
+
+  const toggleClosed = () => {
+    setOpen(!open);
+  };
+
+  const openQuery = Boolean(qsParams.get('q'));
+  const queryString = location.search;
+
+  const toggleQuery = () => {
     if (!openQuery) {
       setQueryString({ q: 1 });
     } else {
@@ -62,113 +74,108 @@ class SideBar extends React.Component {
     }
   };
 
-  render() {
-    const { classes, location } = this.props;
+  const drawerClass = open ? classes.drawerPaper : classes.drawerPaperClose;
 
-    const qsParams = getSiteParams(location);
+  return (
+    <Drawer
+      variant="permanent"
+      classes={{
+        paper: classNames(drawerClass)
+      }}
+      open={open}
+    >
+      <div className={classes.toolbar} />
+      <MenuList component="nav">
+        <MenuItem button onClick={toggleClosed}>
+          <Tooltip title="Collapse Menu" aria-label="Collapse Menu" placement="top-end">
+            <ListItemIcon>{open ? <ChevronLeftIcon /> : <ChevronRightIcon />}</ListItemIcon>
+          </Tooltip>
+        </MenuItem>
 
-    if (qsParams.get('rt') === 'full') {
-      return '';
-    }
+        <MenuItem button onClick={toggleQuery} selected={openQuery}>
+          <Tooltip title="Search Input" aria-label="Search Input" placement="top-end">
+            <ListItemIcon>
+              <Icon>search</Icon>
+            </ListItemIcon>
+          </Tooltip>
+          <ListItemText primary="Search" />
+        </MenuItem>
 
-    const openQuery = Boolean(qsParams.get('q'));
-    const queryString = location.search;
+        <Divider />
 
-    return (
-      <Drawer
-        variant="permanent"
-        classes={{
-          paper: classNames(classes.drawerPaper, classes.drawerPaperClose)
-        }}
-        open={false}
-      >
-        <div className={classes.toolbar} />
-        <MenuList component="nav">
-          <MenuItem button onClick={this.toggleQuery} selected={openQuery}>
-            <Tooltip title="Search Input" aria-label="Search Input" placement="top-end">
-              <ListItemIcon>
-                <Icon>search</Icon>
-              </ListItemIcon>
-            </Tooltip>
-            <ListItemText primary="Search" />
-          </MenuItem>
+        <MenuItem
+          selected={/^\/$/.test(location.pathname)}
+          component={NavLink}
+          to={{ pathname: '/', search: queryString }}
+          button
+        >
+          <Tooltip title="Home" aria-label="Home" placement="top-end">
+            <ListItemIcon>
+              <Icon>home</Icon>
+            </ListItemIcon>
+          </Tooltip>
+          <ListItemText primary="Home" />
+        </MenuItem>
 
-          <Divider />
+        <MenuItem
+          selected={/^\/results/.test(location.pathname)}
+          component={NavLink}
+          to={{ pathname: '/results', search: queryString }}
+          button
+        >
+          <Tooltip title="Search Results" aria-label="Search Results" placement="top-end">
+            <ListItemIcon>
+              <Icon>storages</Icon>
+            </ListItemIcon>
+          </Tooltip>
+          <ListItemText primary="Results" />
+        </MenuItem>
 
-          <MenuItem
-            selected={/^\/$/.test(location.pathname)}
-            component={NavLink}
-            to={{ pathname: '/', search: queryString }}
-            button
-          >
-            <Tooltip title="Home" aria-label="Home" placement="top-end">
-              <ListItemIcon>
-                <Icon>home</Icon>
-              </ListItemIcon>
-            </Tooltip>
-            <ListItemText primary="Home" />
-          </MenuItem>
+        <MenuItem
+          selected={/^\/favorites/.test(location.pathname)}
+          component={NavLink}
+          to={{ pathname: '/favorites', search: queryString }}
+          button
+        >
+          <Tooltip title="Favorites" aria-label="Favorites" placement="top-end">
+            <ListItemIcon>
+              <Icon>star</Icon>
+            </ListItemIcon>
+          </Tooltip>
+          <ListItemText primary="Favorites" />
+        </MenuItem>
 
-          <MenuItem
-            selected={/^\/results/.test(location.pathname)}
-            component={NavLink}
-            to={{ pathname: '/results', search: queryString }}
-            button
-          >
-            <Tooltip title="Search Results" aria-label="Search Results" placement="top-end">
-              <ListItemIcon>
-                <Icon>storages</Icon>
-              </ListItemIcon>
-            </Tooltip>
-            <ListItemText primary="Results" />
-          </MenuItem>
+        <MenuItem
+          selected={/^\/help/.test(location.pathname)}
+          component={NavLink}
+          to={{ pathname: '/help', search: queryString }}
+          button
+        >
+          <Tooltip title="Help" aria-label="Help" placement="top-end">
+            <ListItemIcon>
+              <Icon>info</Icon>
+            </ListItemIcon>
+          </Tooltip>
+          <ListItemText primary="Help" />
+        </MenuItem>
 
-          <MenuItem
-            selected={/^\/favorites/.test(location.pathname)}
-            component={NavLink}
-            to={{ pathname: '/favorites', search: queryString }}
-            button
-          >
-            <Tooltip title="Favorites" aria-label="Favorites" placement="top-end">
-              <ListItemIcon>
-                <Icon>star</Icon>
-              </ListItemIcon>
-            </Tooltip>
-            <ListItemText primary="Favorites" />
-          </MenuItem>
-
-          <MenuItem
-            selected={/^\/help/.test(location.pathname)}
-            component={NavLink}
-            to={{ pathname: '/help', search: queryString }}
-            button
-          >
-            <Tooltip title="Help" aria-label="Help" placement="top-end">
-              <ListItemIcon>
-                <Icon>info</Icon>
-              </ListItemIcon>
-            </Tooltip>
-            <ListItemText primary="Help" />
-          </MenuItem>
-
-          <MenuItem
-            selected={/^\/releasenotes/.test(location.pathname)}
-            component={NavLink}
-            to={{ pathname: '/releasenotes', search: queryString }}
-            button
-          >
-            <Tooltip title="Release Notes" aria-label="Release Notes" placement="top-end">
-              <ListItemIcon>
-                <Icon>list</Icon>
-              </ListItemIcon>
-            </Tooltip>
-            <ListItemText primary="Release Notes" />
-          </MenuItem>
-        </MenuList>
-        <Contact />
-      </Drawer>
-    );
-  }
+        <MenuItem
+          selected={/^\/releasenotes/.test(location.pathname)}
+          component={NavLink}
+          to={{ pathname: '/releasenotes', search: queryString }}
+          button
+        >
+          <Tooltip title="Release Notes" aria-label="Release Notes" placement="top-end">
+            <ListItemIcon>
+              <Icon>list</Icon>
+            </ListItemIcon>
+          </Tooltip>
+          <ListItemText primary="Release Notes" />
+        </MenuItem>
+      </MenuList>
+      <Contact />
+    </Drawer>
+  );
 }
 
 SideBar.propTypes = {
