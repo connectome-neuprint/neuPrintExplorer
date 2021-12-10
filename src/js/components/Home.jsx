@@ -79,7 +79,7 @@ function Home(props) {
   const dataSetNames = Object.keys(datasetInfo) || [];
 
   const defaultDS = dataSetNames.sort(
-    (a, b) => (new Date(datasetInfo[b].lastmod) - new Date(datasetInfo[a].lastmod))
+    (a, b) => new Date(datasetInfo[b].lastmod) - new Date(datasetInfo[a].lastmod)
   )[0];
 
   if (loggedIn && (!queryObject.dataset || !queryObject.qt) && defaultDS) {
@@ -99,10 +99,10 @@ function Home(props) {
         <Grid item xs={loggedIn ? 8 : 12} className={classes.roottext}>
           <Typography variant="h3">Analysis tools for connectomics and more</Typography>
           <Typography className={classes.description}>
-            neuPrintExplorer provides tools to query and visualize inter and intra
-            cellular interactions data stored in{' '}
-            <a href="https://github.com/janelia-flyem/neuPrint">neuPrint+</a>, which
-            uses a neo4j graph database.
+            neuPrintExplorer provides tools to query and visualize inter and intra cellular
+            interactions data stored in{' '}
+            <a href="https://github.com/janelia-flyem/neuPrint">neuPrint+</a>, which uses a neo4j
+            graph database.
           </Typography>
           {loggedIn && !queryObject.q && (
             <Typography variant="h6">
@@ -116,7 +116,7 @@ function Home(props) {
             <DataSetLogo dataSet={queryObject.dataset} datasetInfo={datasetInfo} />
           </Grid>
         )}
-        {(loggedIn && (authLevel.match(/^readwrite|admin$/) || publicState)) ? (
+        {loggedIn && (authLevel.match(/^readwrite|admin$/) || publicState) ? (
           <Grid item sm={12} md={4}>
             <NeuronOfTheDay dataSet={queryObject.dataset} />
           </Grid>
@@ -153,6 +153,21 @@ function Home(props) {
           <News />
         </Grid>
       </Grid>
+      <p style={{ textAlign: 'center', width: '100%' }}>
+        <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+          <img
+            alt="Creative Commons License"
+            style={{ borderWidth: 0 }}
+            src="https://i.creativecommons.org/l/by/4.0/88x31.png"
+          />
+        </a>
+        <br />
+        This work is licensed under a{' '}
+        <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+          Creative Commons Attribution 4.0 International License
+        </a>
+        .
+      </p>
     </div>
   );
 }

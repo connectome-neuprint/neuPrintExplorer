@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import Grid from '@material-ui/core/Grid';
 import AppBar from '@material-ui/core/AppBar';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
@@ -46,7 +47,13 @@ const styles = theme => ({
   bold: { fontWeight: 'bold', display: 'inline' },
   contact: {
     padding: '1em',
-    marginBottom: '1em'
+    height: "100%"
+  },
+  citation: {
+    padding: '1em',
+  },
+  info: {
+    marginBottom: "1em"
   }
 });
 
@@ -66,23 +73,59 @@ function Help(props) {
 
   return (
     <div className={classes.root}>
-      <Paper className={classes.contact}>
-        <Typography variant="h5">Contact us:</Typography>
-        <ul>
-          <li>
-            Email: <a href="mailto:neuprint@janelia.hhmi.org">neuprint@janelia.hhmi.org</a>
-          </li>
-          <li>
-            Issues:{' '}
-            <a href="https://github.com/connectome-neuprint/neuPrintExplorer/issues">
-              Github Issues
-            </a>
-          </li>
-          <li>
-            Forum: <a href="https://groups.google.com/forum/#!forum/neuprint">Google Groups</a>
-          </li>
-        </ul>
-      </Paper>
+      <Grid container spacing={2} className={classes.info}>
+        <Grid item sm={12} md={4}>
+          <Paper className={classes.contact}>
+            <Typography variant="h5">Contact us:</Typography>
+            <ul>
+              <li>
+                Email: <a href="mailto:neuprint@janelia.hhmi.org">neuprint@janelia.hhmi.org</a>
+              </li>
+              <li>
+                Issues:{' '}
+                <a href="https://github.com/connectome-neuprint/neuPrintExplorer/issues">
+                  Github Issues
+                </a>
+              </li>
+              <li>
+                Forum: <a href="https://groups.google.com/forum/#!forum/neuprint">Google Groups</a>
+              </li>
+            </ul>
+          </Paper>
+        </Grid>
+        <Grid item sm={12} md={8}>
+          <Paper className={classes.citation}>
+            <Typography variant="h5">Cite this work:</Typography>
+            <p>
+              <b>neuPrint: Analysis Tools for EM Connectomics</b>
+            </p>
+            <i>
+              Jody Clements, Tom Dolafi, Lowell Umayam, Nicole L. Neubarth, Stuart Berg, Louis K.
+              Scheffer, Stephen M. Plaza
+            </i>
+            <p>
+              bioRxiv 2020.01.16.909465; doi:{' '}
+              <a href="https://doi.org/10.1101/2020.01.16.909465">
+                https://doi.org/10.1101/2020.01.16.909465
+              </a>
+            </p>
+            <p>
+              <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+                <img
+                  alt="Creative Commons License"
+                  style={{ borderWidth: 0 }}
+                  src="https://i.creativecommons.org/l/by/4.0/88x31.png"
+                />
+              </a>{' '}
+              This work is licensed under a{' '}
+              <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+                Creative Commons Attribution 4.0 International License
+              </a>
+              .
+            </p>
+          </Paper>
+        </Grid>
+      </Grid>
 
       <AppBar position="static" color="default">
         <Tabs value={value}>
