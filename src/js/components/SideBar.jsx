@@ -51,8 +51,27 @@ const styles = theme => ({
   toolbar: theme.mixins.toolbar
 });
 
+function lsTest() {
+  const test = 'test';
+  try {
+    localStorage.setItem(test, test);
+    localStorage.removeItem(test);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 function SideBar({ classes, location }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(() => {
+    // getting stored value
+    if (lsTest()) {
+      const saved = localStorage.getItem('collapse_menu');
+      const initialValue = JSON.parse(saved);
+      return initialValue || false;
+    }
+    return false;
+  });
 
   const qsParams = getSiteParams(location);
   if (qsParams.get('rt') === 'full') {
@@ -60,6 +79,9 @@ function SideBar({ classes, location }) {
   }
 
   const toggleClosed = () => {
+    if (lsTest()) {
+      localStorage.setItem('collapse_menu', JSON.stringify(!open));
+    }
     setOpen(!open);
   };
 
