@@ -8,8 +8,13 @@
       "improved the accuracy of synapse-to-mito distances. See Errata document for more details."
     ],
     "links": {
-      "Errata": "https://docs.google.com/document/d/1vae3ClHR8z8uekqwrOHtqiux3oY5-Y_xw6W2srCi3PI/edit?usp=sharing",
-      "When using this data, cite https://elifesciences.org/articles/57443": "https://elifesciences.org/articles/57443"
+      "Errata": "https://docs.google.com/document/d/1vae3ClHR8z8uekqwrOHtqiux3oY5-Y_xw6W2srCi3PI/edit?usp=sharing"
+    },
+    "cite": {
+      "title": "A connectome and analysis of the adult Drosophila central brain",
+      "publication": "eLife 9:e57443.",
+      "authors": "Scheffer et al.",
+      "link": "https://doi.org/10.7554/eLife.57443"
     }
   },
   {
@@ -24,8 +29,13 @@
       "AL glomeruli are added (only those identifiable in the dataset)"
     ],
     "links": {
-      "Errata": "https://docs.google.com/document/d/1vae3ClHR8z8uekqwrOHtqiux3oY5-Y_xw6W2srCi3PI/edit?usp=sharing",
-      "When using this data, please cite: https://elifesciences.org/articles/57443": "https://elifesciences.org/articles/57443"
+      "Errata": "https://docs.google.com/document/d/1vae3ClHR8z8uekqwrOHtqiux3oY5-Y_xw6W2srCi3PI/edit?usp=sharing"
+    },
+    "cite": {
+      "title": "A connectome and analysis of the adult Drosophila central brain",
+      "publication": "eLife 9:e57443.",
+      "authors": "Scheffer et al.",
+      "link": "https://doi.org/10.7554/eLife.57443"
     }
   },
   {
@@ -34,6 +44,12 @@
     "notes": ["initial release"],
     "links": {
       "Errata": "https://docs.google.com/document/d/1vae3ClHR8z8uekqwrOHtqiux3oY5-Y_xw6W2srCi3PI/edit?usp=sharing"
+    },
+    "cite": {
+      "title": "A connectome and analysis of the adult Drosophila central brain",
+      "publication": "eLife 9:e57443.",
+      "authors": "Scheffer et al.",
+      "link": "https://doi.org/10.7554/eLife.57443"
     }
   }
 ]
