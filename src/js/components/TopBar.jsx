@@ -127,14 +127,16 @@ class TopBar extends React.Component {
       label: dataset
     }));
 
-    const datasetstr = qsParams.get('dataset') || 'Select a dataset';
+    const dataSet = qsParams.get('dataset');
+
+    const datasetstr = dataSet || 'Select a dataset';
 
     const fullscreen = qsParams.get('rt');
 
     return (
       <AppBar position="absolute" className={classes.appBar}>
         {showBrainRegions && <BrainRegions onClose={this.handleRegionClick} dataSet={datasetstr} />}
-        {loggedIn && <MetaInfo />}
+        {loggedIn && <MetaInfo dataSet={dataSet} />}
         <Toolbar>
           <div>
             <Tooltip title={VERSION} placement="bottom" enterDelay={300}>

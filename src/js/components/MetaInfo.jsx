@@ -18,12 +18,16 @@ export function sortRois(a, b) {
 
 class MetaInfo extends React.Component {
   componentDidMount() {
-    const { userInfo } = this.props;
+    const { userInfo, dataSet } = this.props;
     this.updateDB(userInfo);
+    if (dataSet) {
+      this.updateMetaRoiInfo();
+      this.updateMetaDatasetInfo();
+    }
   }
 
   componentDidUpdate(prevProps) {
-    const { userInfo, setNeoDatasets, setNeoServer } = this.props;
+    const { userInfo, setNeoDatasets, setNeoServer, dataSet } = this.props;
     if (prevProps.userInfo !== userInfo) {
       setNeoDatasets([], {}, {}, {});
       setNeoServer('');
@@ -32,10 +36,68 @@ class MetaInfo extends React.Component {
     if (!_.isEqual(prevProps.userInfo, userInfo)) {
       this.updateDB(userInfo);
     }
+
+    if (dataSet && prevProps.dataSet !== dataSet) {
+      this.updateMetaRoiInfo();
+      this.updateMetaDatasetInfo();
+    }
   }
 
+  updateMetaRoiInfo = () => {
+    const { setRoiInfo, dataSet } = this.props;
+    if (dataSet) {
+      fetch('/api/custom/custom?np_explorer=meta_roi_info', {
+        credentials: 'include',
+        body: JSON.stringify({ cypher: 'MATCH (n:Meta) RETURN n.roiInfo', dataset: dataSet }),
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        }
+      })
+        .then(result => result.json())
+        .then(resp => {
+          if (!('message' in resp)) {
+            if (resp.data && resp.data[0]) {
+              setRoiInfo(JSON.parse(resp.data[0][0]));
+            }
+          }
+        });
+    }
+  };
+
+
+  updateMetaDatasetInfo = () => {
+    const { setMeshInfo, dataSet } = this.props;
+    if (dataSet) {
+      fetch('/api/custom/custom?np_explorer=meta_dataset_and_host', {
+        credentials: 'include',
+        body: JSON.stringify({ cypher: 'MATCH (n:Meta) RETURN n.dataset, n.meshHost', dataset: dataSet }),
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        }
+      })
+        .then(result => result.json())
+        .then(resp => {
+          if (!('message' in resp)) {
+            const meshInfo = {}
+            if (resp.data) {
+              resp.data.forEach(dataset => {
+                const [key, value] = dataset;
+                meshInfo[key] = value;
+              });
+            }
+            setMeshInfo(meshInfo);
+          }
+        });
+    }
+  }
+
+
   updateDB = () => {
-    const { setRoiInfo, setNeoDatasets, setNeoServer, setNeoServerPublic, setMeshInfo, setNeoServerPublicLoaded } = this.props;
+    const { setNeoDatasets, setNeoServer, setNeoServerPublic, setNeoServerPublicLoaded } = this.props;
     fetch('/api/dbmeta/datasets', {
       credentials: 'include'
     })
@@ -88,47 +150,6 @@ class MetaInfo extends React.Component {
         setNeoServerPublicLoaded();
       });
 
-   fetch('/api/custom/custom?np_explorer=meta_roi_info', {
-      credentials: 'include',
-      body: JSON.stringify({ cypher: 'MATCH (n:Meta) RETURN n.roiInfo' }),
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json'
-      }
-    })
-      .then(result => result.json())
-      .then(resp => {
-        if (!('message' in resp)) {
-          if (resp.data && resp.data[0]) {
-            setRoiInfo(JSON.parse(resp.data[0][0]));
-          }
-        }
-      });
-
-
-    fetch('/api/custom/custom?np_explorer=meta_dataset_and_host', {
-      credentials: 'include',
-      body: JSON.stringify({ cypher: 'MATCH (n:Meta) RETURN n.dataset, n.meshHost' }),
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json'
-      }
-    })
-      .then(result => result.json())
-      .then(resp => {
-        if (!('message' in resp)) {
-          const meshInfo = {}
-          if (resp.data) {
-            resp.data.forEach(dataset => {
-              const [key, value] = dataset;
-              meshInfo[key] = value;
-            });
-          }
-          setMeshInfo(meshInfo);
-        }
-      });
   };
 
   render() {
@@ -143,7 +164,12 @@ MetaInfo.propTypes = {
   setNeoServerPublicLoaded: PropTypes.func.isRequired,
   setMeshInfo: PropTypes.func.isRequired,
   setRoiInfo: PropTypes.func.isRequired,
-  userInfo: PropTypes.object.isRequired
+  userInfo: PropTypes.object.isRequired,
+  dataSet: PropTypes.string
+};
+
+MetaInfo.defaultProps = {
+  dataSet: null
 };
 
 const MetaInfoState = state => ({
