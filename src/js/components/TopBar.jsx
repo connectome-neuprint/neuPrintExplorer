@@ -2,7 +2,7 @@
 /*
  * Top level page for displaying queries and results.
  */
-import React from 'react';
+import React, { Suspense } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -20,10 +20,12 @@ import Tooltip from '@material-ui/core/Tooltip';
 
 import MetaInfo from './MetaInfo';
 import Login from './Login';
-import BrainRegions from './BrainRegions';
 import { getSiteParams, setQueryString } from '../helpers/queryString';
 
 import './TopBar.css';
+
+const BrainRegions = React.lazy(() => import('./BrainRegions'));
+
 
 // adapted from material ui example
 const styles = theme => ({
@@ -135,7 +137,11 @@ class TopBar extends React.Component {
 
     return (
       <AppBar position="absolute" className={classes.appBar}>
-        {showBrainRegions && <BrainRegions onClose={this.handleRegionClick} dataSet={datasetstr} />}
+        {showBrainRegions && (
+
+            <Suspense fallback={<div>loading...</div>}>
+          <BrainRegions onClose={this.handleRegionClick} dataSet={datasetstr} />
+        </Suspense>)}
         {loggedIn && <MetaInfo dataSet={dataSet} />}
         <Toolbar>
           <div>
