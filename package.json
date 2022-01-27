@@ -111,7 +111,7 @@
     "redux-thunk": "^2.3.0",
     "slugg": "^1.2.1",
     "swagger-ui": "^3.52.5",
-    "underscore": "^1.12.1",
+    "underscore": "^1.13.2",
     "uuid": "^8.3.2"
   },
   "scripts": {
