@@ -130,6 +130,7 @@
   },
   "size-limit": [
     {
+      "limit": "3 MB",
       "path": "build/js/app.*.js"
     }
   ],
