@@ -102,7 +102,7 @@
     "react-dom": "^16.13.1",
     "react-fast-compare": "^2.0.4",
     "react-google-login": "^3.0.10",
-    "react-pdf": "^4.2.0",
+    "react-pdf": "^5.7.0",
     "react-redux": "^7.2.1",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
@@ -113,7 +113,7 @@
     "slugg": "^1.2.1",
     "swagger-ui": "^3.33.0",
     "underscore": "^1.12.1",
-    "uuid": "^3.3.2"
+    "uuid": "^8.3.2"
   },
   "scripts": {
     "pretest": "eslint --ext .jsx,.js src/js/",

@@ -6,7 +6,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { Document, Page } from 'react-pdf';
+import { Document, Page }  from 'react-pdf/dist/esm/entry.webpack';
 import * as d3 from 'd3';
 import './BrainRegions.css';
 
