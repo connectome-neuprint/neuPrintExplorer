@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import dateFns from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
 
 
 class CachedCounter extends React.Component {
@@ -15,7 +15,7 @@ class CachedCounter extends React.Component {
     super(props);
     const { fetchedTime } = this.props;
     this.state = {
-      distanceInWords: dateFns.distanceInWordsToNow(new Date(fetchedTime))
+      distanceInWords: formatDistanceToNow(new Date(fetchedTime))
     };
   }
 
@@ -24,7 +24,7 @@ class CachedCounter extends React.Component {
     this.updateTimeId = setInterval(() => {
       const { fetchedTime } = this.props;
       if (this.isMountedNow) {
-        this.setState({distanceInWords: dateFns.distanceInWordsToNow(new Date(fetchedTime))});
+        this.setState({distanceInWords: formatDistanceToNow(new Date(fetchedTime))});
       }
     },  1000);
   }

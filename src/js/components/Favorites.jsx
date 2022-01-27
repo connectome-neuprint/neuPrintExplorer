@@ -6,7 +6,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import dateFns from 'date-fns';
+import { format } from 'date-fns';
 
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
@@ -176,7 +176,7 @@ class Favorites extends React.Component {
           <TableCell>
             <Typography>
               <Button color="primary" onClick={() => this.handleViewSearch(row.id)}>
-                {row.value.name} - {dateFns.format(new Date(row.value.timestamp), 'MM/DD/YYYY H:mm')}
+                {row.value.name} - {format(new Date(row.value.timestamp), 'MM/dd/yyyy H:mm')}
               </Button>
             </Typography>
           </TableCell>

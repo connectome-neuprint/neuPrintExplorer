@@ -26,7 +26,6 @@ import './TopBar.css';
 
 const BrainRegions = React.lazy(() => import('./BrainRegions'));
 
-
 // adapted from material ui example
 const styles = theme => ({
   appBar: {
