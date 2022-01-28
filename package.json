@@ -78,7 +78,7 @@
     "copy-to-clipboard": "^3.3.1",
     "d3": "^5.16.0",
     "date-fns": "^2.28.0",
-    "deep-equal": "^1.0.1",
+    "deep-equal": "^2.0.5",
     "deepmerge": "^4.2.2",
     "history": "^4.7.2",
     "immutable": "^4.0.0",
