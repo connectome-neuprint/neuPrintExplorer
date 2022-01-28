@@ -4,7 +4,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 import { CookiesProvider } from 'react-cookie';
 
 import Master from './components/Master';
@@ -15,7 +15,7 @@ import loadPlugins from './helpers/initplugins';
 const ReactDOM = require('react-dom');
 
 // set theme colors
-const theme = createMuiTheme({
+const theme = createTheme({
   typography: {
     useNextVariants: true
   },

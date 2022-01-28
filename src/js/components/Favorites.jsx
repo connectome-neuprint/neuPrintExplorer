@@ -231,8 +231,8 @@ class Favorites extends React.Component {
                   count={favoritesArr.length}
                   rowsPerPage={rowsPerPage}
                   page={page}
-                  onChangePage={this.handleChangePage}
-                  onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                  onPageChange={this.handleChangePage}
+                  onRowsPerPageChange={this.handleChangeRowsPerPage}
                   ActionsComponent={TablePaginationActions}
                 />
               </TableRow>
@@ -252,8 +252,8 @@ class Favorites extends React.Component {
                   count={searchesArr.length}
                   rowsPerPage={rowsPerPage}
                   page={page}
-                  onChangePage={this.handleChangePage}
-                  onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                  onPageChange={this.handleChangePage}
+                  onRowsPerPageChange={this.handleChangeRowsPerPage}
                   ActionsComponent={TablePaginationActions}
                 />
               </TableRow>

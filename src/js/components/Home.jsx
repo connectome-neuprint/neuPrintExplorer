@@ -95,7 +95,7 @@ function Home(props) {
 
   return (
     <div className={classes.root}>
-      <Grid container spacing={4} justify="center" className={classes.container}>
+      <Grid container spacing={4} justifyContent="center" className={classes.container}>
         <Grid item xs={loggedIn ? 8 : 12} className={classes.roottext}>
           <Typography variant="h3">Analysis tools for connectomics and more</Typography>
           <Typography className={classes.description}>
@@ -142,7 +142,7 @@ function Home(props) {
         </Grid>
       )}
       {queryObject.dataset && <Divider variant="middle" className={classes.sectionDivide} />}
-      <Grid container spacing={4} justify="center" className={classes.container}>
+      <Grid container spacing={4} justifyContent="center" className={classes.container}>
         <Grid item xs={12} sm={12} md={6} lg={5}>
           <ServerInfoCard loggedIn={loggedIn} datasetInfo={datasetInfo} {...rest} />
         </Grid>
