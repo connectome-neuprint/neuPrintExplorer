@@ -1,17 +1,22 @@
 import * as skeletonActions from './skeleton';
 import C from '../reducers/constants';
 
+
+
 describe('skeleton Actions', () => {
-  it('should dispatch actions to add a skeleton', () => {
+  it('should dispatch actions to add a skeleton', async () => {
     const expectedAction = {
       type: C.SKELETON_ADD_ID
     };
-    expect(skeletonActions.skeletonAddandOpen()).toEqual(expectedAction);
+    // have to wait for the pouchdb code to load or the test throws a warning
+    // about imports.
+    await new Promise((r) => setTimeout(r, 1000));
+    expect( await skeletonActions.skeletonAddandOpen()).toEqual(expectedAction);
   });
-  it('should create action to remove skeleton', () => {
+  it('should create action to remove skeleton', async () => {
     const expectedAction = {
       type: C.SKELETON_REMOVE
     };
-    expect(skeletonActions.skeletonRemove()).toEqual(expectedAction);
+    expect( await skeletonActions.skeletonRemove()).toEqual(expectedAction);
   });
 });
