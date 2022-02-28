@@ -2,7 +2,6 @@ extends:
     - "react-app"
     - "airbnb"
     - "prettier"
-    - "prettier/react"
 env:
     browser: true
     node: true
@@ -19,6 +18,8 @@ plugins:
 settings:
     import/resolver: webpack
 rules:
+    "default-param-last":
+        - 0
     "react/forbid-prop-types":
         - 1
         - forbid:
