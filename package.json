@@ -18,7 +18,7 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
     "@babel/preset-env": "^7.12.10",
     "@babel/preset-react": "^7.12.10",
-    "@size-limit/preset-app": "^4.6.0",
+    "@size-limit/preset-app": "^7.0.8",
     "babel-loader": "^8.2.3",
     "babelify": "^8.0.0",
     "clean-webpack-plugin": "^4.0.0",
