@@ -20,7 +20,6 @@
     "@babel/preset-react": "^7.12.10",
     "@size-limit/preset-app": "^7.0.8",
     "babel-loader": "^8.2.3",
-    "babelify": "^8.0.0",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^10.2.4",
     "css-loader": "^6.6.0",
