@@ -35,7 +35,7 @@ function SynapseUpdater(props) {
 
   const visible = synapseStateCheck.get(id, false) ? {} : { color: '#ccc' };
 
-  function handleToggle() {
+  const  handleToggle = () => {
     // decide if this input/output
     if (synapseState.getIn([bodyId, synapseType, id])) {
       actions.removeSynapse(bodyId, id, isInput);
@@ -44,7 +44,7 @@ function SynapseUpdater(props) {
     }
   }
 
-  function handleChangeColor(unusedId, color) {
+  const handleChangeColor = (unusedId, color) => {
     if (!synapseState.getIn([bodyId, synapseType, id])) {
       actions.loadSynapse(bodyId, id, dataSet, { isInput, radius: synapseRadius, color });
     } else {

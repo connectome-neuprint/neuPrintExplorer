@@ -18,6 +18,8 @@ plugins:
 settings:
     import/resolver: webpack
 rules:
+    "react/jsx-props-no-spreading":
+        - 0
     "default-param-last":
         - 0
     "react/forbid-prop-types":

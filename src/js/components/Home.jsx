@@ -51,12 +51,6 @@ const styles = theme => ({
   }
 });
 
-const useCacheClear = myAction => {
-  useEffect(() => {
-    myAction();
-  }, []);
-};
-
 function Home(props) {
   const { classes, actions, loggedIn, datasetInfo, ...rest } = props;
 
@@ -72,9 +66,11 @@ function Home(props) {
   // was cleared of the result parameters, there is no way to start a new search,
   // because the site says there are too many results, but there is no way to clear
   // them without refreshing the page.
-  if (!queryObject.qr) {
-    useCacheClear(actions.clearResultsCache);
-  }
+  useEffect(() => {
+    if (!queryObject.qr) {
+      actions.clearResultsCache();
+    }
+  },[actions, queryObject.qr]);
 
   const dataSetNames = Object.keys(datasetInfo) || [];
 

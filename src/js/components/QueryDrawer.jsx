@@ -37,8 +37,7 @@ const styles = theme => ({
   }
 });
 
-const QueryDrawer = props => {
-  const { classes, location, loggedIn } = props;
+function QueryDrawer({ classes, location, loggedIn }) {
   const qsParams = getSiteParams(location);
 
   const openQuery = qsParams.get('q');

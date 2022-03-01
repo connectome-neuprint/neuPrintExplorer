@@ -136,11 +136,9 @@ export default function AboutIssueList({token, appDB}) {
         setData(error);
       });
 
-  }, []);
+  }, [appDB, token]);
 
-  return (
-    <>{data}</>
-  );
+  return data;
 }
 
 AboutIssueList.propTypes = {

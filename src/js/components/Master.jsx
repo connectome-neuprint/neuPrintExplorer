@@ -51,32 +51,34 @@ const styles = theme => ({
   toolbar: theme.mixins.toolbar
 });
 
-const Master = props => {
-  const { classes, user } = props;
-
-  const PrivateRoute = ({ component: Component, ...rest }) => {
-    if (!user.get('loggedIn')) {
-      if (user.get('loaded')) {
-        // have to encode the uri here to make sure the &'s are escaped. If they aren't
-        // they wont make it through the redirect code.
-        const redirectUrl = encodeURIComponent(`${rest.location.pathname}${rest.location.search}`);
-        window.open(`/login?redirect=${redirectUrl}`, '_self');
-      }
+function PrivateRoute({ component: Component, user, ...rest }) {
+  if (!user.get('loggedIn')) {
+    if (user.get('loaded')) {
+      // have to encode the uri here to make sure the &'s are escaped. If they aren't
+      // they wont make it through the redirect code.
+      const redirectUrl = encodeURIComponent(`${rest.location.pathname}${rest.location.search}`);
+      window.open(`/login?redirect=${redirectUrl}`, '_self');
     }
+  }
 
-    return (
-      <Route
-        {...rest}
-        render={privateProps =>
-          user.get('loggedIn', false) ? <Component {...privateProps} /> : <Login {...privateProps} />
-        }
-      />
-    );
-  };
+  return (
+    <Route
+      {...rest}
+      render={privateProps =>
+        user.get('loggedIn', false) ? <Component {...privateProps} /> : <Login {...privateProps} />
+      }
+    />
+  );
+};
 
-  PrivateRoute.propTypes = {
-    component: PropTypes.object.isRequired
-  };
+PrivateRoute.propTypes = {
+  component: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired
+};
+
+
+
+function Master({ classes, user }) {
 
   // TODO: Have a router switch for logged in vs logged out users.
   // - loggedIn application has all the details and code we need for the full
@@ -96,11 +98,11 @@ const Master = props => {
             <Suspense fallback={<div>loading...</div>}>
               <Switch>
                 <Route exact path="/" component={Home} />
-                <PrivateRoute path="/results" component={Results} />
+                <PrivateRoute user={user} path="/results" component={Results} />
                 <Route path="/help" component={Help} />
-                <PrivateRoute path="/favorites" component={Favorites} />
+                <PrivateRoute user={user} path="/favorites" component={Favorites} />
                 <Route path="/about" component={About} />
-                <PrivateRoute path="/account" component={Account} />
+                <PrivateRoute user={user} path="/account" component={Account} />
                 <Route path="/workstation" component={Workstation} />
                 <Route path="/view" component={Workstation} />
                 <Route path="/releasenotes" component={ReleaseNotes} />

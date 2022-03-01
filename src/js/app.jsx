@@ -80,7 +80,7 @@ if (process.env.NODE_ENV === 'development') {
  */
 function loadInterface() {
   ReactDOM.render(
-    <React.Fragment>
+    <>
       <CssBaseline />
       <CookiesProvider>
         <ThemeProvider theme={theme}>
@@ -89,7 +89,7 @@ function loadInterface() {
           </Provider>
         </ThemeProvider>
       </CookiesProvider>
-    </React.Fragment>,
+    </>,
     document.getElementById('analyzer')
   );
 }

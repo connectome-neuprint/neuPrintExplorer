@@ -63,7 +63,7 @@ export default class ScrollPositionManager extends React.Component {
     this.restoreScrollPosition();
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const { scrollKey } = this.props;
     if (scrollKey !== nextProps.scrollKey) {
       this.saveScrollPosition();

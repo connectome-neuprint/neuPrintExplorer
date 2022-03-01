@@ -73,7 +73,8 @@ function DataSetLogo(props) {
 
 DataSetLogo.propTypes = {
   dataSet: PropTypes.string.isRequired,
-  datasetInfo: PropTypes.object.isRequired
+  datasetInfo: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(DataSetLogo);

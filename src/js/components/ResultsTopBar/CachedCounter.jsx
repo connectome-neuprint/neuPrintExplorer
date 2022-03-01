@@ -31,7 +31,7 @@ class CachedCounter extends React.Component {
 
   componentWillUnmount() {
     this.isMountedNow = false;
-    clearInterval(this.updateTimeID);
+    clearInterval(this.updateTimeId);
   }
 
 

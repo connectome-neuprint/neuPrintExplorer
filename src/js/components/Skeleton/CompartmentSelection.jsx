@@ -76,7 +76,7 @@ class CompartmentSelection extends React.Component {
     }));
 
     return (
-			<React.Fragment>
+			<>
 				<Select
 					isMulti
 					className={classes.select}
@@ -96,7 +96,7 @@ class CompartmentSelection extends React.Component {
 						}
 						label="All Regions"
 				/>
-			</React.Fragment>
+			</>
     );
   }
 }

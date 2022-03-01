@@ -55,9 +55,12 @@ const styles = theme => ({
 });
 
 class HelpTutorial extends React.Component {
-  state = {
-    activeStep: 0
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      activeStep: 0
+    };
+  }
 
   handleNext = () => {
     this.setState(prevState => ({

@@ -18,7 +18,7 @@ export default function AddIdModal(props) {
   const [bodyId, setBodyId] = useState();
   const dispatch = useDispatch();
 
-  function addBodyId() {
+  const addBodyId = () => {
     // add the body id to the skeleton
     if (bodyId) {
       // TODO: There is no validation to check if the bodyId is valid!!!!!

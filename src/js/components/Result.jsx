@@ -215,12 +215,6 @@ class Result extends React.Component {
     }
   };
 
-  handleResultSelection = (event, value) => {
-    // set the tabs value in the query string to the value
-    // passed in here.
-    setQueryString({ tab: value });
-  };
-
   currentPlugin() {
     const { pluginList, tabIndex } = this.props;
     const query = getQueryObject();

@@ -18,7 +18,7 @@ function ToggleSynapses(props) {
 
   const synapseType = isInput ? 'inputs' : 'outputs';
 
-  function handleShow() {
+  const handleShow = () => {
     synapseList.forEach(id => {
       if (!synapseState.getIn([bodyId, synapseType, id])) {
         actions.loadSynapse(bodyId, id, dataSet, { isInput, radius: synapseRadius });
@@ -26,7 +26,7 @@ function ToggleSynapses(props) {
     });
   }
 
-  function handleHide() {
+  const handleHide = () => {
     synapseList.forEach(id => {
       actions.removeSynapse(bodyId, id, isInput);
     });

@@ -714,12 +714,6 @@ class SkeletonView extends React.Component {
     this.setState({ bodies: updated });
   }
 
-  removeOutput(bodyId, outputId) {
-    const { outputs } = this.state;
-    const updated = outputs.deleteIn([bodyId, 'outputs', outputId]);
-    this.setState({ outputs: updated });
-  }
-
   synapseRadiusDidChange(newRadius) {
     const { sharkViewerSynapseRadius } = this.state;
     if (newRadius !== sharkViewerSynapseRadius) {
@@ -924,7 +918,7 @@ class SkeletonView extends React.Component {
           label="Axis Lines"
         />
         {areSynapses && (
-          <React.Fragment>
+          <>
             <FormControlLabel
               control={
                 <Switch
@@ -947,7 +941,7 @@ class SkeletonView extends React.Component {
               />
               <span className={classes.bottomControlsSliderLabel}>Synapse Size</span>
             </span>
-          </React.Fragment>
+          </>
         )}
       </FormGroup>
     );

@@ -69,10 +69,6 @@ class ResultsTopBar extends React.Component {
     this.setState({ open: false });
   };
 
-  handleFullScreen = () => {
-    setQueryString({ rt: 'full' });
-  };
-
   handleSaveResults = () => {
     // save the result data, cypher query and current time stamp
     // into google data store
@@ -321,9 +317,7 @@ class ResultsTopBar extends React.Component {
             <IconButton
               className={classes.button}
               aria-label="Full Screen"
-              onClick={() => {
-                this.handleFullScreen(index);
-              }}
+              onClick={() => setQueryString({ rt: 'full' })}
             >
               <Icon style={{ fontSize: 18 }}>fullscreen</Icon>
             </IconButton>

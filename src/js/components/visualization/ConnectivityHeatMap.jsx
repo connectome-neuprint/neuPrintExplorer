@@ -83,7 +83,7 @@ function generateGraph(rois, dataSet, mouseOver, mouseOut, classes) {
 
   const height = roiNames.length * 15 + 150;
 
-  function clickHandler(event) {
+  const clickHandler = (event) => {
     // set query as a tab in the url query string.
     setSearchQueryString({
       code: 'fn',
@@ -102,22 +102,20 @@ function generateGraph(rois, dataSet, mouseOver, mouseOut, classes) {
   }
 
   return (
-    <React.Fragment>
-      <HeatMap
-        data={data}
-        xLabels={roiNames.slice().reverse()}
-        yLabels={roiNames}
-        height={height}
-        width={height}
-        onClick={clickHandler}
-        onMouseOver={mouseOver}
-        onFocus={mouseOver}
-        onMouseOut={mouseOut}
-        onBlur={mouseOver}
-        maxColor="#396a9f"
-        textLabels={false}
-      />
-    </React.Fragment>
+    <HeatMap
+      data={data}
+      xLabels={roiNames.slice().reverse()}
+      yLabels={roiNames}
+      height={height}
+      width={height}
+      onClick={clickHandler}
+      onMouseOver={mouseOver}
+      onFocus={mouseOver}
+      onMouseOut={mouseOut}
+      onBlur={mouseOver}
+      maxColor="#396a9f"
+      textLabels={false}
+    />
   );
 }
 

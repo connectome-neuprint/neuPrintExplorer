@@ -56,7 +56,7 @@ class ErrorBoundary extends React.Component {
     if (hasError) {
       // You can render any custom fallback UI
       return (
-        <React.Fragment>
+        <>
           <AppBar position="absolute" className={classes.appBar}>
             <Toolbar>
               <Link to="/">
@@ -84,7 +84,7 @@ class ErrorBoundary extends React.Component {
               <a href="mailto:neuprint@janelia.hhmi.org">neuprint@janelia.hhmi.org</a>
             </Typography>
           </main>
-        </React.Fragment>
+        </>
       );
     }
 

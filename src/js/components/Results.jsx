@@ -25,89 +25,85 @@ const styles = () => ({
   }
 });
 
-class Results extends React.Component {
-  handleResultSelection = (event, value) => {
+function Results ({ allResults, pluginList, classes, authLevel, publicState, publicLoaded, loggedIn }) {
+
+  const handleResultSelection = (event, value) => {
     // set the tabs value in the query string to the value
     // passed in here.
     setQueryString({ tab: value });
   };
 
-  render() {
-    const { allResults, pluginList, classes, authLevel, publicState, publicLoaded, loggedIn } = this.props;
-
-
-    if (!publicLoaded) {
-      return (<p>loading...</p>);
-    }
-
-    if (!publicState) {
-      // only redirect if the server is not in public read mode
-      if (loggedIn && !authLevel.match(/^readwrite|admin$/)) {
-        // only redirect if the user is logged in and their auth level
-        // is not readwrite or admin.
-        return (
-          <Redirect
-            to={{
-              pathname: '/'
-            }}
-          />
-        );
-      }
-    }
-
-    const query = getQueryObject();
-    const resultsList = query.qr || [];
-    const tabIndex = parseInt(query.tab || 0, 10);
-    const fixedTab = parseInt(query.ftab, 10);
-
-    const tabs = resultsList.map((tab, index) => {
-      const key = `${tab.code}${index}`;
-      const tabResults = allResults.get(index);
-      if (tabResults) {
-        if (tabResults.label) {
-          return <Tab key={key} label={tabResults.label} />;
-        }
-      }
-
-      const selectedPlugin = pluginList.find(plugin => plugin.details.abbr === tab.code);
-
-      if (selectedPlugin && selectedPlugin.details) {
-        const tabName = selectedPlugin.details.displayName;
-        return <Tab key={key} label={tabName} />;
-      }
-      return <Tab key={key} label="Unknown Plugin" />;
-    });
-
-    const tabData = [<Result key="changing" tabIndex={tabIndex} query={query} />];
-
-    // need to check for >= 0 here instead of just checking the Boolean value,
-    // because the first tab index is 0, which evaluates to false.
-    if (fixedTab >= 0) {
-      tabData.push(<Result key="fixed" tabIndex={fixedTab} query={query} fixed />);
-    }
-
-    return (
-      <div className={classes.resultContent}>
-        {query.rt !== 'full' && (
-          <AppBar position="static" color="default">
-            {tabs.length > 0 && (
-              <Tabs
-                value={tabIndex}
-                onChange={this.handleResultSelection}
-                textColor="primary"
-                indicatorColor="primary"
-                variant="scrollable"
-                scrollButtons="auto"
-              >
-                {tabs}
-              </Tabs>
-            )}
-          </AppBar>
-        )}
-        <div className={classes.scroll}>{tabData}</div>
-      </div>
-    );
+  if (!publicLoaded) {
+    return (<p>loading...</p>);
   }
+
+  if (!publicState) {
+    // only redirect if the server is not in public read mode
+    if (loggedIn && !authLevel.match(/^readwrite|admin$/)) {
+      // only redirect if the user is logged in and their auth level
+      // is not readwrite or admin.
+      return (
+        <Redirect
+          to={{
+            pathname: '/'
+          }}
+        />
+      );
+    }
+  }
+
+  const query = getQueryObject();
+  const resultsList = query.qr || [];
+  const tabIndex = parseInt(query.tab || 0, 10);
+  const fixedTab = parseInt(query.ftab, 10);
+
+  const tabs = resultsList.map((tab, index) => {
+    const key = `${tab.code}${index}`;
+    const tabResults = allResults.get(index);
+    if (tabResults) {
+      if (tabResults.label) {
+        return <Tab key={key} label={tabResults.label} />;
+      }
+    }
+
+    const selectedPlugin = pluginList.find(plugin => plugin.details.abbr === tab.code);
+
+    if (selectedPlugin && selectedPlugin.details) {
+      const tabName = selectedPlugin.details.displayName;
+      return <Tab key={key} label={tabName} />;
+    }
+    return <Tab key={key} label="Unknown Plugin" />;
+  });
+
+  const tabData = [<Result key="changing" tabIndex={tabIndex} query={query} />];
+
+  // need to check for >= 0 here instead of just checking the Boolean value,
+  // because the first tab index is 0, which evaluates to false.
+  if (fixedTab >= 0) {
+    tabData.push(<Result key="fixed" tabIndex={fixedTab} query={query} fixed />);
+  }
+
+  return (
+    <div className={classes.resultContent}>
+      {query.rt !== 'full' && (
+        <AppBar position="static" color="default">
+          {tabs.length > 0 && (
+            <Tabs
+              value={tabIndex}
+              onChange={handleResultSelection}
+              textColor="primary"
+              indicatorColor="primary"
+              variant="scrollable"
+              scrollButtons="auto"
+            >
+              {tabs}
+            </Tabs>
+          )}
+        </AppBar>
+      )}
+      <div className={classes.scroll}>{tabData}</div>
+    </div>
+  );
 }
 
 Results.propTypes = {

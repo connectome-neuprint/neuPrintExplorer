@@ -34,12 +34,12 @@ function ColorPickerModal(props) {
     colorBoxStyle.backgroundColor = currentColor;
   }
 
-  function changeColor(newColor) {
+  const changeColor = (newColor) => {
     handleChangeColor(bodyId, newColor.hex);
   }
 
   return (
-    <React.Fragment>
+    <>
       <Tooltip title="Change Color" placement="top">
         <IconButton onClick={event => setAnchorEl(event.currentTarget)} aria-label="Change color">
           <div className={classes.colorBox} style={colorBoxStyle} />
@@ -57,7 +57,7 @@ function ColorPickerModal(props) {
           presetColors={presetColors}
         />
       </Popover>
-    </React.Fragment>
+    </>
   );
 }
 

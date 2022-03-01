@@ -27,12 +27,12 @@ const styles = {
 function CypherQuery(props) {
   const { cypherString, classes, actions } = props;
 
-  function handleClose(e) {
+  const handleClose = (e) => {
     e.preventDefault();
     actions.closeCypher();
   }
 
-  function handleCopy() {
+  const handleCopy = () => {
     actions.launchNotification('Text Copied to Clipboard');
   }
 

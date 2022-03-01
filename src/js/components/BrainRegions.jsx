@@ -131,7 +131,7 @@ function BrainRegionsTree(props) {
       .then(resp => {
         setRoiTree(JSON.parse(resp.data[0]));
       });
-  }, [treeRef.current]);
+  }, [dataSet]);
 
   return (
     <Dialog fullWidth maxWidth="lg" open onClose={onClose}>

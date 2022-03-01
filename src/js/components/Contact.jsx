@@ -16,11 +16,13 @@ const styles = () => ({
 });
 
 
-const Contact = ({ classes }) => (
-  <IconButton className={classes.contact} color="primary" component={Link} to="/about">
-    <Icon>contact_support</Icon>
-  </IconButton>
-);
+function Contact({ classes }) {
+  return (
+    <IconButton className={classes.contact} color="primary" component={Link} to="/about">
+      <Icon>contact_support</Icon>
+    </IconButton>
+  );
+}
 
 Contact.propTypes = {
   classes: PropTypes.object.isRequired,
