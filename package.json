@@ -56,7 +56,7 @@
   },
   "dependencies": {
     "@janelia-flyem/react-neuroglancer": "^2.4.0",
-    "@janelia/sharkviewer": "^1.7.9",
+    "@janelia/sharkviewer": "^1.7.10",
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
     "@neuprint/colorbox": "^1.1.3",
