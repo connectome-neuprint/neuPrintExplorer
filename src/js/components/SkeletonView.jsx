@@ -365,6 +365,7 @@ class SkeletonView extends React.Component {
       const sharkViewer = new SharkViewer.default({ // eslint-disable-line new-cap
         dom_element: 'skeletonviewer',
         showAxes: 10000,
+        flip: true,
         WIDTH: this.skelRef.current.clientWidth,
         HEIGHT: this.skelRef.current.clientHeight,
         // on_select_node: (id, sampleNumber, event, coords) => { console.log(id, sampleNumber, event, coords) },
