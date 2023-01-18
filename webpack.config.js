@@ -64,7 +64,7 @@ module.exports = {
   watch: true,
   devtool: 'source-map',
   devServer: {
-    contentBase: './build'
+    static: './build'
   },
   module: {
     rules: [
