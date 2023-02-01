@@ -97,17 +97,13 @@ function Help(props) {
           <Paper className={classes.citation}>
             <Typography variant="h5">Cite this work:</Typography>
             <p>
-              <b>neuPrint: Analysis Tools for EM Connectomics</b>
+              <b>neuPrint: An open access tool for EM connectomics.</b>
             </p>
             <i>
-              Jody Clements, Tom Dolafi, Lowell Umayam, Nicole L. Neubarth, Stuart Berg, Louis K.
-              Scheffer, Stephen M. Plaza
+              Plaza SM, Clements J, Dolafi T, Umayam L, Neubarth NN, Scheffer LK and Berg S
             </i>
             <p>
-              bioRxiv 2020.01.16.909465; doi:{' '}
-              <a href="https://doi.org/10.1101/2020.01.16.909465">
-                https://doi.org/10.1101/2020.01.16.909465
-              </a>
+              Front. Neuroinform. 16:896292. doi: <a href="https://doi.org/10.1101/2020.01.16.909465">10.3389/fninf.2022.896292</a>
             </p>
             <p>
               <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
