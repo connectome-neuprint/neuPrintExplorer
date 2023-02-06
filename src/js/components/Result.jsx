@@ -536,8 +536,8 @@ const ResultDispatch = dispatch => ({
       dispatch(pluginResponseError(error));
     },
     launchNotification: message => dispatch(launchNotification(message)),
-    skeletonAddandOpen: (id, dataSet) => {
-      dispatch(skeletonAddandOpen(id, dataSet));
+    skeletonAddandOpen: (id, dataSet, tabIndex, color) => {
+      dispatch(skeletonAddandOpen(id, dataSet, tabIndex, color));
     },
     skeletonRemove: (id, dataSet, tabIndex) => {
       dispatch(skeletonRemove(id, dataSet, tabIndex));

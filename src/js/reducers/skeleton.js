@@ -1,5 +1,6 @@
 import Immutable from 'immutable';
 import { setQueryString, getQueryObject } from 'helpers/queryString';
+import PouchDB from 'pouchdb';
 
 import C from './constants';
 
@@ -77,7 +78,29 @@ export default function skeletonReducer(state = skeletonState, action) {
         newQuery.ftab = ftab;
       }
 
-      setQueryString(newQuery);
+      if (action.color) {
+        const db = new PouchDB('neuprint_compartments');
+        db.get(`sk_${action.id}`)
+          .then(doc => {
+            const updated = doc;
+            updated.color = action.color;
+            return db.put(updated);
+          })
+          .catch(() => {
+            db.put({
+              _id: `sk_${action.id}`,
+              color: action.color
+            });
+          })
+          .finally(() => {
+            setQueryString(newQuery);
+            return state;
+          });
+
+      } else {
+        setQueryString(newQuery);
+        return state;
+      }
       return state;
     }
     case C.SKELETON_REMOVE: {
