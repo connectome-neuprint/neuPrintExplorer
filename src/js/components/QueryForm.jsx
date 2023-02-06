@@ -99,6 +99,7 @@ class QueryForm extends React.Component {
       availableROIs,
       superROIsByDataSet,
       roiInfo,
+      token,
       isQuerying,
       allResults,
       neoServerSettings
@@ -166,6 +167,7 @@ class QueryForm extends React.Component {
             datasetstr={dataSet}
             dataSet={dataSet}
             availableROIs={currROIs}
+            token={token}
             superROIs={superROIs}
             roiInfo={roiInfo}
             disable={isQuerying}
@@ -186,6 +188,7 @@ class QueryForm extends React.Component {
 QueryForm.propTypes = {
   queryType: PropTypes.string.isRequired,
   userInfo: PropTypes.object.isRequired,
+  token: PropTypes.string.isRequired,
   pluginList: PropTypes.arrayOf(
     PropTypes.oneOfType([
       PropTypes.func,
@@ -208,6 +211,7 @@ const QueryFormState = state => ({
   isQuerying: state.query.get('isQuerying'),
   neoError: state.query.get('neoError'),
   userInfo: state.user.get('userInfo'),
+  token: state.user.get('token'),
   allResults: state.results.get('allResults'),
   neoServerSettings: state.neo4jsettings,
   availableROIs: state.neo4jsettings.get('availableROIs'),
