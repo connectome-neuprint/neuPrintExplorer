@@ -198,10 +198,12 @@ class ResultsTopBar extends React.Component {
           <Typography variant="caption" color="inherit" className={classes.flex} noWrap>
             {dataSet} - {name}
             <br />
-            <span className={classes.cachedTime}>
               {' '}
-              Loaded from server <CachedCounter fetchedTime={fetchedTime} key={index} /> ago{' '}
+            { dataSet !== "loading" ? (
+            <span className={classes.cachedTime}>
+              Loaded from server <CachedCounter fetchedTime={fetchedTime} key={index} /> ago
             </span>
+              ) : ""}
           </Typography>
           <Tooltip title="Show Cypher Query">
             <IconButton
