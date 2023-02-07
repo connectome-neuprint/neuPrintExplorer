@@ -188,7 +188,8 @@ class ResultsTopBar extends React.Component {
       fetchedTime,
       dataSet,
       visibleColumns,
-      resultData
+      resultData,
+      onClose
     } = this.props;
     const { open, addIdOpen, copyToClipboardOpen } = this.state;
 
@@ -345,6 +346,9 @@ class ResultsTopBar extends React.Component {
               aria-label="Close tab"
               onClick={() => {
                 this.handleRemoveResult(index);
+                if (onClose) {
+                  onClose();
+                }
               }}
             >
               <Icon style={{ fontSize: 18 }}>close</Icon>
@@ -414,7 +418,8 @@ ResultsTopBar.propTypes = {
   appDB: PropTypes.string.isRequired,
   results: PropTypes.object.isRequired,
   fixed: PropTypes.bool.isRequired,
-  dataSet: PropTypes.string
+  dataSet: PropTypes.string,
+  onClose: PropTypes.func,
 };
 
 ResultsTopBar.defaultProps = {
@@ -425,7 +430,8 @@ ResultsTopBar.defaultProps = {
   download3DCallback: null,
   clipboardCallback: null,
   visibleColumns: null,
-  resultData: null
+  resultData: null,
+  onClose: null
 };
 
 export default withStyles(styles)(

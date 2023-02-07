@@ -336,6 +336,12 @@ class Result extends React.Component {
               ? currentPlugin.clipboardCallback(combined)
               : null;
 
+          // Add an onClose callback, so that we can remove things from the state if needed.
+          const onCloseCallback =
+             typeof currentPlugin.onCloseCallBack === 'function'
+               ? currentPlugin.onCloseCallBack(combined)
+               : null;
+
           if (combined && combined.code === processingPlugin.details.abbr) {
             // show the header information if not in full screen mode.
             const tabDataHeader =
@@ -356,6 +362,7 @@ class Result extends React.Component {
                   color="#cccccc"
                   fixed={fixed}
                   dataSet={resultsList[tabIndex].ds}
+                  onClose={onCloseCallback}
                 />
               ) : (
                 ''
