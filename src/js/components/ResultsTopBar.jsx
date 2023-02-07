@@ -6,6 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { useResizeDetector } from 'react-resize-detector';
 
 import Typography from '@material-ui/core/Typography';
 import Icon from '@material-ui/core/Icon';
@@ -22,6 +23,8 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import ThreeDRotation from '@material-ui/icons/ThreeDRotation';
 import Assignment from '@material-ui/icons/Assignment';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 import { authError, reAuth } from 'actions/user';
 import { launchNotification } from 'actions/app';
@@ -32,47 +35,79 @@ import CachedCounter from './ResultsTopBar/CachedCounter';
 import AddIdModal from './ResultsTopBar/AddIdModal';
 import CopyToClipboardModal from './ResultsTopBar/CopyToClipboardModal';
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
     width: '100%',
-    flexGrow: true
+    flexGrow: true,
   },
   flex: {
-    flex: 1
+    flex: 1,
   },
   closeButton: {
     position: 'absolute',
     right: theme.spacing(1),
-    top: theme.spacing(1)
+    top: theme.spacing(1),
   },
   cachedTime: {
-    color: '#555'
-  }
+    color: '#555',
+  },
+  menuIcon: {
+    fontSize: 18,
+    marginRight: theme.spacing(2),
+  },
 });
 
-class ResultsTopBar extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      open: false,
-      addIdOpen: false,
-      copyToClipboardOpen: false,
-      bookmarkname: ''
-    };
-  }
+function ResultsTopBar({
+  classes,
+  color,
+  name,
+  index,
+  downloadCallback,
+  downloadEnabled,
+  download3DCallback,
+  clipboardCallback,
+  saveEnabled,
+  addIdEnabled,
+  actions,
+  fetchedTime,
+  dataSet,
+  visibleColumns,
+  resultData,
+  token,
+  appDB,
+  queryStr,
+  results,
+  fixed,
+  onClose,
+}) {
+  const [open, setOpen] = React.useState(false);
+  const [addIdOpen, setAddIdOpen] = React.useState(false);
+  const [copyToClipboardOpen, setCopyToClipboardOpen] = React.useState(false);
+  const [bookmarkname, setBookmarkname] = React.useState('');
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const { width, ref } = useResizeDetector();
 
-  openPopup = () => {
-    this.setState({ open: true, bookmarkname: '' });
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
   };
 
-  handleClose = () => {
-    this.setState({ open: false });
+  const handleOpenMenu = (event) => {
+    setAnchorEl(event.currentTarget);
   };
 
-  handleSaveResults = () => {
+  const openPopup = () => {
+    setOpen(true);
+    setBookmarkname('');
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleSaveResults = () => {
     // save the result data, cypher query and current time stamp
     // into google data store
-    const { actions, token, appDB, queryStr, results, name, index } = this.props;
     const data = JSON.stringify(results.get(index));
     if (token !== '') {
       fetch(`${appDB}/user/searches`, {
@@ -80,14 +115,14 @@ class ResultsTopBar extends React.Component {
           name,
           data,
           cypher: queryStr,
-          timestamp: new Date().getTime()
+          timestamp: new Date().getTime(),
         }),
         headers: {
           Authorization: `Bearer ${token}`,
-          'content-type': 'application/json'
+          'content-type': 'application/json',
         },
-        method: 'POST'
-      }).then(resp => {
+        method: 'POST',
+      }).then((resp) => {
         if (resp.status === 401) {
           // need to re-authenticate
           actions.reAuth();
@@ -99,21 +134,19 @@ class ResultsTopBar extends React.Component {
     }
   };
 
-  handleAddId = () => {
-    this.setState({ addIdOpen: true });
+  const handleAddId = () => {
+    setAddIdOpen(true);
   };
 
-  handleCopyToClipboard = () => {
-    this.setState({ copyToClipboardOpen: true });
+  const handleCopyToClipboard = () => {
+    setCopyToClipboardOpen(true);
   };
 
-  handleRefresh = () => {
-    const { actions, index } = this.props;
+  const handleRefresh = () => {
     actions.refreshResult(index);
   };
 
-  handleRemoveResult = () => {
-    const { actions, index, fixed } = this.props;
+  const handleRemoveResult = () => {
     // if fixed, just clear the ftab in the url and have the page close the split
     // window.
     if (fixed) {
@@ -142,25 +175,23 @@ class ResultsTopBar extends React.Component {
     setQueryString({ qr: query.qr, tab: tabIndex, ftab: '' });
   };
 
-  addFavorite = () => {
-    const { actions, token, appDB, queryStr } = this.props;
-    const { bookmarkname } = this.state;
+  const addFavorite = () => {
     if (token !== '') {
       const loc = window.location.pathname + window.location.search;
-      this.setState({ open: false });
+      setOpen(false);
 
       fetch(`${appDB}/user/favorites`, {
         body: JSON.stringify({
           name: bookmarkname,
           url: loc,
-          cypher: queryStr
+          cypher: queryStr,
         }),
         headers: {
           Authorization: `Bearer ${token}`,
-          'content-type': 'application/json'
+          'content-type': 'application/json',
         },
-        method: 'POST'
-      }).then(resp => {
+        method: 'POST',
+      }).then((resp) => {
         if (resp.status === 401) {
           // need to re-authenticate
           actions.reAuth();
@@ -172,202 +203,260 @@ class ResultsTopBar extends React.Component {
     }
   };
 
-  render() {
-    const {
-      classes,
-      color,
-      name,
-      index,
-      downloadCallback,
-      downloadEnabled,
-      download3DCallback,
-      clipboardCallback,
-      saveEnabled,
-      addIdEnabled,
-      actions,
-      fetchedTime,
-      dataSet,
-      visibleColumns,
-      resultData,
-      onClose
-    } = this.props;
-    const { open, addIdOpen, copyToClipboardOpen } = this.state;
-
-    return (
-      <div className={classNames(classes.root, 'topresultbar')} style={{ backgroundColor: color }}>
-        <Toolbar>
-          <Typography variant="caption" color="inherit" className={classes.flex} noWrap>
-            {dataSet} - {name}
-            <br />
-              {' '}
-            { dataSet !== "loading" ? (
+  return (
+    <div ref={ref} className={classNames(classes.root, 'topresultbar')} style={{ backgroundColor: color }}>
+      <Toolbar>
+        <Typography variant="caption" color="inherit" className={classes.flex} noWrap>
+          {dataSet} - {name} {width}
+          <br />{' '}
+          {dataSet !== 'loading' ? (
             <span className={classes.cachedTime}>
               Loaded from server <CachedCounter fetchedTime={fetchedTime} key={index} /> ago
             </span>
-              ) : ""}
-          </Typography>
-          <Tooltip title="Show Cypher Query">
-            <IconButton
-              onClick={() => {
-                actions.toggleCypherDisplay();
-              }}
-              aria-label="Show Query"
-            >
-              <Icon style={{ fontSize: 18 }}>info</Icon>
-            </IconButton>
-          </Tooltip>
+          ) : (
+            ''
+          )}
+        </Typography>
+        {width > 550 ? (
+          <>
+            <Tooltip title="Show Cypher Query">
+              <IconButton
+                onClick={() => {
+                  actions.toggleCypherDisplay();
+                }}
+                aria-label="Show Query"
+              >
+                <Icon style={{ fontSize: 18 }}>info</Icon>
+              </IconButton>
+            </Tooltip>
 
-          {clipboardCallback && resultData && (
-            <Tooltip title="Copy to clipboard">
+            {clipboardCallback && resultData && (
+              <Tooltip title="Copy to clipboard">
+                <IconButton
+                  className={classes.button}
+                  aria-label="Copy results to clipboard"
+                  onClick={() => {
+                    handleCopyToClipboard();
+                  }}
+                >
+                  <Assignment style={{ fontSize: 18 }} />
+                </IconButton>
+              </Tooltip>
+            )}
+            <Tooltip title="reload results">
+              <IconButton aria-label="Refresh" onClick={handleRefresh}>
+                <Icon style={{ fontSize: 18 }}>refresh</Icon>
+              </IconButton>
+            </Tooltip>
+            {addIdEnabled && (
+              <Tooltip title="Add body id">
+                <IconButton aria-label="Add" onClick={handleAddId}>
+                  <Icon style={{ fontSize: 18 }}>add</Icon>
+                </IconButton>
+              </Tooltip>
+            )}
+            {saveEnabled && (
+              <Tooltip title="Add to favorites">
+                <IconButton aria-label="Add favorite" onClick={openPopup}>
+                  <Icon style={{ fontSize: 18 }}>star</Icon>
+                </IconButton>
+              </Tooltip>
+            )}
+
+            {saveEnabled && (
+              <Tooltip title="Add to saved searches">
+                <IconButton
+                  className={classes.button}
+                  aria-label="Save"
+                  onClick={() => {
+                    handleSaveResults(index);
+                  }}
+                >
+                  <Icon style={{ fontSize: 18 }}>save</Icon>
+                </IconButton>
+              </Tooltip>
+            )}
+
+            {downloadEnabled && (
+              <Tooltip title="Download results">
+                <IconButton
+                  className={classes.button}
+                  aria-label="Download data"
+                  onClick={() => {
+                    downloadCallback(index);
+                  }}
+                >
+                  <Icon style={{ fontSize: 18 }}>file_download</Icon>
+                </IconButton>
+              </Tooltip>
+            )}
+            <Tooltip title="Fullscreen">
               <IconButton
                 className={classes.button}
-                aria-label="Copy results to clipboard"
+                aria-label="Full Screen"
+                onClick={() => setQueryString({ rt: 'full' })}
+              >
+                <Icon style={{ fontSize: 18 }}>fullscreen</Icon>
+              </IconButton>
+            </Tooltip>
+
+            {download3DCallback && (
+              <Tooltip title="Download VR viewer seed">
+                <IconButton
+                  className={classes.button}
+                  aria-label="Download VR viewer seed"
+                  onClick={() => {
+                    download3DCallback(index);
+                  }}
+                >
+                  <ThreeDRotation style={{ fontSize: 18 }} />
+                </IconButton>
+              </Tooltip>
+            )}
+          </>
+        ) : (
+          <>
+            <IconButton
+              color="inherit"
+              aria-label="menu"
+              className={classes.button}
+              onClick={handleOpenMenu}
+            >
+              <Icon style={{ fontSize: 18 }}>menu</Icon>
+            </IconButton>
+            <Menu
+              id="simple-menu"
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleCloseMenu}
+            >
+              <MenuItem
                 onClick={() => {
-                  this.handleCopyToClipboard();
+                  actions.toggleCypherDisplay();
                 }}
               >
-                <Assignment style={{ fontSize: 18 }} />
-              </IconButton>
-            </Tooltip>
-          )}
-          {clipboardCallback && resultData && (
-            <CopyToClipboardModal
-              open={copyToClipboardOpen}
-              visibleColumns={visibleColumns}
-              resultData={resultData}
-              callback={clipboardCallback}
-              handleClose={() => this.setState({ copyToClipboardOpen: false })}
-            />
-          )}
+                <Icon className={classes.menuIcon}>info</Icon> Show Cypher Query
+              </MenuItem>
+              {clipboardCallback && resultData && (
+                <MenuItem
+                  aria-label="Copy results to clipboard"
+                  onClick={() => {
+                    handleCopyToClipboard();
+                  }}
+                >
+                  <Assignment className={classes.menuIcon} /> Copy to clipboard
+                </MenuItem>
+              )}
 
-          <Tooltip title="reload results">
-            <IconButton aria-label="Refresh" onClick={this.handleRefresh}>
-              <Icon style={{ fontSize: 18 }}>refresh</Icon>
-            </IconButton>
-          </Tooltip>
-          {addIdEnabled && (
-            <Tooltip title="Add body id">
-              <IconButton aria-label="Add" onClick={this.handleAddId}>
-                <Icon style={{ fontSize: 18 }}>add</Icon>
-              </IconButton>
-            </Tooltip>
-          )}
-          <AddIdModal
-            open={addIdOpen}
-            index={index}
-            handleClose={() => this.setState({ addIdOpen: false })}
+              <MenuItem aria-label="Refresh" onClick={handleRefresh}>
+                <Icon className={classes.menuIcon}>refresh</Icon> Refresh
+              </MenuItem>
+              {addIdEnabled && (
+                <MenuItem aria-label="Add" onClick={handleAddId}>
+                  <Icon className={classes.menuIcon}>add</Icon> Add body id
+                </MenuItem>
+              )}
+
+              {saveEnabled && (
+                <MenuItem aria-label="Add favorite" onClick={openPopup}>
+                  <Icon className={classes.menuIcon}>star</Icon> Add to favorites
+                </MenuItem>
+              )}
+
+              {saveEnabled && (
+                <MenuItem
+                  aria-label="Save"
+                  onClick={() => {
+                    handleSaveResults(index);
+                  }}
+                >
+                  <Icon className={classes.menuIcon}>save</Icon> Add to saved searches
+                </MenuItem>
+              )}
+              {downloadEnabled && (
+                <MenuItem
+                  aria-label="Download data"
+                  onClick={() => {
+                    downloadCallback(index);
+                  }}
+                >
+                  <Icon className={classes.menuIcon}>file_download</Icon> Download results
+                </MenuItem>
+              )}
+
+              <MenuItem onClick={() => setQueryString({ rt: 'full' })}>
+                <Icon className={classes.menuIcon}>fullscreen</Icon>
+                Full screen
+              </MenuItem>
+              {download3DCallback && (
+                <MenuItem onClick={() => download3DCallback(index)}>
+                  <ThreeDRotation className={classes.menuIcon} /> Download VR viewer Seed
+                </MenuItem>
+              )}
+            </Menu>
+          </>
+        )}
+
+        <Tooltip title="Close tab">
+          <IconButton
+            className={classes.button}
+            aria-label="Close tab"
+            onClick={() => {
+              handleRemoveResult(index);
+              if (onClose) {
+                onClose();
+              }
+            }}
+          >
+            <Icon style={{ fontSize: 18 }}>close</Icon>
+          </IconButton>
+        </Tooltip>
+      </Toolbar>
+      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">Save Bookmark</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Name and save a query.</DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="bookmark name"
+            fullWidth
+            onChange={(event) => setBookmarkname(event.target.value)}
           />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={addFavorite} color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
 
-          {saveEnabled && (
-            <Tooltip title="Add to favorites">
-              <IconButton aria-label="Add favorite" onClick={this.openPopup}>
-                <Icon style={{ fontSize: 18 }}>star</Icon>
-              </IconButton>
-            </Tooltip>
-          )}
-
-          {saveEnabled && (
-            <Tooltip title="Add to saved searches">
-              <IconButton
-                className={classes.button}
-                aria-label="Save"
-                onClick={() => {
-                  this.handleSaveResults(index);
-                }}
-              >
-                <Icon style={{ fontSize: 18 }}>save</Icon>
-              </IconButton>
-            </Tooltip>
-          )}
-
-          <Dialog open={open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
-            <DialogTitle id="form-dialog-title">Save Bookmark</DialogTitle>
-            <DialogContent>
-              <DialogContentText>Name and save a query.</DialogContentText>
-              <TextField
-                autoFocus
-                margin="dense"
-                id="name"
-                label="bookmark name"
-                fullWidth
-                onChange={event => this.setState({ bookmarkname: event.target.value })}
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={this.handleClose} color="primary">
-                Cancel
-              </Button>
-              <Button onClick={this.addFavorite} color="primary">
-                Save
-              </Button>
-            </DialogActions>
-          </Dialog>
-
-          {downloadEnabled && (
-            <Tooltip title="Download results">
-              <IconButton
-                className={classes.button}
-                aria-label="Download data"
-                onClick={() => {
-                  downloadCallback(index);
-                }}
-              >
-                <Icon style={{ fontSize: 18 }}>file_download</Icon>
-              </IconButton>
-            </Tooltip>
-          )}
-          <Tooltip title="Fullscreen">
-            <IconButton
-              className={classes.button}
-              aria-label="Full Screen"
-              onClick={() => setQueryString({ rt: 'full' })}
-            >
-              <Icon style={{ fontSize: 18 }}>fullscreen</Icon>
-            </IconButton>
-          </Tooltip>
-
-          {download3DCallback && (
-            <Tooltip title="Download VR viewer seed">
-              <IconButton
-                className={classes.button}
-                aria-label="Download VR viewer seed"
-                onClick={() => {
-                  download3DCallback(index);
-                }}
-              >
-                <ThreeDRotation style={{ fontSize: 18 }} />
-              </IconButton>
-            </Tooltip>
-          )}
-
-          <Tooltip title="Close tab">
-            <IconButton
-              className={classes.button}
-              aria-label="Close tab"
-              onClick={() => {
-                this.handleRemoveResult(index);
-                if (onClose) {
-                  onClose();
-                }
-              }}
-            >
-              <Icon style={{ fontSize: 18 }}>close</Icon>
-            </IconButton>
-          </Tooltip>
-        </Toolbar>
-      </div>
-    );
-  }
+      <AddIdModal open={addIdOpen} index={index} handleClose={() => setAddIdOpen(false)} />
+      {clipboardCallback && resultData && (
+        <CopyToClipboardModal
+          open={copyToClipboardOpen}
+          visibleColumns={visibleColumns}
+          resultData={resultData}
+          callback={clipboardCallback}
+          handleClose={() => setCopyToClipboardOpen(false)}
+        />
+      )}
+    </div>
+  );
 }
 
-const ResultsTopBarState = state => ({
+const ResultsTopBarState = (state) => ({
   token: state.user.get('token'),
   isAdmin: state.user.get('userInfo').AuthLevel === 'admin',
   results: state.results.get('allResults'),
-  appDB: state.app.get('appDB')
+  appDB: state.app.get('appDB'),
 });
 
-const ResultsTopBarDispatch = dispatch => ({
+const ResultsTopBarDispatch = (dispatch) => ({
   actions: {
     reAuth() {
       dispatch(reAuth());
@@ -381,21 +470,21 @@ const ResultsTopBarDispatch = dispatch => ({
     clearNewResult(index) {
       dispatch({
         type: C.CLEAR_NEW_RESULT,
-        index
+        index,
       });
     },
     refreshResult(index) {
       dispatch({
         type: C.REFRESH_RESULT,
-        index
+        index,
       });
     },
     toggleCypherDisplay() {
       dispatch({
-        type: C.TOGGLE_CYPHER_DISPLAY
+        type: C.TOGGLE_CYPHER_DISPLAY,
       });
-    }
-  }
+    },
+  },
 });
 
 ResultsTopBar.propTypes = {
@@ -431,7 +520,7 @@ ResultsTopBar.defaultProps = {
   clipboardCallback: null,
   visibleColumns: null,
   resultData: null,
-  onClose: null
+  onClose: null,
 };
 
 export default withStyles(styles)(
