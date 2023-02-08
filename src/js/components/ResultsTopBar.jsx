@@ -207,7 +207,7 @@ function ResultsTopBar({
     <div ref={ref} className={classNames(classes.root, 'topresultbar')} style={{ backgroundColor: color }}>
       <Toolbar>
         <Typography variant="caption" color="inherit" className={classes.flex} noWrap>
-          {dataSet} - {name} {width}
+          {dataSet} - {name}
           <br />{' '}
           {dataSet !== 'loading' ? (
             <span className={classes.cachedTime}>
