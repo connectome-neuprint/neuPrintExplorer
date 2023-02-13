@@ -14,6 +14,94 @@ const skeletonState = Immutable.Map({
   cameraPosition: null
 });
 
+
+function addBodiesToSkeleton(bodies, dataSet, tabIndex, options) {
+  // grab the tab data
+  const current = getQueryObject('qr', []);
+
+  // need to find the index of the tab we are going to update / replace.
+  let selectedIndex = tabIndex || -1;
+  let selected = current[tabIndex];
+  let ftab = null;
+
+  // find existing skeletonviewer tab
+  current.forEach((tab, index) => {
+    if (tab.code === 'sk') {
+      if (tab.ds === dataSet) {
+        selectedIndex = index;
+        selected = tab;
+      }
+    }
+  });
+
+  //   if dataSet is the same
+  if (selectedIndex >= 0) {
+    let bodyIds = [];
+    if (selected.pm.bodyIds) {
+      bodyIds = selected.pm.bodyIds.toString().split(',');
+    }
+    // if we are replacing the body ids, then we need to clear out the old ones
+    if (options && options.replace) {
+      bodyIds = [];
+    }
+    // push the id into the bodyids list
+    bodyIds.push(bodies.map(body => body.id));
+    selected.pm.bodyIds = bodyIds.join(',');
+    current[selectedIndex] = selected;
+    if (!tabIndex) {
+      ftab = selectedIndex;
+    }
+  } else {
+    // if none found, then add one to the querystring
+    //   push the id into the bodyids list
+    // set the tab value to that of the skeleton viewer.
+    current.push({
+      code: 'sk',
+      ds: dataSet,
+      pm: {
+        dataset: dataSet,
+        skip: true,
+        bodyIds: bodies.map(body => body.id)
+      }
+    });
+    ftab = current.length - 1;
+  }
+
+
+  const newQuery = {
+    qr: current
+  };
+
+  if (ftab) {
+    newQuery.ftab = ftab;
+  }
+
+  // set the colors if provided
+  const db = new PouchDB('neuprint_compartments');
+  const colorModifiers = bodies.map(body => db.get(`sk_${body.id}`)
+    .then(doc => {
+      const updated = doc;
+      updated.color = body.color;
+      return db.put(updated);
+    })
+    .catch(() => {
+      db.put({
+        _id: `sk_${body.id}`,
+        color: body.color
+      });
+    })
+  );
+
+  Promise.all(
+    // for each body create a promise that sets the color if defined
+    colorModifiers
+   ).finally(() => {
+    setQueryString(newQuery);
+  });
+}
+
+
+
 /* Neuron structure should be:
  * {
  *   name: <string>
@@ -26,13 +114,20 @@ const skeletonState = Immutable.Map({
 export default function skeletonReducer(state = skeletonState, action) {
   switch (action.type) {
     case C.SKELETON_ADD_ID: {
+      addBodiesToSkeleton({id: action.id, color: action.color}, action.dataSet, action.tabIndex);
+      return state;
+    }
+    case C.SKELETON_ADD_BODIES: {
+      addBodiesToSkeleton(action.bodies, action.dataSet, action.tabIndex, action.options);
+      return state;
+    }
+    case C.SKELETON_CLEAR: {
       // grab the tab data
       const current = getQueryObject('qr', []);
 
       // need to find the index of the tab we are going to update / replace.
       let selectedIndex = action.tabIndex || -1;
       let selected = current[action.tabIndex];
-      let ftab = null;
 
       // find existing skeletonviewer tab
       current.forEach((tab, index) => {
@@ -44,63 +139,18 @@ export default function skeletonReducer(state = skeletonState, action) {
         }
       });
 
-      //   if dataSet is the same
+      //   if dataSet is the same clear out the bodies
       if (selectedIndex >= 0) {
-        const bodyIds = selected.pm.bodyIds.toString().split(',');
-        // push the id into the bodyids list
-        bodyIds.push(action.id);
-        selected.pm.bodyIds = bodyIds.join(',');
+        selected.pm.bodyIds = [];
         current[selectedIndex] = selected;
-        if (!action.tabIndex) {
-          ftab = selectedIndex;
-        }
-      } else {
-        // if none found, then add one to the querystring
-        //   push the id into the bodyids list
-        // set the tab value to that of the skeleton viewer.
-        current.push({
-          code: 'sk',
-          ds: action.dataSet,
-          pm: {
-            dataset: action.dataSet,
-            skip: true,
-            bodyIds: action.id
-          }
-        });
-        ftab = current.length - 1;
       }
 
       const newQuery = {
         qr: current
       };
 
-      if (ftab) {
-        newQuery.ftab = ftab;
-      }
+      setQueryString(newQuery);
 
-      if (action.color) {
-        const db = new PouchDB('neuprint_compartments');
-        db.get(`sk_${action.id}`)
-          .then(doc => {
-            const updated = doc;
-            updated.color = action.color;
-            return db.put(updated);
-          })
-          .catch(() => {
-            db.put({
-              _id: `sk_${action.id}`,
-              color: action.color
-            });
-          })
-          .finally(() => {
-            setQueryString(newQuery);
-            return state;
-          });
-
-      } else {
-        setQueryString(newQuery);
-        return state;
-      }
       return state;
     }
     case C.SKELETON_REMOVE: {

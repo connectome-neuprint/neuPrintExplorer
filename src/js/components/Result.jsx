@@ -15,7 +15,7 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Icon from '@material-ui/core/Icon';
 
-import { skeletonAddandOpen, skeletonRemove, DefaultSynapseRadius } from 'actions/skeleton';
+import {  skeletonClear, skeletonAddBodiesandOpen, skeletonAddandOpen, skeletonRemove, DefaultSynapseRadius } from 'actions/skeleton';
 import { neuroglancerAddandOpen } from 'actions/neuroglancer';
 import { setFullScreen, clearFullScreen, setSelectedResult, launchNotification } from 'actions/app';
 import { setColumnStatus, initColumnStatus } from 'actions/visibleColumns';
@@ -545,6 +545,12 @@ const ResultDispatch = dispatch => ({
     launchNotification: message => dispatch(launchNotification(message)),
     skeletonAddandOpen: (id, dataSet, tabIndex, color) => {
       dispatch(skeletonAddandOpen(id, dataSet, tabIndex, color));
+    },
+     skeletonAddBodiesandOpen: (bodies, dataSet, tabIndex, options) => {
+      dispatch( skeletonAddBodiesandOpen(bodies, dataSet, tabIndex, options));
+    },
+     skeletonClear: (dataSet, tabIndex) => {
+      dispatch( skeletonClear(dataSet, tabIndex));
     },
     skeletonRemove: (id, dataSet, tabIndex) => {
       dispatch(skeletonRemove(id, dataSet, tabIndex));

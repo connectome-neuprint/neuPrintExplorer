@@ -14,6 +14,27 @@ export function skeletonAddandOpen(id, dataSet, tabIndex, color) {
   };
 }
 
+// bodies = { id: color, id: null, id:color}
+// options = { replace: true } - if true, will replace all bodies in the display
+export function skeletonAddBodiesandOpen(bodies, dataSet, tabIndex, options) {
+  return {
+    type: C.SKELETON_ADD_BODIES,
+    bodies,
+    dataSet,
+    tabIndex,
+    options
+  };
+}
+
+export function skeletonClear(dataSet, tabIndex) {
+  return {
+    type: C.SKELETON_CLEAR,
+    dataSet,
+    tabIndex
+  };
+}
+
+
 export function skeletonRemove(id, dataSet, tabIndex) {
   return {
     type: C.SKELETON_REMOVE,
