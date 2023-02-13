@@ -32,7 +32,7 @@ const styles = theme => ({
 });
 
 const failureMessage =
-  'There was a problem rendering the plugin form. Please contact the developer of this continues.';
+  'There was a problem rendering the plugin form. Please contact the developer if this continues.';
 
 class QueryForm extends React.Component {
   constructor(props) {
