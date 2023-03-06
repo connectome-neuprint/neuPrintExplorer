@@ -81,14 +81,22 @@ function addBodiesToSkeleton(bodies, dataSet, tabIndex, options) {
   const colorModifiers = bodies.map(body => db.get(`sk_${body.id}`)
     .then(doc => {
       const updated = doc;
-      updated.color = body.color;
-      return db.put(updated);
+      // only add a record to pouch db if there is a defined color
+      if (body.color) {
+        updated.color = body.color;
+        return db.put(updated);
+      }
+      return Promise.resolve();
     })
     .catch(() => {
-      db.put({
-        _id: `sk_${body.id}`,
-        color: body.color
-      });
+      // only add a record to pouch db if there is a defined color
+      if (body.color) {
+        const record = {
+          _id: `sk_${body.id}`,
+          color: body.color,
+        };
+        db.put(record);
+      }
     })
   );
 
@@ -114,7 +122,7 @@ function addBodiesToSkeleton(bodies, dataSet, tabIndex, options) {
 export default function skeletonReducer(state = skeletonState, action) {
   switch (action.type) {
     case C.SKELETON_ADD_ID: {
-      addBodiesToSkeleton({id: action.id, color: action.color}, action.dataSet, action.tabIndex);
+      addBodiesToSkeleton([{id: action.id, color: action.color}], action.dataSet, action.tabIndex);
       return state;
     }
     case C.SKELETON_ADD_BODIES: {
