@@ -102,7 +102,8 @@ class QueryForm extends React.Component {
       token,
       isQuerying,
       allResults,
-      neoServerSettings
+      neoServerSettings,
+      vimoServer
     } = this.props;
     const { openSnack, hasError } = this.state;
 
@@ -173,6 +174,7 @@ class QueryForm extends React.Component {
             disable={isQuerying}
             isQuerying={isQuerying}
             neoServerSettings={neoServerSettings}
+            vimoServer={vimoServer}
             actions={actions}
             submit={this.submit}
             isPublic={PUBLIC} // indicates whether or not the application is in public mode
@@ -201,6 +203,7 @@ QueryForm.propTypes = {
   actions: PropTypes.object.isRequired,
   allResults: PropTypes.object.isRequired,
   neoServerSettings: PropTypes.object.isRequired,
+  vimoServer: PropTypes.string.isRequired,
   availableROIs: PropTypes.object.isRequired,
   roiInfo: PropTypes.object.isRequired,
   superROIsByDataSet: PropTypes.object.isRequired
@@ -214,6 +217,7 @@ const QueryFormState = state => ({
   token: state.user.get('token'),
   allResults: state.results.get('allResults'),
   neoServerSettings: state.neo4jsettings,
+  vimoServer: state.vimoServer.get('url'),
   availableROIs: state.neo4jsettings.get('availableROIs'),
   roiInfo: state.neo4jsettings.get('roiInfo'),
   superROIsByDataSet: state.neo4jsettings.get('superROIs')

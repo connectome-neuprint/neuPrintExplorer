@@ -15,6 +15,9 @@ export const handlers = [
   rest.get('/api/npexplorer/nglayers/vnc.json', (req, res, ctx) =>
     res(ctx.status(200), ctx.json(ngLayers))
   ),
+  rest.get('/api/dbmeta/vimo', (req, res, ctx) =>
+    res(ctx.status(200), ctx.json({url: 'http://localhost:4242'}))
+  ),
   // Handles a GET /user request
   rest.get('/user', null)
 ];

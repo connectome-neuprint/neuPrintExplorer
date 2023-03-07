@@ -14,6 +14,7 @@ import neuroglancer from './neuroglancer';
 import errors from './errors';
 import notification from './notification';
 import visibleColumns from './visibleColumns';
+import vimoServer from './vimoserver';
 
 export default combineReducers({
   skeleton,
@@ -25,5 +26,6 @@ export default combineReducers({
   user,
   errors,
   neuroglancer,
-  notification
+  notification,
+  vimoServer,
 });

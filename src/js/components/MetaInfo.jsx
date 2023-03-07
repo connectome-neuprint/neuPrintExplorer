@@ -27,10 +27,11 @@ class MetaInfo extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { userInfo, setNeoDatasets, setNeoServer, dataSet } = this.props;
+    const { userInfo, setNeoDatasets, setNeoServer, setVimoServer, dataSet } = this.props;
     if (prevProps.userInfo !== userInfo) {
       setNeoDatasets([], {}, {}, {});
       setNeoServer('');
+      setVimoServer('');
     }
 
     if (!_.isEqual(prevProps.userInfo, userInfo)) {
@@ -97,7 +98,7 @@ class MetaInfo extends React.Component {
 
 
   updateDB = () => {
-    const { setNeoDatasets, setNeoServer, setNeoServerPublic, setNeoServerPublicLoaded } = this.props;
+    const { setNeoDatasets, setNeoServer, setVimoServer, setNeoServerPublic, setNeoServerPublicLoaded } = this.props;
     fetch('/api/dbmeta/datasets', {
       credentials: 'include'
     })
@@ -135,6 +136,15 @@ class MetaInfo extends React.Component {
         }
       });
 
+    fetch('/api/dbmeta/vimo', {
+      credentials: 'include'
+    })
+      .then(result => result.json())
+      .then(data => {
+        if (!('message' in data)) {
+          setVimoServer(data.url);
+        }
+      });
 
     fetch('/api/serverinfo', {
       credentials: 'include',
@@ -160,6 +170,7 @@ class MetaInfo extends React.Component {
 MetaInfo.propTypes = {
   setNeoDatasets: PropTypes.func.isRequired,
   setNeoServer: PropTypes.func.isRequired,
+  setVimoServer: PropTypes.func.isRequired,
   setNeoServerPublic: PropTypes.func.isRequired,
   setNeoServerPublicLoaded: PropTypes.func.isRequired,
   setMeshInfo: PropTypes.func.isRequired,
@@ -216,7 +227,14 @@ const MetaInfoDispatch = dispatch => ({
       type: C.SET_NEO_ROIINFO,
       rois
     });
-  }
+  },
+  setVimoServer(url) {
+    dispatch({
+      type: C.SET_VIMO_URL,
+      url
+    });
+  },
+
 });
 
 export default connect(
