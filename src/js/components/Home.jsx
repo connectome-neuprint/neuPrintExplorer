@@ -76,7 +76,7 @@ function Home(props) {
 
   const defaultDS = dataSetNames.sort(
     (a, b) => new Date(datasetInfo[b].lastmod) - new Date(datasetInfo[a].lastmod)
-  )[0];
+  ).filter(name => datasetInfo[name].hidden === false)[0];
 
   if (loggedIn && (!queryObject.dataset || !queryObject.qt) && defaultDS) {
     return (
