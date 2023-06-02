@@ -43,7 +43,13 @@ function handleClick(event, queryType) {
 }
 
 function QueryTypeSelection(props) {
-  const { classes, pluginList, tabs, actions } = props;
+  const { classes, pluginList, tabs, actions, user } = props;
+
+  // filter out experimental plugins, unless the user is an admin
+  const filteredList = user?.AuthLevel === 'admin' ?
+    pluginList :
+    pluginList.filter(plugin => !plugin.details.experimental === true);
+
 
   return (
     <div>
@@ -53,7 +59,7 @@ function QueryTypeSelection(props) {
       </div>
       <Divider />
       <List className={classes.root} subheader={<li />}>
-        {pluginList
+        {filteredList
           .filter(plugin => plugin.details.category === 'top-level')
           .map(val => (
             <ListItem
@@ -73,7 +79,7 @@ function QueryTypeSelection(props) {
           {tabs.get(0) ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
         <Collapse in={tabs.get(0)} timeout="auto" unmountOnExit>
-          {pluginList
+          {filteredList
             .filter(plugin => plugin.details.category === undefined)
             .map(val => (
               <ListItem
@@ -94,7 +100,7 @@ function QueryTypeSelection(props) {
           {tabs.get(1) ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
         <Collapse in={tabs.get(1)} timeout="auto" unmountOnExit>
-          {pluginList
+          {filteredList
             .filter(plugin => plugin.details.category === 'recon')
             .map(val => (
               <ListItem
@@ -115,7 +121,7 @@ function QueryTypeSelection(props) {
           {tabs.get(2) ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
         <Collapse in={tabs.get(2)} timeout="auto" unmountOnExit>
-          {pluginList
+          {filteredList
             .filter(plugin => plugin.details.category === 'visualization')
             .map(val => (
               <ListItem
@@ -139,12 +145,14 @@ QueryTypeSelection.propTypes = {
   classes: PropTypes.object.isRequired,
   tabs: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired,
-  pluginList: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.func, PropTypes.object])).isRequired
+  pluginList: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.func, PropTypes.object])).isRequired,
+  user: PropTypes.object.isRequired,
 };
 
 const QueryTypeState = state => ({
   pluginList: state.app.get('pluginList'),
-  tabs: state.query.get('tabs')
+  tabs: state.query.get('tabs'),
+  user: state.user.get('userInfo')
 });
 
 const QueryTypeDispatch = dispatch => ({
