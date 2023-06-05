@@ -136,13 +136,13 @@ class MetaInfo extends React.Component {
         }
       });
 
-    fetch('/api/dbmeta/vimo', {
+    fetch('/api/vimoserver', {
       credentials: 'include'
     })
       .then(result => result.json())
       .then(data => {
         if (!('message' in data)) {
-          setVimoServer(data.url);
+          setVimoServer(data.Url);
         }
       });
 
