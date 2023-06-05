@@ -5,7 +5,6 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { Document, Page }  from 'react-pdf/dist/esm/entry.webpack';
 import './BrainRegions.css';
 
 
@@ -15,9 +14,7 @@ export default function BrainRegions(props) {
     <Dialog fullWidth maxWidth="lg" open onClose={onClose}>
       <DialogTitle>Brain regions</DialogTitle>
       <DialogContent>
-        <Document file="/public/brainregions.pdf">
-          <Page pageNumber={1} scale={1.1} />
-        </Document>
+        <img style={{width: "100%"}} src="/public/brainregions.png" alt="brain regions diagram" />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="primary">
