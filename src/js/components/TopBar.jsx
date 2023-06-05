@@ -89,6 +89,22 @@ function handleFullScreen() {
   });
 }
 
+function getDatasetOptions(datasetInfo, isAdmin) {
+  if (isAdmin) {
+    return Object.keys(datasetInfo).map(dataset => {
+      const label = datasetInfo[dataset].hidden === true ? `${dataset} - HIDDEN` : dataset;
+      return {
+        value: dataset,
+        label
+      };
+    });
+  }
+  return Object.keys(datasetInfo).filter(dataset => datasetInfo[dataset].hidden !== true).map(dataset => ({
+    value: dataset,
+    label: dataset
+  }));
+}
+
 class TopBar extends React.Component {
   constructor(props) {
     super(props);
@@ -119,14 +135,13 @@ class TopBar extends React.Component {
     this.setState({ showBrainRegions: !showBrainRegions });
   };
 
+
+
   render() {
-    const { classes, loggedIn, location, datasetInfo } = this.props;
+    const { classes, loggedIn, userInfo, location, datasetInfo } = this.props;
     const { showBrainRegions } = this.state;
     const qsParams = getSiteParams(location);
-    const dataSetOptions = Object.keys(datasetInfo).filter(dataset => datasetInfo[dataset].hidden !== true).map(dataset => ({
-      value: dataset,
-      label: dataset
-    }));
+    const dataSetOptions = getDatasetOptions(datasetInfo, userInfo.AuthLevel === 'admin');
 
     const dataSet = qsParams.get('dataset');
 
@@ -198,12 +213,13 @@ TopBar.propTypes = {
   classes: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   loggedIn: PropTypes.bool.isRequired,
+  userInfo: PropTypes.object.isRequired,
   datasetInfo: PropTypes.object.isRequired
 };
 
 const TopBarState = state => ({
-  userInfo: state.user.userInfo,
   loggedIn: state.user.get('loggedIn'),
+  userInfo: state.user.get('userInfo'),
   datasetInfo: state.neo4jsettings.get('datasetInfo')
 });
 
