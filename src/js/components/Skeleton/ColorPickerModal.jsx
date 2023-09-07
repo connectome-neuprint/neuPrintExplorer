@@ -6,6 +6,7 @@ import randomColor from 'randomcolor';
 import Popover from '@material-ui/core/Popover';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = () => ({
@@ -51,11 +52,13 @@ function ColorPickerModal(props) {
         open={Boolean(anchorEl)}
         onClose={() => setAnchorEl(null)}
       >
-        <SketchPicker
-          color={sketchColor}
-          onChangeComplete={changeColor}
-          presetColors={presetColors}
-        />
+        <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
+          <SketchPicker
+            color={sketchColor}
+            onChangeComplete={changeColor}
+            presetColors={presetColors}
+          />
+        </ClickAwayListener>
       </Popover>
     </>
   );
