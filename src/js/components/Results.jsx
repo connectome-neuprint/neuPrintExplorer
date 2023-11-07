@@ -25,7 +25,7 @@ const styles = () => ({
   }
 });
 
-function Results ({ allResults, pluginList, classes, authLevel, publicState, publicLoaded, loggedIn }) {
+function Results ({ allResults, pluginList, classes, authLevel, publicState, publicLoaded, columnDataLoaded, loggedIn }) {
 
   const handleResultSelection = (event, value) => {
     // set the tabs value in the query string to the value
@@ -33,7 +33,7 @@ function Results ({ allResults, pluginList, classes, authLevel, publicState, pub
     setQueryString({ tab: value });
   };
 
-  if (!publicLoaded) {
+  if (!publicLoaded || !columnDataLoaded) {
     return (<p>loading...</p>);
   }
 
@@ -113,7 +113,8 @@ Results.propTypes = {
   authLevel: PropTypes.string.isRequired,
   loggedIn: PropTypes.bool.isRequired,
   publicState: PropTypes.bool.isRequired,
-  publicLoaded: PropTypes.bool.isRequired
+  publicLoaded: PropTypes.bool.isRequired,
+  columnDataLoaded: PropTypes.bool.isRequired
 };
 
 const ResultsState = state => ({
@@ -122,6 +123,7 @@ const ResultsState = state => ({
   publicState: state.neo4jsettings.get('publicState'),
   publicLoaded: state.neo4jsettings.get('publicStateLoaded'),
   loggedIn: state.user.get('loggedIn'),
+  columnDataLoaded: state.neo4jsettings.get('columnDefaultsLoaded'),
   authLevel: state.user.get('userInfo').AuthLevel || 'none'
 });
 

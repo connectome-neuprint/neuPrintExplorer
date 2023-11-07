@@ -87,7 +87,7 @@ class Result extends React.Component {
     // grab the contents of the search string.
     // if it has an array of query objects, fetch the data from neuPrint
     // and store it in the redux/local state?
-    const { actions, token, tabIndex } = this.props;
+    const { actions, token, tabIndex, defaultColumns } = this.props;
     const query = getQueryObject();
     const resultsList = query.qr || [];
 
@@ -96,7 +96,7 @@ class Result extends React.Component {
       // only fetch results for the tab being displayed.
       actions.fetchData(resultsList[tabIndex], currentPlugin, tabIndex, token);
       if (Object.prototype.hasOwnProperty.call(currentPlugin, 'getColumnHeaders')) {
-        actions.initColumnStatus(tabIndex, currentPlugin.getColumnHeaders(query.qr[tabIndex]));
+        actions.initColumnStatus(tabIndex, currentPlugin.getColumnHeaders(query.qr[tabIndex], defaultColumns));
       }
     }
   }
@@ -110,6 +110,7 @@ class Result extends React.Component {
       loading,
       loadingError,
       visibleColumns,
+      defaultColumns,
       tabIndex
     } = this.props;
 
@@ -132,7 +133,7 @@ class Result extends React.Component {
             !visibleColumns.get(tabIndex) &&
             Object.prototype.hasOwnProperty.call(currentPlugin, 'getColumnHeaders')
           ) {
-            actions.initColumnStatus(tabIndex, currentPlugin.getColumnHeaders(query.qr[tabIndex]));
+            actions.initColumnStatus(tabIndex, currentPlugin.getColumnHeaders(query.qr[tabIndex], defaultColumns));
           }
         }
       }
@@ -237,6 +238,7 @@ class Result extends React.Component {
       neo4jsettings,
       showCypher,
       visibleColumns,
+      defaultColumns,
       tabIndex,
       fixed,
       user
@@ -316,6 +318,7 @@ class Result extends React.Component {
             submitFunc: this.submit,
             isPublic: PUBLIC, // PUBLIC indicates this is a public version of the application
             originalPlugin: processingPlugin,
+            defaultColumns,
             roiLookup: neo4jsettings.get('roiInfo')
           });
 
@@ -491,6 +494,7 @@ Result.propTypes = {
   neo4jsettings: PropTypes.object.isRequired,
   showCypher: PropTypes.bool.isRequired,
   visibleColumns: PropTypes.object.isRequired,
+  defaultColumns: PropTypes.bool.isRequired,
   tabIndex: PropTypes.number.isRequired,
   fixed: PropTypes.bool,
   user: PropTypes.object.isRequired
@@ -518,6 +522,7 @@ const ResultState = state => ({
   token: state.user.get('token'),
   neoServer: state.neo4jsettings.get('neoServer'),
   visibleColumns: state.visibleColumns.get('tab'),
+  defaultColumns: state.neo4jsettings.get('columnDefaults'),
   user: state.user
 });
 

@@ -11,6 +11,8 @@ const neo4jsettingsState = Immutable.Map({
   datasetInfo: {},
   meshInfo: {},
   roiInfo: {},
+  columnDefaults: null,
+  columnDefaultsLoaded: false,
   neoServer: '',
   publicState: false,
   publicStateLoaded: false
@@ -39,6 +41,9 @@ export default function neo4jreducer(state = neo4jsettingsState, action) {
     }
     case C.SET_NEO_SERVER_PUBLIC_LOADED: {
       return state.set('publicStateLoaded', action.loaded);
+    }
+    case C.SET_NEO_DATASET_COLUMN_DEFAULTS: {
+      return state.set('columnDefaults', action.columnDefaults).set('columnDefaultsLoaded', true);
     }
     default: {
       return state;

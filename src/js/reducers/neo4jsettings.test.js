@@ -12,6 +12,8 @@ const state = Immutable.Map({
   },
   meshInfo: {},
   roiInfo: {},
+  columnDefaults: null,
+  columnDefaultsLoaded: false,
   neoServer: 'foobar',
   publicState: false,
   publicStateLoaded: false
@@ -24,6 +26,8 @@ const initialState = Immutable.Map({
   datasetInfo: {},
   meshInfo: {},
   roiInfo: {},
+  columnDefaults: null,
+  columnDefaultsLoaded: false,
   neoServer: '',
   publicState: false,
   publicStateLoaded: false
@@ -52,6 +56,8 @@ describe('neo4jsettings Reducer', () => {
         },
         meshInfo: {},
         roiInfo: {},
+        columnDefaults: null,
+        columnDefaultsLoaded: false,
         neoServer: '',
         publicState: false,
         publicStateLoaded: false
@@ -68,6 +74,8 @@ describe('neo4jsettings Reducer', () => {
         },
         meshInfo: {},
         roiInfo: {},
+        columnDefaults: null,
+        columnDefaultsLoaded: false,
         neoServer: 'foobar',
         publicState: false,
         publicStateLoaded: false

@@ -16,6 +16,52 @@ export function sortRois(a, b) {
   return a < b ? -1 : 1;
 }
 
+function fetchDataSetColumnDefaults(datasets, setNeoDatasetColumnDefaults) {
+
+  const columnDefaults = Promise.all(datasets.map((dataset) => fetch('/api/custom/custom?np_explorer=column_request', {
+    headers: {
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({
+      dataset,
+      cypher: `MATCH (n:Meta) RETURN n.neuronColumns, n.neuronColumnsVisible`,
+    }),
+    method: 'POST',
+    credentials: 'include',
+  })
+    .then((result) => {
+      if (result.ok) {
+        return result.json();
+      }
+      throw new Error(
+        'Unable to fetch column headers, try reloading the page. If this error persists, please contact support.'
+      );
+    })
+    .then((resp) => [dataset, resp])
+  ));
+  columnDefaults.then(defaults => {
+    // build defaults object and store it in redux;
+    const columnsByDataSet = {};
+
+    defaults.forEach(dataset => {
+      if (dataset[1]?.data[0] && dataset[1]?.data[0][0]) {
+        const parsedColumnData = JSON.parse(dataset[1]?.data[0][0]);
+        const fixedColumnData = parsedColumnData.map(column => {
+          const updatedColumn = {...column};
+          if (updatedColumn.id === "bodyId") {
+            updatedColumn.name = 'id';
+          }
+          updatedColumn.status = column.visible;
+          delete updatedColumn.visible;
+          return updatedColumn;
+        });
+        columnsByDataSet[dataset[0]] = fixedColumnData;
+      }
+    });
+    setNeoDatasetColumnDefaults(columnsByDataSet);
+  });
+}
+
 class MetaInfo extends React.Component {
   componentDidMount() {
     const { userInfo, dataSet } = this.props;
@@ -53,11 +99,11 @@ class MetaInfo extends React.Component {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Accept: 'application/json'
-        }
+          Accept: 'application/json',
+        },
       })
-        .then(result => result.json())
-        .then(resp => {
+        .then((result) => result.json())
+        .then((resp) => {
           if (!('message' in resp)) {
             if (resp.data && resp.data[0]) {
               setRoiInfo(JSON.parse(resp.data[0][0]));
@@ -67,25 +113,27 @@ class MetaInfo extends React.Component {
     }
   };
 
-
   updateMetaDatasetInfo = () => {
     const { setMeshInfo, dataSet } = this.props;
     if (dataSet) {
       fetch('/api/custom/custom?np_explorer=meta_dataset_and_host', {
         credentials: 'include',
-        body: JSON.stringify({ cypher: 'MATCH (n:Meta) RETURN n.dataset, n.meshHost', dataset: dataSet }),
+        body: JSON.stringify({
+          cypher: 'MATCH (n:Meta) RETURN n.dataset, n.meshHost',
+          dataset: dataSet,
+        }),
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Accept: 'application/json'
-        }
+          Accept: 'application/json',
+        },
       })
-        .then(result => result.json())
-        .then(resp => {
+        .then((result) => result.json())
+        .then((resp) => {
           if (!('message' in resp)) {
-            const meshInfo = {}
+            const meshInfo = {};
             if (resp.data) {
-              resp.data.forEach(dataset => {
+              resp.data.forEach((dataset) => {
                 const [key, value] = dataset;
                 meshInfo[key] = value;
               });
@@ -94,22 +142,28 @@ class MetaInfo extends React.Component {
           }
         });
     }
-  }
-
+  };
 
   updateDB = () => {
-    const { setNeoDatasets, setNeoServer, setVimoServer, setNeoServerPublic, setNeoServerPublicLoaded } = this.props;
+    const {
+      setNeoDatasets,
+      setNeoServer,
+      setNeoDatasetColumnDefaults,
+      setVimoServer,
+      setNeoServerPublic,
+      setNeoServerPublicLoaded,
+    } = this.props;
     fetch('/api/dbmeta/datasets', {
-      credentials: 'include'
+      credentials: 'include',
     })
-      .then(result => result.json())
-      .then(items => {
+      .then((result) => result.json())
+      .then((items) => {
         if (!('message' in items)) {
           const datasets = [];
           const rois = {};
           const superRois = {};
           const datasetInfo = {};
-          Object.entries(items).forEach(item => {
+          Object.entries(items).forEach((item) => {
             const [name, data] = item;
             datasets.push(name);
             rois[name] = data.ROIs.sort(sortRois);
@@ -118,29 +172,30 @@ class MetaInfo extends React.Component {
               uuid: data.uuid,
               lastmod: data['last-mod'],
               info: data.info,
-              hidden: data.hidden
+              hidden: data.hidden,
             };
           });
           setNeoDatasets(datasets, rois, superRois, datasetInfo);
+          // for each dataset, load in the default column states for
+          fetchDataSetColumnDefaults(datasets, setNeoDatasetColumnDefaults);
         }
       });
 
-
     fetch('/api/dbmeta/database', {
-      credentials: 'include'
+      credentials: 'include',
     })
-      .then(result => result.json())
-      .then(data => {
+      .then((result) => result.json())
+      .then((data) => {
         if (!('message' in data)) {
           setNeoServer(data.Location);
         }
       });
 
     fetch('/api/vimoserver', {
-      credentials: 'include'
+      credentials: 'include',
     })
-      .then(result => result.json())
-      .then(data => {
+      .then((result) => result.json())
+      .then((data) => {
         if (!('message' in data)) {
           setVimoServer(data.Url);
         }
@@ -151,15 +206,14 @@ class MetaInfo extends React.Component {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Accept: 'application/json'
-      }
+        Accept: 'application/json',
+      },
     })
-      .then(result => result.json())
-      .then(resp => {
+      .then((result) => result.json())
+      .then((resp) => {
         setNeoServerPublic(resp.IsPublic);
         setNeoServerPublicLoaded();
       });
-
   };
 
   render() {
@@ -173,71 +227,74 @@ MetaInfo.propTypes = {
   setVimoServer: PropTypes.func.isRequired,
   setNeoServerPublic: PropTypes.func.isRequired,
   setNeoServerPublicLoaded: PropTypes.func.isRequired,
+  setNeoDatasetColumnDefaults: PropTypes.func.isRequired,
   setMeshInfo: PropTypes.func.isRequired,
   setRoiInfo: PropTypes.func.isRequired,
   userInfo: PropTypes.object.isRequired,
-  dataSet: PropTypes.string
+  dataSet: PropTypes.string,
 };
 
 MetaInfo.defaultProps = {
-  dataSet: null
+  dataSet: null,
 };
 
-const MetaInfoState = state => ({
-  userInfo: state.user.get('userInfo')
+const MetaInfoState = (state) => ({
+  userInfo: state.user.get('userInfo'),
 });
 
-const MetaInfoDispatch = dispatch => ({
+const MetaInfoDispatch = (dispatch) => ({
   setNeoDatasets(datasets, rois, superRois, datasetInfo) {
     dispatch({
       type: C.SET_NEO_DATASETS,
       availableDatasets: datasets,
       availableROIs: rois,
       superROIs: superRois,
-      datasetInfo
+      datasetInfo,
+    });
+  },
+  setNeoDatasetColumnDefaults(columnDefaults) {
+    dispatch({
+      type: C.SET_NEO_DATASET_COLUMN_DEFAULTS,
+      columnDefaults
     });
   },
   setNeoServerPublic(publicState) {
     dispatch({
       type: C.SET_NEO_SERVER_PUBLIC,
-      publicState
+      publicState,
     });
   },
   setNeoServerPublicLoaded() {
     dispatch({
       type: C.SET_NEO_SERVER_PUBLIC_LOADED,
-      loaded: true
+      loaded: true,
     });
   },
 
   setNeoServer(server) {
     dispatch({
       type: C.SET_NEO_SERVER,
-      neoServer: server
+      neoServer: server,
     });
   },
   setMeshInfo(dataSets) {
     dispatch({
       type: C.SET_NEO_MESHINFO,
-      dataSets
+      dataSets,
     });
   },
   setRoiInfo(rois) {
     dispatch({
       type: C.SET_NEO_ROIINFO,
-      rois
+      rois,
     });
   },
   setVimoServer(url) {
     dispatch({
       type: C.SET_VIMO_URL,
-      url
+      url,
     });
   },
-
 });
 
-export default connect(
-  MetaInfoState,
-  MetaInfoDispatch
-)(MetaInfo);
+export default connect(MetaInfoState, MetaInfoDispatch)(MetaInfo);
