@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   neuprinthttp:
-    image: gcr.io/flyem-public/connectome-neuprint/neuprinthttp:1.6.0-1.61.0
+    image: gcr.io/flyem-public/connectome-neuprint/neuprinthttp:1.6.4-1.61.11
     networks:
       - neuprint-net
     ports:
