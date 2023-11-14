@@ -494,7 +494,7 @@ Result.propTypes = {
   neo4jsettings: PropTypes.object.isRequired,
   showCypher: PropTypes.bool.isRequired,
   visibleColumns: PropTypes.object.isRequired,
-  defaultColumns: PropTypes.bool.isRequired,
+  defaultColumns: PropTypes.object.isRequired,
   tabIndex: PropTypes.number.isRequired,
   fixed: PropTypes.bool,
   user: PropTypes.object.isRequired
