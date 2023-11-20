@@ -19,7 +19,7 @@ import qs from 'qs';
 // https://neuprint-dev.janelia.org:11000/view?dataset=hemibrain:v1.1&bodyid=1291103485
 
 
-const itemsOnPage = 10;
+const itemsOnPage = 25;
 
 export default function Workstation(props) {
   // build the search string based on the props passed in.
