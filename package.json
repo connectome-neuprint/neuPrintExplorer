@@ -54,7 +54,7 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
-    "@janelia-flyem/react-neuroglancer": "^2.4.0",
+    "@janelia-flyem/react-neuroglancer": "^2.4.12",
     "@janelia/sharkviewer": "^1.7.13",
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
@@ -64,7 +64,7 @@
     "@neuprint/queries": "^11.7.3",
     "@neuprint/react-heatmap": "^0.5.1",
     "@neuprint/support": "^1.4.8",
-    "@neuprint/views": "^9.5.1",
+    "@neuprint/views": "^9.5.2",
     "@vimo-public/vimo-sketches": "^0.2.6",
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "chroma-js": "^2.4.2",
