@@ -91,6 +91,10 @@ const styles = theme => ({
   }
 });
 
+// the defaultMaxVolumeSize is the diameter of the largest
+// volume in a dataset, in pixels.
+const defaultMaxVolumeSize = 100000;
+
 function objectMap(object, mapFn) {
   return Object.keys(object).reduce((result, key) => {
     result[key] = mapFn(object[key]); // eslint-disable-line no-param-reassign
@@ -360,12 +364,20 @@ class SkeletonView extends React.Component {
   }
 
   createShark = () => {
-    const { query } = this.props;
+    const { query, datasetInfo } = this.props;
+
+    // check for maxVolumeSize in datasetInfo
+    let maxVolumeSize = defaultMaxVolumeSize;
+    if (datasetInfo && datasetInfo[query.ds] && datasetInfo[query.ds].maxVolumeSize) {
+      maxVolumeSize = datasetInfo[query.ds].maxVolumeSize;
+    }
+
     import('@janelia/sharkviewer').then(SharkViewer => {
       const sharkViewer = new SharkViewer.default({ // eslint-disable-line new-cap
         dom_element: 'skeletonviewer',
         showAxes: 10000,
         flip: true,
+        maxVolumeSize,
         WIDTH: this.skelRef.current.clientWidth,
         HEIGHT: this.skelRef.current.clientHeight,
         // on_select_node: (id, sampleNumber, event, coords) => { console.log(id, sampleNumber, event, coords) },
@@ -985,6 +997,7 @@ SkeletonView.propTypes = {
   classes: PropTypes.object.isRequired,
   actions: PropTypes.object.isRequired,
   neo4jsettings: PropTypes.object.isRequired,
+  datasetInfo: PropTypes.object.isRequired,
   synapses: PropTypes.object.isRequired,
   hideControls: PropTypes.bool,
   synapseRadius: PropTypes.number.isRequired

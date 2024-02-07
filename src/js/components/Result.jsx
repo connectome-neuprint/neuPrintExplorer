@@ -236,6 +236,7 @@ class Result extends React.Component {
       actions,
       neoServer,
       neo4jsettings,
+      datasetInfo,
       showCypher,
       visibleColumns,
       defaultColumns,
@@ -396,6 +397,7 @@ class Result extends React.Component {
                           index={tabIndex}
                           key={viewKey}
                           neoServer={neoServer}
+                          datasetInfo={datasetInfo}
                           neo4jsettings={neo4jsettings}
                           synapseRadius={synapseRadius}
                         />
@@ -492,6 +494,7 @@ Result.propTypes = {
   neoServer: PropTypes.string.isRequired,
   token: PropTypes.string.isRequired,
   neo4jsettings: PropTypes.object.isRequired,
+  datasetInfo: PropTypes.object.isRequired,
   showCypher: PropTypes.bool.isRequired,
   visibleColumns: PropTypes.object.isRequired,
   defaultColumns: PropTypes.object.isRequired,
@@ -519,6 +522,7 @@ const ResultState = state => ({
   queryObj: state.query.get('neoQueryObj'),
   fullscreen: state.app.get('fullscreen'),
   neo4jsettings: state.neo4jsettings,
+  datasetInfo: state.neo4jsettings.get('datasetInfo'),
   token: state.user.get('token'),
   neoServer: state.neo4jsettings.get('neoServer'),
   visibleColumns: state.visibleColumns.get('tab'),

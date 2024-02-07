@@ -173,6 +173,7 @@ class MetaInfo extends React.Component {
               lastmod: data['last-mod'],
               info: data.info,
               hidden: data.hidden,
+              maxVolumeSize: data.maxVolumeSize,
             };
           });
           setNeoDatasets(datasets, rois, superRois, datasetInfo);
