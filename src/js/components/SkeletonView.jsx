@@ -93,7 +93,7 @@ const styles = theme => ({
 
 // the defaultMaxVolumeSize is the diameter of the largest
 // volume in a dataset, in pixels.
-const defaultMaxVolumeSize = 100000;
+const defaultMaxVolumeSize = 400000;
 
 function objectMap(object, mapFn) {
   return Object.keys(object).reduce((result, key) => {
