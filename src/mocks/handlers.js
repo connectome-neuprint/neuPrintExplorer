@@ -2,6 +2,7 @@ import { rest } from 'msw';
 import ngLayers from './ng-layers.json';
 import datasets from './datasets.json';
 import findNeurons from './find-neurons.json';
+import columnRequest from './column-request.json';
 
 
 /* eslint-disable-next-line import/prefer-default-export */
@@ -21,7 +22,7 @@ export const handlers = [
 
   /* rest.get('/api/dbmeta/datasets', (req, res, ctx) =>
     res(ctx.status(200), ctx.json(datasets))
-  ), */
+  ),*/
 
   // Handles a GET /user request
   rest.get('/user', null),
@@ -35,4 +36,14 @@ export const handlers = [
 		const originalResponse = await ctx.fetch(req);
 		return res(ctx.status(originalResponse.status), ctx.json(await originalResponse.json()));
   }), */
+  /* rest.post('/api/custom/custom', async (req, res, ctx) => {
+		const npExplorer = req.url.searchParams.get('np_explorer');
+
+		if (npExplorer === 'column_request') {
+			return res(ctx.status(200), ctx.json(columnRequest))
+		}
+		const originalResponse = await ctx.fetch(req);
+		return res(ctx.status(originalResponse.status), ctx.json(await originalResponse.json()));
+  })*/
+
 ];
