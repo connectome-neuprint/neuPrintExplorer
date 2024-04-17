@@ -11,6 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Icon from '@material-ui/core/Icon';
+import CallMadeIcon from '@material-ui/icons/CallMade';
 import Divider from '@material-ui/core/Divider';
 
 import { getQueryObject } from 'helpers/queryString';
@@ -25,30 +26,33 @@ import NeuronOfTheDay from './NeuronOfTheDay';
 
 import './Home.css';
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
     flexWrap: 'wrap',
     display: 'flex',
     overflow: 'auto',
-    padding: theme.spacing(3)
+    padding: theme.spacing(3),
   },
   roottext: {
-    textAlign: 'center'
+    textAlign: 'center',
   },
   description: {
-    margin: theme.spacing(2)
+    margin: theme.spacing(2),
   },
   container: {
-    alignContent: 'flex-start'
+    alignContent: 'flex-start',
   },
   sectionDivide: {
     width: '100%',
-    margin: '2em 0'
+    margin: '2em 0',
   },
   video: {
     marginBottom: theme.spacing(2),
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
+  menupointer: {
+    transform: 'rotate(270deg)',
+  },
 });
 
 function Home(props) {
@@ -70,20 +74,20 @@ function Home(props) {
     if (!queryObject.qr) {
       actions.clearResultsCache();
     }
-  },[actions, queryObject.qr]);
+  }, [actions, queryObject.qr]);
 
   const dataSetNames = Object.keys(datasetInfo) || [];
 
-  const defaultDS = dataSetNames.sort(
-    (a, b) => new Date(datasetInfo[b].lastmod) - new Date(datasetInfo[a].lastmod)
-  ).filter(name => datasetInfo[name].hidden === false)[0];
+  const defaultDS = dataSetNames
+    .sort((a, b) => new Date(datasetInfo[b].lastmod) - new Date(datasetInfo[a].lastmod))
+    .filter((name) => datasetInfo[name].hidden === false)[0];
 
   if (loggedIn && (!queryObject.dataset || !queryObject.qt) && defaultDS) {
     return (
       <Redirect
         to={{
           pathname: '/',
-          search: `?dataset=${defaultDS}&qt=findneurons`
+          search: `?dataset=${defaultDS}&qt=findneurons`,
         }}
       />
     );
@@ -95,15 +99,15 @@ function Home(props) {
         <Grid item xs={loggedIn ? 8 : 12} className={classes.roottext}>
           <Typography variant="h3">Analysis tools for connectomics and more</Typography>
           <Typography className={classes.description}>
-            neuPrintExplorer provides tools to query and visualize inter and intra cellular
+            neuPrintExplorer provides tools to query and visualize inter- &amp; intra- cellular
             interactions data stored in{' '}
             <a href="https://github.com/janelia-flyem/neuPrint">neuPrint+</a>, which uses a neo4j
             graph database.
           </Typography>
           {loggedIn && !queryObject.q && (
             <Typography variant="h6">
-              Use the search icon <Icon>search</Icon> in the menu on the{' '}
-              <Link to="/?q=1">left</Link> to query the database.
+              <CallMadeIcon className={classes.menupointer} /> Use the search icon{' '}
+              <Icon>search</Icon> to query the database.
             </Typography>
           )}
         </Grid>
@@ -168,26 +172,26 @@ function Home(props) {
   );
 }
 
-const HomeState = state => ({
+const HomeState = (state) => ({
   neoServer: state.neo4jsettings.get('neoServer'),
   availableDatasets: state.neo4jsettings.get('availableDatasets'),
   datasetInfo: state.neo4jsettings.get('datasetInfo'),
   loggedIn: state.user.get('loggedIn'),
   publicState: state.neo4jsettings.get('publicState'),
-  authLevel: state.user.get('userInfo').AuthLevel || 'none'
+  authLevel: state.user.get('userInfo').AuthLevel || 'none',
 });
 
-const HomeDispatch = dispatch => ({
+const HomeDispatch = (dispatch) => ({
   actions: {
     clearResultsCache: () => {
       dispatch(clearResultsCache());
-    }
-  }
+    },
+  },
 });
 
 Home.propTypes = {
   location: PropTypes.shape({
-    search: PropTypes.string.isRequired
+    search: PropTypes.string.isRequired,
   }).isRequired,
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
@@ -197,7 +201,7 @@ Home.propTypes = {
   datasetInfo: PropTypes.object.isRequired,
   neoServer: PropTypes.string.isRequired,
   publicState: PropTypes.bool.isRequired,
-  actions: PropTypes.object.isRequired
+  actions: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles, { withTheme: true })(connect(HomeState, HomeDispatch)(Home));
