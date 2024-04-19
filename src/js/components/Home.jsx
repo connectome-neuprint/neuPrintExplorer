@@ -5,7 +5,7 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Link, Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
@@ -79,6 +79,7 @@ function Home(props) {
   const dataSetNames = Object.keys(datasetInfo) || [];
 
   const defaultDS = dataSetNames
+    // set the default dataset by using the last modified date.
     .sort((a, b) => new Date(datasetInfo[b].lastmod) - new Date(datasetInfo[a].lastmod))
     .filter((name) => datasetInfo[name].hidden === false)[0];
 
