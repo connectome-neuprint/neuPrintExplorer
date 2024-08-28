@@ -19,7 +19,6 @@ import { clearResultsCache } from 'actions/plugins';
 
 import ServerInfoCard from './ServerInfoCard';
 import DataSetLogo from './DataSetLogo';
-import News from './News';
 import Hints from './Hints';
 import DataSetHome from './DataSetHome';
 import NeuronOfTheDay from './NeuronOfTheDay';
@@ -149,9 +148,6 @@ function Home(props) {
         </Grid>
         <Grid item xs={12} sm={12} md={6} lg={5}>
           <Hints />
-        </Grid>
-        <Grid item xs={12} sm={12} md={6} lg={5}>
-          <News />
         </Grid>
       </Grid>
       <p style={{ textAlign: 'center', width: '100%' }}>
