@@ -10,7 +10,6 @@ const state = Immutable.Map({
     lastmod: 'existinglastmod',
     uuid: 'existingversion'
   },
-  meshInfo: {},
   roiInfo: {},
   columnDefaults: null,
   columnDefaultsLoaded: false,
@@ -24,7 +23,6 @@ const initialState = Immutable.Map({
   availableROIs: {},
   superROIs: {},
   datasetInfo: {},
-  meshInfo: {},
   roiInfo: {},
   columnDefaults: null,
   columnDefaultsLoaded: false,
@@ -54,7 +52,6 @@ describe('neo4jsettings Reducer', () => {
           lastmod: 'newlastmod',
           uuid: 'newversion'
         },
-        meshInfo: {},
         roiInfo: {},
         columnDefaults: null,
         columnDefaultsLoaded: false,
@@ -72,7 +69,6 @@ describe('neo4jsettings Reducer', () => {
           lastmod: 'newlastmod',
           uuid: 'newversion'
         },
-        meshInfo: {},
         roiInfo: {},
         columnDefaults: null,
         columnDefaultsLoaded: false,

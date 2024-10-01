@@ -68,7 +68,6 @@ class MetaInfo extends React.Component {
     this.updateDB(userInfo);
     if (dataSet) {
       this.updateMetaRoiInfo();
-      this.updateMetaDatasetInfo();
     }
   }
 
@@ -86,7 +85,6 @@ class MetaInfo extends React.Component {
 
     if (dataSet && prevProps.dataSet !== dataSet) {
       this.updateMetaRoiInfo();
-      this.updateMetaDatasetInfo();
     }
   }
 
@@ -108,37 +106,6 @@ class MetaInfo extends React.Component {
             if (resp.data && resp.data[0]) {
               setRoiInfo(JSON.parse(resp.data[0][0]));
             }
-          }
-        });
-    }
-  };
-
-  updateMetaDatasetInfo = () => {
-    const { setMeshInfo, dataSet } = this.props;
-    if (dataSet) {
-      fetch('/api/custom/custom?np_explorer=meta_dataset_and_host', {
-        credentials: 'include',
-        body: JSON.stringify({
-          cypher: 'MATCH (n:Meta) RETURN n.dataset, n.meshHost',
-          dataset: dataSet,
-        }),
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-      })
-        .then((result) => result.json())
-        .then((resp) => {
-          if (!('message' in resp)) {
-            const meshInfo = {};
-            if (resp.data) {
-              resp.data.forEach((dataset) => {
-                const [key, value] = dataset;
-                meshInfo[key] = value;
-              });
-            }
-            setMeshInfo(meshInfo);
           }
         });
     }
@@ -229,7 +196,6 @@ MetaInfo.propTypes = {
   setNeoServerPublic: PropTypes.func.isRequired,
   setNeoServerPublicLoaded: PropTypes.func.isRequired,
   setNeoDatasetColumnDefaults: PropTypes.func.isRequired,
-  setMeshInfo: PropTypes.func.isRequired,
   setRoiInfo: PropTypes.func.isRequired,
   userInfo: PropTypes.object.isRequired,
   dataSet: PropTypes.string,
@@ -276,12 +242,6 @@ const MetaInfoDispatch = (dispatch) => ({
     dispatch({
       type: C.SET_NEO_SERVER,
       neoServer: server,
-    });
-  },
-  setMeshInfo(dataSets) {
-    dispatch({
-      type: C.SET_NEO_MESHINFO,
-      dataSets,
     });
   },
   setRoiInfo(rois) {
