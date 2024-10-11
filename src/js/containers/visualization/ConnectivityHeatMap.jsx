@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { metaInfoError } from '@neuprint/support';
+import { metaInfoError } from 'plugins/support';
 
 import ConnectivityHeatMap from 'components/visualization/ConnectivityHeatMap';
 

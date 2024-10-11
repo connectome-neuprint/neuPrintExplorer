@@ -48,9 +48,9 @@ export function getQueryObject(part, ifEmpty = {}) {
     decoder: function decoder(value) {
       // if we encounter something that looks like a number then return it
       // as a number and not a string.
-      if (/^(\d+|\d*\.\d+)$/.test(value)) {
+      /* if (/^(\d+|\d*\.\d+)$/.test(value)) {
         return parseFloat(value);
-      }
+      } */
       // we want boolean to be booleans and not strings. So check the string to
       // see if is in the boolean keywords list and return as appropriate.
       if (value in keywords) {

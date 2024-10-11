@@ -16,6 +16,7 @@ import Divider from '@material-ui/core/Divider';
 
 import { getQueryObject } from 'helpers/queryString';
 import { clearResultsCache } from 'actions/plugins';
+import { metaInfoError } from 'plugins/support';
 
 import ServerInfoCard from './ServerInfoCard';
 import DataSetLogo from './DataSetLogo';
@@ -119,7 +120,7 @@ function Home(props) {
         )}
         {loggedIn && (authLevel.match(/^readwrite|admin$/) || publicState) ? (
           <Grid item sm={12} md={4}>
-            <NeuronOfTheDay dataSet={queryObject.dataset} />
+            <NeuronOfTheDay dataSet={queryObject.dataset} actions={actions} />
           </Grid>
         ) : null}
         {queryObject.dataset && loggedIn && (
@@ -186,6 +187,9 @@ const HomeDispatch = (dispatch) => ({
   actions: {
     clearResultsCache: () => {
       dispatch(clearResultsCache());
+    },
+    metaInfoError: error => {
+      dispatch(metaInfoError(error));
     },
   },
 });

@@ -8,7 +8,7 @@ import {
 } from 'actions/skeleton';
 import { logoutUser } from 'actions/user';
 import { getQueryObject, setQueryString } from 'helpers/queryString';
-import { metaInfoError } from '@neuprint/support';
+import { metaInfoError } from 'plugins/support';
 
 import SkeletonView from '../components/SkeletonView';
 

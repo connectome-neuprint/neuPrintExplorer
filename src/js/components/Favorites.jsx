@@ -18,7 +18,7 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
 
-import { TablePaginationActions } from '@neuprint/support';
+import { TablePaginationActions } from 'plugins/support';
 import { apiError } from 'actions/app';
 import { setSearchQueryString, getQueryString } from 'helpers/queryString';
 

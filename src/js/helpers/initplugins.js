@@ -3,14 +3,13 @@
  */
 
 import { initPlugins, initViewPlugins } from 'actions/app';
-import { plugins as viewPlugins } from '@neuprint/views';
 
 // search the plugins directory and load all the files found there.
 const pluginList = [];
-const plugins = require('@neuprint/queries');
+const viewPlugins = {};
 
-const extQueries = require.context('../../../plugins/', true, /.jsx?$/);
-const extViews = require.context('../../../view-plugins/', true, /.jsx?$/);
+const extQueries = require.context('../plugins/query', false, /^(?!.*\.test\.jsx?$)\.\/(.*)\.jsx?$/);
+const extViews = require.context('../plugins/views', true, /.jsx?$/);
 
 // load the external view plugins
 extViews.keys().forEach(key => {
@@ -22,12 +21,6 @@ extViews.keys().forEach(key => {
   }
 });
 
-// load the core query plugins
-Object.keys(plugins)
-  .forEach(key => {
-    pluginList.push(plugins[key]);
-  });
-// load the external query plugins
 extQueries.keys().forEach(key => {
   pluginList.unshift(extQueries(key).default);
 });

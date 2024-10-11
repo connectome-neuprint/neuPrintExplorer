@@ -14,7 +14,7 @@ import Chip from '@material-ui/core/Chip';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 
-import { pickTextColorBasedOnBgColorAdvanced } from '@neuprint/support';
+import { pickTextColorBasedOnBgColorAdvanced } from 'plugins/support';
 
 import { MinSynapseRadius, MaxSynapseRadius } from 'actions/skeleton';
 

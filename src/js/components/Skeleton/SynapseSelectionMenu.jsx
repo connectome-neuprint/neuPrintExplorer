@@ -7,7 +7,7 @@ import SynapseSelection from 'containers/Skeleton/SynapseSelection';
 import ToggleSynapses from 'containers/Skeleton/ToggleSynapses';
 
 const cypherQuery =
-  'MATCH (n :Neuron {bodyId: <BODYID>})-[x :ConnectsTo]-(m) RETURN x.weight AS weight, startnode(x).bodyId AS startId, startnode(x).type AS startType, endnode(x).bodyId AS endBody, endnode(x).type AS endType ORDER BY x.weight DESC';
+  'MATCH (n :Neuron {bodyId: <BODYID>})-[x :ConnectsTo]-(m) RETURN x.weight AS weight, toString(startnode(x).bodyId) AS startId, startnode(x).type AS startType, toString(endnode(x).bodyId) AS endBody, endnode(x).type AS endType ORDER BY x.weight DESC';
 
 export default function SynapseSelectionMenu(props) {
   const { open, bodyId, dataSet, synapseRadius } = props;

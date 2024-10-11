@@ -22,8 +22,5 @@ rules:
         - 0
     "default-param-last":
         - 0
-    "react/forbid-prop-types":
-        - 1
-        - forbid:
-            - 'any'
-            - 'array'
+    "react/forbid-prop-types": off
+    "react/destructuring-assignment": off

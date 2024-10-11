@@ -19,7 +19,7 @@ import {  skeletonClear, skeletonAddBodiesandOpen, skeletonAddandOpen, skeletonR
 import { neuroglancerAddandOpen } from 'actions/neuroglancer';
 import { setFullScreen, clearFullScreen, setSelectedResult, launchNotification } from 'actions/app';
 import { setColumnStatus, initColumnStatus } from 'actions/visibleColumns';
-import { metaInfoError } from '@neuprint/support';
+import { metaInfoError } from 'plugins/support';
 import { pluginResponseError, fetchData } from 'actions/plugins';
 
 import {
@@ -168,10 +168,8 @@ class Result extends React.Component {
       pm: query.parameters,
       visProps: query.visProps
     });
-    history.push({
-      pathname: '/results',
-      search: getQueryString()
-    });
+    const updatedState = { pathname: '/results', search: getQueryString() };
+    history.push(updatedState);
   };
 
   // TODO: fix the download button. - why is it broken?
@@ -343,7 +341,7 @@ class Result extends React.Component {
           // Add an onClose callback, so that we can remove things from the state if needed.
           const onCloseCallback =
              typeof currentPlugin.onCloseCallBack === 'function'
-               ? currentPlugin.onCloseCallBack(combined)
+               ? currentPlugin.onCloseCallBack(combined, actions.metaInfoError)
                : null;
 
           if (combined && combined.code === processingPlugin.details.abbr) {

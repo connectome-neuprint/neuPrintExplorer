@@ -11,7 +11,7 @@ import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import { withStyles } from '@material-ui/core/styles';
 
-import { SunburstFormatter, SkeletonFormatter } from '@neuprint/support';
+import { SunburstFormatter, SkeletonFormatter } from 'plugins/support';
 import { addSearchToQuery } from 'helpers/queryString';
 
 const styles = theme => ({
@@ -21,7 +21,7 @@ const styles = theme => ({
 });
 
 function NeuronOfTheDay(props) {
-  const { dataSet, superROIs, classes } = props;
+  const { dataSet, superROIs, classes, actions } = props;
 
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
@@ -119,6 +119,7 @@ function NeuronOfTheDay(props) {
               bodyId={data.info.bodyid}
               rawData={data.connectivity.data}
               superROIs={superROIs[dataSet]}
+              onError={actions.metaInfoError}
             />
           </CardContent>
         </Card>
@@ -130,7 +131,10 @@ function NeuronOfTheDay(props) {
 NeuronOfTheDay.propTypes = {
   dataSet: PropTypes.string.isRequired,
   superROIs: PropTypes.object.isRequired,
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  actions: PropTypes.shape({
+    metaInfoError: PropTypes.func.isRequired
+  }).isRequired
 };
 
 const NeuronState = state => ({
