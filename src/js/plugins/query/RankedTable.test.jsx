@@ -1,7 +1,9 @@
+import React from 'react'; // React import needed for JSX
+import { render } from '@testing-library/react';
 import { RankedTable } from './RankedTable';
 
 const styles = { formControl: 'formControlClass' };
-const { actions, React, renderer, submit } = global;
+const { actions, submit } = global;
 
 const neoServerSettings = {
   get: () => 'http://example.com'
@@ -45,11 +47,11 @@ describe('RankedTable Plugin', () => {
     expect(RankedTable.details.description).toBeTruthy();
   });
   it('renders correctly', () => {
-    const pluginView = renderer.create(component).toJSON();
-    expect(pluginView).toMatchSnapshot();
+    const { asFragment} = render(component);
+    expect(asFragment()).toMatchSnapshot(); // Snapshot test
   });
   it('renders correctly in public mode', () => {
-    const pluginViewPublic = renderer.create(componentPublic).toJSON();
-    expect(pluginViewPublic).toMatchSnapshot();
+    const { asFragment} = render(componentPublic);
+    expect(asFragment()).toMatchSnapshot(); // Snapshot test
   });
 });

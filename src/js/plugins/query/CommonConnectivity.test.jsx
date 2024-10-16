@@ -1,8 +1,14 @@
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
+// eslint-disable-next-line import/no-unresolved
+import '@testing-library/jest-dom';
 import CommonConnectivity from './CommonConnectivity';
 
+const { actions, submit } = global;
+
 const styles = {};
-const { actions, React, enzyme, renderer, submit } = global;
 
 const neoServerSettings = {
   get: () => 'http://example.com'
@@ -21,16 +27,10 @@ const raw = (
   </MemoryRouter>
 );
 
-function providedRenderedComponent() {
-  const wrapper = enzyme.mount(raw);
-  // get through the styles and router components that wrap the plugin.
-  const rendered = wrapper.children().children();
-  return rendered;
-}
-
 describe('Common Connectivity Plugin', () => {
   beforeEach(() => {
     submit.mockClear();
+    actions.metaInfoError.mockClear();
   });
 
   describe('has required functions', () => {
@@ -43,47 +43,45 @@ describe('Common Connectivity Plugin', () => {
   });
 
   describe('renders correct defaults', () => {
-    const rendered = providedRenderedComponent();
 
     it('should render', () => {
-      const component = renderer.create(raw);
-      const tree = component.toJSON();
-      expect(tree).toMatchSnapshot();
+      const { asFragment } = render(raw);
+      expect(asFragment()).toMatchSnapshot();
     });
 
-    test('bodyIds should be empty', () => {
-      expect(
-        rendered
-          .find('textarea')
-          .at(2)
-          .props().value
-      ).toEqual('');
+    test('bodyIds should be empty', async () => {
+      render(raw);
+      const bodyIds = screen.getByRole('textbox');
+      expect(bodyIds).toHaveValue('');
     });
 
-    test('typeValue should be inputs', () => {
-      const inputType = rendered.find('input[name="type"]').at(0);
-      expect(inputType.props().value).toEqual('input');
-      expect(inputType.props().checked).toBe(true);
+    test('typeValue should be inputs', async () => {
+      render(raw);
+      const inputType = screen.getByRole('radio', { name: 'Inputs' });
+      expect(inputType).toBeChecked();
 
-      const outputType = rendered.find('input[name="type"]').at(1);
-      expect(outputType.props().value).toEqual('output');
-      expect(outputType.props().checked).toBe(false);
+      const outputType = screen.getByRole('radio', { name: 'Outputs' });
+      expect(outputType).not.toBeChecked();
     });
   });
 
   describe('submits correctly', () => {
-    const rendered = providedRenderedComponent();
-    test('submit button pressed', () => {
-      rendered.find('Button').simulate('click');
+    test('submit button pressed', async () => {
+      render(raw);
+      const inputArea = await screen.getByRole('textbox');
+      await userEvent.type( inputArea, '1234' );
+      const submitButton = await screen.getByRole('button', { name: 'Submit' });
+      submitButton.click();
+      expect(actions.metaInfoError).toHaveBeenCalledTimes(2);
       expect(submit).toHaveBeenCalledTimes(1);
     });
 
-    test('enter key pressed in text field', () => {
-      rendered
-        .find('TextField')
-        .at(0)
-        .simulate('keyDown', { keyCode: 13 });
-      expect(submit).toHaveBeenCalledTimes(1);
+    test('enter key pressed in text field', async () => {
+      render(raw);
+      const inputArea = await screen.getByRole('textbox');
+      await userEvent.type( inputArea, '{enter}' );
+      expect(actions.metaInfoError).toHaveBeenCalledTimes(2);
+      expect(submit).toHaveBeenCalledTimes(0);
     });
   });
 });

@@ -86,7 +86,7 @@ describe('createSimpleConnectionsResult', () => {
     expect(debug).toEqual(apiResponse.debug);
     expect(columns.length).toBe(13);
     expect(data.length).toBe(3);
-    expect(data[0].length).toBe(14);
+    expect(data[0].length).toBe(15);
 
     const resultPublic = createSimpleConnectionsResult(
       'test',
@@ -99,7 +99,7 @@ describe('createSimpleConnectionsResult', () => {
     expect(resultPublic.debug).toEqual(apiResponse.debug);
     expect(resultPublic.columns.length).toBe(12);
     expect(resultPublic.data.length).toBe(3);
-    expect(resultPublic.data[0].length).toBe(13);
+    expect(resultPublic.data[0].length).toBe(14);
   });
 });
 

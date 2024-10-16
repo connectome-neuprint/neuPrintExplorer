@@ -12,7 +12,7 @@ import Switch from '@material-ui/core/Switch';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 
-import { ColorLegend } from '@neuprint/miniroiheatmap';
+import { ColorLegend } from 'plugins/MiniRoiHeatMap';
 import NeuronInputField from './shared/NeuronInputField';
 import AdvancedNeuronInput from './shared/AdvancedNeuronInput';
 import BrainRegionPopover from './shared/BrainRegionPopover';

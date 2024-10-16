@@ -18,7 +18,7 @@ import Typography from '@material-ui/core/Typography';
 import Icon from '@material-ui/core/Icon';
 import Switch from '@material-ui/core/Switch';
 
-import ColorBox from '@neuprint/colorbox';
+import ColorBox from 'plugins/ColorBox';
 import NeuronInputField from './shared/NeuronInputField';
 import AdvancedNeuronInput from './shared/AdvancedNeuronInput';
 import HPWeightSlider from './shared/HPWeightSlider';

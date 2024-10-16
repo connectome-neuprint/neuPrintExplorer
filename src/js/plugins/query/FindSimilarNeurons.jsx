@@ -15,7 +15,7 @@ import FormLabel from '@material-ui/core/FormLabel';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 
-import { ColorLegend } from '@neuprint/miniroiheatmap';
+import { ColorLegend } from 'plugins/MiniRoiHeatMap';
 import {
   setColumnIndices,
   createSimpleConnectionQueryObject,
@@ -580,6 +580,9 @@ export class FindSimilarNeurons extends React.Component {
       if (resp.data[0][0]) {
         this.setState({ nBlastMatches: true });
       }
+    })
+    .catch(() => {
+      this.setState({ nBlastMatches: false });
     });
   }
 
@@ -636,7 +639,7 @@ export class FindSimilarNeurons extends React.Component {
           Search By Body ID
         </Button>
         {errorMessage !== '' && (
-          <Typography color="error" className={classes.noBodyError}>
+          <Typography color="error" role="alert" className={classes.noBodyError}>
             {errorMessage}
           </Typography>
         )}

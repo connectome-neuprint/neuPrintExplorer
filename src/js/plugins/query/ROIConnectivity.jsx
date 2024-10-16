@@ -9,7 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import InputLabel from '@material-ui/core/InputLabel';
 import { withStyles } from '@material-ui/core/styles';
 
-import ColorBox from '@neuprint/colorbox';
+import ColorBox from 'plugins/ColorBox';
 
 import BrainRegionInput from './shared/BrainRegionInput';
 

@@ -1,8 +1,8 @@
 import React from 'react';
 // eslint-disable-next-line import/no-unresolved
 import * as math from 'mathjs';
-import NeuronRoiHeatMap, { ColorLegend } from '@neuprint/miniroiheatmap';
-import NeuronRoiBarGraph, { MiniMitoBarGraph, MiniMitoByTypeBarGraph } from '@neuprint/miniroibargraph';
+import NeuronRoiHeatMap, { ColorLegend } from 'plugins/MiniRoiHeatMap';
+import NeuronRoiBarGraph, { MiniMitoBarGraph, MiniMitoByTypeBarGraph } from 'plugins/MiniRoiBarGraph';
 import { pluginName, pluginAbbrev } from './SimpleConnectionsConstants';
 import BodyId from '../visualization/BodyId';
 

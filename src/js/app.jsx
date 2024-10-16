@@ -6,13 +6,12 @@ import thunk from 'redux-thunk';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 import { CookiesProvider } from 'react-cookie';
+import { createRoot } from 'react-dom/client';
 
 import Master from './components/Master';
 import { setAppDb } from './actions/app';
 import AppReducers from './reducers';
 import loadPlugins from './helpers/initplugins';
-
-const ReactDOM = require('react-dom');
 
 // set theme colors
 const theme = createTheme({
@@ -79,7 +78,9 @@ if (process.env.NODE_ENV === 'development') {
  * Load interface into a DIV anchored by analyzer.
  */
 function loadInterface() {
-  ReactDOM.render(
+  const container = document.getElementById('analyzer');
+  const root = createRoot(container);
+  root.render(
     <>
       <CssBaseline />
       <CookiesProvider>
@@ -89,8 +90,7 @@ function loadInterface() {
           </Provider>
         </ThemeProvider>
       </CookiesProvider>
-    </>,
-    document.getElementById('analyzer')
+    </>
   );
 }
 

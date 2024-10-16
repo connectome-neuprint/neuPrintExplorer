@@ -1,6 +1,6 @@
 import React from 'react';
-import { RoiHeatMap, HeatMapLabels } from '@neuprint/miniroiheatmap';
-import { MiniROIBarGraph} from '@neuprint/miniroibargraph';
+import { RoiHeatMap, HeatMapLabels } from 'plugins/MiniRoiHeatMap';
+import { MiniROIBarGraph} from 'plugins/MiniRoiBarGraph';
 
 function desc(a, b, orderBy) {
   let aVal = a[orderBy];

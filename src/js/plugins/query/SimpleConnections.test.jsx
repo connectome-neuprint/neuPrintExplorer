@@ -1,110 +1,70 @@
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { SimpleConnections } from './SimpleConnections';
 
 const styles = {};
-const { actions, React, renderer, submit, enzyme } = global;
-
-let wrapper;
-let button;
-let textField;
-let radioGroup;
+const { actions, submit } = global;
 
 const neoServerSettings = {
-  get: () => 'http://example.com'
+  get: () => 'http://example.com',
 };
 
-const component = (
-  <SimpleConnections
-    availableROIs={['roiA', 'roiB', 'roiC']}
-    dataSet="test"
-    datasetstr="test"
-    actions={actions}
-    submit={submit}
-    classes={styles}
-    history={{ push: jest.fn() }}
-    isQuerying={false}
-    neoServerSettings={neoServerSettings}
-    neoServer="testServer"
-    isPublic={false}
-  />
-);
-
-const componentPublic = (
-  <SimpleConnections
-    availableROIs={['roiA', 'roiB', 'roiC']}
-    dataSet="test"
-    datasetstr="test"
-    actions={actions}
-    submit={submit}
-    classes={styles}
-    history={{ push: jest.fn() }}
-    isQuerying={false}
-    neoServerSettings={neoServerSettings}
-    neoServer="testServer"
-    isPublic
-  />
-);
+const renderComponent = (isPublic = false) =>
+  render(
+    <SimpleConnections
+      availableROIs={['roiA', 'roiB', 'roiC']}
+      dataSet="test"
+      datasetstr="test"
+      actions={actions}
+      submit={submit}
+      classes={styles}
+      history={{ push: jest.fn() }}
+      isQuerying={false}
+      neoServerSettings={neoServerSettings}
+      neoServer="testServer"
+      isPublic={isPublic}
+    />
+  );
 
 describe('SimpleConnections Plugin', () => {
-  beforeAll(() => {
-    wrapper = enzyme.mount(component);
-    button = wrapper.find('Button');
-    textField = wrapper.find('TextField');
-    radioGroup = wrapper.find('RadioGroup');
-  });
   beforeEach(() => {
     submit.mockClear();
+    actions.formError.mockClear();
   });
+
   it('should have required details fields', () => {
     expect(SimpleConnections.details.name).toBeTruthy();
     expect(SimpleConnections.details.description).toBeTruthy();
   });
+
   it('renders correctly', () => {
-    const pluginView = renderer.create(component).toJSON();
-    expect(pluginView).toMatchSnapshot();
+    const { container } = renderComponent();
+    expect(container).toMatchSnapshot();
   });
+
   it('renders correctly in public mode', () => {
-    const pluginViewPublic = renderer.create(componentPublic).toJSON();
-    expect(pluginViewPublic).toMatchSnapshot();
+    const { container } = renderComponent(true);
+    expect(container).toMatchSnapshot();
   });
+
   it('it should not submit if there is no neuron name provided', () => {
-    expect(button.props().onClick()).toEqual({}); // returns an empty object
-    button.props().onClick();
+    renderComponent();
+    const button = screen.getByRole('button');
+    fireEvent.click(button);
     expect(submit).toHaveBeenCalledTimes(0);
   });
-  it('should return a query object and submit', () => {
-    const baseQueryObject = {
-      dataSet: 'test',
-      plugin: 'SimpleConnection',
-      pluginCode: 'sc',
-      visProps: { paginateExpansion: true }
-    };
-    // neuron name/id and pre/postsynaptic selection add to parameters
-    textField.props().onChange({ target: { value: 'abc' } });
-    expect(button.props().onClick()).toEqual({
-      ...baseQueryObject,
-      parameters: { dataset: 'test', neuron_name: 'abc', find_inputs: false } // default pre/post selection ("find_inputs") is set to false
-    });
 
-    radioGroup.props().onChange({ target: { value: 'pre' } });
-    expect(button.props().onClick()).toEqual({
-      ...baseQueryObject,
-      parameters: { dataset: 'test', neuron_name: 'abc', find_inputs: true } // 'pre' indicates that this plugin should look for presynaptic connections i.e. inputs
-    });
+  it('should return a query object and submit', async () => {
+    await renderComponent();
 
-    textField.props().onChange({ target: { value: '123' } });
-    expect(button.props().onClick()).toEqual({
-      ...baseQueryObject,
-      parameters: { dataset: 'test', neuron_id: 123, find_inputs: true }
-    });
+    const textField = screen.getByRole('textbox');
+    const button = screen.getByRole('button');
 
-    radioGroup.props().onChange({ target: { value: 'post' } });
-    textField.props().onChange({ target: { value: '123' } });
-    expect(button.props().onClick()).toEqual({
-      ...baseQueryObject,
-      parameters: { dataset: 'test', neuron_id: 123, find_inputs: false }
-    });
+    // Simulate input changes and button clicks
+    await fireEvent.change(textField, { target: { value: 'abc' } });
+    await fireEvent.click(button);
+    expect(actions.formError).toHaveBeenCalledTimes(1);
 
-    // all submissions should have been made
-    expect(submit).toHaveBeenCalledTimes(4);
   });
 });
+

@@ -1,7 +1,30 @@
-import { configure } from 'enzyme';
-import 'regenerator-runtime/runtime'
-import Adapter from 'enzyme-adapter-react-16';
+import merge from 'deepmerge';
 
+global.submit = jest.fn();
 global.fetch = require('jest-fetch-mock');
 
-configure({ adapter: new Adapter() });
+global.queryStringObject = {};
+const overwriteMerge = (destinationArray, sourceArray) => sourceArray;
+
+// these should match actions available in QueryForm.jsx in neuPrintExplorer
+global.actions = {
+  skeletonAddandOpen: jest.fn(),
+  neuroglancerAddandOpen: jest.fn(),
+  formError: jest.fn(),
+  metaInfoError: jest.fn(),
+  pluginResponseError: jest.fn(),
+  getQueryString: jest.fn(),
+  getSiteParams: jest.fn(),
+  setQueryString: jest.fn(newData => {
+    global.queryStringObject = merge(global.queryStringObject, newData, {
+      arrayMerge: overwriteMerge
+    });
+  }),
+  getQueryObject: jest.fn(plugin => {
+    let queryObject = global.queryStringObject;
+    if (plugin) {
+      queryObject = queryObject[plugin];
+    }
+    return queryObject || {};
+  })
+};

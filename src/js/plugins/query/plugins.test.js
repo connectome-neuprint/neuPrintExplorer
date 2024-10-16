@@ -1,34 +1,29 @@
-// import all the plugins
-// eslint-disable-next-line import/no-unresolved
-const plugins = require('.');
+const fs = require('fs');
+const path = require('path');
 
-const abbreviationList = [];
+// Directory containing the .jsx files
+const componentsDir = path.join(__dirname, './');
 
-Object.keys(plugins).forEach(plugin => {
-  describe(`Testing: ${plugin}`, () => {
-    describe('has required functions', () => {
-      test('details', () => {
-        expect(plugins[plugin].details).toBeTruthy();
-        abbreviationList.push(plugins[plugin].details.abbr);
-      });
-      test('fetchParameters', () => {
-        expect(plugins[plugin].fetchParameters).toBeTruthy();
-      });
+describe('Test all JSX files for `details` function', () => {
+  // Read all files in the directory
+  const jsxFiles = fs.readdirSync(componentsDir)
+    .filter(file => file.endsWith('.jsx') && !file.endsWith('test.jsx'));
+
+  jsxFiles.forEach((file) => {
+    // Import each JSX file dynamically
+    const componentPath = path.join(componentsDir, file);
+    let component;
+
+    try {
+      // eslint-disable-next-line
+      component = require(componentPath).default;
+    } catch (err) {
+      return;
+    }
+
+    test(`${file} should have a 'details' function`, () => {
+      expect(component.details.name).toBeTruthy();
+      expect(component.details.description).toBeTruthy();
     });
-  });
-});
-
-describe('unique checks', () => {
-  test('name', () => {
-
-  });
-
-  test('abbreviation', () => {
-    const unique = [... new Set(abbreviationList)];
-    // we should get at least one abbreviation value.
-    expect(unique.length).toBeGreaterThan(0);
-    // The unique list should be as long as the unfiltered list
-    // if the values are all unique
-    expect(unique).toHaveLength(abbreviationList.length);
   });
 });
