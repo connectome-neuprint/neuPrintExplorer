@@ -76,8 +76,11 @@ export default function neuroglancerReducer(state = neuroglancerState, action) {
         qr: current
       };
 
-      if(ftab) {
-        newQuery.ftab = ftab;
+      if (ftab) {
+        const useNeuroglancer = JSON.parse(localStorage.getItem('pin_neuroglancer') || true);
+        if (useNeuroglancer) {
+          newQuery.ftab = ftab;
+        }
       }
 
       setQueryString(newQuery);

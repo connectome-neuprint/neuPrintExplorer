@@ -5,11 +5,22 @@ import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Avatar from '@material-ui/core/Avatar';
+import Switch from '@material-ui/core/Switch';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { withStyles } from '@material-ui/core/styles';
 
 function Account(props) {
   const { user, classes } = props;
   const [imgAvatar, setImageAvatar] = useState(true);
+
+  const pinnedNeuroglancer = JSON.parse(localStorage.getItem('pin_neuroglancer') || true);
+  const [useNeuroglancer, setUseNeuroglancer] = useState(pinnedNeuroglancer);
+
+  const handleSwitchChange = event => {
+    setUseNeuroglancer(event.target.checked);
+    localStorage.setItem('pin_neuroglancer', event.target.checked);
+    // window.location.reload();
+  }
 
   const avatar = imgAvatar ?  (
         <Avatar
@@ -37,6 +48,18 @@ function Account(props) {
         <Typography>Auth Token:</Typography>
         {user.get('token')}
       </Paper>
+      {/* a switch to toggle the value of the pin_neuroglancer key in local storage */}
+      <FormControlLabel
+        control={
+          <Switch
+            checked={useNeuroglancer}
+            onChange={handleSwitchChange}
+            value="useNeuroglancer"
+            color="primary"
+          />
+        }
+        label="Use Neuroglancer when displaying skeletons via bodyIds"
+      />
     </div>
   );
 }

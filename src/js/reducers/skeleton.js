@@ -72,9 +72,12 @@ function addBodiesToSkeleton(bodies, dataSet, tabIndex, options) {
     qr: current
   };
 
-  /* if (ftab) {
-    newQuery.ftab = ftab;
-  } */
+  if (ftab) {
+    const useNeuroglancer = JSON.parse(localStorage.getItem('pin_neuroglancer') || false);
+    if (!useNeuroglancer) {
+      newQuery.ftab = ftab;
+    }
+  }
 
   // set the colors if provided
   const db = new PouchDB('neuprint_compartments');
