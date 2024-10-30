@@ -217,7 +217,7 @@ function ResultsTopBar({
             ''
           )}
         </Typography>
-        {width > 550 ? (
+        {width > 570 ? (
           <>
             <Tooltip title="Show Cypher Query">
               <IconButton
@@ -297,6 +297,17 @@ function ResultsTopBar({
                 onClick={() => setQueryString({ rt: 'full' })}
               >
                 <Icon style={{ fontSize: 18 }}>fullscreen</Icon>
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Pin to side">
+              <IconButton
+                className={classes.button}
+                aria-label="Pin to side"
+                onClick={() => {
+                  setQueryString({ ftab: index });
+                }}
+              >
+                <Icon style={{ fontSize: 18 }}>push_pin</Icon>
               </IconButton>
             </Tooltip>
 
