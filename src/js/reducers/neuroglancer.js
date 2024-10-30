@@ -28,6 +28,7 @@ export default function neuroglancerReducer(state = neuroglancerState, action) {
       // need to find the index of the tab we are going to update / replace.
       let selectedIndex = -1;
       let selected = null;
+      let ftab = null;
 
       // find existing neuroglancer tab
       current.forEach((tab, index) => {
@@ -46,12 +47,9 @@ export default function neuroglancerReducer(state = neuroglancerState, action) {
         bodyIds.push(action.id);
         selected.pm.bodyIds = bodyIds.join(',');
         current[selectedIndex] = selected;
-        // the SetQueryString function is turned off so that it doesn't immediately
-        // shift the user to the neuroglancer tab. This can be turned back on if
-        // the desired behavior changes.
-        /* setQueryString({
-          tab: selectedIndex,
-        }); */
+        if (!action.tabIndex) {
+          ftab = selectedIndex;
+        }
       } else {
         // if none found, then add one to the querystring
         //   push the id into the bodyids list
@@ -65,6 +63,7 @@ export default function neuroglancerReducer(state = neuroglancerState, action) {
             bodyIds: action.id
           }
         });
+        ftab = current.length - 1;
         // the SetQueryString function is turned off so that it doesn't immediately
         // shift the user to the neuroglancer tab. This can be turned back on if
         // the desired behavior changes.
@@ -73,9 +72,15 @@ export default function neuroglancerReducer(state = neuroglancerState, action) {
         }); */
       }
 
-      setQueryString({
+      const newQuery = {
         qr: current
-      });
+      };
+
+      if(ftab) {
+        newQuery.ftab = ftab;
+      }
+
+      setQueryString(newQuery);
 
       return state;
     }
