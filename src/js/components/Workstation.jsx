@@ -109,7 +109,7 @@ export default function Workstation(props) {
     qr: [
       findNeuronsQuery,
       {
-        code: 'sk',
+        code: 'ng',
         ds: dataset || defaultDataset,
         pm: {
           bodyIds,
