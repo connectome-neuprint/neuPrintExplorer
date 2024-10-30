@@ -74,7 +74,7 @@ function addBodiesToSkeleton(bodies, dataSet, tabIndex, options) {
 
   /* if (ftab) {
     newQuery.ftab = ftab;
-  }*/
+  } */
 
   // set the colors if provided
   const db = new PouchDB('neuprint_compartments');

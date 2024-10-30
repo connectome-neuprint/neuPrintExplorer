@@ -163,7 +163,7 @@ class Login extends React.Component {
               onClose={this.closeUser}
             >
               <MenuItem onClick={this.logout}>Logout</MenuItem>
-              <MenuItem component={NavLink} to={{ pathname: '/account' }}>
+              <MenuItem component={NavLink} to={{ pathname: '/account' }} onClick={this.closeUser}>
                 Account
               </MenuItem>
             </Menu>
