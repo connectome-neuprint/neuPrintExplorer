@@ -93,8 +93,8 @@ class NeuroGlancerView extends React.Component {
     }
 
     const basicViewerState = {
-      perspectiveOrientation: [0.1, -0.3, -0.3, 0.8],
-      perspectiveZoom: 95,
+      // perspectiveOrientation: [0.1, -0.3, -0.3, 0.8],
+      // perspectiveZoom: 95,
       navigation: {
         pose: {
           position: {
