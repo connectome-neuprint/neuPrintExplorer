@@ -7,4 +7,5 @@ plugins/*
 view-plugins/*
 neuprint_compartments
 neuprinthttp-config.json
+neuprint-server
 certs/*
