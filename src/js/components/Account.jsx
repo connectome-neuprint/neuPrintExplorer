@@ -13,13 +13,16 @@ function Account(props) {
   const { user, classes } = props;
   const [imgAvatar, setImageAvatar] = useState(true);
 
-  const pinnedNeuroglancer = JSON.parse(localStorage.getItem('pin_neuroglancer') || true);
+  const pinnedNeuroglancer = JSON.parse(localStorage.getItem('use_neuroglancer'));
   const [useNeuroglancer, setUseNeuroglancer] = useState(pinnedNeuroglancer);
 
   const handleSwitchChange = event => {
     setUseNeuroglancer(event.target.checked);
-    localStorage.setItem('pin_neuroglancer', event.target.checked);
-    // window.location.reload();
+    if (event.target.checked) { // if the switch is on, set the value in local storage
+      localStorage.setItem('use_neuroglancer', true);
+    } else {
+      localStorage.removeItem('use_neuroglancer');
+    }
   }
 
   const avatar = imgAvatar ?  (
@@ -58,7 +61,7 @@ function Account(props) {
             color="primary"
           />
         }
-        label="Use Neuroglancer when displaying skeletons via bodyIds"
+        label="Use Neuroglancer as the default 3D viewer, instead of the skeleton viewer"
       />
     </div>
   );

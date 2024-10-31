@@ -73,7 +73,8 @@ function addBodiesToSkeleton(bodies, dataSet, tabIndex, options) {
   };
 
   if (ftab) {
-    const useNeuroglancer = JSON.parse(localStorage.getItem('pin_neuroglancer') || false);
+    const useNeuroglancer = JSON.parse(localStorage.getItem('use_neuroglancer'));
+    // TODO: reverse this condition if we want to use neuroglancer by default
     if (!useNeuroglancer) {
       newQuery.ftab = ftab;
     }
