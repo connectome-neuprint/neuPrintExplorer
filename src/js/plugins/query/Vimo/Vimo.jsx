@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from "prop-types";
 
-import { Sketch, NeuprintExecutor } from '@vimo-public/vimo-sketches';
+import { Sketch, NeuprintExecutor } from '@neuprint/vimo-sketches';
 
 export default function Vimo({
   isQuerying,

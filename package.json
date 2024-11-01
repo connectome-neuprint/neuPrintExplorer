@@ -66,7 +66,7 @@
     "@neuprint/react-heatmap": "^0.5.1",
     "@neuprint/react-skeleton": "^0.1.0",
     "@neuprint/react-sunburst": "^1.2.2",
-    "@vimo-public/vimo-sketches": "^0.2.6",
+    "@neuprint/vimo-sketches": "^0.2.8",
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "chroma-js": "^2.6.0",
     "classnames": "^2.3.1",
