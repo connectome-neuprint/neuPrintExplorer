@@ -15,8 +15,8 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Icon from '@material-ui/core/Icon';
 
-import {  skeletonClear, skeletonAddBodiesandOpen, skeletonAddandOpen, skeletonRemove, DefaultSynapseRadius } from 'actions/skeleton';
-import { neuroglancerAddandOpen } from 'actions/neuroglancer';
+import { skeletonClear, skeletonAddBodiesandOpen, skeletonAddandOpen, skeletonRemove, DefaultSynapseRadius } from 'actions/skeleton';
+import { addAndOpen3DViewer } from 'actions/3DViewer';
 import { setFullScreen, clearFullScreen, setSelectedResult, launchNotification } from 'actions/app';
 import { setColumnStatus, initColumnStatus } from 'actions/visibleColumns';
 import { metaInfoError } from 'plugins/support';
@@ -562,8 +562,8 @@ const ResultDispatch = dispatch => ({
     skeletonRemove: (id, dataSet, tabIndex) => {
       dispatch(skeletonRemove(id, dataSet, tabIndex));
     },
-    neuroglancerAddandOpen: (id, dataSet) => {
-      dispatch(neuroglancerAddandOpen(id, dataSet));
+    addAndOpen3D: (id, dataSet, tabIndex, color) => {
+      dispatch(addAndOpen3DViewer(id, dataSet, tabIndex, color));
     },
     getQueryObject: (id, empty) => getQueryObject(id, empty),
     setQueryString: data => setQueryString(data),

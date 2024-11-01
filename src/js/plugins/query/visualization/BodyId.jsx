@@ -46,9 +46,8 @@ const styles = theme => ({
  * @param {string} dataset
  * @param {Object} actions
  */
-function showSkeleton(id, dataset, actions, color) {
-  actions.neuroglancerAddandOpen(id, dataset);
-  actions.skeletonAddandOpen(id, dataset, null, color);
+function show3DView(id, dataset, actions, color) {
+  actions.addAndOpen3D(id, dataset, null, color);
 }
 
 function BodyId(props) {
@@ -60,10 +59,10 @@ function BodyId(props) {
       <div className={classes.container}>
         <SelectAndCopyText text={children} actions={actions} />
         {options.skeleton ? (
-        <Tooltip title="Skeleton View">
+        <Tooltip title="3D View">
           <Icon
             className={classes.icon}
-            onClick={() => showSkeleton(children, dataSet, actions, options.color)}
+            onClick={() => show3DView(children, dataSet, actions, options.color)}
             fontSize="inherit"
           >
             visibility

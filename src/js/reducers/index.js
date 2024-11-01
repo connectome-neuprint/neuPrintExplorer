@@ -9,12 +9,11 @@ import query from './query';
 import neo4jsettings from './neo4jsettings';
 import results from './results';
 import user from './user';
-import skeleton from './skeleton';
-import neuroglancer from './neuroglancer';
 import errors from './errors';
 import notification from './notification';
 import visibleColumns from './visibleColumns';
 import vimoServer from './vimoserver';
+import skeleton from './3Dviewer';
 
 export default combineReducers({
   skeleton,
@@ -25,7 +24,6 @@ export default combineReducers({
   visibleColumns,
   user,
   errors,
-  neuroglancer,
   notification,
   vimoServer,
 });
