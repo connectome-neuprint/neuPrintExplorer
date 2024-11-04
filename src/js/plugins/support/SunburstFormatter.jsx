@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Sunburst from '@neuprint/react-sunburst';
 
-function processRaw(bodyId, rawData, superROIs, onError) {
+function processRaw(bodyId, rawData, superROIs) {
   const data = {
     name: bodyId,
     children: [
@@ -54,7 +54,8 @@ function processRaw(bodyId, rawData, superROIs, onError) {
           if (roiData.post) {
             typeLevel.value += roiData.post;
           } else {
-            onError(`roiData.post missing for bodyid ${targetId}`);
+            // eslint-disable-next-line no-console
+            console.error(`roiData.post missing for bodyid ${targetId}`);
           }
         });
     }
