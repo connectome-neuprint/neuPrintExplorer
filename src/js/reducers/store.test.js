@@ -8,7 +8,6 @@ import neo4jsettings from './neo4jsettings';
 import results from './results';
 import user from './user';
 import skeleton from './skeleton';
-import neuroglancer from './neuroglancer';
 import C from './constants';
 
 let store;
@@ -43,9 +42,6 @@ describe('store Creation', () => {
   });
   it('initial store errors state is correct', () => {
     expect(store.getState().errors).toEqual(errors(undefined, {}));
-  });
-  it('initial store neuroglancer state is correct', () => {
-    expect(store.getState().neuroglancer).toEqual(neuroglancer(undefined, {}));
   });
   // check store actions
   // skeleton

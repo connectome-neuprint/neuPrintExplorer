@@ -74,6 +74,7 @@ export default function NeuroGlancerView({ query }) {
         if (layer.segments) {
           layer.segments.push(id);
         } else {
+          // eslint-disable-next-line no-param-reassign
           layer.segments = [id];
         }
       }

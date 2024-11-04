@@ -1,6 +1,5 @@
 import Immutable from 'immutable';
 import { setQueryString, getQueryObject } from 'helpers/queryString';
-import PouchDB from 'pouchdb';
 
 import C from './constants';
 

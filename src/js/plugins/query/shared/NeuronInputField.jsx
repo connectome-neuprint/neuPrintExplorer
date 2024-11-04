@@ -30,12 +30,14 @@ function truncateString(str, n, useWordBoundary) {
   return `${subString}&hellip;`;
 }
 
-const formatOptionLabel = ({ label, additionalInfo }) => (
-  <div style={{ display: 'flex' }}>
-    <div>{label}</div>
-    <div style={{ marginLeft: '10px', color: '#ccc' }}>{additionalInfo}</div>
-  </div>
-);
+function formatOptionLabel({ label, additionalInfo }) {
+  return (
+    <div style={{ display: 'flex' }}>
+      <div>{label}</div>
+      <div style={{ marginLeft: '10px', color: '#ccc' }}>{additionalInfo}</div>
+    </div>
+  );
+}
 
 formatOptionLabel.propTypes = {
   label: PropTypes.string.isRequired,

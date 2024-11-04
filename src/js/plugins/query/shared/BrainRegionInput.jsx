@@ -19,12 +19,14 @@ const styles = theme => ({
   }
 });
 
-const formatOptionLabel = ({ label, additionalInfo }) => (
-  <div style={{ display: 'flex' }}>
-    <div>{label}</div>
-    <div style={{ marginLeft: '10px', fontSize: '0.8em' }}>{additionalInfo}</div>
-  </div>
-);
+function formatOptionLabel({ label, additionalInfo }){
+  return (
+    <div style={{ display: 'flex' }}>
+      <div>{label}</div>
+      <div style={{ marginLeft: '10px', fontSize: '0.8em' }}>{additionalInfo}</div>
+    </div>
+  );
+}
 
 formatOptionLabel.propTypes = {
   label: PropTypes.string.isRequired,
