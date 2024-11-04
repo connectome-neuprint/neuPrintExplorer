@@ -253,7 +253,7 @@ class SkeletonView extends React.Component {
 
       // sharkViewer must rerender if the synapses-on-top toggle is all that changed
       if (query.sot !== prevProps.query.sot) {
-        sharkViewer.setValues({ onTop: query.sot });
+        sharkViewer.setValues({ onTop: parseInt(query.sot, 10) });
         sharkViewer.render();
       }
 
@@ -321,7 +321,7 @@ class SkeletonView extends React.Component {
       // the axis lines are the first child element added to the scene
       // so we can toggle the visibility of them this way.
       sharkViewer.axesScene.children.forEach(child => {
-        child.visible = !query.ax // eslint-disable-line no-param-reassign
+        child.visible = !parseInt(query.ax, 10) // eslint-disable-line no-param-reassign
         return null;
       });
 
@@ -782,7 +782,7 @@ class SkeletonView extends React.Component {
     ids.forEach(id => {
       const body = bodies.get(id);
 
-      const swc = query.sp
+      const swc = parseInt(query.sp, 10)
         ? /* The JSON.parse(JSON.stringify(object)) call in the following code is needed to
            * create a deep clone of the object, referenced here as 'Native deep cloning':
            * https://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-deep-clone-an-object-in-javascript
@@ -892,9 +892,9 @@ class SkeletonView extends React.Component {
       />
     );
 
-    const spindleChecked = Boolean(query.sp);
-    const AxisChecked = !query.ax;
-    const synapsesOnTopChecked = Boolean(query.sot);
+    const spindleChecked = Boolean(parseInt(query.sp, 10));
+    const AxisChecked = !parseInt(query.ax, 10);
+    const synapsesOnTopChecked = Boolean(parseInt(query.sot, 10));
 
     // the synapses map never loses keys, so there are no synapses shown when
     // each of those keys is associated with nothing

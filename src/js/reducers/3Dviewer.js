@@ -4,13 +4,7 @@ import { setQueryString, getQueryObject } from 'helpers/queryString';
 import C from './constants';
 
 const threeDviewerState = Immutable.Map({
-  // display: false,
-  // neurons: Immutable.Map({}),
-  // compartments: Immutable.Map({}),
   synapses: Immutable.Map({}),
-  // loading: false,
-  // error: null,
-  // cameraPosition: null,
 });
 
 function addNeuronglancerToQuery(action, priorQuery) {
@@ -266,13 +260,15 @@ export default function threeDviewerReducer(state = threeDviewerState, action) {
     }
     case C.SKELETON_SPINDLE_TOGGLE: {
       // grab the tab data
-      const current = getQueryObject('qr', []);
+      const query = getQueryObject();
+      const current = query.qr || [];
+      // const current = getQueryObject('qr', []);
       // need to find the index of the tab we are going to update / replace.
       const selected = current[action.tabIndex];
 
       if (selected) {
         // get current spindle display state
-        const spindleState = selected.sp || 0;
+        const spindleState = parseInt(selected.sp, 10) || 0;
         selected.sp = !spindleState ? 1 : 0;
         current[action.tabIndex] = selected;
         setQueryString({
@@ -289,7 +285,7 @@ export default function threeDviewerReducer(state = threeDviewerState, action) {
 
       if (selected) {
         // get current spindle display state
-        const spindleState = selected.ax || 0;
+        const spindleState = parseInt(selected.ax, 10) || 0;
         selected.ax = !spindleState ? 1 : 0;
         current[action.tabIndex] = selected;
         setQueryString({
@@ -313,7 +309,7 @@ export default function threeDviewerReducer(state = threeDviewerState, action) {
 
       if (selected) {
         // get current display state
-        const synapsesOnTopState = selected.sot || 0;
+        const synapsesOnTopState = parseInt(selected.sot, 10) || 0;
         selected.sot = !synapsesOnTopState ? 1 : 0;
         current[action.tabIndex] = selected;
         setQueryString({
