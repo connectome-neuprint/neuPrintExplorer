@@ -17,7 +17,7 @@ import Icon from '@material-ui/core/Icon';
 
 import { skeletonClear, skeletonAddBodiesandOpen, skeletonAddandOpen, skeletonRemove, DefaultSynapseRadius } from 'actions/skeleton';
 import { addAndOpen3DViewer } from 'actions/3DViewer';
-import { setFullScreen, clearFullScreen, setSelectedResult, launchNotification } from 'actions/app';
+import { addAndOpenQuery, setFullScreen, clearFullScreen, setSelectedResult, launchNotification } from 'actions/app';
 import { setColumnStatus, initColumnStatus } from 'actions/visibleColumns';
 import { metaInfoError } from 'plugins/support';
 import { pluginResponseError, fetchData } from 'actions/plugins';
@@ -564,6 +564,9 @@ const ResultDispatch = dispatch => ({
     },
     addAndOpen3D: (id, dataSet, tabIndex, color) => {
       dispatch(addAndOpen3DViewer(id, dataSet, tabIndex, color));
+    },
+    addFindNeuronsQuery: (id, dataSet) => {
+      dispatch(addAndOpenQuery('FindNeurons', { id, dataset: dataSet }));
     },
     getQueryObject: (id, empty) => getQueryObject(id, empty),
     setQueryString: data => setQueryString(data),

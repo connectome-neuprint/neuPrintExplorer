@@ -8,13 +8,13 @@ function processRaw(bodyId, rawData, superROIs) {
     children: [
       {
         name: 'upstream',
-        children: []
+        children: [],
       },
-      { name: 'downstream', children: [] }
-    ]
+      { name: 'downstream', children: [] },
+    ],
   };
 
-  rawData.forEach(row => {
+  rawData.forEach((row) => {
     const [targetId, type = 'none', , roisJSON, status, direction] = row;
     // check that the status is traced
     if (/(traced|anchor|leave)/i.test(status)) {
@@ -31,16 +31,16 @@ function processRaw(bodyId, rawData, superROIs) {
       const rois = JSON.parse(roisJSON);
       // filter to show only super ROIs
       Object.entries(rois)
-        .filter(entry => superROIs.includes(entry[0]))
+        .filter((entry) => superROIs.includes(entry[0]))
         .forEach(([roiLabel, roiData]) => {
-          let roiLevel = topLevel.children.find(el => el.name === roiLabel);
+          let roiLevel = topLevel.children.find((el) => el.name === roiLabel);
           if (!roiLevel) {
             const roiObject = { name: roiLabel, children: [] };
             topLevel.children.push(roiObject);
             roiLevel = roiObject;
           }
 
-          let typeLevel = roiLevel.children.find(el => el.name === type);
+          let typeLevel = roiLevel.children.find((el) => el.name === type);
           if (!typeLevel) {
             const typeObject = { name: type, value: 0 };
             roiLevel.children.push(typeObject);
@@ -64,13 +64,29 @@ function processRaw(bodyId, rawData, superROIs) {
 }
 
 export default function SunburstFormatter(props) {
-  const { colors, bodyId, rawData, superROIs, onError } = props;
+  const { colors, bodyId, rawData, superROIs, onError, actions, dataSet } = props;
 
   const data = processRaw(bodyId, rawData, superROIs, onError);
 
+  // callback function that takes the name of the node from node.name
+  // and generates a new FindNeurons query, using that name as input. The
+  // query should then be opened in a new tab.
+  const onNodeClick = (node) => {
+    console.log('Node clicked:', node);
+    if (actions.addFindNeuronsQuery && node.name && node.name !== "") {
+      actions.addFindNeuronsQuery(node.name, dataSet);
+    }
+  }
+
+
   return (
-    <div style={{ 'textAlign': 'center' , 'width': '100%', 'height': '100%'}}>
-      <Sunburst data={data} colors={colors} preserveTopLevelOrder />
+    <div style={{ textAlign: 'center', width: '100%', height: '100%' }}>
+      <Sunburst
+        data={data}
+        colors={colors}
+        preserveTopLevelOrder
+        onNodeClick={onNodeClick}
+      />
       <p>Connections are filtered to only those between traced neurons</p>
     </div>
   );
@@ -81,10 +97,13 @@ SunburstFormatter.propTypes = {
   rawData: PropTypes.arrayOf(PropTypes.array).isRequired,
   bodyId: PropTypes.number.isRequired,
   superROIs: PropTypes.arrayOf(PropTypes.string).isRequired,
-  onError: PropTypes.func.isRequired
+  onError: PropTypes.func.isRequired,
+  actions: PropTypes.object,
+  dataSet: PropTypes.string.isRequired,
 };
 
 SunburstFormatter.defaultProps = {
   // colors: ['#e2b72f', '#396a9f']
-  colors: ['#396a9f', '#e2b72f']
+  colors: ['#396a9f', '#e2b72f'],
+  actions: {},
 };

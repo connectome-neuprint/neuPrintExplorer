@@ -216,7 +216,7 @@ export class FindNeurons extends React.Component {
         `MATCH (m:Meta) WITH m.superLevelRois AS rois MATCH (neuron :${neuronSegment}) ` +
         `${whereConditions} ` +
         `${directedRoiClause} ` +
-        `RETURN neuron{.*, bodyId: toString(neuron.bodyId)} AS neuron, rois ` +
+        `RETURN neuron, rois ` +
         `ORDER BY neuron.bodyId`
     );
 

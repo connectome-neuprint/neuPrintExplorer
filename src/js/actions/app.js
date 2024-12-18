@@ -81,3 +81,11 @@ export function setSelectedResult(index) {
     index
   };
 }
+
+export function addAndOpenQuery(query, data) {
+  return {
+    type: C.ADD_AND_OPEN_QUERY,
+    query,
+    data
+  };
+}

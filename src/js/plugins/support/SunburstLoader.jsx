@@ -7,7 +7,7 @@ class SunburstLoader extends React.Component {
     super(props);
     this.state = {
       rawData: null,
-      superROIs: null
+      superROIs: null,
     };
   }
 
@@ -30,30 +30,30 @@ class SunburstLoader extends React.Component {
 
   fetchConnections() {
     const { bodyId, dataSet, onError } = this.props;
-    const cypher = `MATCH (n :Neuron {bodyId: ${bodyId}})-[x :ConnectsTo]->(m) RETURN toString(m.bodyId) as m.bodyId, m.type, x.weight, x.roiInfo, m.status, 'downstream' as direction UNION MATCH (n :Neuron {bodyId: ${bodyId}})<-[x :ConnectsTo]-(m) RETURN toString(m.bodyId) as m.bodyId, m.type, x.weight, x.roiInfo, m.status, 'upstream' as direction`;
+    const cypher = `MATCH (n :Neuron {bodyId: ${bodyId}})-[x :ConnectsTo]->(m) RETURN m.bodyId, m.type, x.weight, x.roiInfo, m.status, 'downstream' as direction UNION MATCH (n :Neuron {bodyId: ${bodyId}})<-[x :ConnectsTo]-(m) RETURN m.bodyId, m.type, x.weight, x.roiInfo, m.status, 'upstream' as direction`;
 
     const parameters = {
       cypher,
-      dataset: dataSet
+      dataset: dataSet,
     };
 
     const queryUrl = '/api/custom/custom?np_explorer=sunburst_loader';
     const querySettings = {
       headers: {
         'content-type': 'application/json',
-        Accept: 'application/json'
+        Accept: 'application/json',
       },
       body: JSON.stringify(parameters),
       credentials: 'include',
-      method: 'POST'
+      method: 'POST',
     };
 
     fetch(queryUrl, querySettings)
-      .then(result => result.json())
-      .then(resp => {
-        this.setState({ rawData: resp.data});
+      .then((result) => result.json())
+      .then((resp) => {
+        this.setState({ rawData: resp.data });
       })
-      .catch(error => {
+      .catch((error) => {
         onError(error);
       });
   }
@@ -64,36 +64,44 @@ class SunburstLoader extends React.Component {
 
     const parameters = {
       cypher,
-      dataset: dataSet
+      dataset: dataSet,
     };
 
     const queryUrl = '/api/custom/custom?np_explorer=sunburst_loader_rois';
     const querySettings = {
       headers: {
         'content-type': 'application/json',
-        Accept: 'application/json'
+        Accept: 'application/json',
       },
       body: JSON.stringify(parameters),
       credentials: 'include',
-      method: 'POST'
+      method: 'POST',
     };
 
     fetch(queryUrl, querySettings)
-      .then(result => result.json())
-      .then(resp => {
-        this.setState({ superROIs: resp.data[0][0]});
+      .then((result) => result.json())
+      .then((resp) => {
+        this.setState({ superROIs: resp.data[0][0] });
       })
-      .catch(error => {
+      .catch((error) => {
         onError(error);
       });
-
   }
 
   render() {
     const { rawData, superROIs } = this.state;
-    const { bodyId, onError } = this.props;
+    const { bodyId, onError, actions, dataSet } = this.props;
     if (rawData && superROIs) {
-      return <SunburstFormatter bodyId={bodyId} rawData={rawData} superROIs={superROIs} onError={onError} />;
+      return (
+        <SunburstFormatter
+          bodyId={bodyId}
+          rawData={rawData}
+          superROIs={superROIs}
+          onError={onError}
+          actions={actions}
+          dataSet={dataSet}
+        />
+      );
     }
     return <p>Loading</p>;
   }
@@ -102,7 +110,8 @@ class SunburstLoader extends React.Component {
 SunburstLoader.propTypes = {
   bodyId: PropTypes.number.isRequired,
   dataSet: PropTypes.string.isRequired,
-  onError: PropTypes.func.isRequired
+  onError: PropTypes.func.isRequired,
+  actions: PropTypes.object.isRequired,
 };
 
 export default SunburstLoader;

@@ -87,6 +87,7 @@ function BodyId(props) {
             bodyId={children}
             dataSet={dataSet}
             onError={actions.metaInfoError}
+            actions={actions}
         />
         </div>
       </Modal>
