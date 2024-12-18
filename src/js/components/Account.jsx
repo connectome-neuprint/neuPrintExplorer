@@ -13,15 +13,15 @@ function Account(props) {
   const { user, classes } = props;
   const [imgAvatar, setImageAvatar] = useState(true);
 
-  const pinnedNeuroglancer = JSON.parse(localStorage.getItem('use_neuroglancer'));
-  const [useNeuroglancer, setUseNeuroglancer] = useState(pinnedNeuroglancer);
+  const pinnedSkeleton = JSON.parse(localStorage.getItem('use_skeleton'));
+  const [useSkeleton, setUseSkeleton] = useState(pinnedSkeleton);
 
   const handleSwitchChange = event => {
-    setUseNeuroglancer(event.target.checked);
+    setUseSkeleton(event.target.checked);
     if (event.target.checked) { // if the switch is on, set the value in local storage
-      localStorage.setItem('use_neuroglancer', true);
+      localStorage.setItem('use_skeleton', true);
     } else {
-      localStorage.removeItem('use_neuroglancer');
+      localStorage.removeItem('use_skeleton');
     }
   }
 
@@ -51,17 +51,16 @@ function Account(props) {
         <Typography>Auth Token:</Typography>
         {user.get('token')}
       </Paper>
-      {/* a switch to toggle the value of the pin_neuroglancer key in local storage */}
       <FormControlLabel
         control={
           <Switch
-            checked={useNeuroglancer}
+            checked={useSkeleton}
             onChange={handleSwitchChange}
-            value="useNeuroglancer"
+            value="useSkeleton"
             color="primary"
           />
         }
-        label="Use Neuroglancer as the default 3D viewer, instead of the skeleton viewer"
+        label="Restore Skeleton viewer as the default 3D viewer, instead of neuroglancer"
       />
     </div>
   );

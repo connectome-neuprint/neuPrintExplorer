@@ -57,8 +57,8 @@ function addNeuronglancerToQuery(action, priorQuery) {
   };
 
   if (ftab) {
-    const useNeuroglancer = JSON.parse(localStorage.getItem('use_neuroglancer'));
-    if (useNeuroglancer) {
+    const useSkeleton = JSON.parse(localStorage.getItem('use_skeleton'));
+    if (!useSkeleton) {
       newQuery.ftab = ftab;
     }
   }
@@ -123,10 +123,10 @@ function addBodiesToQuery(bodies, dataSet, tabIndex, options, priorQuery) {
   };
 
   if (ftab) {
-    const useNeuroglancer = JSON.parse(localStorage.getItem('use_neuroglancer'));
-    // if use has chosen to use neuroglancer as the default viewer, then don't set the ftab
-    // to the skeleton viewer tab.
-    if (!useNeuroglancer) {
+    const useSkeleton = JSON.parse(localStorage.getItem('use_skeleton'));
+    // if use has chosen to use skeleton as the default viewer, then set
+    // the ftab to the skeleton viewer tab.
+    if (useSkeleton) {
       newQuery.ftab = ftab;
     }
   }

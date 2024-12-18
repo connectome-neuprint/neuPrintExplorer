@@ -77,9 +77,8 @@ export default function neuroglancerReducer(state = neuroglancerState, action) {
       };
 
       if (ftab) {
-        const useNeuroglancer = JSON.parse(localStorage.getItem('use_neuroglancer'));
-        // TODO: reverse this condition if we want to use skeleton viewer by default
-        if (useNeuroglancer) {
+        const useSkeleton = JSON.parse(localStorage.getItem('use_skeleton'));
+        if (!useSkeleton) {
           newQuery.ftab = ftab;
         }
       }
