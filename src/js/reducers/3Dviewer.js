@@ -9,7 +9,7 @@ const threeDviewerState = Immutable.Map({
 
 function addNeuronglancerToQuery(action, priorQuery) {
   // grab the tab data
-  const current = priorQuery.qr || getQueryObject('qr', []);
+  const current = (priorQuery && priorQuery.qr) ? priorQuery.qr : getQueryObject('qr', []);
 
   // need to find the index of the tab we are going to update / replace.
   let selectedIndex = -1;
@@ -67,7 +67,7 @@ function addNeuronglancerToQuery(action, priorQuery) {
 
 function addBodiesToQuery(bodies, dataSet, tabIndex, options, priorQuery) {
   // grab the tab data
-  const current = priorQuery || getQueryObject('qr', []);
+  const current = (priorQuery && priorQuery.qr) ? priorQuery.qr : getQueryObject('qr', []);
 
   // need to find the index of the tab we are going to update / replace.
   let selectedIndex = tabIndex || -1;
@@ -162,12 +162,15 @@ function addBodiesToQuery(bodies, dataSet, tabIndex, options, priorQuery) {
 export default function threeDviewerReducer(state = threeDviewerState, action) {
   switch (action.type) {
     case C.ADD_AND_OPEN_3D_VIEWER: {
-      const newQuery = addBodiesToQuery(
+      const newQuery = addNeuronglancerToQuery(action);
+      // add the skeleton viewer tab to the query string
+      const updateQuery = addBodiesToQuery(
         [{ id: action.id, color: action.color }],
         action.dataSet,
-        action.tabIndex
+        action.tabIndex,
+        undefined,
+        newQuery
       );
-      const updateQuery = addNeuronglancerToQuery(action, newQuery);
       // crappy hack to get the ftab set if it was originally set in
       // the addBodiesToQuery function.
       if (newQuery.ftab) {
