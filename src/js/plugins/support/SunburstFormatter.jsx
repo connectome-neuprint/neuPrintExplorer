@@ -72,7 +72,6 @@ export default function SunburstFormatter(props) {
   // and generates a new FindNeurons query, using that name as input. The
   // query should then be opened in a new tab.
   const onNodeClick = (node) => {
-    console.log('Node clicked:', node);
     if (actions.addFindNeuronsQuery && node.name && node.name !== "") {
       actions.addFindNeuronsQuery(node.name, dataSet);
     }
