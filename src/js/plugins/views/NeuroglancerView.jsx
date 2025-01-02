@@ -5,7 +5,7 @@ import { NgViewerContext } from '../../contexts/NgViewerContext';
 const Neuroglancer = React.lazy(() => import('@janelia-flyem/react-neuroglancer'));
 // const Neuroglancer = React.lazy(() => import('./Neuroglancer'));
 
-function debounce (func, wait, immediate) {
+function debounce(func, wait, immediate) {
   let timeout;
   function debounced(...args) {
     const context = this;
@@ -26,6 +26,19 @@ function debounce (func, wait, immediate) {
   });
 
   return debounced;
+}
+
+const defaultViewerState = {
+  navigation: {
+    pose: {
+      position: {
+        voxelCoordinates: [],
+      },
+    },
+    zoomFactor: 8,
+  },
+  layout: 'xy-3d',
+  layers: [],
 };
 
 export default function NeuroGlancerView({ query }) {
@@ -34,8 +47,11 @@ export default function NeuroGlancerView({ query }) {
   const [loadingError, setLoadingError] = useState();
   const { ngViewerState, setNgViewerState } = useContext(NgViewerContext);
 
+  const { dataset } = query.pm;
+
+  // load the layers for the dataset
   useEffect(() => {
-    fetch(`/api/npexplorer/nglayers/${query.pm.dataset}.json`, {
+    fetch(`/api/npexplorer/nglayers/${dataset}.json`, {
       headers: {
         'content-type': 'application/json',
         Accept: 'application/json',
@@ -45,49 +61,71 @@ export default function NeuroGlancerView({ query }) {
     })
       .then((response) => response.json())
       .then((json) => {
-        //  setLayers(json);
         setNgViewerState((prevState) => {
-          const newState = { ...prevState, ...json };
+          // grab the previous state for the current dataset and merge with the json
+          const prevDatasetState = prevState[dataset] || defaultViewerState;
+          const newDatasetState = { ...prevDatasetState, ...json };
+          const newState = { ...prevState, [dataset]: newDatasetState };
           return newState;
         });
         setLayersLoading(false);
-      }).catch((error) => {
+      })
+      .catch((error) => {
         setLoadingError(error);
       });
-  }, [query.pm.dataset, setNgViewerState]);
+  }, [dataset, setNgViewerState]);
 
+  // add the bodyIds to the layer segments
   useEffect(() => {
-    if (ngViewerState.layers.length > 0) {
+    const datasetState = ngViewerState[dataset] || defaultViewerState;
+    if (datasetState.layers.length > 0) {
       setNgViewerState((prevState) => {
-        const newState = { ...prevState };
+        const newDatasetState = { ...prevState[dataset] };
         // merge the bodyIds into the layer segments array, if the layer name matches the dataset
         // there should be no duplicate ids
-        newState.layers.forEach((layer) => {
-          if (layer.name === query.pm.dataset) {
+        newDatasetState.layers.forEach((layer) => {
+          if (layer.name === dataset) {
             if (layer.segments) {
-              layer.segments = [...new Set([...layer.segments, ...bodyIds])]; // eslint-disable-line no-param-reassign
+              // eslint-disable-next-line no-param-reassign
+              layer.segments = [...new Set([...layer.segments, ...bodyIds])];
             } else {
-              layer.segments = bodyIds; // eslint-disable-line no-param-reassign
+              // eslint-disable-next-line no-param-reassign
+              layer.segments = bodyIds;
             }
           }
         });
+        if (JSON.stringify(newDatasetState) === JSON.stringify(prevState[dataset])) {
+          return prevState;
+        }
+        const newState = { ...prevState, [dataset]: newDatasetState };
         return newState;
       });
     }
-  }, [bodyIds, query.pm.dataset, ngViewerState.layers, setNgViewerState]);
+  }, [bodyIds, dataset, ngViewerState, setNgViewerState]);
 
-  const viewerState = useMemo(() => ({ ...ngViewerState }), [ngViewerState]);
+  const viewerState = useMemo(() => ({ ...ngViewerState[dataset] }), [ngViewerState, dataset]);
 
-  const onViewerStateChanged = useCallback(debounce((state) => { // eslint-disable-line react-hooks/exhaustive-deps
-    setNgViewerState((prevState) => {
-      // if the serialized state is the same as the serialized current
-      // state, don't do anything
-      if (JSON.stringify(state) === JSON.stringify(prevState)) {
-        return prevState;
-      }
-      return state;
-    });
-  }, 1000, false), []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const onViewerStateChanged = useCallback(
+    debounce(
+      (state) => {
+        // eslint-disable-line react-hooks/exhaustive-deps
+        setNgViewerState((prevState) => {
+          // if the serialized state is the same as the serialized current
+          // state, don't do anything
+          const prevDatasetState = prevState[dataset] || defaultViewerState;
+          if (JSON.stringify(state) === JSON.stringify(prevDatasetState)) {
+            return prevState;
+          }
+          const newState = { ...prevState, [dataset]: state };
+          return newState;
+        });
+      },
+      1000,
+      false
+    ),
+    []
+  );
 
   if (loadingError) {
     return <div>{loadingError.message}</div>;
