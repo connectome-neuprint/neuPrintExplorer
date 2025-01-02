@@ -31,7 +31,7 @@ export default function Vimo({
       }));
     }
     updateAttributes();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const processor = async (motifJson, lim) => {
     const query = await ne.json2cypher(motifJson, lim);

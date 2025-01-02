@@ -1,14 +1,38 @@
-import React, { useMemo, useState, useEffect, Suspense } from 'react';
+import React, { useContext, useCallback, useMemo, useState, useEffect, Suspense } from 'react';
 import PropTypes from 'prop-types';
-import Immutable from 'immutable';
+import { NgViewerContext } from '../../contexts/NgViewerContext';
 
 const Neuroglancer = React.lazy(() => import('@janelia-flyem/react-neuroglancer'));
+// const Neuroglancer = React.lazy(() => import('./Neuroglancer'));
+
+function debounce (func, wait, immediate) {
+  let timeout;
+  function debounced(...args) {
+    const context = this;
+    const later = () => {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+    const callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  }
+
+  Object.assign(debounced, {
+    cancel() {
+      clearTimeout(timeout);
+    },
+  });
+
+  return debounced;
+};
 
 export default function NeuroGlancerView({ query }) {
   const bodyIds = useMemo(() => query.pm.bodyIds.toString().split(','), [query.pm.bodyIds]);
-  const [layers, setLayers] = useState();
-  const [coordinates, setCoordinates] = useState();
+  const [layersLoading, setLayersLoading] = useState(true);
   const [loadingError, setLoadingError] = useState();
+  const { ngViewerState, setNgViewerState } = useContext(NgViewerContext);
 
   useEffect(() => {
     fetch(`/api/npexplorer/nglayers/${query.pm.dataset}.json`, {
@@ -21,68 +45,56 @@ export default function NeuroGlancerView({ query }) {
     })
       .then((response) => response.json())
       .then((json) => {
-        setLayers(json);
-      });
-  }, [query.pm.dataset]);
-
-  useEffect(() => {
-    const lastId = bodyIds[bodyIds.length - 1];
-    const coordinatesQuery = `MATCH (n :Segment {bodyId: ${lastId}})-[:Contains]->(:SynapseSet)-[:Contains]->(ss) RETURN ss.location.x, ss.location.y, ss.location.z limit 1`;
-    fetch('/api/custom/custom?np_explorer=neuroglancer_neuron_coordinates', {
-      headers: {
-        'content-type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify({
-        cypher: coordinatesQuery,
-        dataset: query.pm.dataset
-      }),
-      method: 'POST',
-      credentials: 'include',
-    })
-      .then((result) => result.json())
-      .then((result) => {
-        setCoordinates(Immutable.List(result.data[0]));
-      })
-      .catch((error) => {
+        //  setLayers(json);
+        setNgViewerState((prevState) => {
+          const newState = { ...prevState, ...json };
+          return newState;
+        });
+        setLayersLoading(false);
+      }).catch((error) => {
         setLoadingError(error);
       });
-  }, [bodyIds, query.pm.dataset]);
+  }, [query.pm.dataset, setNgViewerState]);
+
+  useEffect(() => {
+    if (ngViewerState.layers.length > 0) {
+      setNgViewerState((prevState) => {
+        const newState = { ...prevState };
+        // merge the bodyIds into the layer segments array, if the layer name matches the dataset
+        // there should be no duplicate ids
+        newState.layers.forEach((layer) => {
+          if (layer.name === query.pm.dataset) {
+            if (layer.segments) {
+              layer.segments = [...new Set([...layer.segments, ...bodyIds])]; // eslint-disable-line no-param-reassign
+            } else {
+              layer.segments = bodyIds; // eslint-disable-line no-param-reassign
+            }
+          }
+        });
+        return newState;
+      });
+    }
+  }, [bodyIds, query.pm.dataset, ngViewerState.layers, setNgViewerState]);
+
+  const viewerState = useMemo(() => ({ ...ngViewerState }), [ngViewerState]);
+
+  const onViewerStateChanged = useCallback(debounce((state) => { // eslint-disable-line react-hooks/exhaustive-deps
+    setNgViewerState((prevState) => {
+      // if the serialized state is the same as the serialized current
+      // state, don't do anything
+      if (JSON.stringify(state) === JSON.stringify(prevState)) {
+        return prevState;
+      }
+      return state;
+    });
+  }, 1000, false), []);
 
   if (loadingError) {
     return <div>{loadingError.message}</div>;
   }
 
-  const basicViewerState = {
-    navigation: {
-      pose: {
-        position: {
-          voxelCoordinates: [],
-        },
-      },
-      zoomFactor: 8,
-    },
-    layout: 'xy-3d',
-    layers: [],
-  };
-
-  const viewerState = { ...basicViewerState, ...layers };
-
-  bodyIds.forEach((id) => {
-    viewerState.layers.forEach((layer) => {
-      if (layer.name === query.pm.dataset) {
-        if (layer.segments) {
-          layer.segments.push(id);
-        } else {
-          // eslint-disable-next-line no-param-reassign
-          layer.segments = [id];
-        }
-      }
-    });
-  });
-
-  if (coordinates) {
-    viewerState.navigation.pose.position.voxelCoordinates = coordinates.toJS();
+  if (layersLoading) {
+    return <div>Loading layers...</div>;
   }
 
   return (
@@ -92,6 +104,7 @@ export default function NeuroGlancerView({ query }) {
         viewerState={viewerState}
         brainMapsClientId="NOT_A_VALID_ID"
         ngServer="https://clio-ng.janelia.org"
+        onViewerStateChanged={onViewerStateChanged}
       />
     </Suspense>
   );

@@ -10,6 +10,7 @@ import AppBar from '@material-ui/core/AppBar';
 
 import { getQueryObject, setQueryString } from 'helpers/queryString';
 import Result from 'components/Result';
+import { NgViewerProvider } from '../contexts/NgViewerContext';
 
 const styles = () => ({
   resultContent: {
@@ -85,6 +86,7 @@ function Results ({ allResults, pluginList, classes, authLevel, publicState, pub
 
   return (
     <div className={classes.resultContent}>
+      <NgViewerProvider>
       {query.rt !== 'full' && (
         <AppBar position="static" color="default">
           {tabs.length > 0 && (
@@ -102,6 +104,7 @@ function Results ({ allResults, pluginList, classes, authLevel, publicState, pub
         </AppBar>
       )}
       <div className={classes.scroll}>{tabData}</div>
+    </NgViewerProvider>
     </div>
   );
 }
