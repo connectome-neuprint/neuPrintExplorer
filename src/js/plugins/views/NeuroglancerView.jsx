@@ -1,9 +1,9 @@
 import React, { useContext, useCallback, useMemo, useState, useEffect, Suspense } from 'react';
 import PropTypes from 'prop-types';
+import { setQueryString, getQueryObject } from 'helpers/queryString';
 import { NgViewerContext } from '../../contexts/NgViewerContext';
 
 const Neuroglancer = React.lazy(() => import('@janelia-flyem/react-neuroglancer'));
-// const Neuroglancer = React.lazy(() => import('./Neuroglancer'));
 
 function debounce(func, wait, immediate) {
   let timeout;
@@ -41,13 +41,34 @@ const defaultViewerState = {
   layers: [],
 };
 
+function cleanedIds(ids) {
+  // strip out duplicates
+  const filtered = ids.filter((value, index, self) => self.indexOf(value) === index);
+  // strip out empty strings
+  const nonEmpty = filtered.filter((value) => value !== '');
+  // sort the bodyIds lexicographically to match the neuroglancer state
+  nonEmpty.sort((a, b) => a.localeCompare(b));
+  return nonEmpty;
+}
+
 export default function NeuroGlancerView({ query }) {
-  const bodyIds = useMemo(() => query.pm.bodyIds.toString().split(','), [query.pm.bodyIds]);
+  const initialBodyIds = query.pm.bodyIds.toString().split(',');
   const [layersLoading, setLayersLoading] = useState(true);
   const [loadingError, setLoadingError] = useState();
+  // we have to set the initial state of the bodyIds, so that the useEffect
+  // calls don't trigger with an empty array and wipe out the bodyIds in the
+  // query string.
+  const [bodyIds, setBodyIds] = useState(cleanedIds(initialBodyIds));
   const { ngViewerState, setNgViewerState } = useContext(NgViewerContext);
 
   const { dataset } = query.pm;
+
+  // load the bodyIds from the query string
+  useEffect(() => {
+    const queryBodyIds = query.pm.bodyIds.toString().split(',');
+    const cleaned = cleanedIds(queryBodyIds);
+    setBodyIds(cleaned);
+  }, [query.pm.bodyIds]);
 
   // load the layers for the dataset
   useEffect(() => {
@@ -77,31 +98,61 @@ export default function NeuroGlancerView({ query }) {
 
   // add the bodyIds to the layer segments
   useEffect(() => {
-    const datasetState = ngViewerState[dataset] || defaultViewerState;
-    if (datasetState.layers.length > 0) {
-      setNgViewerState((prevState) => {
-        const newDatasetState = { ...prevState[dataset] };
-        // merge the bodyIds into the layer segments array, if the layer name matches the dataset
-        // there should be no duplicate ids
-        newDatasetState.layers.forEach((layer) => {
-          if (layer.name === dataset) {
-            if (layer.segments) {
-              // eslint-disable-next-line no-param-reassign
-              layer.segments = [...new Set([...layer.segments, ...bodyIds])];
-            } else {
-              // eslint-disable-next-line no-param-reassign
-              layer.segments = bodyIds;
-            }
-          }
-        });
-        if (JSON.stringify(newDatasetState) === JSON.stringify(prevState[dataset])) {
+    setNgViewerState((prevState) => {
+      const newDatasetState = { ...prevState[dataset] };
+
+      // if the layers haven't loaded yet, then don't do anything
+      if (!newDatasetState.layers) {
+        return prevState;
+      }
+
+      const layerOfInterest = newDatasetState.layers.find((layer) => layer.name === dataset);
+
+      if (!layerOfInterest) {
+        return prevState;
+      }
+
+      // if the bodyIds list hasn't changed, then don't do anything
+      if (layerOfInterest && layerOfInterest.segments) {
+        if (JSON.stringify(bodyIds) === JSON.stringify(layerOfInterest.segments)) {
           return prevState;
         }
-        const newState = { ...prevState, [dataset]: newDatasetState };
-        return newState;
-      });
-    }
+      }
+
+      // merge the new bodyIds into the layer segments array
+      if (layerOfInterest) {
+        if (layerOfInterest.segments) {
+          const updatedSegments = [...new Set([...layerOfInterest.segments, ...bodyIds])];
+          updatedSegments.sort((a, b) => a.localeCompare(b));
+          layerOfInterest.segments = updatedSegments;
+        } else if (bodyIds.length > 0) {
+          layerOfInterest.segments = bodyIds;
+        }
+      }
+
+      const newState = { ...prevState, [dataset]: newDatasetState };
+      return newState;
+    });
   }, [bodyIds, dataset, ngViewerState, setNgViewerState]);
+
+  useEffect(() => {
+    // if a bodyId is added or removed in neuroglancer, then update the list of bodyIds
+    // in the query string
+
+    const current = getQueryObject('qr', []);
+    current.forEach((tab) => {
+      if (tab.code === 'sk' && tab.ds === dataset) {
+        // eslint-disable-next-line no-param-reassign
+        tab.pm.bodyIds = bodyIds.join(',');
+      }
+      if (tab.code === 'ng' && tab.ds === dataset) {
+        // eslint-disable-next-line no-param-reassign
+        tab.pm.bodyIds = bodyIds.join(',');
+      }
+    });
+    // update the query string with the new bodyIds
+    setQueryString({ qr: current });
+  }, [bodyIds, dataset]);
 
   const viewerState = useMemo(() => ({ ...ngViewerState[dataset] }), [ngViewerState, dataset]);
 
@@ -109,6 +160,17 @@ export default function NeuroGlancerView({ query }) {
   const onViewerStateChanged = useCallback(
     debounce(
       (state) => {
+        const layer = state.layers.find((l) => l.name === dataset);
+        if (layer && layer.segments) {
+          const neuroglancerBodyIds = layer.segments;
+          setBodyIds((previousIds) => {
+            if (JSON.stringify(neuroglancerBodyIds) === JSON.stringify(previousIds)) {
+              return previousIds;
+            }
+            return neuroglancerBodyIds;
+          });
+        }
+
         // eslint-disable-line react-hooks/exhaustive-deps
         setNgViewerState((prevState) => {
           // if the serialized state is the same as the serialized current
