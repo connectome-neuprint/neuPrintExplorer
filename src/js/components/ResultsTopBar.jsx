@@ -34,6 +34,7 @@ import C from '../reducers/constants';
 import CachedCounter from './ResultsTopBar/CachedCounter';
 import AddIdModal from './ResultsTopBar/AddIdModal';
 import CopyToClipboardModal from './ResultsTopBar/CopyToClipboardModal';
+import NeuroglancerMenu from './ResultsTopBar/NeuroglancerMenu';
 
 const styles = (theme) => ({
   root: {
@@ -68,6 +69,7 @@ function ResultsTopBar({
   clipboardCallback=null,
   saveEnabled,
   addIdEnabled=false,
+  isNeuroglancer,
   actions,
   fetchedTime=new Date().getTime(),
   dataSet='loading',
@@ -86,7 +88,6 @@ function ResultsTopBar({
   const [bookmarkname, setBookmarkname] = React.useState('');
   const [anchorEl, setAnchorEl] = React.useState(null);
   const { width, ref } = useResizeDetector();
-
 
   const handleCloseMenu = () => {
     setAnchorEl(null);
@@ -204,7 +205,11 @@ function ResultsTopBar({
   };
 
   return (
-    <div ref={ref} className={classNames(classes.root, 'topresultbar')} style={{ backgroundColor: color }}>
+    <div
+      ref={ref}
+      className={classNames(classes.root, 'topresultbar')}
+      style={{ backgroundColor: color }}
+    >
       <Toolbar>
         <Typography variant="caption" color="inherit" className={classes.flex} noWrap>
           {dataSet} - {name}
@@ -310,6 +315,9 @@ function ResultsTopBar({
                 <Icon style={{ fontSize: 18 }}>push_pin</Icon>
               </IconButton>
             </Tooltip>
+            {isNeuroglancer ? (
+              <NeuroglancerMenu dataSet={dataSet} />
+            ) : null}
 
             {download3DCallback && (
               <Tooltip title="Download VR viewer seed">
@@ -509,6 +517,7 @@ ResultsTopBar.propTypes = {
   visibleColumns: PropTypes.object,
   resultData: PropTypes.object,
   addIdEnabled: PropTypes.bool,
+  isNeuroglancer: PropTypes.bool,
   saveEnabled: PropTypes.bool.isRequired,
   queryStr: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,

@@ -1,7 +1,7 @@
 import React, { useContext, useCallback, useMemo, useState, useEffect, Suspense } from 'react';
 import PropTypes from 'prop-types';
 import { setQueryString, getQueryObject } from 'helpers/queryString';
-import { NgViewerContext } from '../../contexts/NgViewerContext';
+import { NgViewerContext } from 'contexts/NgViewerContext';
 
 const Neuroglancer = React.lazy(() => import('@janelia-flyem/react-neuroglancer'));
 

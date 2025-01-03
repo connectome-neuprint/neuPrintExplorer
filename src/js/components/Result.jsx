@@ -352,6 +352,7 @@ class Result extends React.Component {
                   downloadEnabled={downloadEnabled}
                   saveEnabled={saveEnabled}
                   addIdEnabled={Boolean(processingPlugin.details.visType === 'SkeletonView')}
+                  isNeuroglancer={Boolean(processingPlugin.details.visType === 'NeuroglancerView')}
                   downloadCallback={this.downloadFile}
                   download3DCallback={download3DCallback}
                   clipboardCallback={clipboardCallback}

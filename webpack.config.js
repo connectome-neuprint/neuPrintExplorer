@@ -99,6 +99,7 @@ module.exports = {
       containers: path.resolve(__dirname, 'src/js/containers'),
       components: path.resolve(__dirname, 'src/js/components'),
       helpers: path.resolve(__dirname, 'src/js/helpers'),
+      contexts: path.resolve(__dirname, 'src/js/contexts'),
       plugins: path.resolve(__dirname, 'src/js/plugins'),
       views: path.resolve(__dirname, 'src/js/components/view-plugins'),
       actions: path.resolve(__dirname, 'src/js/actions')
