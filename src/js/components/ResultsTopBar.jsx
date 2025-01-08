@@ -204,6 +204,9 @@ function ResultsTopBar({
     }
   };
 
+  const result = results.get(index);
+  const data = result ? result.result : null;
+
   return (
     <div
       ref={ref}
@@ -316,7 +319,7 @@ function ResultsTopBar({
               </IconButton>
             </Tooltip>
             {isNeuroglancer ? (
-              <NeuroglancerMenu dataSet={dataSet} />
+              <NeuroglancerMenu dataSet={dataSet} ngState={data} />
             ) : null}
 
             {download3DCallback && (

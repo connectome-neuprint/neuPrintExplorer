@@ -6,8 +6,8 @@ import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import HistoryIcon from '@material-ui/icons/History';
 import ToggleOffIcon from '@material-ui/icons/ToggleOff';
+import DoubleArrowIcon from '@material-ui/icons/DoubleArrow';
 
 import OpenInNewIcon from '@material-ui/icons/OpenInNew';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -45,7 +45,7 @@ function encodeFragment(fragment) {
   );
 }
 
-function NeuroglancerMenu({ classes, dataSet }) {
+function NeuroglancerMenu({ classes, dataSet, ngState }) {
   const { ngViewerState, setNgViewerState } = useContext(NgViewerContext);
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -67,63 +67,53 @@ function NeuroglancerMenu({ classes, dataSet }) {
     window.open(url, '_blank');
   };
 
-  const handleResetViewToBrain = () => {
+  const handleUpdateNgState = (newState) => {
     setNgViewerState((prevState) => {
-      const newState = { ...prevState, [dataSet]: { ...prevState[dataSet], perspectiveZoom: 80 } };
-      return newState;
+      const newNgState = { ...prevState, [dataSet]: newState };
+      return newNgState;
     });
     handleCloseMenu();
   };
 
-  const handleResetViewToVNC = () => {
+  const handleLayerUpdate = (layerName, layerUpdate) => {
     setNgViewerState((prevState) => {
-      const newState = { ...prevState, [dataSet]: { ...prevState[dataSet], perspectiveZoom: 200 } };
-      return newState;
+      const tabState = prevState[dataSet];
+      const layerOfInterest = tabState.layers.find((layer) => layer.name === layerName);
+      if (layerOfInterest) {
+        const newLayer = { ...layerOfInterest, ...layerUpdate };
+        const newLayers = tabState.layers.map((layer) => {
+          if (layer.name === layerName) {
+            return newLayer;
+          }
+          return layer;
+        });
+        const newTabState = { ...tabState, layers: newLayers };
+        const newState = { ...prevState, [dataSet]: newTabState };
+        return newState;
+      }
+      return prevState;
     });
     handleCloseMenu();
   };
 
-  const handleSynapseToggle = () => {
+  const handleLayerAttributeToggle = (layerName, attributeToToggle) => {
     setNgViewerState((prevState) => {
-      // find the layer that has a name containing 'synapse'
       const tabState = prevState[dataSet];
-      const layerOfInterest = tabState.layers.find((layer) => layer.name.includes('synapse'));
-
-      // set the synapse layer to be visible or not visible depending on the current state
+      const layerOfInterest = tabState.layers.find((layer) => layer.name === layerName);
       if (layerOfInterest) {
-        // if layerOfInterest.visible is missing, set it to be false
-        if (layerOfInterest.visible === undefined) {
-          layerOfInterest.visible = false;
+        const attribute = layerOfInterest[attributeToToggle];
+        if (attribute === undefined) {
+          layerOfInterest[attributeToToggle] = false;
         } else {
-          layerOfInterest.visible = !layerOfInterest.visible;
+          layerOfInterest[attributeToToggle] = !layerOfInterest[attributeToToggle];
         }
+        const newState = { ...prevState, [dataSet]: tabState };
+        return newState;
       }
-      const newState = { ...prevState, [dataSet]: tabState };
-      return newState;
+      return prevState;
     });
     handleCloseMenu();
-  }
-
-  const handleROIToggle = () => {
-    setNgViewerState((prevState) => {
-      // find the layer that has a name containing 'ROI'
-      const tabState = prevState[dataSet];
-      const layerOfInterest = tabState.layers.find((layer) => layer.name.includes('roi'));
-
-      // set the ROI layer to be visible or not visible depending on the current state
-      if (layerOfInterest) {
-        // if layerOfInterest.visible is missing, set it to be false
-        if (layerOfInterest.visible === undefined) {
-          layerOfInterest.visible = false;
-        } else {
-          layerOfInterest.visible = !layerOfInterest.visible;
-        }
-      }
-      const newState = { ...prevState, [dataSet]: tabState };
-      return newState;
-    });
-    handleCloseMenu();
-  }
+  };
 
   const handleSkeletonMeshToggle = () => {
     // TODO: implement the skeleton/mesh toggle
@@ -131,8 +121,86 @@ function NeuroglancerMenu({ classes, dataSet }) {
     console.log('handleSkeletonMeshToggle');
   }
 
+  // custom menu options for the neuroglancer viewer
+  // these are defined in the nglayers json that is loaded from neuprintHTTP
+  // to create one of these add the "neuprintMenuOptions": [] to the top level
+  // of the nglayers object
+  //
+  // each menu option should have the following fields:
+  //  - name: the name of the menu option that will be displayed
+  //  - stateUpdate: an object that will be merged with the top level of the neuroglancer state
+  //
+  //  or
+  //
+  //  - name: the name of the menu option that will be displayed
+  //  - layerUpdate: an object that will be merged with the layer specified by layerName
+  //  - layerName: the name of the layer to update
+  //
+  //  or
+  //
+  //  - name: the name of the menu option that will be displayed
+  //  - layerName: the name of the layer to update
+  //  - attributeToToggle: the attribute to toggle on the layer specified by layerName
+  //
+  // here are some examples:
+  // {
+  //  "name": "Toggle Segmentation",
+  //  "layerName": "segmentation",
+  //  "attributeToToggle": "visible"
+  // }
+  //
+  // {
+  //  "name": "Show Segmentation",
+  //  "layerName": "segmentation",
+  //  "layerUpdate": {
+  //    "visible": true
+  //  }
+  // }
+  //
+  // {
+  //  "name": "reset view",
+  //  "stateUpdate": {
+  //    "position": [
+  //      0 , 0, 0
+  //    ],
+  //    "projectionOrientation": [
+  //      0, 0, 0, 1
+  //    ],
+  //    "projectionScale": 8000
+  //  }
+  // }
+
+
+  // generate menu options based on the items in the ngState.neuprintMenuOptions
+  const menuItems = ngState.neuprintMenuOptions ? ngState.neuprintMenuOptions.map((option) => {
+    const onClick = () => {
+      // if there is a stateUpdate, apply it to the neuroglancer
+      // state at the top level
+      if (option.stateUpdate) {
+        handleUpdateNgState(option.stateUpdate);
+      }
+      // if there is a layerUpdate/layerName, apply it to the layer specified
+      else if (option.layerUpdate && option.layerName) {
+        handleLayerUpdate(option.layerName, option.layerUpdate);
+      } else if (option.layerName && option.attributeToToggle) {
+        handleLayerAttributeToggle(option.layerName, option.attributeToToggle);
+      }
+    };
+    return (
+      <MenuItem
+        key={option.name}
+        aria-label={option.name}
+        onClick={onClick}
+      >
+        <DoubleArrowIcon className={classes.menuIcon} /> {option.name}
+      </MenuItem>
+    );
+  }) : [];
+
   return (
     <>
+    {menuItems.length > 0 ? (
+      <>
       <Tooltip title="Neuroglancer Actions">
         <IconButton
           className={classes.button}
@@ -143,22 +211,7 @@ function NeuroglancerMenu({ classes, dataSet }) {
         </IconButton>
       </Tooltip>
       <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseMenu}>
-        <MenuItem
-          aria-label="Reset to default brain view"
-          onClick={() => {
-            handleResetViewToBrain();
-          }}
-        >
-          <HistoryIcon className={classes.menuIcon} /> Reset to default brain view
-        </MenuItem>
-        <MenuItem
-          aria-label="Reset to default VNC view"
-          onClick={() => {
-            handleResetViewToVNC();
-          }}
-        >
-          <HistoryIcon className={classes.menuIcon} /> Reset to default VNC view
-        </MenuItem>
+        {menuItems}
         <MenuItem
           aria-label="Switch between meshes and skeletons"
           onClick={() => {
@@ -167,23 +220,8 @@ function NeuroglancerMenu({ classes, dataSet }) {
         >
           <ToggleOffIcon className={classes.menuIcon} /> Switch between meshes and skeletons
         </MenuItem>
-        <MenuItem
-          aria-label="Toggle synapses"
-          onClick={() => {
-            handleSynapseToggle();
-          }}
-        >
-          <ToggleOffIcon className={classes.menuIcon} /> Toggle synapses
-        </MenuItem>
-        <MenuItem
-          aria-label="Toggle ROIs"
-          onClick={() => {
-            handleROIToggle();
-          }}
-        >
-          <ToggleOffIcon className={classes.menuIcon} /> Toggle ROIs
-        </MenuItem>
       </Menu>
+      </>) : null}
 
       <Tooltip title="Open in new window">
         <IconButton
@@ -201,6 +239,7 @@ function NeuroglancerMenu({ classes, dataSet }) {
 NeuroglancerMenu.propTypes = {
   classes: PropTypes.object.isRequired,
   dataSet: PropTypes.string.isRequired,
+  ngState: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(NeuroglancerMenu);
