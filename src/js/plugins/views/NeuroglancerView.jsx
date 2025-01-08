@@ -72,29 +72,20 @@ export default function NeuroGlancerView({ query }) {
 
   // load the layers for the dataset
   useEffect(() => {
-    fetch(`/api/npexplorer/nglayers/${dataset}.json`, {
-      headers: {
-        'content-type': 'application/json',
-        Accept: 'application/json',
-      },
-      method: 'GET',
-      credentials: 'include',
-    })
-      .then((response) => response.json())
-      .then((json) => {
-        setNgViewerState((prevState) => {
-          // grab the previous state for the current dataset and merge with the json
-          const prevDatasetState = prevState[dataset] || defaultViewerState;
-          const newDatasetState = { ...prevDatasetState, ...json };
-          const newState = { ...prevState, [dataset]: newDatasetState };
-          return newState;
-        });
-        setLayersLoading(false);
-      })
-      .catch((error) => {
-        setLoadingError(error);
+    const incommingState = query?.result?.data
+    try {
+      setNgViewerState((prevState) => {
+        // grab the previous state for the current dataset and merge with the json
+        const prevDatasetState = prevState[dataset] || defaultViewerState;
+        const newDatasetState = { ...prevDatasetState, ...incommingState };
+        const newState = { ...prevState, [dataset]: newDatasetState };
+        return newState;
       });
-  }, [dataset, setNgViewerState]);
+      setLayersLoading(false);
+    } catch (error) {
+      setLoadingError(error);
+    };
+  }, [dataset, setNgViewerState, query]);
 
   // add the bodyIds to the layer segments
   useEffect(() => {

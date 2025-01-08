@@ -59,7 +59,6 @@ export default function neuroglancerReducer(state = neuroglancerState, action) {
           ds: action.dataSet,
           pm: {
             dataset: action.dataSet,
-            skip: true,
             bodyIds: action.id
           }
         });

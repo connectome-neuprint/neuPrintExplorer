@@ -32,15 +32,17 @@ class Neuroglancer extends React.Component {
     };
   }
 
-  static fetchParameters() {
+  static fetchParameters(params) {
     return {
-      skip: true
+      queryUrl: `/api/npexplorer/nglayers/${params.dataset}.json`,
+      method: 'GET',
     };
   }
 
-  static processResults({ query }) {
+  static processResults({ query, apiResponse }) {
     return {
       debug: 'No cypher query for this plugin',
+      data: apiResponse,
       title: `Neuroglancer viewer for ${query.pm.dataset}`,
     };
   };
@@ -62,7 +64,6 @@ class Neuroglancer extends React.Component {
       pluginCode: pluginAbbrev,
       parameters: {
         dataset: dataSet,
-        skip: true, // skip the data fetching in Requests.
         bodyIds
       },
     };

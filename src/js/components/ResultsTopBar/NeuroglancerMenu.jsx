@@ -6,13 +6,11 @@ import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import Icon from '@material-ui/core/Icon';
 import HistoryIcon from '@material-ui/icons/History';
 import ToggleOffIcon from '@material-ui/icons/ToggleOff';
 
 import OpenInNewIcon from '@material-ui/icons/OpenInNew';
 import MenuIcon from '@material-ui/icons/Menu';
-import Assignment from '@material-ui/icons/Assignment';
 
 import { NgViewerContext } from 'contexts/NgViewerContext';
 
@@ -128,6 +126,8 @@ function NeuroglancerMenu({ classes, dataSet }) {
   }
 
   const handleSkeletonMeshToggle = () => {
+    // TODO: implement the skeleton/mesh toggle
+    // eslint-disable-next-line no-console
     console.log('handleSkeletonMeshToggle');
   }
 

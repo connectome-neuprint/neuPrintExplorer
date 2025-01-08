@@ -100,7 +100,7 @@ export default function Workstation(props) {
     };
   }
 
-  // set up the two tabs, one for the skeleton and one for the find neurons tab.
+  // set up the two tabs, one for neuroglancer and one for the find neurons tab.
   const redirectQuery = {
     q: 0,
     tab,
@@ -114,7 +114,6 @@ export default function Workstation(props) {
         pm: {
           bodyIds,
           dataset: dataset || defaultDataset,
-          skip: true
         }
       }
     ]
