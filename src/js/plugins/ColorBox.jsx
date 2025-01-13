@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function ColorBox({ margin, width, height, backgroundColor, borderColor, title, text, color }) {
+function ColorBox({ margin, width, height, backgroundColor, borderColor=null, title, text, color='#000' }) {
   const styles = {
     margin: `${margin}px`,
     width: `${width}px`,
@@ -40,11 +40,6 @@ function ColorBox({ margin, width, height, backgroundColor, borderColor, title, 
     </div>
   );
 }
-
-ColorBox.defaultProps = {
-  color: '#000',
-  borderColor: null
-};
 
 ColorBox.propTypes = {
   margin: PropTypes.number.isRequired,
