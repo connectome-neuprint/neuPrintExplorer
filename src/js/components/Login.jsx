@@ -143,6 +143,7 @@ class Login extends React.Component {
               invisible={badgeVis}
               badgeContent="A"
               color="secondary"
+              overlap="rectangular"
             >
               <Fab size="small" onClick={this.launchUserPopup} color="primary">
                 {avatar}

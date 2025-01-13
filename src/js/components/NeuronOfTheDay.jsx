@@ -120,6 +120,7 @@ function NeuronOfTheDay(props) {
               rawData={data.connectivity.data}
               superROIs={superROIs[dataSet]}
               onError={actions.metaInfoError}
+              dataSet={dataSet}
             />
           </CardContent>
         </Card>
