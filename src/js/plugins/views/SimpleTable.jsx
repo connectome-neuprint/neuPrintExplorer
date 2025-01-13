@@ -101,7 +101,7 @@ class SimpleTable extends React.Component {
   render() {
     const { query, classes, visibleColumns } = this.props;
     const { visProps = {}, result } = query;
-    const { rowsPerPage = 5 } = visProps;
+    const rowsPerPage = parseInt(visProps.rowsPerPage, 10) || 5;
     const { paginate = true, page = 0, orderBy = '', order = 'asc' } = visProps;
 
     if (!result?.data) {

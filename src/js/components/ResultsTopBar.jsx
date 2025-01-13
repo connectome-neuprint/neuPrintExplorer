@@ -59,26 +59,26 @@ const styles = (theme) => ({
 
 function ResultsTopBar({
   classes,
-  color,
+  color='#cccccc',
   name,
   index,
   downloadCallback,
   downloadEnabled,
-  download3DCallback,
-  clipboardCallback,
+  download3DCallback=null,
+  clipboardCallback=null,
   saveEnabled,
-  addIdEnabled,
+  addIdEnabled=false,
   actions,
-  fetchedTime,
-  dataSet,
-  visibleColumns,
-  resultData,
+  fetchedTime=new Date().getTime(),
+  dataSet='loading',
+  visibleColumns=null,
+  resultData=null,
   token,
   appDB,
   queryStr,
   results,
   fixed,
-  onClose,
+  onClose=null,
 }) {
   const [open, setOpen] = React.useState(false);
   const [addIdOpen, setAddIdOpen] = React.useState(false);
@@ -520,18 +520,6 @@ ResultsTopBar.propTypes = {
   fixed: PropTypes.bool.isRequired,
   dataSet: PropTypes.string,
   onClose: PropTypes.func,
-};
-
-ResultsTopBar.defaultProps = {
-  color: '#cccccc',
-  dataSet: 'loading',
-  fetchedTime: new Date().getTime(),
-  addIdEnabled: false,
-  download3DCallback: null,
-  clipboardCallback: null,
-  visibleColumns: null,
-  resultData: null,
-  onClose: null,
 };
 
 export default withStyles(styles)(

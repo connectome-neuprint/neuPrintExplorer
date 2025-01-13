@@ -51,7 +51,7 @@ function show3DView(id, dataset, actions, color) {
 }
 
 function BodyId(props) {
-  const { children, dataSet, actions, classes, options={skeleton: true} } = props;
+  const { children, dataSet, actions, classes, options={skeleton: true, color: null} } = props;
   const [modal, setModal] = useState(false);
   const neuronbridgeLink = `https://neuronbridge.janelia.org/search?q=${dataSet.replace(/:.*$/, '*')}:${children}`;
   return (
@@ -101,13 +101,6 @@ BodyId.propTypes = {
   actions: PropTypes.object.isRequired,
   classes: PropTypes.object.isRequired,
   options: PropTypes.object
-};
-
-BodyId.defaultProps = {
-  options: {
-    color: null,
-    skeleton: true
-  },
 };
 
 export default withStyles(styles)(BodyId);
