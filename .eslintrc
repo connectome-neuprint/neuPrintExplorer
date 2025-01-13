@@ -1,6 +1,5 @@
 extends:
     - "react-app"
-    - "airbnb"
     - "prettier"
 env:
     browser: true
@@ -15,6 +14,7 @@ parser:
     "@babel/eslint-parser"
 plugins:
     - "react"
+    - "react-hooks"
 settings:
     import/resolver: webpack
 rules:

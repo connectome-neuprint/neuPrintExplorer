@@ -154,9 +154,11 @@ export function getRoiBarChartForConnection(
 }
 
 
-export default {
+const visHelpers = {
   stableSort,
   getSorting,
   getRoiHeatMapForConnection,
   getCSRoiInfoObjectWithNoneCount
 };
+
+export default visHelpers;

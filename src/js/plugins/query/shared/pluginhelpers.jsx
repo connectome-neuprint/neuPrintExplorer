@@ -588,7 +588,7 @@ export function createSimpleConnectionsResult(
   };
 }
 
-export default {
+const pluginHelpers = {
   setColumnIndices,
   createSimpleConnectionQueryObject,
   generateRoiHeatMapAndBarGraph,
@@ -596,3 +596,5 @@ export default {
   computeSimilarity,
   createSimpleConnectionsResult
 };
+
+export default pluginHelpers;
