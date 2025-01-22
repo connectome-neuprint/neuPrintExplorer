@@ -95,12 +95,12 @@ export default function Workstation(props) {
       pm: {
         all_segment: false,
         dataset: dataset || defaultDataset,
-        neuron_id: bodyid
+        neuron_id: parseInt(bodyid, 10)
       }
     };
   }
 
-  // set up the two tabs, one for the skeleton and one for the find neurons tab.
+  // set up the two tabs, one for neuroglancer and one for the find neurons tab.
   const redirectQuery = {
     q: 0,
     tab,
@@ -114,7 +114,6 @@ export default function Workstation(props) {
         pm: {
           bodyIds,
           dataset: dataset || defaultDataset,
-          skip: true
         }
       }
     ]

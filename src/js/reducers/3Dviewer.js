@@ -45,7 +45,6 @@ function addNeuronglancerToQuery(action, priorQuery) {
       ds: action.dataSet,
       pm: {
         dataset: action.dataSet,
-        skip: true,
         bodyIds: action.id,
       },
     });

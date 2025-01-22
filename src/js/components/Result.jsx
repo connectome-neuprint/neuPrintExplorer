@@ -218,10 +218,13 @@ class Result extends React.Component {
     const { pluginList, tabIndex } = this.props;
     const query = getQueryObject();
     const resultsList = query.qr || [];
-    const currentPlugin = pluginList.find(
-      plugin => plugin.details.abbr === resultsList[tabIndex].code
-    );
-    return currentPlugin;
+    if (resultsList[tabIndex]) {
+      const currentPlugin = pluginList.find(
+        plugin => plugin.details.abbr === resultsList[tabIndex].code
+      );
+      return currentPlugin;
+    }
+    return null;
   }
 
   render() {
@@ -245,6 +248,8 @@ class Result extends React.Component {
 
     const query = getQueryObject();
     const resultsList = query.qr || [];
+    const currentPlugin = this.currentPlugin();
+
 
     if (!loading.get(tabIndex, false) && resultsList.length === 0) {
       return (
@@ -258,6 +263,40 @@ class Result extends React.Component {
         </div>
       );
     }
+
+    // Return early with a way to close the tab, if an error
+    // occurred loading the data. Maybe add a try again button.
+
+    if (!loading.get(tabIndex, false) && loadingError.get(tabIndex)) {
+      return (
+        <div className={classes.scroll}>
+          <div className={classes.full}>
+            <ResultsTopBar
+              downloadCallback={this.downloadFile}
+              downloadEnabled={false}
+              saveEnabled={false}
+              name="Error loading content"
+              index={tabIndex}
+              queryStr="error"
+              color="#ffcccc"
+              fixed={fixed}
+              dataSet={resultsList[tabIndex].ds}
+            />
+            {/*
+            Some of the error messages are returned from the server as plain text with
+            a set amount of white space used to indicate where the error occurs. So
+            placing them in a pre tag preserves the indicator location in a web
+            page.
+              */}
+            <div>
+              <pre className={classes.errorText}>{loadingError.get(tabIndex).toString()}</pre>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+
 
     let tabData = (
       <div className={classes.full}>
@@ -284,7 +323,6 @@ class Result extends React.Component {
         cachedResults.params &&
         cachedResults.params.code === resultsList[tabIndex].code
       ) {
-        const currentPlugin = this.currentPlugin();
 
         if (currentPlugin) {
           // TODO: here is where we should trigger the loading of the view plugins. It is only at this
@@ -352,6 +390,7 @@ class Result extends React.Component {
                   downloadEnabled={downloadEnabled}
                   saveEnabled={saveEnabled}
                   addIdEnabled={Boolean(processingPlugin.details.visType === 'SkeletonView')}
+                  isNeuroglancer={Boolean(processingPlugin.details.visType === 'NeuroglancerView')}
                   downloadCallback={this.downloadFile}
                   download3DCallback={download3DCallback}
                   clipboardCallback={clipboardCallback}
@@ -441,36 +480,6 @@ class Result extends React.Component {
           }
         }
       }
-    }
-
-    // Return here with a way to close the tab, if an error
-    // occurred loading the data. Maybe add a try again button.
-
-    if (!loading.get(tabIndex, false) && loadingError.get(tabIndex)) {
-      tabData = (
-        <div className={classes.full}>
-          <ResultsTopBar
-            downloadCallback={this.downloadFile}
-            downloadEnabled={false}
-            saveEnabled={false}
-            name="Error loading content"
-            index={tabIndex}
-            queryStr="error"
-            color="#ffcccc"
-            fixed={fixed}
-            dataSet={resultsList[tabIndex].ds}
-          />
-          {/*
-           Some of the error messages are returned from the server as plain text with
-           a set amount of white space used to indicate where the error occurs. So
-           placing them in a pre tag preserves the indicator location in a web
-           page.
-            */}
-          <div>
-            <pre className={classes.errorText}>{loadingError.get(tabIndex).toString()}</pre>
-          </div>
-        </div>
-      );
     }
 
     return <div className={classes.scroll}>{tabData}</div>;

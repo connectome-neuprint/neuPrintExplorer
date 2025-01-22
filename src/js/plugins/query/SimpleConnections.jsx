@@ -266,7 +266,7 @@ export class SimpleConnections extends React.Component {
         parameters.enable_contains = true;
       }
       if (/^\d+$/.test(neuronName)) {
-        parameters.neuron_id = neuronName;
+        parameters.neuron_id = parseInt(neuronName, 10);
       } else {
         parameters.neuron_name = neuronName;
       }

@@ -639,7 +639,7 @@ export class FindNeurons extends React.Component {
 
     if (neuronInstance !== '') {
       if (/^\d+$/.test(neuronInstance)) {
-        parameters.neuron_id = neuronInstance;
+        parameters.neuron_id = parseInt(neuronInstance, 10);
       } else {
         parameters.neuron_name = neuronInstance;
       }
