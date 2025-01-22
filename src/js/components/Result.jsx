@@ -218,10 +218,13 @@ class Result extends React.Component {
     const { pluginList, tabIndex } = this.props;
     const query = getQueryObject();
     const resultsList = query.qr || [];
-    const currentPlugin = pluginList.find(
-      plugin => plugin.details.abbr === resultsList[tabIndex].code
-    );
-    return currentPlugin;
+    if (resultsList[tabIndex]) {
+      const currentPlugin = pluginList.find(
+        plugin => plugin.details.abbr === resultsList[tabIndex].code
+      );
+      return currentPlugin;
+    }
+    return null;
   }
 
   render() {
