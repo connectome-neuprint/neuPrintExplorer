@@ -95,7 +95,7 @@ export default function Workstation(props) {
       pm: {
         all_segment: false,
         dataset: dataset || defaultDataset,
-        neuron_id: bodyid
+        neuron_id: parseInt(bodyid, 10)
       }
     };
   }

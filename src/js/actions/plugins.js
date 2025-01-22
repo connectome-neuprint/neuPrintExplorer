@@ -115,6 +115,12 @@ export function fetchData(params, plugin, tabPosition, token) {
     } else if (fetchParams.cypherQuery) {
       parameters.cypher = fetchParams.cypherQuery;
     }
+    // TODO: remove this when all plugins are updated to allow neuron_ids as strings
+
+    // convert neuron_id to integer if it is a string (for backward compatibility)
+    if (parameters.neuron_id) {
+      parameters.neuron_id = parseInt(parameters.neuron_id, 10);
+    }
 
     const body = (fetchParams.method === 'GET') ? null : JSON.stringify(parameters);
 
