@@ -51,13 +51,28 @@ function NeuroglancerMenu({ classes, dataSet }) {
   const [ngState, setNgState] = useState([]);
 
   useEffect(() => {
-    fetch(`/api/npexplorer/nglayers/${dataSet}-actions.json`)
-      .then((response) => response.json())
-      .then((data) => {
-        setNgState(data);
-      });
-  }, [dataSet]);
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`/api/npexplorer/nglayers/${dataSet}-actions.json`);
 
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data && typeof data === 'object') {
+          setNgState(data);
+        } else {
+          throw new Error('Invalid data format received');
+        }
+      } catch (error) {
+        console.error('Error fetching neuroglancer actions:', error);
+      }
+    };
+
+    fetchData();
+  }, [dataSet]);
 
   const handleCloseMenu = () => {
     setAnchorEl(null);
@@ -129,7 +144,7 @@ function NeuroglancerMenu({ classes, dataSet }) {
     // TODO: implement the skeleton/mesh toggle
     // eslint-disable-next-line no-console
     console.log('handleSkeletonMeshToggle');
-  }
+  };
 
   // custom menu options for the neuroglancer viewer
   // these are defined in the nglayers/{dataset}-actions.json that is loaded from neuprintHTTP
@@ -181,7 +196,6 @@ function NeuroglancerMenu({ classes, dataSet }) {
   //  }
   // ]
 
-
   // generate menu options based on the items in the ngState
   const menuItems = ngState.map((option) => {
     const onClick = () => {
@@ -198,11 +212,7 @@ function NeuroglancerMenu({ classes, dataSet }) {
       }
     };
     return (
-      <MenuItem
-        key={option.name}
-        aria-label={option.name}
-        onClick={onClick}
-      >
+      <MenuItem key={option.name} aria-label={option.name} onClick={onClick}>
         <DoubleArrowIcon className={classes.menuIcon} /> {option.name}
       </MenuItem>
     );
@@ -210,29 +220,35 @@ function NeuroglancerMenu({ classes, dataSet }) {
 
   return (
     <>
-    {menuItems.length > 0 ? (
-      <>
-      <Tooltip title="Neuroglancer Actions">
-        <IconButton
-          className={classes.button}
-          aria-label="Neuroglancer Menu"
-          onClick={handleOpenMenu}
-        >
-          <MenuIcon style={{ fontSize: 18 }} />
-        </IconButton>
-      </Tooltip>
-      <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseMenu}>
-        {menuItems}
-        <MenuItem
-          aria-label="Switch between meshes and skeletons"
-          onClick={() => {
-            handleSkeletonMeshToggle();
-          }}
-        >
-          <ToggleOffIcon className={classes.menuIcon} /> Switch between meshes and skeletons
-        </MenuItem>
-      </Menu>
-      </>) : null}
+      {menuItems.length > 0 ? (
+        <>
+          <Tooltip title="Neuroglancer Actions">
+            <IconButton
+              className={classes.button}
+              aria-label="Neuroglancer Menu"
+              onClick={handleOpenMenu}
+            >
+              <MenuIcon style={{ fontSize: 18 }} />
+            </IconButton>
+          </Tooltip>
+          <Menu
+            id="simple-menu"
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleCloseMenu}
+          >
+            {menuItems}
+            <MenuItem
+              aria-label="Switch between meshes and skeletons"
+              onClick={() => {
+                handleSkeletonMeshToggle();
+              }}
+            >
+              <ToggleOffIcon className={classes.menuIcon} /> Switch between meshes and skeletons
+            </MenuItem>
+          </Menu>
+        </>
+      ) : null}
 
       <Tooltip title="Open in new window">
         <IconButton
