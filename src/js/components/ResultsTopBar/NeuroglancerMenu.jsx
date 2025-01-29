@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 
 import { withStyles } from '@material-ui/core/styles';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -45,9 +45,19 @@ function encodeFragment(fragment) {
   );
 }
 
-function NeuroglancerMenu({ classes, dataSet, ngState }) {
+function NeuroglancerMenu({ classes, dataSet }) {
   const { ngViewerState, setNgViewerState } = useContext(NgViewerContext);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [ngState, setNgState] = useState([]);
+
+  useEffect(() => {
+    fetch(`/api/npexplorer/nglayers/${dataSet}-actions.json`)
+      .then((response) => response.json())
+      .then((data) => {
+        setNgState(data);
+      });
+  }, [dataSet]);
+
 
   const handleCloseMenu = () => {
     setAnchorEl(null);
@@ -122,9 +132,8 @@ function NeuroglancerMenu({ classes, dataSet, ngState }) {
   }
 
   // custom menu options for the neuroglancer viewer
-  // these are defined in the nglayers json that is loaded from neuprintHTTP
-  // to create one of these add the "neuprintMenuOptions": [] to the top level
-  // of the nglayers object
+  // these are defined in the nglayers/{dataset}-actions.json that is loaded from neuprintHTTP
+  // to create one of these add an [] of action objects to the file
   //
   // each menu option should have the following fields:
   //  - name: the name of the menu option that will be displayed
@@ -142,37 +151,39 @@ function NeuroglancerMenu({ classes, dataSet, ngState }) {
   //  - layerName: the name of the layer to update
   //  - attributeToToggle: the attribute to toggle on the layer specified by layerName
   //
-  // here are some examples:
-  // {
-  //  "name": "Toggle Segmentation",
-  //  "layerName": "segmentation",
-  //  "attributeToToggle": "visible"
-  // }
+  // here is an example of a few menu options:
+  // [
+  //   {
+  //    "name": "Toggle Segmentation",
+  //    "layerName": "segmentation",
+  //    "attributeToToggle": "visible"
+  //   }
   //
-  // {
-  //  "name": "Show Segmentation",
-  //  "layerName": "segmentation",
-  //  "layerUpdate": {
-  //    "visible": true
-  //  }
-  // }
+  //   {
+  //    "name": "Show Segmentation",
+  //    "layerName": "segmentation",
+  //    "layerUpdate": {
+  //      "visible": true
+  //    }
+  //   }
   //
-  // {
-  //  "name": "reset view",
-  //  "stateUpdate": {
-  //    "position": [
-  //      0 , 0, 0
-  //    ],
-  //    "projectionOrientation": [
-  //      0, 0, 0, 1
-  //    ],
-  //    "projectionScale": 8000
+  //   {
+  //    "name": "reset view",
+  //    "stateUpdate": {
+  //      "position": [
+  //        0 , 0, 0
+  //      ],
+  //      "projectionOrientation": [
+  //        0, 0, 0, 1
+  //      ],
+  //      "projectionScale": 8000
+  //    }
   //  }
-  // }
+  // ]
 
 
-  // generate menu options based on the items in the ngState.neuprintMenuOptions
-  const menuItems = ngState.neuprintMenuOptions ? ngState.neuprintMenuOptions.map((option) => {
+  // generate menu options based on the items in the ngState
+  const menuItems = ngState.map((option) => {
     const onClick = () => {
       // if there is a stateUpdate, apply it to the neuroglancer
       // state at the top level
@@ -195,7 +206,7 @@ function NeuroglancerMenu({ classes, dataSet, ngState }) {
         <DoubleArrowIcon className={classes.menuIcon} /> {option.name}
       </MenuItem>
     );
-  }) : [];
+  });
 
   return (
     <>
@@ -239,7 +250,6 @@ function NeuroglancerMenu({ classes, dataSet, ngState }) {
 NeuroglancerMenu.propTypes = {
   classes: PropTypes.object.isRequired,
   dataSet: PropTypes.string.isRequired,
-  ngState: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(NeuroglancerMenu);
