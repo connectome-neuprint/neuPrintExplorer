@@ -52,26 +52,31 @@ function cleanedIds(ids) {
 }
 
 export default function NeuroGlancerView({ query }) {
-  const initialBodyIds = query.pm.bodyIds.toString().split(',');
   const [layersLoading, setLayersLoading] = useState(true);
   const [loadingError, setLoadingError] = useState();
+
   // we have to set the initial state of the bodyIds, so that the useEffect
   // calls don't trigger with an empty array and wipe out the bodyIds in the
   // query string.
-  const [bodyIds, setBodyIds] = useState(cleanedIds(initialBodyIds));
+  const queryBodyIds = useMemo(() => {
+    let bodyIds = [];
+    if (query.pm.bodyIds) {
+      bodyIds = query.pm.bodyIds.toString().split(',');
+    }
+    return cleanedIds(bodyIds);
+  }, [query.pm.bodyIds]);
+  const [bodyIds, setBodyIds] = useState(queryBodyIds);
   const { ngViewerState, setNgViewerState } = useContext(NgViewerContext);
 
   const { dataset } = query.pm;
 
-  // load the bodyIds from the query string
-  useEffect(() => {
-    const queryBodyIds = query.pm.bodyIds.toString().split(',');
-    const cleaned = cleanedIds(queryBodyIds);
-    setBodyIds(cleaned);
-  }, [query.pm.bodyIds]);
-
   // load the layers for the dataset
   useEffect(() => {
+    // if the dataset is already in the ngViewerState then don't load it again 
+    if (ngViewerState[dataset]) {
+      setLayersLoading(false);
+      return;
+    }
     const incommingState = query?.result?.data
     try {
       setNgViewerState((prevState) => {
@@ -85,7 +90,10 @@ export default function NeuroGlancerView({ query }) {
     } catch (error) {
       setLoadingError(error);
     };
-  }, [dataset, setNgViewerState, query]);
+    // We really only want to run this once when a new dataset
+    // is loaded.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // add the bodyIds to the layer segments
   useEffect(() => {
@@ -124,26 +132,10 @@ export default function NeuroGlancerView({ query }) {
       const newState = { ...prevState, [dataset]: newDatasetState };
       return newState;
     });
-  }, [bodyIds, dataset, ngViewerState, setNgViewerState]);
-
-  useEffect(() => {
-    // if a bodyId is added or removed in neuroglancer, then update the list of bodyIds
-    // in the query string
-
-    const current = getQueryObject('qr', []);
-    current.forEach((tab) => {
-      if (tab.code === 'sk' && tab.ds === dataset) {
-        // eslint-disable-next-line no-param-reassign
-        tab.pm.bodyIds = bodyIds.join(',');
-      }
-      if (tab.code === 'ng' && tab.ds === dataset) {
-        // eslint-disable-next-line no-param-reassign
-        tab.pm.bodyIds = bodyIds.join(',');
-      }
-    });
-    // update the query string with the new bodyIds
-    setQueryString({ qr: current });
-  }, [bodyIds, dataset]);
+    // We really only want to run this once when a new dataset
+    // is loaded.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const viewerState = useMemo(() => ({ ...ngViewerState[dataset] }), [ngViewerState, dataset]);
 
@@ -152,8 +144,9 @@ export default function NeuroGlancerView({ query }) {
     debounce(
       (state) => {
         const layer = state.layers.find((l) => l.name === dataset);
+        let neuroglancerBodyIds = [];
         if (layer && layer.segments) {
-          const neuroglancerBodyIds = layer.segments;
+          neuroglancerBodyIds = layer.segments;
           setBodyIds((previousIds) => {
             if (JSON.stringify(neuroglancerBodyIds) === JSON.stringify(previousIds)) {
               return previousIds;
@@ -173,6 +166,16 @@ export default function NeuroGlancerView({ query }) {
           const newState = { ...prevState, [dataset]: state };
           return newState;
         });
+        // update the url to include the new bodyIds from the state.
+        const current = getQueryObject('qr', []);
+        current.forEach((tab) => {
+          if (tab.code === 'ng' && tab.ds === dataset) {
+            // eslint-disable-next-line no-param-reassign
+            tab.pm.bodyIds = neuroglancerBodyIds;
+          }
+        });
+        // update the query string with the new bodyIds
+        setQueryString({ qr: current }, true);
       },
       1000,
       false
@@ -200,6 +203,7 @@ export default function NeuroGlancerView({ query }) {
     </Suspense>
   );
 }
+NeuroGlancerView.whyDidYouRender = true;
 NeuroGlancerView.propTypes = {
   query: PropTypes.object.isRequired,
 };

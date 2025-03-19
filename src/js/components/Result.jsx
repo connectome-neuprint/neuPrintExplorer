@@ -16,7 +16,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Icon from '@material-ui/core/Icon';
 
 import { skeletonClear, skeletonAddBodiesandOpen, skeletonAddandOpen, skeletonRemove, DefaultSynapseRadius } from 'actions/skeleton';
-import { addAndOpen3DViewer } from 'actions/3DViewer';
+import { addAndOpen3DViewer, removeBodyFrom3DViewer } from 'actions/3DViewer';
 import { addAndOpenQuery, setFullScreen, clearFullScreen, setSelectedResult, launchNotification } from 'actions/app';
 import { setColumnStatus, initColumnStatus } from 'actions/visibleColumns';
 import { metaInfoError } from 'plugins/support';
@@ -83,6 +83,7 @@ function getQueryData(queryData) {
 }
 
 class Result extends React.Component {
+  static whyDidYouRender = true;
   componentDidMount() {
     // grab the contents of the search string.
     // if it has an array of query objects, fetch the data from neuPrint
@@ -573,6 +574,9 @@ const ResultDispatch = dispatch => ({
     },
     addAndOpen3D: (id, dataSet, tabIndex, color) => {
       dispatch(addAndOpen3DViewer(id, dataSet, tabIndex, color));
+    },
+    removeBodyFrom3D: (id, dataSet) => {
+      dispatch(removeBodyFrom3DViewer(id, dataSet));
     },
     addFindNeuronsQuery: (id, dataSet) => {
       dispatch(addAndOpenQuery('FindNeurons', { id, dataset: dataSet }));

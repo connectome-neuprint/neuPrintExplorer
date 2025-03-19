@@ -53,6 +53,14 @@ class SimpleConnectionsTable extends React.Component {
       isExpanded: {},
       expansionPanels: {}
     };
+    this.addIconStyle = {
+      width: '.75em',
+      height: '.75em'
+    };
+    this.removeIconStyle = {
+      width: '.75em',
+      height: '.75em'
+    };
   }
 
   handleChangePage = (_, page) => {
@@ -156,6 +164,7 @@ class SimpleConnectionsTable extends React.Component {
         ? columnCells
         : columnCells.filter((column, i) => visibleColumns.getIn([i, 'status']));
 
+   
     return (
       <div className={classes.root}>
         <div className={classes.scroll}>
@@ -203,9 +212,9 @@ class SimpleConnectionsTable extends React.Component {
                                   onClick={() => this.toggleExpandPanel(keyId, cell, row[5].sortBy)}
                                 >
                                   {isExpanded[keyId] ? (
-                                    <RemoveIcon style={{ width: '.75em', height: '.75em' }} />
+                                    <RemoveIcon style={this.removeIconStyle} />
                                   ) : (
-                                    <AddIcon style={{ width: '.75em', height: '.75em' }} />
+                                    <AddIcon style={this.addIconStyle} />
                                   )}
                                 </IconButton>
                               </TableCell>

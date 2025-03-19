@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Icon from '@material-ui/core/Icon';
@@ -6,6 +6,9 @@ import Modal from '@material-ui/core/Modal';
 import Tooltip from '@material-ui/core/Tooltip';
 import { SunburstLoader } from 'plugins/support';
 import SelectAndCopyText from '../shared/SelectAndCopyText';
+
+import { NgViewerContext } from '../../../contexts/NgViewerContext';
+
 
 const styles = theme => ({
   icon: {
@@ -53,21 +56,129 @@ function show3DView(id, dataset, actions, color) {
 function BodyId(props) {
   const { children, dataSet, actions, classes, options={skeleton: true, color: null} } = props;
   const [modal, setModal] = useState(false);
+  const { ngViewerState, setNgViewerState } = useContext(NgViewerContext);
+
+  function removeBodyFromNGstate(bodyId, dataSet) {
+    setNgViewerState((prevState) => {
+      const newDatasetState = { ...prevState[dataSet] };
+      // if the layers haven't loaded yet, then don't do anything
+      if (!newDatasetState.layers) {
+        return prevState;
+      }
+
+      const layerOfInterest = newDatasetState.layers.find((layer) => layer.name === dataSet);
+
+      if (!layerOfInterest) {
+        return prevState;
+      }
+
+      // remove the bodyId from the layer segments array
+      if (layerOfInterest && layerOfInterest.segments) {
+        const updatedSegments = layerOfInterest.segments.filter((id) => id !== bodyId);
+        layerOfInterest.segments = updatedSegments;
+      }
+
+      const newState = { ...prevState, [dataSet]: newDatasetState };
+      return newState;
+    });
+    // remove the bodyID from the json stored in the url.
+    actions.removeBodyFrom3D(bodyId, dataSet);
+  }
+
+
+  function addBodyToNGstate(bodyId, dataSet, color) {
+		const maxRetries = 20; // Retry up to 20 times (100ms * 20 = 2 seconds)
+		let attempts = 0;
+
+		function tryUpdateState() {
+			setNgViewerState((prevState) => {
+				const newDatasetState = { ...prevState[dataSet] };
+        // If layers haven't loaded, retry
+        if (!newDatasetState.layers) {
+          if (attempts < maxRetries) {
+            attempts++;
+            setTimeout(tryUpdateState, 100); // Retry after 100ms
+            return prevState;
+          }
+          return prevState; // Give up after maxRetries
+        }
+
+				const layerOfInterest = newDatasetState.layers.find((layer) => layer.name === dataSet);
+
+				if (!layerOfInterest) {
+					return prevState;
+				}
+				// if the bodyIds list hasn't changed, then don't do anything
+				if (layerOfInterest && layerOfInterest.segments) {
+					if (layerOfInterest.segments.includes(bodyId)) {
+						return prevState;
+					}
+				}
+
+				// merge the new bodyIds into the layer segments array
+				if (layerOfInterest) {
+					if (layerOfInterest.segments) {
+						const bodyIds = [bodyId];
+						const updatedSegments = [...new Set([...layerOfInterest.segments, ...bodyIds])];
+						updatedSegments.sort((a, b) => a.localeCompare(b));
+						layerOfInterest.segments = updatedSegments;
+					} else {
+						layerOfInterest.segments = [bodyId];
+					}
+				}
+
+				const newState = { ...prevState, [dataSet]: newDatasetState };
+				return newState;
+			});
+		}
+		tryUpdateState();
+  }
+
+  function handleRemoveClick() {
+    removeBodyFromNGstate(children.toString(), dataSet);
+    actions.removeBodyFrom3D(children.toString(), dataSet);
+  }
+
+  function handleClick() {
+    show3DView(children, dataSet, actions, options.color);
+    addBodyToNGstate(children.toString(), dataSet, options.color);
+  }
+
+
+  let segments = [];
+  if (ngViewerState[dataSet] && ngViewerState[dataSet].layers) {
+    segments = ngViewerState[dataSet].layers.find((layer) => layer.name === dataSet).segments || [];
+  }
+
+  const viewIcon = segments.includes(children.toString()) ? (
+   <Tooltip title="Remove from 3D View">
+      <Icon
+        className={classes.icon}
+        onClick={() => handleRemoveClick()}
+        fontSize="inherit"
+      >
+        visibility_off
+      </Icon>
+    </Tooltip>
+
+  ) : (
+    <Tooltip title="3D View">
+      <Icon
+        className={classes.icon}
+        onClick={() => handleClick()}
+        fontSize="inherit"
+      >
+        visibility
+      </Icon>
+    </Tooltip>
+  );
+
   const neuronbridgeLink = `https://neuronbridge.janelia.org/search?q=${dataSet.replace(/:.*$/, '*')}:${children}`;
   return (
     <div>
       <div className={classes.container}>
         <SelectAndCopyText text={children} actions={actions} />
-        {options.skeleton ? (
-        <Tooltip title="3D View">
-          <Icon
-            className={classes.icon}
-            onClick={() => show3DView(children, dataSet, actions, options.color)}
-            fontSize="inherit"
-          >
-            visibility
-          </Icon>
-        </Tooltip>) : ""}
+        {options.skeleton ? (viewIcon) : ""}
         <Tooltip title="Synapse Connectivity">
           <Icon className={classes.icon} onClick={() => setModal(!modal)} fontSize="inherit">
             donut_small

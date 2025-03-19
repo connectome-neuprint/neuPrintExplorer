@@ -15,6 +15,7 @@ import QueryDrawer from './QueryDrawer';
 import Errors from './Errors';
 import Notification from './Notification';
 import ErrorBoundary from './ErrorBoundary';
+import { NgViewerProvider } from '../contexts/NgViewerContext';
 
 import './Master.css';
 
@@ -95,10 +96,11 @@ function Master({ classes, user }) {
           <QueryDrawer />
           <main className={classes.content}>
             <div className={classes.toolbar} />
+            <NgViewerProvider>
             <Suspense fallback={<div>loading...</div>}>
               <Switch>
                 <Route exact path="/" component={Home} />
-                <PrivateRoute user={user} path="/results" component={Results} />
+                  <PrivateRoute user={user} path="/results" component={Results} />
                 <Route path="/help" component={Help} />
                 <PrivateRoute user={user} path="/favorites" component={Favorites} />
                 <Route path="/about" component={About} />
@@ -109,6 +111,7 @@ function Master({ classes, user }) {
                 <Route component={NoMatch} />
               </Switch>
             </Suspense>
+            </NgViewerProvider>
           </main>
           <Errors />
           <Notification />
