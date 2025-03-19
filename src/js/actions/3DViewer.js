@@ -32,3 +32,13 @@ export function addAndOpen3DViewer(id, dataSet, tabIndex, color) {
     });
   };
 }
+
+export function removeBodyFrom3DViewer(id, dataSet) {
+  return async (dispatch) => {
+    dispatch({
+      type: C.REMOVE_BODY_FROM_3D_VIEWER,
+      id,
+      dataSet,
+    });
+  };
+}

@@ -73,10 +73,19 @@ export function getPluginQueryObject() {
   return queryList;
 }
 
-export function setQueryString(newData) {
+export function setQueryString(newData, overwrite = false) {
   const currentQuery = getQueryObject();
   const updatedData = merge(currentQuery, newData, { arrayMerge: overwriteMerge });
   const updatedQuery = qs.stringify(updatedData);
+  // Overwrite the current query string with the new one. This is used when
+  // we want the query string to change, without triggering a page reload from
+  // react-router. An example of this is when a bodyId is added to the
+  // neuroglancer view. Or, when the neuroglancer state is changed internally
+  // and updates the state of the url.
+  if (overwrite) {
+    window.history.replaceState({}, '', window.location.pathname + '?' + updatedQuery);
+    return;
+  }
   history.push({
     pathname: window.location.pathname,
     search: updatedQuery

@@ -7,6 +7,16 @@ const threeDviewerState = Immutable.Map({
   synapses: Immutable.Map({}),
 });
 
+function fTabIsNeuroglancerOrSkeleton() {
+  const current = getQueryObject('qr', []);
+  const currentFtabIndex = getQueryObject('ftab', null);
+  const tab = current[currentFtabIndex];
+  if (!tab) {
+    return false;
+  }
+  return tab.code === 'ng' || tab.code === 'sk';
+}
+
 function addNeuronglancerToQuery(action, priorQuery) {
   // grab the tab data
   const current = (priorQuery && priorQuery.qr) ? priorQuery.qr : getQueryObject('qr', []);
@@ -26,26 +36,17 @@ function addNeuronglancerToQuery(action, priorQuery) {
     }
   });
 
-  //   if dataSet is the same
+  //   if dataSet has a selected tab
   if (selectedIndex > 0) {
-    const bodyIds = selected.pm.bodyIds.toString().split(',');
-    // push the id into the bodyids list
-    bodyIds.push(action.id);
-    selected.pm.bodyIds = bodyIds.join(',');
-    current[selectedIndex] = selected;
-    if (!action.tabIndex) {
-      ftab = selectedIndex;
-    }
+    ftab = selectedIndex;
   } else {
     // if none found, then add one to the querystring
-    //   push the id into the bodyids list
-    // set the tab value to that of the skeleton viewer.
+    // and set the tab value to that of the skeleton viewer.
     current.push({
       code: 'ng',
       ds: action.dataSet,
       pm: {
         dataset: action.dataSet,
-        bodyIds: action.id,
       },
     });
     ftab = current.length - 1;
@@ -54,6 +55,10 @@ function addNeuronglancerToQuery(action, priorQuery) {
   const newQuery = {
     qr: current,
   };
+
+  if (fTabIsNeuroglancerOrSkeleton()) {
+    return newQuery;
+  }
 
   if (ftab) {
     const useSkeleton = JSON.parse(localStorage.getItem('use_skeleton'));
@@ -121,6 +126,10 @@ function addBodiesToQuery(bodies, dataSet, tabIndex, options, priorQuery) {
     qr: current
   };
 
+  if (fTabIsNeuroglancerOrSkeleton()) {
+    return newQuery;
+  }
+
   if (ftab) {
     const useSkeleton = JSON.parse(localStorage.getItem('use_skeleton'));
     // if use has chosen to use skeleton as the default viewer, then set
@@ -129,6 +138,7 @@ function addBodiesToQuery(bodies, dataSet, tabIndex, options, priorQuery) {
       newQuery.ftab = ftab;
     }
   }
+
 
   /*  // set the colors if provided
   const db = new PouchDB('neuprint_compartments');
@@ -158,7 +168,61 @@ function addBodiesToQuery(bodies, dataSet, tabIndex, options, priorQuery) {
   return newQuery;
 }
 
-export default function threeDviewerReducer(state = threeDviewerState, action) {
+
+function removeNeuroglancerBodies(tab, idToRemove) {
+  if (!tab.pm.bodyIds) {
+    const bodyIds = tab.pm.bodyIds.toString().split(',');
+    const updated = bodyIds.filter((id) => id !== idToRemove);
+    tab.pm.bodyIds = updated;
+  }
+  return tab;
+}
+
+function removeSkeletonBodies(tab, idToRemove) {
+  const bodyIds = tab.pm.bodyIds.toString().split(',');
+  const updated = bodyIds.filter((id) => id !== idToRemove);
+  tab.pm.bodyIds = updated.join(',');
+  return tab;
+}
+
+function removeBodiesFromQuery(action) {
+
+  const idToRemove = action.id;
+
+
+  const current = getQueryObject('qr', []);
+
+  let ngTab = null;
+  let skTab = null;
+
+  current.forEach((tab, index) => {
+    if (tab.code === 'ng') {
+      ngTab = removeNeuroglancerBodies(tab, idToRemove);
+      current[index] = ngTab;
+    } else if (tab.code === 'sk') {
+      skTab = removeSkeletonBodies(tab, idToRemove);
+      current[index] = skTab;
+    }
+  });
+
+  const newQuery = {
+    qr: current
+  };
+
+  return newQuery;
+}
+
+function isNgTab() {
+  const current = getQueryObject('qr', []);
+  const currentFtabIndex = getQueryObject('ftab', null);
+  const tab = current[currentFtabIndex];
+  if (!tab) {
+    return false;
+  }
+  return tab.code === 'ng';
+}
+
+export default function the3DviewerReducer(state = threeDviewerState, action) {
   switch (action.type) {
     case C.ADD_AND_OPEN_3D_VIEWER: {
       const newQuery = addNeuronglancerToQuery(action);
@@ -175,7 +239,22 @@ export default function threeDviewerReducer(state = threeDviewerState, action) {
       if (newQuery.ftab) {
         updateQuery.ftab = newQuery.ftab;
       }
-      setQueryString(updateQuery);
+      // if updating an already open neuroglancer, then make sure the
+      // url is updated via a window.history.replaceState()
+      if (isNgTab()) {
+        setQueryString(updateQuery, true);
+      } else {
+        setQueryString(updateQuery);
+      }
+      return state;
+    }
+    case C.REMOVE_BODY_FROM_3D_VIEWER: {
+      const updated = removeBodiesFromQuery(action);
+      if (isNgTab()) {
+        setQueryString(updated, true);
+      } else {
+        setQueryString(updated);
+      }
       return state;
     }
     case C.NEUROGLANCER_ADD_ID: {

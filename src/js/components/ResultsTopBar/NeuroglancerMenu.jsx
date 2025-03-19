@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useMemo, useContext, useState, useEffect } from 'react';
 
 import { withStyles } from '@material-ui/core/styles';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -218,6 +218,10 @@ function NeuroglancerMenu({ classes, dataSet }) {
     );
   });
 
+  const newIconStyle = useMemo(() => ({
+    fontSize: 18,
+  }), []);
+
   return (
     <>
       {menuItems.length > 0 ? (
@@ -256,7 +260,7 @@ function NeuroglancerMenu({ classes, dataSet }) {
           aria-label="Open in new window"
           onClick={handleOpenInNewWindow}
         >
-          <OpenInNewIcon style={{ fontSize: 18 }} />
+          <OpenInNewIcon style={newIconStyle} />
         </IconButton>
       </Tooltip>
     </>
