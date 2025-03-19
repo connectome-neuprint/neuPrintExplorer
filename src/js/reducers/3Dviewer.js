@@ -23,7 +23,6 @@ function addNeuronglancerToQuery(action, priorQuery) {
 
   // need to find the index of the tab we are going to update / replace.
   let selectedIndex = -1;
-  let selected = null;
   let ftab = null;
 
   // find existing neuroglancer tab
@@ -31,7 +30,6 @@ function addNeuronglancerToQuery(action, priorQuery) {
     if (tab.code === 'ng') {
       if (tab.ds === action.dataSet) {
         selectedIndex = index;
-        selected = tab;
       }
     }
   });

@@ -7,7 +7,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { SunburstLoader } from 'plugins/support';
 import SelectAndCopyText from '../shared/SelectAndCopyText';
 
-import { NgViewerContext } from 'contexts/NgViewerContext';
+import { NgViewerContext } from '../../../contexts/NgViewerContext';
 
 
 const styles = theme => ({
