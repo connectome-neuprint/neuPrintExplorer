@@ -255,7 +255,9 @@ export function computeSimilarity(inputVector, queriedBodyVector) {
 }
 
 function createConnectionDetailQueryObject(dataset, bodyIdA, bodyIdB, connectionWeight, roiList) {
-  const cypher = `MATCH (n :Segment {bodyId: ${bodyIdA}})-[x :ConnectsTo]->(b :Segment {bodyId: ${bodyIdB}}) RETURN x.roiInfo`;
+  const cypher = `
+MATCH (n :Segment {bodyId: ${bodyIdA}})-[x :ConnectsTo]->(b :Segment {bodyId: ${bodyIdB}})
+RETURN x.roiInfo`;
   return {
     bodyIdA,
     bodyIdB,

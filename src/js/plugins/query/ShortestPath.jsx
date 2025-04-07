@@ -47,7 +47,7 @@ export class ShortestPath extends React.Component {
 
   static fetchParameters(params) {
     const { bodyId1, bodyId2, minWeight } = params;
-    const shortestPathQuery = `call apoc.cypher.runTimeboxed('MATCH (src :Neuron { bodyId: ${bodyId1} }),(dest:Neuron{ bodyId: ${bodyId2} }), p = allShortestPaths((src)-[:ConnectsTo*]->(dest)) WHERE ALL (x in relationships(p) WHERE x.weight >= ${minWeight}) AND ALL (n in nodes(p) WHERE n.status="Traced") RETURN length(p) AS \`length(path)\`, [n in nodes(p) | [n.bodyId, n.type]] AS path, [x in relationships(p) | x.weight] AS weights', {},5000) YIELD value return  value.\`length(path)\` as \`length(path)\`, value.path as path, value.weights AS weights`;
+    const shortestPathQuery = `call apoc.cypher.runTimeboxed('MATCH (src :Neuron { bodyId: ${bodyId1} }),(dest:Neuron{ bodyId: ${bodyId2} }), p = allShortestPaths((src)-[:ConnectsTo*]->(dest)) WHERE ALL (x in relationships(p) WHERE x.weight >= ${minWeight}) AND ALL (n in nodes(p) WHERE n.status="Traced") RETURN length(p) AS \`length(path)\`, [n in nodes(p) | [toString(n.bodyId), n.type]] AS path, [x in relationships(p) | x.weight] AS weights', {},5000) YIELD value RETURN  value.\`length(path)\` as \`length(path)\`, value.path as path, value.weights AS weights`;
     return {
       cypherQuery: shortestPathQuery
     };

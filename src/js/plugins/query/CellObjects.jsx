@@ -54,35 +54,28 @@ const columnHeaders = {
   post: ['Location', 'Confidence'],
 };
 
-/* TODO: use a query like the one below to get the meta information that
- * we need to figure out what types of objects are in the database.
-
-fetch('/api/custom/custom?np_explorer=meta', {
-  credentials: 'include',
-  body: JSON.stringify({ cypher: 'MATCH (n:Meta) RETURN n' }),
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    Accept: 'application/json',
-  },
-})
-  .then((result) => result.json())
-  .then((resp) => {
-    console.log(resp);
-    console.log(JSON.parse(resp.data[0][0].objectProperties));
-  });
-
-*/
-
 const pctFormatter = Intl.NumberFormat('en-US', {
   style: 'percent',
   maximumFractionDigits: 1,
 });
 
+// checked for bodyId conversion
+export function generateCypher(bodyId, whereClause) {
+  const cypher = `
+MATCH(n :Cell {bodyId: ${bodyId}}) -[x:Contains]-> () -[y:Contains]-> (m:Element)
+${whereClause}
+RETURN DISTINCT ID(m), m.type, apoc.map.setKey(properties(m), 'bodyId', toString(m.bodyId)) as m`;
+  return cypher;
+}
+
 function formatRow({type, data, submitFunc, query}) {
   // convert location to a clickable link
   const [x, y, z] = data.location.coordinates;
-  const cypher = `MATCH (n :Element)-[x]-(m :Element) WHERE n.location = Point({x:${x} ,y:${y} ,z:${z}}) return ID(m), m.type, m, n, x, type(x)`;
+  // checked for bodyId conversion
+  const cypher = `
+MATCH (n :Element)-[x]-(m :Element)
+WHERE n.location = Point({x:${x} ,y:${y} ,z:${z}})
+RETURN ID(m), m.type, m, n, x, type(x)`;
   const objectQuery = {
     dataSet: query.ds,
     pluginCode: 'fo',
@@ -221,7 +214,7 @@ export class CellObjects extends React.Component {
       const conditions = types.map((type) => `m.type = '${type}'`).join(' OR ');
       whereClause = ` WHERE ${conditions} `;
     }
-    const cypher = `MATCH(n :Cell {bodyId: ${bodyId}}) -[x:Contains]-> () -[y:Contains]-> (m:Element) ${whereClause} RETURN DISTINCT ID(m), m.type, m`;
+    const cypher = generateCypher(bodyId, whereClause);
 
     const query = {
       dataSet,

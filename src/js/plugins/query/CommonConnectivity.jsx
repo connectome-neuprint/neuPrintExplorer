@@ -111,7 +111,18 @@ class CommonConnectivity extends React.Component {
 
     const matchCypher = params.find_inputs ? '(k:Neuron)<-[r:ConnectsTo]-(neuron)' : '(k:Neuron)-[r:ConnectsTo]->(neuron)'
 
-    const cypherQuery = `WITH [${neuronIds}] AS queriedNeurons MATCH ${matchCypher} WHERE (k.bodyId IN queriedNeurons ${hasConditions} ${conditions}) WITH k, neuron, r, toString(k.bodyId)+"_weight" AS dynamicWeight RETURN collect(apoc.map.fromValues(["${params.find_inputs ? "input" : "output"}", neuron.bodyId, "name", neuron.instance, "type", neuron.type, dynamicWeight, r.weight])) AS map`;
+    const cypherQuery = `WITH [${neuronIds}] AS queriedNeurons
+MATCH ${matchCypher}
+WHERE (k.bodyId IN queriedNeurons ${hasConditions} ${conditions})
+WITH k, neuron, r, toString(k.bodyId)+"_weight" AS dynamicWeight
+RETURN collect(apoc.map.fromValues(["${params.find_inputs ? "input" : "output"}",
+      toString(neuron.bodyId),
+      "name",
+      neuron.instance,
+      "type",
+      neuron.type,
+      dynamicWeight,
+      r.weight])) AS map`;
 
     return {
       cypherQuery,
@@ -154,7 +165,7 @@ class CommonConnectivity extends React.Component {
     const data = [];
     Object.keys(groupedByInputOrOutputId).forEach(inputOrOutput => {
       const singleRow = [
-        parseInt(inputOrOutput, 10),
+        inputOrOutput,
         groupedByInputOrOutputId[inputOrOutput].name,
         groupedByInputOrOutputId[inputOrOutput].type
       ];
@@ -206,7 +217,7 @@ class CommonConnectivity extends React.Component {
     const data = [];
     Object.keys(groupedByInputOrOutputId).forEach(inputOrOutput => {
       const singleRow = [
-        getBodyIdForTable(query.ds, parseInt(inputOrOutput, 10), actions),
+        getBodyIdForTable(query.ds, inputOrOutput, actions),
         groupedByInputOrOutputId[inputOrOutput].name,
         groupedByInputOrOutputId[inputOrOutput].type
       ];
@@ -252,7 +263,7 @@ class CommonConnectivity extends React.Component {
       dataset: dataSet,
       statuses: status,
       find_inputs: typeValue !== 'output',
-      neuron_ids: bodyIds === '' ? [] : bodyIds.split(',').map(Number),
+      neuron_ids: bodyIds === '' ? [] : bodyIds.split(','),
       all_segments: !limitNeurons
     };
 

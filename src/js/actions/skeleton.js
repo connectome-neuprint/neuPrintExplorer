@@ -146,11 +146,15 @@ function loadSynapseError(bodyId, synapseId, error) {
 
 // output
 const tbarQuery =
-  'MATCH (n :Neuron {bodyId: <TARGETBODYID>})-[:Contains]->(ss :SynapseSet)-[:ConnectsTo]->(:SynapseSet)<-[:Contains]-(m :Neuron {bodyId: <OTHERBODYID>}) WITH ss MATCH (ss)-[:Contains]->(s :Synapse) RETURN s.location.x AS x, s.location.y AS y, s.location.z AS z';
+`MATCH (n :Neuron {bodyId: <TARGETBODYID>})-[:Contains]->(ss :SynapseSet)-[:ConnectsTo]->(:SynapseSet)<-[:Contains]-(m :Neuron {bodyId: <OTHERBODYID>})
+WITH ss MATCH (ss)-[:Contains]->(s :Synapse)
+RETURN s.location.x AS x, s.location.y AS y, s.location.z AS z`;
 
 // input
 const psdQuery =
-  'MATCH (n :Neuron {bodyId: <TARGETBODYID>})-[:Contains]->(ss :SynapseSet)<-[:ConnectsTo]-(:SynapseSet)<-[:Contains]-(m :Neuron {bodyId: <OTHERBODYID>}) WITH ss MATCH (ss)-[:Contains]->(s :Synapse) RETURN s.location.x AS x, s.location.y AS y, s.location.z AS z';
+`MATCH (n :Neuron {bodyId: <TARGETBODYID>})-[:Contains]->(ss :SynapseSet)<-[:ConnectsTo]-(:SynapseSet)<-[:Contains]-(m :Neuron {bodyId: <OTHERBODYID>})
+WITH ss MATCH (ss)-[:Contains]->(s :Synapse)
+RETURN s.location.x AS x, s.location.y AS y, s.location.z AS z`;
 
 export function loadSynapse(bodyId, synapseId, dataSet, options = { isInput: true }) {
   return function loadSynapseAsync(dispatch) {

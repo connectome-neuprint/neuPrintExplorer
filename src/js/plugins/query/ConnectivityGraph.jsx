@@ -94,7 +94,11 @@ class ConnectivityGraph extends React.Component {
 
   static fetchParameters(params) {
     const { bodyIds } = params;
-    const cypherQuery = `WITH [${bodyIds}] AS input MATCH (n:Neuron)-[c:ConnectsTo]->(m) WHERE n.bodyId IN input AND m.bodyId IN input RETURN n.bodyId AS start, m.bodyId AS end, c.weight AS weight, n.instance AS startInstance, m.instance AS endInstance, n.type as startType, m.type as endType`;
+    //checked for bodyId conversion
+    const cypherQuery = `WITH [${bodyIds}] AS input
+    MATCH (n:Neuron)-[c:ConnectsTo]->(m)
+    WHERE n.bodyId IN input AND m.bodyId IN input
+    RETURN toString(n.bodyId) AS start, toString(m.bodyId) AS end, c.weight AS weight, n.instance AS startInstance, m.instance AS endInstance, n.type as startType, m.type as endType`;
     return {
       cypherQuery
     };
@@ -120,7 +124,7 @@ class ConnectivityGraph extends React.Component {
       pluginCode: pluginAbbrev,
       parameters: {
         dataset: dataSet,
-        bodyIds: bodyIds === '' ? [] : bodyIds.split(',').map(Number),
+        bodyIds: bodyIds === '' ? [] : bodyIds.split(','),
         minWeight,
         includeAutapses
       }
