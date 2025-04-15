@@ -59,7 +59,13 @@ export class SynapsesForConnection extends React.Component {
       roiPredicate += ')';
     }
 
-    const cypherQuery = `MATCH (a:Neuron{bodyId:${bodyId1}})-[:Contains]->(ss :SynapseSet)-[:ConnectsTo]->(:SynapseSet)<-[:Contains]-(b{bodyId:${bodyId2}}) WITH ss MATCH (ss)-[:Contains]->(s:Synapse)${roiPredicate} RETURN s.type, s.location.x ,s.location.y ,s.location.z, s.confidence, keys(s) UNION MATCH (a:Neuron{bodyId:${bodyId1}})-[:Contains]->(:SynapseSet)-[:ConnectsTo]->(ss :SynapseSet)<-[:Contains]-(b{bodyId:${bodyId2}}) WITH ss MATCH (ss)-[:Contains]->(s:Synapse)${roiPredicate} RETURN s.type, s.location.x ,s.location.y ,s.location.z, s.confidence, keys(s)`;
+    const cypherQuery = `MATCH (a:Neuron{bodyId:${bodyId1}})-[:Contains]->(ss :SynapseSet)-[:ConnectsTo]->(:SynapseSet)<-[:Contains]-(b{bodyId:${bodyId2}})
+WITH ss MATCH (ss)-[:Contains]->(s:Synapse)${roiPredicate}
+RETURN s.type, s.location.x ,s.location.y ,s.location.z, s.confidence, keys(s)
+UNION
+MATCH (a:Neuron{bodyId:${bodyId1}})-[:Contains]->(:SynapseSet)-[:ConnectsTo]->(ss :SynapseSet)<-[:Contains]-(b{bodyId:${bodyId2}})
+WITH ss MATCH (ss)-[:Contains]->(s:Synapse)${roiPredicate}
+RETURN s.type, s.location.x ,s.location.y ,s.location.z, s.confidence, keys(s)`;
 
     return {
       cypherQuery
@@ -159,6 +165,11 @@ export class SynapsesForConnection extends React.Component {
   };
 
   handleChangeRois = selected => {
+    // If no ROIs are selected, set rois to an empty array
+    if (!selected || selected.length === 0) {
+      this.setState({ rois: [] });
+      return;
+    }
     const rois = selected.map(item => item.value);
     this.setState({ rois });
   };

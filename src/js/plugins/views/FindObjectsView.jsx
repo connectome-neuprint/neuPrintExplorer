@@ -53,7 +53,9 @@ export default function FindObjectsView({ query, actions }) {
     // load parent information from cypher here
     if (result.data.matchedObject) {
       const [x, y, z] = result.data.matchedObject.location.coordinates;
-      const cypher = `MATCH (n:Element)-[x:Contains]-(m)-[y:Contains]-(o:Cell) WHERE n.location = Point({x:${x} ,y:${y} ,z:${z} }) return o, labels(o), labels(m)`;
+      const cypher = `MATCH (n:Element)-[x:Contains]-(m)-[y:Contains]-(o:Cell)
+ WHERE n.location = Point({x:${x} ,y:${y} ,z:${z} })
+ RETURN apoc.map.setKey(properties(o), 'bodyId', toString(o.bodyId)) as o, labels(o), labels(m)`;
 
       const options = {
         method: 'POST',
@@ -90,7 +92,9 @@ export default function FindObjectsView({ query, actions }) {
       code: 'cos',
       ds: query.ds,
       pm: {
-        cypherQuery: `MATCH(n :Cell {bodyId: ${bodyId}}) -[x:Contains]-> () -[y:Contains]-> (m:Element) RETURN DISTINCT ID(m), m.type, m`,
+        cypherQuery: `
+MATCH(n :Cell {bodyId: ${bodyId}}) -[x:Contains]-> () -[y:Contains]-> (m:Element)
+RETURN DISTINCT ID(m), m.type, apoc.map.setKey(properties(m), 'bodyId', toString(m.bodyId)) as m`,
         dataset: query.ds,
         bodyId,
       }

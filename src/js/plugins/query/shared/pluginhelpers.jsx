@@ -90,7 +90,7 @@ export function createSimpleConnectionQueryObject({ dataSet, isPost = false, que
     }
   };
   if (queryId) {
-    query.parameters.neuron_id = parseInt(queryId, 10);
+    query.parameters.neuron_id = queryId;
   } else if (queryName && queryName !== '') {
     query.parameters.neuron_name = queryName;
   } else {
@@ -255,7 +255,9 @@ export function computeSimilarity(inputVector, queriedBodyVector) {
 }
 
 function createConnectionDetailQueryObject(dataset, bodyIdA, bodyIdB, connectionWeight, roiList) {
-  const cypher = `MATCH (n :Segment {bodyId: ${bodyIdA}})-[x :ConnectsTo]->(b :Segment {bodyId: ${bodyIdB}}) RETURN x.roiInfo`;
+  const cypher = `
+MATCH (n :Segment {bodyId: ${bodyIdA}})-[x :ConnectsTo]->(b :Segment {bodyId: ${bodyIdB}})
+RETURN x.roiInfo`;
   return {
     bodyIdA,
     bodyIdB,

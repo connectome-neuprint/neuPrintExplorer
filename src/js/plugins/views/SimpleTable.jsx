@@ -150,7 +150,7 @@ class SimpleTable extends React.Component {
               component="div"
               count={result.data.length}
               rowsPerPage={rowsPerPage}
-              page={page}
+              page={parseInt(page, 10)}
               onPageChange={this.handleChangePage}
               onRowsPerPageChange={this.handleChangeRowsPerPage}
               rowsPerPageOptions={[5, 10, 25, 50, 100]}

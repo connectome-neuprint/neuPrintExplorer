@@ -49,7 +49,16 @@ class Completeness extends React.Component {
 
     const hasConditions = conditions.length > 0 ? 'WHERE' : '';
 
-    const cypherQuery = `MATCH (neuron:Neuron) ${hasConditions} ${conditions} WITH apoc.convert.fromJsonMap(neuron.roiInfo) AS roiInfo WITH roiInfo AS roiInfo, keys(roiInfo) AS roiList UNWIND roiList AS roiName WITH roiName AS roiName, sum(roiInfo[roiName].pre) AS pre, sum(roiInfo[roiName].post) AS post MATCH (meta:Meta) WITH apoc.convert.fromJsonMap(meta.roiInfo) AS globInfo, roiName AS roiName, pre AS pre, post AS post WHERE not coalesce(globInfo[roiName]['isNerve'], FALSE) RETURN roiName AS unlabelres, pre AS roipre, post AS roipost, globInfo[roiName].pre AS totalpre, globInfo[roiName].post AS totalpost ORDER BY roiName`;
+    const cypherQuery = `MATCH (neuron:Neuron) ${hasConditions} ${conditions}
+WITH apoc.convert.fromJsonMap(neuron.roiInfo) AS roiInfo
+WITH roiInfo AS roiInfo, keys(roiInfo) AS roiList
+UNWIND roiList AS roiName
+WITH roiName AS roiName, sum(roiInfo[roiName].pre) AS pre, sum(roiInfo[roiName].post) AS post
+MATCH (meta:Meta)
+WITH apoc.convert.fromJsonMap(meta.roiInfo) AS globInfo, roiName AS roiName, pre AS pre, post AS post
+WHERE not coalesce(globInfo[roiName]['isNerve'], FALSE)
+RETURN roiName AS unlabelres, pre AS roipre, post AS roipost, globInfo[roiName].pre AS totalpre, globInfo[roiName].post AS totalpost
+ORDER BY roiName`;
     return {
       cypherQuery,
       queryString: '/custom/custom?np_explorer=completeness'

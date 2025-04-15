@@ -30,7 +30,12 @@ class SunburstLoader extends React.Component {
 
   fetchConnections() {
     const { bodyId, dataSet, onError } = this.props;
-    const cypher = `MATCH (n :Neuron {bodyId: ${bodyId}})-[x :ConnectsTo]->(m) RETURN m.bodyId, m.type, x.weight, x.roiInfo, m.status, 'downstream' as direction UNION MATCH (n :Neuron {bodyId: ${bodyId}})<-[x :ConnectsTo]-(m) RETURN m.bodyId, m.type, x.weight, x.roiInfo, m.status, 'upstream' as direction`;
+    // checked for bodyId conversion
+    const cypher = `MATCH (n :Neuron {bodyId: ${bodyId}})-[x :ConnectsTo]->(m)
+RETURN toString(m.bodyId) as \`m.bodyId\`, m.type, x.weight, x.roiInfo, m.status, 'downstream' as direction
+UNION
+MATCH (n :Neuron {bodyId: ${bodyId}})<-[x :ConnectsTo]-(m)
+RETURN toString(m.bodyId) as \`m.bodyId\`, m.type, x.weight, x.roiInfo, m.status, 'upstream' as direction`;
 
     const parameters = {
       cypher,
@@ -108,7 +113,7 @@ class SunburstLoader extends React.Component {
 }
 
 SunburstLoader.propTypes = {
-  bodyId: PropTypes.number.isRequired,
+  bodyId: PropTypes.string.isRequired,
   dataSet: PropTypes.string.isRequired,
   onError: PropTypes.func.isRequired,
   actions: PropTypes.object.isRequired,

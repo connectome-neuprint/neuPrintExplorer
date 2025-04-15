@@ -54,7 +54,15 @@ const pctFormatter = Intl.NumberFormat('en-US', {
 function formatRow({type, data, submitFunc, query, connectionType}) {
    // convert location to a clickable link
   const [x, y, z] = data.location.coordinates;
-  const cypher = `MATCH (n :Element)-[x]-(m :Element) WHERE n.location = Point({x:${x} ,y:${y} ,z:${z}}) return ID(m), m.type, m, n, x, type(x)`;
+  const cypher = `
+MATCH (n :Element)-[x]-(m :Element)
+WHERE n.location = Point({x:${x} ,y:${y} ,z:${z}})
+RETURN ID(m),
+  m.type,
+  m,
+  n,
+  x,
+  type(x)`;
   const objectQuery = {
     dataSet: query.ds,
     pluginCode: 'fo',
@@ -151,7 +159,14 @@ export class FindObjects extends React.Component {
     const { dataSet, submit } = this.props;
     const { x, y, z } = this.state;
 
-    const cypher = `MATCH (n :Element)-[x]-(m :Element) WHERE n.location = Point({x:${x} ,y:${y} ,z:${z}}) return ID(m), m.type, m, n, x, type(x)`;
+    const cypher = `MATCH (n :Element)-[x]-(m :Element)
+WHERE n.location = Point({x:${x} ,y:${y} ,z:${z}})
+RETURN ID(m),
+      m.type,
+      m,
+      n,
+      x,
+      type(x)`;
 
     const query = {
       dataSet,

@@ -50,6 +50,11 @@ export default function ObjectsView({ query }) {
     tabContents.push(<NodeTable key={type} rows={result.data[type]} columns={result.columns[type]} />);
   });
 
+  if (tabs.length === 0) {
+    tabs.push(<Tab key="empty" label="No objects found" {...a11yProps(0)} />);
+    tabContents.push(<div key="empty-content">No objects found</div>);
+  }
+
   return (
     <div className={classes.root}>
       <div className={classes.scroll}>

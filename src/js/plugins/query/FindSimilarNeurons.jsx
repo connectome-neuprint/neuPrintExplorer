@@ -477,10 +477,15 @@ export class FindSimilarNeurons extends React.Component {
       }
     }
 
-    let cypher = `MATCH (n :Neuron) ${ROIwhere} RETURN n.bodyId, n.instance, n.type, n.cropped, n.pre, n.post, apoc.convert.fromJsonMap(n.roiInfo), n.notes`;
+    let cypher = `
+MATCH (n :Neuron) ${ROIwhere}
+RETURN toString(n.bodyId) as \`n.bodyId\`, n.instance, n.type, n.cropped, n.pre, n.post, apoc.convert.fromJsonMap(n.roiInfo), n.notes`;
 
     if (algorithm === 'nblast') {
-      cypher = `MATCH(n :hemibrain_Neuron)-[x :NblastMatchTo]->(m :hemibrain_Neuron) WHERE x.score > 0.1 AND n.bodyId=${bodyId} RETURN m.bodyId, m.instance, m.type, x.score, apoc.convert.fromJsonMap(m.roiInfo), m.notes, m.pre, m.post ORDER By x.score DESC`
+      cypher = `MATCH(n :hemibrain_Neuron)-[x :NblastMatchTo]->(m :hemibrain_Neuron)
+WHERE x.score > 0.1 AND n.bodyId=${bodyId}
+RETURN toString(m.bodyId) as \`m.bodyId\`, m.instance, m.type, x.score, apoc.convert.fromJsonMap(m.roiInfo), m.notes, m.pre, m.post
+ORDER By x.score DESC`
     }
 
     const query = {

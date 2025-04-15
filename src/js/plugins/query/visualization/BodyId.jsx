@@ -146,8 +146,12 @@ function BodyId(props) {
 
 
   let segments = [];
-  if (ngViewerState[dataSet] && ngViewerState[dataSet].layers) {
-    segments = ngViewerState[dataSet].layers.find((layer) => layer.name === dataSet).segments || [];
+  if (ngViewerState[dataSet] && ngViewerState[dataSet].layers && ngViewerState[dataSet].layers.length > 0) {
+    // Find the layer that matches the dataSet name
+    const layerOfInterest = ngViewerState[dataSet].layers.find((layer) => layer.name === dataSet);
+    if (layerOfInterest && layerOfInterest.segments) {
+      segments = layerOfInterest.segments;
+    }
   }
 
   const viewIcon = segments.includes(children.toString()) ? (
@@ -207,7 +211,7 @@ function BodyId(props) {
 }
 
 BodyId.propTypes = {
-  children: PropTypes.number.isRequired,
+  children: PropTypes.string.isRequired,
   dataSet: PropTypes.string.isRequired,
   actions: PropTypes.object.isRequired,
   classes: PropTypes.object.isRequired,

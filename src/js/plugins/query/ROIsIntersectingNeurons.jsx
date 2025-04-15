@@ -106,7 +106,7 @@ class ROIsIntersectingNeurons extends React.Component {
     if (neuronsrc !== '') {
       const parameters = { dataset: dataSet };
       if (/^\d+$/.test(neuronsrc)) {
-        parameters.neuron_id = parseInt(neuronsrc, 10);
+        parameters.neuron_id = neuronsrc;
       } else {
         parameters.neuron_name = neuronsrc;
       }

@@ -57,23 +57,11 @@ class NeuronInputField extends React.Component {
   fetchOptions = inputValue => {
     const { dataSet } = this.props;
 
-    const convertedInput = parseInt(inputValue, 10);
-
     let bodyId = -1;
 
-    if (!Number.isNaN(convertedInput)) {
-      bodyId = convertedInput;
+    if (!Number.isNaN(inputValue)) {
+      bodyId = inputValue;
     }
-
-    // query neo4j
-    /* const cypherString = `MATCH (neuron :Neuron)
-    WHERE neuron.bodyId = ${bodyId}
-    OR toLower(neuron.type) CONTAINS toLower('${inputValue}')
-    OR toLower(neuron.instance) CONTAINS toLower('${inputValue}')
-    OR toLower(neuron.notes) CONTAINS toLower('${inputValue}')
-    RETURN neuron.bodyId AS bodyid, neuron.type AS type,
-    neuron.instance AS instance, neuron.notes AS notes
-    ORDER BY neuron.instance`; */
 
     const cypherString = `WITH
     toLower('${inputValue}') as q,
@@ -118,7 +106,7 @@ WITH n,
     ELSE 6
     END END END END END END as priority
 RETURN
-    n.bodyId AS bodyid,
+    toString(n.bodyId) AS bodyid,
     n.type AS type,
     n.instance AS instance,
     n.notes AS notes
