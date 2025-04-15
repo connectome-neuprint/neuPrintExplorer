@@ -165,6 +165,11 @@ RETURN s.type, s.location.x ,s.location.y ,s.location.z, s.confidence, keys(s)`;
   };
 
   handleChangeRois = selected => {
+    // If no ROIs are selected, set rois to an empty array
+    if (!selected || selected.length === 0) {
+      this.setState({ rois: [] });
+      return;
+    }
     const rois = selected.map(item => item.value);
     this.setState({ rois });
   };
