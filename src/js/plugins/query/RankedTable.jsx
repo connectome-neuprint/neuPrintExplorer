@@ -290,7 +290,7 @@ export class RankedTable extends React.Component {
     if (neuronSrc !== '') {
       const parameters = { dataset: dataSet };
       if (/^\d+$/.test(neuronSrc)) {
-        parameters.neuron_id = parseInt(neuronSrc, 10);
+        parameters.neuron_id = neuronSrc;
       } else {
         parameters.neuron_name = neuronSrc;
       }

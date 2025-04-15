@@ -113,7 +113,7 @@ RETURN toString(m.bodyId) as \`m.bodyId\`, m.type, x.weight, x.roiInfo, m.status
 }
 
 SunburstLoader.propTypes = {
-  bodyId: PropTypes.number.isRequired,
+  bodyId: PropTypes.string.isRequired,
   dataSet: PropTypes.string.isRequired,
   onError: PropTypes.func.isRequired,
   actions: PropTypes.object.isRequired,

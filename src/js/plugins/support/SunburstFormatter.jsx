@@ -94,7 +94,7 @@ export default function SunburstFormatter({
 SunburstFormatter.propTypes = {
   colors: PropTypes.arrayOf(PropTypes.string),
   rawData: PropTypes.arrayOf(PropTypes.array).isRequired,
-  bodyId: PropTypes.number.isRequired,
+  bodyId: PropTypes.string.isRequired,
   superROIs: PropTypes.arrayOf(PropTypes.string).isRequired,
   onError: PropTypes.func.isRequired,
   actions: PropTypes.object,

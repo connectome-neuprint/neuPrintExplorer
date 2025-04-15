@@ -90,7 +90,7 @@ export function createSimpleConnectionQueryObject({ dataSet, isPost = false, que
     }
   };
   if (queryId) {
-    query.parameters.neuron_id = parseInt(queryId, 10);
+    query.parameters.neuron_id = queryId;
   } else if (queryName && queryName !== '') {
     query.parameters.neuron_name = queryName;
   } else {
