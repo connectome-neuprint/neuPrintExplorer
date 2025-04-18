@@ -59,13 +59,14 @@ class NeuronInputField extends React.Component {
 
     let bodyId = -1;
 
-    if (!Number.isNaN(inputValue)) {
-      bodyId = inputValue;
+    // Proper check if inputValue is a number
+    if (!Number.isNaN(Number(inputValue))) {
+      bodyId = Number(inputValue);
     }
 
     const cypherString = `WITH
     toLower('${inputValue}') as q,
-    '${bodyId}' as user_body
+    ${Number.isInteger(bodyId) ? bodyId : `'${inputValue}'`} as user_body
 MATCH (n :Neuron)
 WHERE
     n.bodyId = user_body
