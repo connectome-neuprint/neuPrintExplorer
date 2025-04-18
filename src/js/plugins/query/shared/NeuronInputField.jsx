@@ -65,7 +65,7 @@ class NeuronInputField extends React.Component {
 
     const cypherString = `WITH
     toLower('${inputValue}') as q,
-    ${bodyId} as user_body
+    '${bodyId}' as user_body
 MATCH (n :Neuron)
 WHERE
     n.bodyId = user_body
