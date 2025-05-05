@@ -6,10 +6,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import FormControl from '@material-ui/core/FormControl';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
+import Button from '@mui/material/Button';
+import FormControl from '@mui/material/FormControl';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 
 const styles = (theme) => ({
   textField: {

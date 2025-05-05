@@ -4,13 +4,13 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
+import Button from '@mui/material/Button';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 
 import { ColorLegend } from 'plugins/MiniRoiHeatMap';
 import NeuronInputField from './shared/NeuronInputField';

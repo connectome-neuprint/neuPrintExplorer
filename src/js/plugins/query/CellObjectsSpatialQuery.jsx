@@ -7,11 +7,11 @@ import PropTypes from 'prop-types';
 import Select from 'react-select';
 
 import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
+import Button from '@mui/material/Button';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 
 const styles = (theme) => ({
   textField: {
@@ -203,6 +203,7 @@ export class CellObjectsSpatialQuery extends React.Component {
           <TextField
             label="x"
             multiline
+            variant="standard"
             fullWidth
             rows={1}
             value={x}
@@ -216,6 +217,7 @@ export class CellObjectsSpatialQuery extends React.Component {
           <TextField
             label="y"
             multiline
+            variant="standard"
             fullWidth
             rows={1}
             value={y}
@@ -229,6 +231,7 @@ export class CellObjectsSpatialQuery extends React.Component {
           <TextField
             label="z"
             multiline
+            variant="standard"
             fullWidth
             rows={1}
             value={z}
@@ -242,6 +245,7 @@ export class CellObjectsSpatialQuery extends React.Component {
           <TextField
             label="radius"
             multiline
+            variant="standard"
             fullWidth
             rows={1}
             value={radius}
