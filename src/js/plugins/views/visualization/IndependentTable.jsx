@@ -151,7 +151,9 @@ class IndependentTable extends React.Component {
             onPageChange={this.handleChangePage}
             onRowsPerPageChange={this.handleChangeRowsPerPage}
             rowsPerPageOptions={[5, 10, 25, 50, 100]}
-            ActionsComponent={TablePaginationActions}
+            slots={{
+              actions: TablePaginationActions
+            }}
           />
         ) : null}
       </div>

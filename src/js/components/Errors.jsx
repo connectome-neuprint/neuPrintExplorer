@@ -33,10 +33,6 @@ class Errors extends React.Component {
         open={errorMessage !== null}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         onClose={this.handleClose}
-        TransitionComponent={TransitionDown}
-        ContentProps={{
-          'aria-describedby': 'message-id'
-        }}
         message={<span id="message-id">{errorMessage}</span>}
         action={[
           <IconButton
@@ -49,6 +45,14 @@ class Errors extends React.Component {
             <CloseIcon />
           </IconButton>
         ]}
+        slots={{
+          transition: TransitionDown
+        }}
+        slotProps={{
+          content: {
+            'aria-describedby': 'message-id'
+          }
+        }}
       />
     );
   }

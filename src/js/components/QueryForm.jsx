@@ -148,9 +148,6 @@ class QueryForm extends React.Component {
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           open={openSnack}
           onClose={this.handleClose}
-          ContentProps={{
-            'aria-describedby': 'message-id'
-          }}
           message={
             <span id="message-id">
               {userInfo === null
@@ -158,6 +155,11 @@ class QueryForm extends React.Component {
                 : 'User not authorized for this server (please contact admin)'}
             </span>
           }
+          slotProps={{
+            content: {
+              'aria-describedby': 'message-id'
+            }
+          }}
         />
         <Typography>{CurrentQuery.details.description}</Typography>
         <Divider className={classes.divider} />

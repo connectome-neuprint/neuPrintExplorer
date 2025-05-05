@@ -233,7 +233,9 @@ class Favorites extends React.Component {
                   page={page}
                   onPageChange={this.handleChangePage}
                   onRowsPerPageChange={this.handleChangeRowsPerPage}
-                  ActionsComponent={TablePaginationActions}
+                  slots={{
+                    actions: TablePaginationActions
+                  }}
                 />
               </TableRow>
             </TableFooter>
@@ -254,7 +256,9 @@ class Favorites extends React.Component {
                   page={page}
                   onPageChange={this.handleChangePage}
                   onRowsPerPageChange={this.handleChangeRowsPerPage}
-                  ActionsComponent={TablePaginationActions}
+                  slots={{
+                    actions: TablePaginationActions
+                  }}
                 />
               </TableRow>
             </TableFooter>

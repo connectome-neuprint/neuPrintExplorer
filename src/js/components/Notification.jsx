@@ -20,12 +20,16 @@ class Notification extends React.Component {
         open={notificationMessage !== null}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
         onClose={this.handleClose}
-        TransitionComponent={Fade}
-        ContentProps={{
-          'aria-describedby': 'message-id'
-        }}
         message={<span id="message-id">{notificationMessage}</span>}
         autoHideDuration={2000}
+        slots={{
+          transition: Fade
+        }}
+        slotProps={{
+          content: {
+            'aria-describedby': 'message-id'
+          }
+        }}
       />
     );
   }
