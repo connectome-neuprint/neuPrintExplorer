@@ -11,9 +11,9 @@ import Immutable from 'immutable';
 import { withRouter } from 'react-router';
 import Papa from 'papaparse';
 
-import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography';
 import { withStyles } from '@material-ui/core/styles';
-import Icon from '@material-ui/core/Icon';
+import Icon from '@mui/material/Icon';
 
 import { skeletonClear, skeletonAddBodiesandOpen, skeletonAddandOpen, skeletonRemove, DefaultSynapseRadius } from 'actions/skeleton';
 import { addAndOpen3DViewer, removeBodyFrom3DViewer } from 'actions/3DViewer';

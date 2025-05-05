@@ -1,11 +1,11 @@
 /* global VERSION */
 import React from 'react';
 
-import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
-import Divider from '@material-ui/core/Divider';
-import Icon from '@material-ui/core/Icon';
-import Button from '@material-ui/core/Button';
+import Divider from '@mui/material/Divider';
+import Icon from '@mui/material/Icon';
+import Button from '@mui/material/Button';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 

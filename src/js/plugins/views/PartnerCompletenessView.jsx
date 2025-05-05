@@ -3,10 +3,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 
-import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography';
 import { withStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import Tooltip from '@material-ui/core/Tooltip';
+import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
 
 import IndependentTable from './visualization/IndependentTable';
 

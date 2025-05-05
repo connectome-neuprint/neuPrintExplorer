@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
 
 import SynapseSelection from 'containers/Skeleton/SynapseSelection';
 import ToggleSynapses from 'containers/Skeleton/ToggleSynapses';

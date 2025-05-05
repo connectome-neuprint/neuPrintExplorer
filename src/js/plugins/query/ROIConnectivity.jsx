@@ -4,9 +4,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import InputLabel from '@material-ui/core/InputLabel';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import InputLabel from '@mui/material/InputLabel';
 import { withStyles } from '@material-ui/core/styles';
 
 import ColorBox from 'plugins/ColorBox';

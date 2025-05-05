@@ -7,10 +7,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import slug from 'slugg';
 
-import Snackbar from '@material-ui/core/Snackbar';
+import Snackbar from '@mui/material/Snackbar';
 import { withRouter } from 'react-router-dom';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
 import { withStyles } from '@material-ui/core/styles';
 
 import { formError, pluginResponseError } from 'actions/plugins';

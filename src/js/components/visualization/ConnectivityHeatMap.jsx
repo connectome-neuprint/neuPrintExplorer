@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import HeatMap from '@neuprint/react-heatmap';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import CircularProgress from '@mui/material/CircularProgress';
 import { withStyles } from '@material-ui/core/styles';
 
 import { getQueryString, setSearchQueryString } from 'helpers/queryString';

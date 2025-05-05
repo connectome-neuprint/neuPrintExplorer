@@ -5,13 +5,13 @@ import Immutable from 'immutable';
 import PouchDB from 'pouchdb';
 import deepEqual from 'deep-equal';
 
-import Slider from '@material-ui/core/Slider';
+import Slider from '@mui/material/Slider';
 
-import Switch from '@material-ui/core/Switch';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Chip from '@material-ui/core/Chip';
-import Button from '@material-ui/core/Button';
+import Switch from '@mui/material/Switch';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Chip from '@mui/material/Chip';
+import Button from '@mui/material/Button';
 import { withStyles } from '@material-ui/core/styles';
 
 import { pickTextColorBasedOnBgColorAdvanced } from 'plugins/support';

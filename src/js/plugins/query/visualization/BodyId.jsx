@@ -1,9 +1,9 @@
 import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Icon from '@material-ui/core/Icon';
-import Modal from '@material-ui/core/Modal';
-import Tooltip from '@material-ui/core/Tooltip';
+import Icon from '@mui/material/Icon';
+import Modal from '@mui/material/Modal';
+import Tooltip from '@mui/material/Tooltip';
 import { SunburstLoader } from 'plugins/support';
 import SelectAndCopyText from '../shared/SelectAndCopyText';
 

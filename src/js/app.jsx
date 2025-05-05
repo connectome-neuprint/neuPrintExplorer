@@ -5,7 +5,7 @@ import React from 'react';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 
-import CssBaseline from '@material-ui/core/CssBaseline';
+import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 import { CookiesProvider } from 'react-cookie';
 import { createRoot } from 'react-dom/client';

@@ -2,14 +2,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
-import IconButton from '@material-ui/core/IconButton';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import TablePagination from '@mui/material/TablePagination';
+import TableSortLabel from '@mui/material/TableSortLabel';
+import IconButton from '@mui/material/IconButton';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 import { withStyles } from '@material-ui/core/styles';
@@ -85,13 +85,13 @@ class SimpleConnectionsTable extends React.Component {
     const { isExpanded, expansionPanels } = this.state;
     const { roiList, bodyIdA, bodyIdB } = parameters;
     const newIsExpanded = { ...isExpanded };
-    const newExpansionPanels = { ...expansionPanels };
+    const newAccordions = { ...expansionPanels };
     if (isExpanded[key]) {
       delete newIsExpanded[key];
-      delete newExpansionPanels[key];
+      delete newAccordions[key];
     } else {
       newIsExpanded[key] = true;
-      newExpansionPanels[key] = <div>loading...</div>;
+      newAccordions[key] = <div>loading...</div>;
       fetch('/api/custom/custom?np_explorer=simple_connections_roi', {
         headers: {
           'content-type': 'application/json',
@@ -109,7 +109,7 @@ class SimpleConnectionsTable extends React.Component {
           }
           const csRoiInfo = JSON.parse(resp.data[0][0]) || {};
 
-          newExpansionPanels[key] = getRoiBarChartForConnection(
+          newAccordions[key] = getRoiBarChartForConnection(
             csRoiInfo,
             roiList,
             connectionWeight,
@@ -117,14 +117,14 @@ class SimpleConnectionsTable extends React.Component {
             bodyIdB
           );
 
-          this.setState({ expansionPanels: newExpansionPanels });
+          this.setState({ expansionPanels: newAccordions });
         })
         .catch(error => {
-          newExpansionPanels[key] = `Error: ${error}`;
-          this.setState({ expansionPanels: newExpansionPanels });
+          newAccordions[key] = `Error: ${error}`;
+          this.setState({ expansionPanels: newAccordions });
         });
     }
-    this.setState({ isExpanded: newIsExpanded, expansionPanels: newExpansionPanels });
+    this.setState({ isExpanded: newIsExpanded, expansionPanels: newAccordions });
   };
 
   render() {

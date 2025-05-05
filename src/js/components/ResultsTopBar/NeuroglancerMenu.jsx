@@ -2,10 +2,10 @@ import PropTypes from 'prop-types';
 import React, { useMemo, useContext, useState, useEffect } from 'react';
 
 import { withStyles } from '@material-ui/core/styles';
-import Tooltip from '@material-ui/core/Tooltip';
-import IconButton from '@material-ui/core/IconButton';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import ToggleOffIcon from '@material-ui/icons/ToggleOff';
 import DoubleArrowIcon from '@material-ui/icons/DoubleArrow';
 

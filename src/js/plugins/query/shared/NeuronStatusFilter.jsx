@@ -6,10 +6,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import merge from 'deepmerge';
 import { withStyles } from '@material-ui/core/styles';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
 import Select from 'react-select';
-import Tooltip from '@material-ui/core/Tooltip';
+import Tooltip from '@mui/material/Tooltip';
 
 const styles = theme => ({
   formControl: {

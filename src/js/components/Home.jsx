@@ -7,12 +7,12 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 
-import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography';
 import { withStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import Icon from '@material-ui/core/Icon';
+import Grid from '@mui/material/Grid';
+import Icon from '@mui/material/Icon';
 import CallMadeIcon from '@material-ui/icons/CallMade';
-import Divider from '@material-ui/core/Divider';
+import Divider from '@mui/material/Divider';
 
 import { getQueryObject } from 'helpers/queryString';
 import { clearResultsCache } from 'actions/plugins';

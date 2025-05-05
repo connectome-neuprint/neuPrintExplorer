@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
-import Modal from '@material-ui/core/Modal';
-import Button from '@material-ui/core/Button';
+import Modal from '@mui/material/Modal';
+import Button from '@mui/material/Button';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
