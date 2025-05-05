@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
@@ -42,7 +42,7 @@ function CypherQuery(props) {
         <CardHeader
           title="Neo4j Cypher Query"
           action={
-            <IconButton aria-label="Close" onClick={handleClose}>
+            <IconButton aria-label="Close" onClick={handleClose} size="large">
               <CloseIcon />
             </IconButton>
           }

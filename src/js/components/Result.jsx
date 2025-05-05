@@ -12,7 +12,7 @@ import { withRouter } from 'react-router';
 import Papa from 'papaparse';
 
 import Typography from '@mui/material/Typography';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 import Icon from '@mui/material/Icon';
 
 import { skeletonClear, skeletonAddBodiesandOpen, skeletonAddandOpen, skeletonRemove, DefaultSynapseRadius } from 'actions/skeleton';

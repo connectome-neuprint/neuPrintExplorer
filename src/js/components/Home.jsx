@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 
 import Typography from '@mui/material/Typography';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 import Grid from '@mui/material/Grid';
 import Icon from '@mui/material/Icon';
 import CallMadeIcon from '@mui/icons-material/CallMade';

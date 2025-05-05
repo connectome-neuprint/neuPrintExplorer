@@ -9,7 +9,7 @@ import { NavLink, withRouter } from 'react-router-dom';
 import { withCookies, Cookies } from 'react-cookie';
 import classNames from 'classnames';
 
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 import Button from '@mui/material/Button';
 import Fab from '@mui/material/Fab';
 import MenuItem from '@mui/material/MenuItem';
@@ -23,7 +23,7 @@ import './Login.css';
 
 const styles = theme => ({
   buttonBasic: {
-    padding: `0 ${theme.spacing(1)}px`,
+    padding: `0 ${theme.spacing(1)}`,
     minWidth: 1,
     color: '#fff'
   },

@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import randomColor from 'randomcolor';
 
 import Button from '@mui/material/Button';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControl from '@mui/material/FormControl';

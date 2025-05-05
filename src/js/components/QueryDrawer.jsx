@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 
 import Drawer from '@mui/material/Drawer';
 import Typography from '@mui/material/Typography';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 import Collapse from '@mui/material/Collapse';
 
 import QueryTypeSelection from './QueryTypeSelection';

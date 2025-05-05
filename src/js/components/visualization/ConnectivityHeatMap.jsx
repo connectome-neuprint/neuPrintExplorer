@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import HeatMap from '@neuprint/react-heatmap';
 import CircularProgress from '@mui/material/CircularProgress';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 
 import { getQueryString, setSearchQueryString } from 'helpers/queryString';
 import history from '../../history';

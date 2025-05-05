@@ -8,7 +8,7 @@ import { NavLink } from 'react-router-dom';
 import { withRouter } from 'react-router';
 
 import Drawer from '@mui/material/Drawer';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 
 const styles = () => ({
   regexWarning: {
@@ -37,7 +37,7 @@ class AdvancedNeuronInput extends React.Component {
           rows={1}
           fullWidth
           value={value}
-          rowsMax={4}
+          maxRows={4}
           className={classes.textField}
           onChange={this.handleChange}
           onKeyDown={this.handleKeyDown} />

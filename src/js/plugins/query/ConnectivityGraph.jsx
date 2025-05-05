@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 
 import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
@@ -173,7 +173,7 @@ class ConnectivityGraph extends React.Component {
             rows={1}
             value={bodyIds}
             name="bodyIds"
-            rowsMax={4}
+            maxRows={4}
             helperText="Separate IDs with commas."
             onChange={this.addNeuronBodyIds}
             onKeyDown={this.catchReturn} />
@@ -186,7 +186,7 @@ class ConnectivityGraph extends React.Component {
             margin="dense"
             rows={1}
             value={minWeight}
-            rowsMax={1}
+            maxRows={1}
             onChange={this.handleMinWeightChange} />
         </FormControl>
         <FormControl variant="standard" className={classes.formControl}>

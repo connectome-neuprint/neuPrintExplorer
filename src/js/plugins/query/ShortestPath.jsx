@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 
 const styles = theme => ({
   textField: {
@@ -202,7 +202,7 @@ export class ShortestPath extends React.Component {
             fullWidth
             rows={1}
             value={bodyId1}
-            rowsMax={1}
+            maxRows={1}
             className={classes.textField}
             onChange={this.addBodyId1} />
           <TextField
@@ -212,7 +212,7 @@ export class ShortestPath extends React.Component {
             fullWidth
             rows={1}
             value={bodyId2}
-            rowsMax={1}
+            maxRows={1}
             className={classes.textField}
             onChange={this.addBodyId2} />
           <TextField
@@ -223,7 +223,7 @@ export class ShortestPath extends React.Component {
             type="number"
             rows={1}
             value={minWeight}
-            rowsMax={1}
+            maxRows={1}
             className={classes.textField}
             onChange={this.addMinWeight} />
         </FormControl>

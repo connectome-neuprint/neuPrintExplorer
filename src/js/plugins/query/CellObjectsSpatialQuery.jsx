@@ -6,7 +6,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
@@ -207,7 +207,7 @@ export class CellObjectsSpatialQuery extends React.Component {
             fullWidth
             rows={1}
             value={x}
-            rowsMax={1}
+            maxRows={1}
             className={classes.textField}
             onChange={(event) => this.setState({x: event.target.value})}
             onKeyDown={this.catchReturn}
@@ -221,7 +221,7 @@ export class CellObjectsSpatialQuery extends React.Component {
             fullWidth
             rows={1}
             value={y}
-            rowsMax={1}
+            maxRows={1}
             className={classes.textField}
             onChange={(event) => this.setState({y: event.target.value})}
             onKeyDown={this.catchReturn}
@@ -235,7 +235,7 @@ export class CellObjectsSpatialQuery extends React.Component {
             fullWidth
             rows={1}
             value={z}
-            rowsMax={1}
+            maxRows={1}
             className={classes.textField}
             onChange={(event) => this.setState({z: event.target.value})}
             onKeyDown={this.catchReturn}
@@ -249,7 +249,7 @@ export class CellObjectsSpatialQuery extends React.Component {
             fullWidth
             rows={1}
             value={radius}
-            rowsMax={1}
+            maxRows={1}
             className={classes.textField}
             onChange={(event) => this.setState({radius: event.target.value})}
             onKeyDown={this.catchReturn}

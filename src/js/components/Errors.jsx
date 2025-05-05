@@ -6,7 +6,7 @@ import Snackbar from '@mui/material/Snackbar';
 import Slide from '@mui/material/Slide';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 
 import { clearErrors } from '../actions/app';
 
@@ -45,7 +45,7 @@ class Errors extends React.Component {
             color="inherit"
             className={classes.close}
             onClick={this.handleClose}
-          >
+            size="large">
             <CloseIcon />
           </IconButton>
         ]}

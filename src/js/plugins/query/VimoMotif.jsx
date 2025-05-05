@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import PouchDB from 'pouchdb';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 import { NEURON_COLORS } from '@neuprint/vimo-sketches';
 import Vimo from "./Vimo/Vimo";
 import { getBodyIdForTable } from './shared/pluginhelpers';

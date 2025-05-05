@@ -5,7 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import merge from 'deepmerge';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Accordion from '@mui/material/Accordion';
@@ -165,7 +165,7 @@ class NeuronFilter extends React.Component {
                 margin="dense"
                 rows={1}
                 value={qsParams.pre}
-                rowsMax={1}
+                maxRows={1}
                 className={classes.textField}
                 onChange={(event) => this.handleTextChange(event, 'pre')}
               />
@@ -176,7 +176,7 @@ class NeuronFilter extends React.Component {
                 type="number"
                 rows={1}
                 value={qsParams.post}
-                rowsMax={1}
+                maxRows={1}
                 className={classes.textField}
                 onChange={(event) => this.handleTextChange(event, 'post')}
               />

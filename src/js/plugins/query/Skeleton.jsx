@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 
 const pluginName = 'Skeleton';
 const pluginAbbrev = 'sk';
@@ -119,7 +119,7 @@ class Skeleton extends React.Component {
             rows={1}
             value={bodyIds}
             name="bodyIds"
-            rowsMax={4}
+            maxRows={4}
             helperText="Separate IDs with commas."
             onChange={this.addNeuronBodyIds}
             onKeyDown={this.catchReturn} />

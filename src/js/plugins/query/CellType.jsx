@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 
 import Button from '@mui/material/Button';
 import InputLabel from '@mui/material/InputLabel';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 
 import CellTypeInputField from './shared/CellTypeInputField';
 

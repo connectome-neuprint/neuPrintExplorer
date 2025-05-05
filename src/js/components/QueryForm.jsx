@@ -11,7 +11,7 @@ import Snackbar from '@mui/material/Snackbar';
 import { withRouter } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 
 import { formError, pluginResponseError } from 'actions/plugins';
 import { metaInfoError, launchNotification } from 'actions/app';

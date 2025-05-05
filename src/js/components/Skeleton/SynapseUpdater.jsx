@@ -5,7 +5,7 @@ import Immutable from 'immutable';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Button from '@mui/material/Button';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 
 import ColorPickerModal from './ColorPickerModal';
 

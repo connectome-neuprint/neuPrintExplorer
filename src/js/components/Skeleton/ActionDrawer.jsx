@@ -14,7 +14,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Tooltip from '@mui/material/Tooltip';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 
 import ColorPickerModal from './ColorPickerModal';
 import SynapseSelectionMenu from './SynapseSelectionMenu';
@@ -104,7 +104,7 @@ function ActionDrawer(props) {
                 href={swcDownload}
                 aria-label="Download"
                 className={classes.margin}
-              >
+                size="large">
                 <Icon style={{ fontSize: '1.5rem' }}>file_download</Icon>
               </IconButton>
             </Tooltip>
@@ -113,7 +113,7 @@ function ActionDrawer(props) {
                 onClick={() => dispatch({ type: 'updateBody', id: name, status: !state.has(name) })}
                 aria-label="Synapses"
                 className={classes.margin}
-              >
+                size="large">
                 <Icon style={{ fontSize: '1.5rem' }}>sync_alt</Icon>
               </IconButton>
             </Tooltip>
@@ -122,7 +122,7 @@ function ActionDrawer(props) {
                 onClick={() => bodyDeleteHandler(name)}
                 aria-label="Delete"
                 className={classes.margin}
-              >
+                size="large">
                 <DeleteIcon fontSize="small" />
               </IconButton>
             </Tooltip>
@@ -149,7 +149,7 @@ function ActionDrawer(props) {
           color="inherit"
           className={classes.close}
           onClick={showHandler}
-        >
+          size="large">
           <CloseIcon />
         </IconButton>
         <Typography variant="h5" gutterBottom className={classes.header}>

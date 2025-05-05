@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useMemo, useContext, useState, useEffect } from 'react';
 
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
@@ -231,7 +231,7 @@ function NeuroglancerMenu({ classes, dataSet }) {
               className={classes.button}
               aria-label="Neuroglancer Menu"
               onClick={handleOpenMenu}
-            >
+              size="large">
               <MenuIcon style={{ fontSize: 18 }} />
             </IconButton>
           </Tooltip>
@@ -253,13 +253,12 @@ function NeuroglancerMenu({ classes, dataSet }) {
           </Menu>
         </>
       ) : null}
-
       <Tooltip title="Open in new window">
         <IconButton
           className={classes.button}
           aria-label="Open in new window"
           onClick={handleOpenInNewWindow}
-        >
+          size="large">
           <OpenInNewIcon style={newIconStyle} />
         </IconButton>
       </Tooltip>

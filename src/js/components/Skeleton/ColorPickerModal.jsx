@@ -7,7 +7,7 @@ import Popover from '@mui/material/Popover';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 
 const styles = () => ({
   colorBox: {
@@ -42,7 +42,10 @@ function ColorPickerModal(props) {
   return (
     <>
       <Tooltip title="Change Color" placement="top">
-        <IconButton onClick={event => setAnchorEl(event.currentTarget)} aria-label="Change color">
+        <IconButton
+          onClick={event => setAnchorEl(event.currentTarget)}
+          aria-label="Change color"
+          size="large">
           <div className={classes.colorBox} style={colorBoxStyle} />
         </IconButton>
       </Tooltip>

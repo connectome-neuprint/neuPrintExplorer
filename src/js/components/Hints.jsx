@@ -10,11 +10,11 @@ import { Link } from 'react-router-dom';
 import MobileStepper from '@mui/material/MobileStepper';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 
 const styles = theme => ({
   hint: {
-    margin: `${theme.spacing(2)}px 0`,
+    margin: `${theme.spacing(2)} 0`,
     minHeight: '76px'
   }
 });

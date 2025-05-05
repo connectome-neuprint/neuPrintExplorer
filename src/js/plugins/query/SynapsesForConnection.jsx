@@ -5,7 +5,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 // eslint-disable-next-line import/no-unresolved
 import { round } from 'mathjs';
 import Select from 'react-select';
@@ -197,7 +197,7 @@ RETURN s.type, s.location.x ,s.location.y ,s.location.z, s.confidence, keys(s)`;
             fullWidth
             rows={1}
             value={bodyId1}
-            rowsMax={1}
+            maxRows={1}
             className={classes.textField}
             onChange={this.addBodyId1} />
           <TextField
@@ -206,7 +206,7 @@ RETURN s.type, s.location.x ,s.location.y ,s.location.z, s.confidence, keys(s)`;
             fullWidth
             rows={1}
             value={bodyId2}
-            rowsMax={1}
+            maxRows={1}
             className={classes.textField}
             onChange={this.addBodyId2} />
         </FormControl>

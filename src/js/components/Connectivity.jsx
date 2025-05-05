@@ -6,7 +6,7 @@ import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 import { ResponsiveHeatMapCanvas } from '@nivo/heatmap';
 
 import { getQueryString, setSearchQueryString } from 'helpers/queryString';

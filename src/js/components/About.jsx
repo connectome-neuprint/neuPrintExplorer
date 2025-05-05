@@ -7,7 +7,7 @@ import Divider from '@mui/material/Divider';
 import Icon from '@mui/material/Icon';
 import Button from '@mui/material/Button';
 import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 
 import AboutIssueList from './AboutIssueList';
 import GithubErrorBoundary from './GithubErrorBoundary';

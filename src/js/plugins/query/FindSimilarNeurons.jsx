@@ -5,7 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
@@ -606,7 +606,7 @@ ORDER By x.score DESC`
             fullWidth
             rows={1}
             value={bodyId}
-            rowsMax={2}
+            maxRows={2}
             className={classes.textField}
             onChange={this.addNeuronBodyId}
             onKeyDown={this.catchReturn} />

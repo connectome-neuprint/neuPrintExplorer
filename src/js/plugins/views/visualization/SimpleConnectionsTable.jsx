@@ -12,7 +12,7 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 
 import { TablePaginationActions } from 'plugins/support';
 
@@ -210,7 +210,7 @@ class SimpleConnectionsTable extends React.Component {
                                 <IconButton
                                   aria-label="Expand"
                                   onClick={() => this.toggleExpandPanel(keyId, cell, row[5].sortBy)}
-                                >
+                                  size="large">
                                   {isExpanded[keyId] ? (
                                     <RemoveIcon style={this.removeIconStyle} />
                                   ) : (

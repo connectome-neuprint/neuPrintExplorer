@@ -15,7 +15,7 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
@@ -233,7 +233,7 @@ function ResultsTopBar({
                   actions.toggleCypherDisplay();
                 }}
                 aria-label="Show Query"
-              >
+                size="large">
                 <Icon style={{ fontSize: 18 }}>info</Icon>
               </IconButton>
             </Tooltip>
@@ -246,26 +246,26 @@ function ResultsTopBar({
                   onClick={() => {
                     handleCopyToClipboard();
                   }}
-                >
+                  size="large">
                   <Assignment style={{ fontSize: 18 }} />
                 </IconButton>
               </Tooltip>
             )}
             <Tooltip title="reload results">
-              <IconButton aria-label="Refresh" onClick={handleRefresh}>
+              <IconButton aria-label="Refresh" onClick={handleRefresh} size="large">
                 <Icon style={{ fontSize: 18 }}>refresh</Icon>
               </IconButton>
             </Tooltip>
             {addIdEnabled && (
               <Tooltip title="Add body id">
-                <IconButton aria-label="Add" onClick={handleAddId}>
+                <IconButton aria-label="Add" onClick={handleAddId} size="large">
                   <Icon style={{ fontSize: 18 }}>add</Icon>
                 </IconButton>
               </Tooltip>
             )}
             {saveEnabled && (
               <Tooltip title="Add to favorites">
-                <IconButton aria-label="Add favorite" onClick={openPopup}>
+                <IconButton aria-label="Add favorite" onClick={openPopup} size="large">
                   <Icon style={{ fontSize: 18 }}>star</Icon>
                 </IconButton>
               </Tooltip>
@@ -279,7 +279,7 @@ function ResultsTopBar({
                   onClick={() => {
                     handleSaveResults(index);
                   }}
-                >
+                  size="large">
                   <Icon style={{ fontSize: 18 }}>save</Icon>
                 </IconButton>
               </Tooltip>
@@ -293,7 +293,7 @@ function ResultsTopBar({
                   onClick={() => {
                     downloadCallback(index);
                   }}
-                >
+                  size="large">
                   <Icon style={{ fontSize: 18 }}>file_download</Icon>
                 </IconButton>
               </Tooltip>
@@ -303,7 +303,7 @@ function ResultsTopBar({
                 className={classes.button}
                 aria-label="Full Screen"
                 onClick={() => setQueryString({ rt: 'full' })}
-              >
+                size="large">
                 <Icon style={{ fontSize: 18 }}>fullscreen</Icon>
               </IconButton>
             </Tooltip>
@@ -314,7 +314,7 @@ function ResultsTopBar({
                 onClick={() => {
                   setQueryString({ ftab: index });
                 }}
-              >
+                size="large">
                 <Icon style={{ fontSize: 18 }}>push_pin</Icon>
               </IconButton>
             </Tooltip>
@@ -330,7 +330,7 @@ function ResultsTopBar({
                   onClick={() => {
                     download3DCallback(index);
                   }}
-                >
+                  size="large">
                   <ThreeDRotation style={{ fontSize: 18 }} />
                 </IconButton>
               </Tooltip>
@@ -343,7 +343,7 @@ function ResultsTopBar({
               aria-label="menu"
               className={classes.button}
               onClick={handleOpenMenu}
-            >
+              size="large">
               <Icon style={{ fontSize: 18 }}>menu</Icon>
             </IconButton>
             <Menu
@@ -429,7 +429,7 @@ function ResultsTopBar({
                 onClose();
               }
             }}
-          >
+            size="large">
             <Icon style={{ fontSize: 18 }}>close</Icon>
           </IconButton>
         </Tooltip>

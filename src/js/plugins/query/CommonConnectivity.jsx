@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -342,7 +342,7 @@ RETURN collect(apoc.map.fromValues(["${params.find_inputs ? "input" : "output"}"
             rows={1}
             value={bodyIds}
             name="bodyIds"
-            rowsMax={4}
+            maxRows={4}
             helperText="Separate IDs with commas. Max 100"
             onChange={this.addNeuronBodyIds}
             onKeyDown={this.catchReturn} />

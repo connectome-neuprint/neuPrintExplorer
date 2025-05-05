@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 import Icon from '@mui/material/Icon';
 import Modal from '@mui/material/Modal';
 import Tooltip from '@mui/material/Tooltip';

@@ -5,7 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import merge from 'deepmerge';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Select from 'react-select';

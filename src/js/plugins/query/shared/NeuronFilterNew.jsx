@@ -9,7 +9,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
-import { makeStyles } from '@material-ui/core/styles';
+import makeStyles from '@mui/styles/makeStyles';
 import NeuronFilter from "./NeuronFilter";
 
 const useStyles = makeStyles((theme) => ({
@@ -188,7 +188,7 @@ export default function NeuronFilterNew({ callback, actions, datasetstr, neoServ
               margin="dense"
               rows={1}
               value={qsParams[filter.id] || ''}
-              rowsMax={1}
+              maxRows={1}
               className={classes.textField}
               onChange={(event) => handleTextChange(event, filter.id)}
             />
@@ -235,7 +235,7 @@ export default function NeuronFilterNew({ callback, actions, datasetstr, neoServ
               margin="dense"
               rows={1}
               value={qsParams.preThreshold}
-              rowsMax={1}
+              maxRows={1}
               className={classes.textField}
               onChange={(event) => handleTextChange(event, 'pre')}
             />
@@ -246,7 +246,7 @@ export default function NeuronFilterNew({ callback, actions, datasetstr, neoServ
               type="number"
               rows={1}
               value={qsParams.postThreshold}
-              rowsMax={1}
+              maxRows={1}
               className={classes.textField}
               onChange={(event) => handleTextChange(event, 'post')}
             />

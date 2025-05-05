@@ -10,7 +10,7 @@ import slug from 'slugg';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 import Icon from '@mui/material/Icon';
 
 import QueryForm from './QueryForm';
