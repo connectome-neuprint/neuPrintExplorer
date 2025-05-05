@@ -439,13 +439,13 @@ function ResultsTopBar({
         <DialogContent>
           <DialogContentText>Name and save a query.</DialogContentText>
           <TextField
+            variant="standard"
             autoFocus
             margin="dense"
             id="name"
             label="bookmark name"
             fullWidth
-            onChange={(event) => setBookmarkname(event.target.value)}
-          />
+            onChange={(event) => setBookmarkname(event.target.value)} />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
@@ -456,7 +456,6 @@ function ResultsTopBar({
           </Button>
         </DialogActions>
       </Dialog>
-
       <AddIdModal open={addIdOpen} index={index} handleClose={() => setAddIdOpen(false)} />
       {clipboardCallback && resultData && (
         <CopyToClipboardModal

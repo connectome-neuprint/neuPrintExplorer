@@ -194,8 +194,9 @@ export class ShortestPath extends React.Component {
 
     return (
       <div>
-        <FormControl fullWidth className={classes.formControl}>
+        <FormControl variant="standard" fullWidth className={classes.formControl}>
           <TextField
+            variant="standard"
             label="Neuron ID A"
             multiline
             fullWidth
@@ -203,9 +204,9 @@ export class ShortestPath extends React.Component {
             value={bodyId1}
             rowsMax={1}
             className={classes.textField}
-            onChange={this.addBodyId1}
-          />
+            onChange={this.addBodyId1} />
           <TextField
+            variant="standard"
             label="Neuron ID B"
             multiline
             fullWidth
@@ -213,9 +214,9 @@ export class ShortestPath extends React.Component {
             value={bodyId2}
             rowsMax={1}
             className={classes.textField}
-            onChange={this.addBodyId2}
-          />
+            onChange={this.addBodyId2} />
           <TextField
+            variant="standard"
             label="Minimum weight"
             multiline
             fullWidth
@@ -224,8 +225,7 @@ export class ShortestPath extends React.Component {
             value={minWeight}
             rowsMax={1}
             className={classes.textField}
-            onChange={this.addMinWeight}
-          />
+            onChange={this.addMinWeight} />
         </FormControl>
         <Button
           disabled={isQuerying}

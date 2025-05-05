@@ -157,7 +157,7 @@ class NeuronFilter extends React.Component {
             <Typography variant="subtitle1">Optional neuron/segment filters</Typography>
           </AccordionSummary>
           <AccordionDetails className={classes.nopad}>
-            <FormControl className={classes.formControl}>
+            <FormControl variant="standard" className={classes.formControl}>
               <TextField
                 label="minimum # pre (optional)"
                 type="number"
@@ -180,7 +180,7 @@ class NeuronFilter extends React.Component {
                 className={classes.textField}
                 onChange={(event) => this.handleTextChange(event, 'post')}
               />
-              <FormControl className={classes.formControl}>
+              <FormControl variant="standard" className={classes.formControl}>
                 <FormLabel style={{ display: 'inline-flex' }}>
                   Filter by status
                 </FormLabel>

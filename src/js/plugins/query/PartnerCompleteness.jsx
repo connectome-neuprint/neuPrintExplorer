@@ -105,13 +105,12 @@ ORDER BY x.weight DESC`;
     return (
       <div>
         <TextField
+          variant="standard"
           label="Body Id"
           fullWidth
           value={bodyId}
           className={classes.textField}
-          onChange={this.addNeuron}
-        />
-
+          onChange={this.addNeuron} />
         <Button
           disabled={isQuerying}
           color="primary"

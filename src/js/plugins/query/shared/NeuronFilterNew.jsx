@@ -181,7 +181,7 @@ export default function NeuronFilterNew({ callback, actions, datasetstr, neoServ
       // and that it is an array.
       if (!filter.choices || !Array.isArray(filter.choices)) {
         return (
-          <FormControl className={classes.formControl} key={filter.id}>
+          <FormControl variant="standard" className={classes.formControl} key={filter.id}>
             <FormLabel style={{ display: 'inline-flex' }}>{filter.name}</FormLabel>
             <TextField
               variant="outlined"
@@ -202,7 +202,7 @@ export default function NeuronFilterNew({ callback, actions, datasetstr, neoServ
         value: choice,
       }));
       return (
-        <FormControl className={classes.formControl} key={filter.id}>
+        <FormControl variant="standard" className={classes.formControl} key={filter.id}>
           <FormLabel style={{ display: 'inline-flex' }}>{filter.name}</FormLabel>
           <Select
             className={classes.select}
@@ -224,7 +224,7 @@ export default function NeuronFilterNew({ callback, actions, datasetstr, neoServ
           <Typography variant="subtitle1">Optional neuron/segment filters</Typography>
         </AccordionSummary>
         <AccordionDetails className={classes.nopad}>
-          <FormControl className={classes.formControl}>
+          <FormControl variant="standard" className={classes.formControl}>
             <Typography variant="subtitle1" component="p">
               Filter by:{' '}
             </Typography>

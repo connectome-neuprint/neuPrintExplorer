@@ -358,7 +358,7 @@ export class RankedTable extends React.Component {
             handleSubmit={this.processRequest}
           />
         )}
-        <FormControl className={classes.formControl}>
+        <FormControl variant="standard" className={classes.formControl}>
           <FormControlLabel
             control={
               <Switch checked={advancedSearch} onChange={this.toggleAdvanced} color="primary" />
@@ -370,7 +370,11 @@ export class RankedTable extends React.Component {
             }
           />
         </FormControl>
-        <FormControl component="fieldset" required className={classes.formControl}>
+        <FormControl
+          variant="standard"
+          component="fieldset"
+          required
+          className={classes.formControl}>
           <RadioGroup
             aria-label="preorpost"
             name="preorpost"

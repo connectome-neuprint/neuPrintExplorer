@@ -36,13 +36,13 @@ export default function AddIdModal(props) {
       <DialogContent>
         <DialogContentText>Enter another body id to display</DialogContentText>
         <TextField
+          variant="standard"
           autoFocus
           margin="dense"
           id="body_id"
           label="body id"
           fullWidth
-          onChange={event => setBodyId(event.target.value) }
-        />
+          onChange={event => setBodyId(event.target.value) } />
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} color="primary">

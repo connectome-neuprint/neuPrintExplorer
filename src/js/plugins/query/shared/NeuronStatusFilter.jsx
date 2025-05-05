@@ -179,8 +179,8 @@ class NeuronStatusFilter extends React.Component {
 
     return (
       <div>
-        <FormControl className={classes.formControl}>
-          <FormControl className={classes.formControl}>
+        <FormControl variant="standard" className={classes.formControl}>
+          <FormControl variant="standard" className={classes.formControl}>
             <FormLabel style={{ display: 'inline-flex' }}>
               Filter by status
               <Tooltip id="tooltip-icon" title={statusDefinitions || ''} placement="right">

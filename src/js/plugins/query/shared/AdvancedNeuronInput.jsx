@@ -31,6 +31,7 @@ class AdvancedNeuronInput extends React.Component {
     return (
       <>
         <TextField
+          variant="standard"
           label="Neuron Instance, Type or BodyID (optional)"
           multiline
           rows={1}
@@ -39,8 +40,7 @@ class AdvancedNeuronInput extends React.Component {
           rowsMax={4}
           className={classes.textField}
           onChange={this.handleChange}
-          onKeyDown={this.handleKeyDown}
-        />
+          onKeyDown={this.handleKeyDown} />
         <Typography color="error" className={classes.regexWarning}>
           Warning!! This is a regular expression search and characters like &#39;&#40;&#39; must be
           escaped. eg: to search for &#39;c(SFS)_R&#39; you would need to type

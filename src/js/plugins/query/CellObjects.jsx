@@ -271,8 +271,9 @@ export class CellObjects extends React.Component {
           onChange={this.handleChangeTypes}
           value={typeValues}
         />
-        <FormControl fullWidth className={classes.formControl}>
+        <FormControl variant="standard" fullWidth className={classes.formControl}>
           <TextField
+            variant="standard"
             label="Body ID"
             multiline
             fullWidth
@@ -281,8 +282,7 @@ export class CellObjects extends React.Component {
             rowsMax={2}
             className={classes.textField}
             onChange={this.addBodyId}
-            onKeyDown={this.catchReturn}
-          />
+            onKeyDown={this.catchReturn} />
         </FormControl>
         <Button
           variant="contained"

@@ -598,8 +598,9 @@ ORDER By x.score DESC`
 
     return (
       <div>
-        <FormControl fullWidth className={classes.formControl}>
+        <FormControl variant="standard" fullWidth className={classes.formControl}>
           <TextField
+            variant="standard"
             label="Neuron ID"
             multiline
             fullWidth
@@ -608,8 +609,7 @@ ORDER By x.score DESC`
             rowsMax={2}
             className={classes.textField}
             onChange={this.addNeuronBodyId}
-            onKeyDown={this.catchReturn}
-          />
+            onKeyDown={this.catchReturn} />
         </FormControl>
         {nBlastMatches ? (
           <>
@@ -633,7 +633,6 @@ ORDER By x.score DESC`
           actions={actions}
           neoServer={neoServerSettings.get('neoServer')}
         />) : ""}
-
         <Button
           variant="contained"
           color="primary"

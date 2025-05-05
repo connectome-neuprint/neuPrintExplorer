@@ -333,8 +333,9 @@ RETURN collect(apoc.map.fromValues(["${params.find_inputs ? "input" : "output"}"
 
     return (
       <div>
-        <FormControl fullWidth className={classes.formControl}>
+        <FormControl variant="standard" fullWidth className={classes.formControl}>
           <TextField
+            variant="standard"
             label="Neuron IDs"
             multiline
             fullWidth
@@ -344,8 +345,7 @@ RETURN collect(apoc.map.fromValues(["${params.find_inputs ? "input" : "output"}"
             rowsMax={4}
             helperText="Separate IDs with commas. Max 100"
             onChange={this.addNeuronBodyIds}
-            onKeyDown={this.catchReturn}
-          />
+            onKeyDown={this.catchReturn} />
         </FormControl>
         <RadioGroup
           aria-label="Type Of Connections"

@@ -791,7 +791,6 @@ ORDER BY neuron.bodyId`
             </Grid>
           </Grid>
         </fieldset>
-
         <fieldset className={classes.fieldset}>
           <InputLabel htmlFor="select-multiple-chip">Output Brain Regions</InputLabel>
           <BrainRegionInput
@@ -820,11 +819,10 @@ ORDER BY neuron.bodyId`
             </Grid>
           </Grid>
         </fieldset>
-
         {dataSet.match(/optic-lobe/) ? (
           <ColumnSelectModal dataset={dataSet} callback={this.enableAllROIs} />
         ) : null}
-        <FormControl className={classes.formControl}>
+        <FormControl variant="standard" className={classes.formControl}>
           <FormControlLabel
             control={<Switch checked={!useSuper} onChange={this.toggleSuper} color="primary" />}
             label={
@@ -834,7 +832,7 @@ ORDER BY neuron.bodyId`
             }
           />
         </FormControl>
-        <FormControl className={classes.formControl}>
+        <FormControl variant="standard" className={classes.formControl}>
           <FormControlLabel
             control={
               <Switch checked={advancedSearch} onChange={this.toggleAdvanced} color="primary" />

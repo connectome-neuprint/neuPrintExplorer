@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography';
 export default function HPWeightSlider(props) {
   const { formControlClass, useHighConfidence, toggleHighConfidence } = props;
   return (
-    <FormControl className={formControlClass}>
+    <FormControl variant="standard" className={formControlClass}>
       <FormControlLabel
         control={
           <Switch

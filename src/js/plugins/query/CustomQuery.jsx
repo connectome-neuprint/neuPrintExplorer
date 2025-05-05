@@ -201,7 +201,7 @@ export class CustomQuery extends React.Component {
     const { classes, isQuerying } = this.props;
     const { errorMessage, textValue = '' } = this.state;
     return (
-      <FormControl fullWidth className={classes.formControl}>
+      <FormControl variant="standard" fullWidth className={classes.formControl}>
         <Typography>Custom Cypher Query</Typography>
         <CodeMirror
           className={classes.textField}

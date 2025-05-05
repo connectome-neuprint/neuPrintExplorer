@@ -201,8 +201,9 @@ RETURN ID(m),
 
     return (
       <div>
-        <FormControl fullWidth className={classes.formControl}>
+        <FormControl variant="standard" fullWidth className={classes.formControl}>
           <TextField
+            variant="standard"
             label="x"
             multiline
             fullWidth
@@ -211,11 +212,11 @@ RETURN ID(m),
             rowsMax={1}
             className={classes.textField}
             onChange={(event) => this.setState({x: event.target.value})}
-            onKeyDown={this.catchReturn}
-          />
+            onKeyDown={this.catchReturn} />
         </FormControl>
-        <FormControl fullWidth className={classes.formControl}>
+        <FormControl variant="standard" fullWidth className={classes.formControl}>
           <TextField
+            variant="standard"
             label="y"
             multiline
             fullWidth
@@ -224,11 +225,11 @@ RETURN ID(m),
             rowsMax={1}
             className={classes.textField}
             onChange={(event) => this.setState({y: event.target.value})}
-            onKeyDown={this.catchReturn}
-          />
+            onKeyDown={this.catchReturn} />
         </FormControl>
-        <FormControl fullWidth className={classes.formControl}>
+        <FormControl variant="standard" fullWidth className={classes.formControl}>
           <TextField
+            variant="standard"
             label="z"
             multiline
             fullWidth
@@ -237,8 +238,7 @@ RETURN ID(m),
             rowsMax={1}
             className={classes.textField}
             onChange={(event) => this.setState({z: event.target.value})}
-            onKeyDown={this.catchReturn}
-          />
+            onKeyDown={this.catchReturn} />
         </FormControl>
         <Button
           variant="contained"

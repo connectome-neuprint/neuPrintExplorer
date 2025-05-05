@@ -163,8 +163,9 @@ class ConnectivityGraph extends React.Component {
 
     return (
       <div>
-        <FormControl fullWidth className={classes.formControl}>
+        <FormControl variant="standard" fullWidth className={classes.formControl}>
           <TextField
+            variant="standard"
             label="Neuron IDs"
             multiline
             fullWidth
@@ -175,21 +176,20 @@ class ConnectivityGraph extends React.Component {
             rowsMax={4}
             helperText="Separate IDs with commas."
             onChange={this.addNeuronBodyIds}
-            onKeyDown={this.catchReturn}
-          />
+            onKeyDown={this.catchReturn} />
         </FormControl>
-        <FormControl className={classes.formControl}>
+        <FormControl variant="standard" className={classes.formControl}>
           <TextField
+            variant="standard"
             label="minimum weight"
             type="number"
             margin="dense"
             rows={1}
             value={minWeight}
             rowsMax={1}
-            onChange={this.handleMinWeightChange}
-          />
+            onChange={this.handleMinWeightChange} />
         </FormControl>
-        <FormControl className={classes.formControl}>
+        <FormControl variant="standard" className={classes.formControl}>
           <FormControlLabel
             control={
               <Switch checked={includeAutapses} onChange={this.toggleAutapses} color="primary" />

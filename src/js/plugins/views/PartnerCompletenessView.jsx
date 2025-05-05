@@ -281,13 +281,13 @@ class PartnerCompletenessView extends React.Component {
           />
         </div>
         <TextField
+          variant="standard"
           id="orphanfilter"
           label="Filter (ignore #conn <=)"
           className={classes.textField}
           value={orphanFilter}
           onChange={this.handleChange}
-          margin="normal"
-        />
+          margin="normal" />
         <Typography variant="h6">Inputs</Typography>
         <Typography>
           {inputPercent} percent connections,{' '}

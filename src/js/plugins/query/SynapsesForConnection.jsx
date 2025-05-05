@@ -190,25 +190,25 @@ RETURN s.type, s.location.x ,s.location.y ,s.location.z, s.confidence, keys(s)`;
 
     return (
       <div>
-        <FormControl className={classes.formControl}>
+        <FormControl variant="standard" className={classes.formControl}>
           <TextField
+            variant="standard"
             label="Neuron ID A"
             fullWidth
             rows={1}
             value={bodyId1}
             rowsMax={1}
             className={classes.textField}
-            onChange={this.addBodyId1}
-          />
+            onChange={this.addBodyId1} />
           <TextField
+            variant="standard"
             label="Neuron ID B"
             fullWidth
             rows={1}
             value={bodyId2}
             rowsMax={1}
             className={classes.textField}
-            onChange={this.addBodyId2}
-          />
+            onChange={this.addBodyId2} />
         </FormControl>
         <InputLabel htmlFor="select-multiple-chip">Brain Regions</InputLabel>
         <Select

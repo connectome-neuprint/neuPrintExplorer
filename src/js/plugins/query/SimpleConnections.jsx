@@ -323,7 +323,7 @@ export class SimpleConnections extends React.Component {
             dataSet={dataSet}
           />
         )}
-        <FormControl className={classes.formControl}>
+        <FormControl variant="standard" className={classes.formControl}>
           <FormControlLabel
             control={
               <Switch checked={advancedSearch} onChange={this.toggleAdvanced} color="primary" />
@@ -335,8 +335,7 @@ export class SimpleConnections extends React.Component {
             }
           />
         </FormControl>
-
-        <FormControl className={classes.formControl}>
+        <FormControl variant="standard" className={classes.formControl}>
           <FormLabel component="legend">Neuron Direction</FormLabel>
           <RadioGroup
             aria-label="preOrPost"

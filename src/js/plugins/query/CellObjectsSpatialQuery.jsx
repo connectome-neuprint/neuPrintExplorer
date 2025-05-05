@@ -199,7 +199,7 @@ export class CellObjectsSpatialQuery extends React.Component {
           onChange={this.handleChangeTypes}
           value={typeValues}
         />
-        <FormControl fullWidth className={classes.formControl}>
+        <FormControl variant="standard" fullWidth className={classes.formControl}>
           <TextField
             label="x"
             multiline
@@ -213,7 +213,7 @@ export class CellObjectsSpatialQuery extends React.Component {
             onKeyDown={this.catchReturn}
           />
         </FormControl>
-        <FormControl fullWidth className={classes.formControl}>
+        <FormControl variant="standard" fullWidth className={classes.formControl}>
           <TextField
             label="y"
             multiline
@@ -227,7 +227,7 @@ export class CellObjectsSpatialQuery extends React.Component {
             onKeyDown={this.catchReturn}
           />
         </FormControl>
-        <FormControl fullWidth className={classes.formControl}>
+        <FormControl variant="standard" fullWidth className={classes.formControl}>
           <TextField
             label="z"
             multiline
@@ -241,7 +241,7 @@ export class CellObjectsSpatialQuery extends React.Component {
             onKeyDown={this.catchReturn}
           />
         </FormControl>
-        <FormControl fullWidth className={classes.formControl}>
+        <FormControl variant="standard" fullWidth className={classes.formControl}>
           <TextField
             label="radius"
             multiline
@@ -255,8 +255,6 @@ export class CellObjectsSpatialQuery extends React.Component {
             onKeyDown={this.catchReturn}
           />
         </FormControl>
-
-
         <Button
           variant="contained"
           color="primary"
