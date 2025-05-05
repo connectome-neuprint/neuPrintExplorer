@@ -6,7 +6,7 @@ import FormLabel from '@mui/material/FormLabel';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import { makeStyles } from '@material-ui/core/styles';

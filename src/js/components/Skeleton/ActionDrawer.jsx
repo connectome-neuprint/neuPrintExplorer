@@ -6,13 +6,13 @@ import Drawer from '@mui/material/Drawer';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Icon from '@mui/material/Icon';
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import DeleteIcon from '@material-ui/icons/Delete';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Tooltip from '@mui/material/Tooltip';
 import { withStyles } from '@material-ui/core/styles';
 

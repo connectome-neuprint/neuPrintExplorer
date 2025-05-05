@@ -6,11 +6,11 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import ToggleOffIcon from '@material-ui/icons/ToggleOff';
-import DoubleArrowIcon from '@material-ui/icons/DoubleArrow';
+import ToggleOffIcon from '@mui/icons-material/ToggleOff';
+import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
 
-import OpenInNewIcon from '@material-ui/icons/OpenInNew';
-import MenuIcon from '@material-ui/icons/Menu';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import MenuIcon from '@mui/icons-material/Menu';
 
 import { NgViewerContext } from 'contexts/NgViewerContext';
 

@@ -6,7 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 

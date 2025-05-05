@@ -6,8 +6,8 @@ import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { withStyles } from '@material-ui/core/styles';
-import ComputerIcon from '@material-ui/icons/Computer';
-import WarningIcon from '@material-ui/icons/Warning';
+import ComputerIcon from '@mui/icons-material/Computer';
+import WarningIcon from '@mui/icons-material/Warning';
 
 import Login from './Login';
 

@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import Snackbar from '@mui/material/Snackbar';
 import Slide from '@mui/material/Slide';
 import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from '@mui/icons-material/Close';
 import { withStyles } from '@material-ui/core/styles';
 
 import { clearErrors } from '../actions/app';

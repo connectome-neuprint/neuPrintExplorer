@@ -21,8 +21,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Dialog from '@mui/material/Dialog';
 import DialogContentText from '@mui/material/DialogContentText';
-import ThreeDRotation from '@material-ui/icons/ThreeDRotation';
-import Assignment from '@material-ui/icons/Assignment';
+import ThreeDRotation from '@mui/icons-material/ThreeDRotation';
+import Assignment from '@mui/icons-material/Assignment';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 

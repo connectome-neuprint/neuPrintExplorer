@@ -11,7 +11,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import { TablePaginationActions } from 'plugins/support';
 import IndependentTable from './visualization/IndependentTable';
