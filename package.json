@@ -107,7 +107,6 @@
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-select": "^5.10.1",
-    "react-test-renderer": "^16.13.1",
     "redux": "^3.7.2",
     "redux-thunk": "^2.3.0",
     "regenerator-runtime": "^0.13.9",
