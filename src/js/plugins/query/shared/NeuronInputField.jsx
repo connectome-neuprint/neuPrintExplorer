@@ -6,9 +6,6 @@ import withStyles from '@mui/styles/withStyles';
 
 
 const styles = theme => ({
-  regexWarning: {
-    fontSize: '0.9em'
-  },
   select: {
     fontFamily: theme.typography.fontFamily,
     margin: '0.5em 0 1em 0'
