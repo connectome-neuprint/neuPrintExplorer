@@ -46,7 +46,7 @@ const styles = theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
     }),
-    width: theme.spacing(6)
+    width: 54
   },
   toolbar: theme.mixins.toolbar
 });
