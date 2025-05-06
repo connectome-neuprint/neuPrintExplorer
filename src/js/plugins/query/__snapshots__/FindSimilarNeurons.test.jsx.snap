@@ -4,31 +4,34 @@ exports[`FindSimilarNeurons Plugin renders correctly 1`] = `
 <DocumentFragment>
   <div>
     <div
-      class="MuiFormControl-root MuiFormControl-fullWidth"
+      class="MuiFormControl-root MuiFormControl-fullWidth css-ytlejw-MuiFormControl-root"
     >
       <div
-        class="MuiFormControl-root MuiTextField-root MuiFormControl-fullWidth"
+        class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-cmpglg-MuiFormControl-root-MuiTextField-root"
       >
         <label
-          class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
+          class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-standard MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-standard css-2hy7sk-MuiFormLabel-root-MuiInputLabel-root"
           data-shrink="false"
+          for=":r0:"
+          id=":r0:-label"
         >
           Neuron ID
         </label>
         <div
-          class="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-fullWidth MuiInput-fullWidth MuiInputBase-formControl MuiInput-formControl MuiInputBase-multiline MuiInput-multiline"
+          class="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-multiline css-1fqsnzy-MuiInputBase-root-MuiInput-root"
         >
           <textarea
             aria-invalid="false"
-            class="MuiInputBase-input MuiInput-input MuiInputBase-inputMultiline MuiInput-inputMultiline"
+            class="MuiInputBase-input MuiInput-input MuiInputBase-inputMultiline css-9j73qj-MuiInputBase-input-MuiInput-input"
+            id=":r0:"
             rows="1"
             style="height: 0px; overflow: hidden;"
           />
           <textarea
             aria-hidden="true"
-            class="MuiInputBase-input MuiInput-input MuiInputBase-inputMultiline MuiInput-inputMultiline"
+            class="MuiInputBase-input MuiInput-input MuiInputBase-inputMultiline css-9j73qj-MuiInputBase-input-MuiInput-input"
             readonly=""
-            style="visibility: hidden; position: absolute; overflow: hidden; height: 0px; top: 0px; left: 0px; transform: translateZ(0); width: 100%;"
+            style="visibility: hidden; position: absolute; overflow: hidden; height: 0px; top: 0px; left: 0px; transform: translateZ(0); padding-top: 0px; padding-bottom: 0px; width: 100%;"
             tabindex="-1"
           />
         </div>
@@ -36,46 +39,60 @@ exports[`FindSimilarNeurons Plugin renders correctly 1`] = `
     </div>
     <div>
       <div
-        class="MuiFormControl-root NeuronStatusFilter-formControl-1"
+        class="MuiFormControl-root NeuronStatusFilter-formControl-1 css-1iw3t7y-MuiFormControl-root"
       >
         <div
-          class="MuiFormControl-root NeuronStatusFilter-formControl-1"
+          class="MuiFormControl-root NeuronStatusFilter-formControl-1 css-1iw3t7y-MuiFormControl-root"
         >
           <label
-            class="MuiFormLabel-root"
+            class="MuiFormLabel-root MuiFormLabel-colorPrimary css-nwsdb5-MuiFormLabel-root"
             style="display: inline-flex;"
           >
             Filter by status
             <div
+              aria-label=""
               class="NeuronStatusFilter-tooltip-5"
-              title=""
+              data-mui-internal-clone-element="true"
             >
               ?
             </div>
           </label>
           <div
-            class="NeuronStatusFilter-select-3 css-2b097c-container"
+            class="NeuronStatusFilter-select-3 css-b62m3t-container"
           >
+            <span
+              class="css-1f43avz-a11yText-A11yText"
+              id="react-select-2-live-region"
+            />
+            <span
+              aria-atomic="false"
+              aria-live="polite"
+              aria-relevant="additions text"
+              class="css-1f43avz-a11yText-A11yText"
+              role="log"
+            />
             <div
-              class=" css-yk16xz-control"
+              class="css-13cymwt-control"
             >
               <div
-                class=" css-g1d714-ValueContainer"
+                class="css-1dyz3mf"
               >
                 <div
-                  class="css-1rhbuit-multiValue"
+                  class="css-1p3m7a8-multiValue"
                 >
                   <div
-                    class="css-12jo7m5"
+                    class="css-9jq23d"
                   >
                     Traced
                   </div>
                   <div
-                    class="css-xb97g8"
+                    aria-label="Remove Traced"
+                    class="css-v7duua"
+                    role="button"
                   >
                     <svg
                       aria-hidden="true"
-                      class="css-6q0nyr-Svg"
+                      class="css-tj5bde-Svg"
                       focusable="false"
                       height="14"
                       viewBox="0 0 20 20"
@@ -88,40 +105,38 @@ exports[`FindSimilarNeurons Plugin renders correctly 1`] = `
                   </div>
                 </div>
                 <div
-                  class="css-b8ldur-Input"
+                  class="css-19bb58m"
+                  data-value=""
                 >
-                  <div
+                  <input
+                    aria-activedescendant=""
+                    aria-autocomplete="list"
+                    aria-expanded="false"
+                    aria-haspopup="true"
+                    autocapitalize="none"
+                    autocomplete="off"
+                    autocorrect="off"
                     class=""
-                    style="display: inline-block;"
-                  >
-                    <input
-                      aria-autocomplete="list"
-                      autocapitalize="none"
-                      autocomplete="off"
-                      autocorrect="off"
-                      id="react-select-2-input"
-                      spellcheck="false"
-                      style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
-                      tabindex="0"
-                      type="text"
-                      value=""
-                    />
-                    <div
-                      style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-                    />
-                  </div>
+                    id="react-select-2-input"
+                    role="combobox"
+                    spellcheck="false"
+                    style="opacity: 1; width: 100%; grid-area: 1 / 2; min-width: 2px; border: 0px; margin: 0px; outline: 0; padding: 0px;"
+                    tabindex="0"
+                    type="text"
+                    value=""
+                  />
                 </div>
               </div>
               <div
-                class=" css-1hb7zxy-IndicatorsContainer"
+                class="css-1wy0on6"
               >
                 <div
                   aria-hidden="true"
-                  class=" css-tlfecz-indicatorContainer"
+                  class="css-1xc3v61-indicatorContainer"
                 >
                   <svg
                     aria-hidden="true"
-                    class="css-6q0nyr-Svg"
+                    class="css-tj5bde-Svg"
                     focusable="false"
                     height="20"
                     viewBox="0 0 20 20"
@@ -133,15 +148,15 @@ exports[`FindSimilarNeurons Plugin renders correctly 1`] = `
                   </svg>
                 </div>
                 <span
-                  class=" css-1okebmr-indicatorSeparator"
+                  class="css-1u9des2-indicatorSeparator"
                 />
                 <div
                   aria-hidden="true"
-                  class=" css-tlfecz-indicatorContainer"
+                  class="css-1xc3v61-indicatorContainer"
                 >
                   <svg
                     aria-hidden="true"
-                    class="css-6q0nyr-Svg"
+                    class="css-tj5bde-Svg"
                     focusable="false"
                     height="20"
                     viewBox="0 0 20 20"
@@ -162,16 +177,12 @@ exports[`FindSimilarNeurons Plugin renders correctly 1`] = `
       </div>
     </div>
     <button
-      class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary Mui-disabled Mui-disabled"
+      class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-74d805-MuiButtonBase-root-MuiButton-root"
       disabled=""
       tabindex="-1"
       type="button"
     >
-      <span
-        class="MuiButton-label"
-      >
-        Search By Body ID
-      </span>
+      Search By Body ID
     </button>
   </div>
 </DocumentFragment>

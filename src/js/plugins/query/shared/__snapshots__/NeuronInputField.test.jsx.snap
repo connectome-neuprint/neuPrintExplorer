@@ -3,22 +3,33 @@
 exports[`NeuronInputField renders correctly 1`] = `
 <DocumentFragment>
   <label
-    class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-animated"
+    class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-animated MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-animated css-1tkmop-MuiFormLabel-root-MuiInputLabel-root"
     for="select-multiple-chip"
   >
     Neuron Instance, Type or BodyId (optional)
   </label>
   <div
-    class="NeuronInputField-select-2 css-2b097c-container"
+    class="NeuronInputField-select-1 css-b62m3t-container"
   >
+    <span
+      class="css-1f43avz-a11yText-A11yText"
+      id="react-select-2-live-region"
+    />
+    <span
+      aria-atomic="false"
+      aria-live="polite"
+      aria-relevant="additions text"
+      class="css-1f43avz-a11yText-A11yText"
+      role="log"
+    />
     <div
-      class="asyncSelect__control css-yk16xz-control"
+      class="asyncSelect__control css-13cymwt-control"
     >
       <div
-        class="asyncSelect__value-container asyncSelect__value-container--has-value css-g1d714-ValueContainer"
+        class="asyncSelect__value-container asyncSelect__value-container--has-value css-hlgwow"
       >
         <div
-          class="asyncSelect__single-value css-1uccc91-singleValue"
+          class="asyncSelect__single-value css-1dimb5e-singleValue"
         >
           <div
             style="display: flex;"
@@ -32,40 +43,38 @@ exports[`NeuronInputField renders correctly 1`] = `
           </div>
         </div>
         <div
-          class="css-b8ldur-Input"
+          class="asyncSelect__input-container css-19bb58m"
+          data-value=""
         >
-          <div
+          <input
+            aria-activedescendant=""
+            aria-autocomplete="list"
+            aria-expanded="false"
+            aria-haspopup="true"
+            autocapitalize="none"
+            autocomplete="off"
+            autocorrect="off"
             class="asyncSelect__input"
-            style="display: inline-block;"
-          >
-            <input
-              aria-autocomplete="list"
-              autocapitalize="none"
-              autocomplete="off"
-              autocorrect="off"
-              id="react-select-2-input"
-              spellcheck="false"
-              style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
-              tabindex="0"
-              type="text"
-              value=""
-            />
-            <div
-              style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-            />
-          </div>
+            id="react-select-2-input"
+            role="combobox"
+            spellcheck="false"
+            style="opacity: 1; width: 100%; grid-area: 1 / 2; min-width: 2px; border: 0px; margin: 0px; outline: 0; padding: 0px;"
+            tabindex="0"
+            type="text"
+            value=""
+          />
         </div>
       </div>
       <div
-        class="asyncSelect__indicators css-1hb7zxy-IndicatorsContainer"
+        class="asyncSelect__indicators css-1wy0on6"
       >
         <div
           aria-hidden="true"
-          class="asyncSelect__indicator asyncSelect__clear-indicator css-tlfecz-indicatorContainer"
+          class="asyncSelect__indicator asyncSelect__clear-indicator css-1xc3v61-indicatorContainer"
         >
           <svg
             aria-hidden="true"
-            class="css-6q0nyr-Svg"
+            class="css-tj5bde-Svg"
             focusable="false"
             height="20"
             viewBox="0 0 20 20"
@@ -77,15 +86,15 @@ exports[`NeuronInputField renders correctly 1`] = `
           </svg>
         </div>
         <span
-          class="asyncSelect__indicator-separator css-1okebmr-indicatorSeparator"
+          class="asyncSelect__indicator-separator css-1u9des2-indicatorSeparator"
         />
         <div
           aria-hidden="true"
-          class="asyncSelect__indicator asyncSelect__dropdown-indicator css-tlfecz-indicatorContainer"
+          class="asyncSelect__indicator asyncSelect__dropdown-indicator css-1xc3v61-indicatorContainer"
         >
           <svg
             aria-hidden="true"
-            class="css-6q0nyr-Svg"
+            class="css-tj5bde-Svg"
             focusable="false"
             height="20"
             viewBox="0 0 20 20"

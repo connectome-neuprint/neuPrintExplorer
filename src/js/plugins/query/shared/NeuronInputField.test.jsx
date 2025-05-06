@@ -1,5 +1,5 @@
 import React from 'react'; // React import needed for JSX
-import { render } from '@testing-library/react';
+import { render } from '../../../tests/test-utils';
 import NeuronInputField from './NeuronInputField';
 
 const processRequest = jest.fn();

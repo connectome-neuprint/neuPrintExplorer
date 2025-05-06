@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render } from '../../tests/test-utils';
 
 // import { ColorLegend } from 'plugins/MiniRoiHeatMap';
 import { FindNeurons } from './FindNeurons';
