@@ -46,7 +46,7 @@ const styles = theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
     }),
-    width: theme.spacing(7)
+    width: theme.spacing(6)
   },
   toolbar: theme.mixins.toolbar
 });
@@ -109,7 +109,7 @@ function SideBar({ classes, location }) {
       <div className={classes.toolbar} />
       <MenuList component="nav">
         <MenuItem button onClick={toggleClosed}>
-          <Tooltip title="Collapse Menu" aria-label="Collapse Menu" placement="top-end">
+          <Tooltip title={open ? "Collapse Menu" : "Expand Menu"} aria-label={open ? "Collapse Menu" : "Expand Menu"} placement="top-end">
             <ListItemIcon>{open ? <ChevronLeftIcon /> : <ChevronRightIcon />}</ListItemIcon>
           </Tooltip>
         </MenuItem>
