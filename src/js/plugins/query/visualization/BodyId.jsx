@@ -15,6 +15,7 @@ const styles = theme => ({
     marginLeft: '3px',
     marginTop: '3px',
     cursor: 'pointer',
+    fontSize: '1em',
     color: theme.palette.primary.main
   },
   nblink: {
@@ -159,7 +160,7 @@ function BodyId(props) {
       <Icon
         className={classes.icon}
         onClick={() => handleRemoveClick()}
-        fontSize="inherit"
+        fontSize="small"
       >
         visibility_off
       </Icon>
@@ -170,7 +171,7 @@ function BodyId(props) {
       <Icon
         className={classes.icon}
         onClick={() => handleClick()}
-        fontSize="inherit"
+        fontSize="small"
       >
         visibility
       </Icon>
@@ -184,7 +185,7 @@ function BodyId(props) {
         <SelectAndCopyText text={children} actions={actions} />
         {options.skeleton ? (viewIcon) : ""}
         <Tooltip title="Synapse Connectivity">
-          <Icon className={classes.icon} onClick={() => setModal(!modal)} fontSize="inherit">
+          <Icon className={classes.icon} onClick={() => setModal(!modal)} fontSize="small">
             donut_small
           </Icon>
         </Tooltip>
