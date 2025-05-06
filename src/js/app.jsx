@@ -3,7 +3,7 @@ import "./wdyr";
 import { Provider } from 'react-redux';
 import React from 'react';
 import { createStore, applyMiddleware, compose } from 'redux';
-import thunk from 'redux-thunk';
+import { thunk } from 'redux-thunk';
 
 import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeProvider, StyledEngineProvider, adaptV4Theme } from '@mui/material/styles';

@@ -1,5 +1,5 @@
 import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
+import { thunk } from 'redux-thunk';
 import Immutable from 'immutable';
 
 import * as pluginsActions from './plugins';
