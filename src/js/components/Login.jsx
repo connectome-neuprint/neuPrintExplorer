@@ -47,7 +47,7 @@ class Login extends React.Component {
 
     // only bother fetching these if there is a login cookie to pass along
     // with the request.
-    if (props.cookies.get('flyem-services') || props.cookies.get('neuPrintHTTP')) {
+    if (props.cookies.get('flyem-services') || props.cookies.get('neuPrintHTTP') || process.env.NODE_ENV === 'development') {
       this.fetchProfile();
       this.fetchToken();
     }
