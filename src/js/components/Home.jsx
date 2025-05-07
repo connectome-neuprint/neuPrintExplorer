@@ -50,6 +50,7 @@ const styles = (theme) => ({
   video: {
     marginBottom: theme.spacing(2),
     textAlign: 'center',
+    width: '100%',
   },
   menupointer: {
     transform: 'rotate(270deg)',
