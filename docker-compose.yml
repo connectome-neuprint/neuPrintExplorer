@@ -1,5 +1,3 @@
-version: '3.7'
-
 services:
   neuprinthttp:
     image: gcr.io/flyem-public/connectome-neuprint/neuprinthttp:1.7.1-1.64.4
