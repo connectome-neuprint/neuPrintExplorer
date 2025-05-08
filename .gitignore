@@ -9,3 +9,9 @@ neuprint_compartments
 neuprinthttp-config.json
 neuprint-server
 certs/*
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

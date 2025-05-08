@@ -7,10 +7,10 @@ import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import Drawer from '@material-ui/core/Drawer';
-import Typography from '@material-ui/core/Typography';
-import { withStyles } from '@material-ui/core/styles';
-import Collapse from '@material-ui/core/Collapse';
+import Drawer from '@mui/material/Drawer';
+import Typography from '@mui/material/Typography';
+import withStyles from '@mui/styles/withStyles';
+import Collapse from '@mui/material/Collapse';
 
 import QueryTypeSelection from './QueryTypeSelection';
 import { getSiteParams } from '../helpers/queryString';

@@ -4,10 +4,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Button from '@material-ui/core/Button';
-import FormControl from '@material-ui/core/FormControl';
-import TextField from '@material-ui/core/TextField';
-import { withStyles } from '@material-ui/core/styles';
+import Button from '@mui/material/Button';
+import FormControl from '@mui/material/FormControl';
+import TextField from '@mui/material/TextField';
+import withStyles from '@mui/styles/withStyles';
 
 const pluginName = 'Neuroglancer';
 const pluginAbbrev = 'ng';
@@ -90,19 +90,19 @@ class Neuroglancer extends React.Component {
     const { bodyIds } = this.state;
     return (
       <div>
-        <FormControl fullWidth className={classes.formControl}>
+        <FormControl variant="standard" fullWidth className={classes.formControl}>
           <TextField
+            variant="standard"
             label="Neuron IDs"
             multiline
             fullWidth
             rows={1}
             value={bodyIds}
             name="bodyIds"
-            rowsMax={4}
+            maxRows={4}
             helperText="Separate IDs with commas."
             onChange={this.addNeuronBodyIds}
-            onKeyDown={this.catchReturn}
-          />
+            onKeyDown={this.catchReturn} />
         </FormControl>
         <Button disabled={isQuerying} variant="contained" color="primary" onClick={this.processRequest}>
           Submit

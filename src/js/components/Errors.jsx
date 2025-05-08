@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import Snackbar from '@material-ui/core/Snackbar';
-import Slide from '@material-ui/core/Slide';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-import { withStyles } from '@material-ui/core/styles';
+import Snackbar from '@mui/material/Snackbar';
+import Slide from '@mui/material/Slide';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+import withStyles from '@mui/styles/withStyles';
 
 import { clearErrors } from '../actions/app';
 
@@ -33,10 +33,6 @@ class Errors extends React.Component {
         open={errorMessage !== null}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         onClose={this.handleClose}
-        TransitionComponent={TransitionDown}
-        ContentProps={{
-          'aria-describedby': 'message-id'
-        }}
         message={<span id="message-id">{errorMessage}</span>}
         action={[
           <IconButton
@@ -45,10 +41,18 @@ class Errors extends React.Component {
             color="inherit"
             className={classes.close}
             onClick={this.handleClose}
-          >
+            size="large">
             <CloseIcon />
           </IconButton>
         ]}
+        slots={{
+          transition: TransitionDown
+        }}
+        slotProps={{
+          content: {
+            'aria-describedby': 'message-id'
+          }
+        }}
       />
     );
   }

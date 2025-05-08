@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Chip from '@material-ui/core/Chip';
+import Chip from '@mui/material/Chip';
 import ConfirmationDialog from './ConfirmationDialog';
 
 class ColumnSelection extends React.Component {

@@ -1,17 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Typography from '@material-ui/core/Typography';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableRow from '@material-ui/core/TableRow';
-import TablePagination from '@material-ui/core/TablePagination';
-import { withStyles } from '@material-ui/core/styles';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Typography from '@mui/material/Typography';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableRow from '@mui/material/TableRow';
+import TablePagination from '@mui/material/TablePagination';
+import withStyles from '@mui/styles/withStyles';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import { TablePaginationActions } from 'plugins/support';
 import IndependentTable from './visualization/IndependentTable';
@@ -132,16 +132,16 @@ class CollapsibleTable extends React.Component {
                   return (
                     <TableRow hover key={rowIndex} style={rowStyle}>
                       <TableCell className={classes.cellborder} padding="none">
-                        <ExpansionPanel>
-                          <ExpansionPanelSummary
+                        <Accordion>
+                          <AccordionSummary
                             classes={{
                               expandIcon: classes.expandButton
                             }}
                             expandIcon={<ExpandMoreIcon />}
                           >
                             <Typography className={classes.expansionText}>{row.name}</Typography>
-                          </ExpansionPanelSummary>
-                          <ExpansionPanelDetails className={classes.nopad}>
+                          </AccordionSummary>
+                          <AccordionDetails className={classes.nopad}>
                             <ColumnSelection
                               columns={visibleColumns}
                               onChange={columnIndex => this.handleColumnChange(columnIndex)}
@@ -151,8 +151,8 @@ class CollapsibleTable extends React.Component {
                               columns={row.columns}
                               paginate={paginateExpansion.valueOf()}
                             />
-                          </ExpansionPanelDetails>
-                        </ExpansionPanel>
+                          </AccordionDetails>
+                        </Accordion>
                       </TableCell>
                     </TableRow>
                   );
@@ -174,7 +174,9 @@ class CollapsibleTable extends React.Component {
             onPageChange={this.handleChangePage}
             onRowsPerPageChange={this.handleChangeRowsPerPage}
             rowsPerPageOptions={[5, 10, 25, 50, 100]}
-            ActionsComponent={TablePaginationActions}
+            slots={{
+              actions: TablePaginationActions
+            }}
           />
         ) : null}
       </div>

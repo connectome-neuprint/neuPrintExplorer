@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent } from '../../tests/test-utils';
 import { SimpleConnections } from './SimpleConnections';
 
 const styles = {};
@@ -57,7 +57,7 @@ describe('SimpleConnections Plugin', () => {
   it('should return a query object and submit', async () => {
     await renderComponent();
 
-    const textField = screen.getByRole('textbox');
+    const textField = screen.getByRole('combobox');
     const button = screen.getByRole('button');
 
     // Simulate input changes and button clicks

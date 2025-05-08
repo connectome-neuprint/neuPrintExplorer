@@ -5,16 +5,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import merge from 'deepmerge';
-import { withStyles } from '@material-ui/core/styles';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
-import Accordion from '@material-ui/core/Accordion';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import Typography from '@material-ui/core/Typography';
+import withStyles from '@mui/styles/withStyles';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Typography from '@mui/material/Typography';
 import Select from 'react-select';
-import TextField from '@material-ui/core/TextField';
+import TextField from '@mui/material/TextField';
 
 const styles = theme => ({
   formControl: {
@@ -157,7 +157,7 @@ class NeuronFilter extends React.Component {
             <Typography variant="subtitle1">Optional neuron/segment filters</Typography>
           </AccordionSummary>
           <AccordionDetails className={classes.nopad}>
-            <FormControl className={classes.formControl}>
+            <FormControl variant="standard" className={classes.formControl}>
               <TextField
                 label="minimum # pre (optional)"
                 type="number"
@@ -165,7 +165,7 @@ class NeuronFilter extends React.Component {
                 margin="dense"
                 rows={1}
                 value={qsParams.pre}
-                rowsMax={1}
+                maxRows={1}
                 className={classes.textField}
                 onChange={(event) => this.handleTextChange(event, 'pre')}
               />
@@ -176,11 +176,11 @@ class NeuronFilter extends React.Component {
                 type="number"
                 rows={1}
                 value={qsParams.post}
-                rowsMax={1}
+                maxRows={1}
                 className={classes.textField}
                 onChange={(event) => this.handleTextChange(event, 'post')}
               />
-              <FormControl className={classes.formControl}>
+              <FormControl variant="standard" className={classes.formControl}>
                 <FormLabel style={{ display: 'inline-flex' }}>
                   Filter by status
                 </FormLabel>

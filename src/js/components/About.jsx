@@ -1,13 +1,13 @@
 /* global VERSION */
 import React from 'react';
 
-import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
-import Divider from '@material-ui/core/Divider';
-import Icon from '@material-ui/core/Icon';
-import Button from '@material-ui/core/Button';
+import Divider from '@mui/material/Divider';
+import Icon from '@mui/material/Icon';
+import Button from '@mui/material/Button';
 import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 
 import AboutIssueList from './AboutIssueList';
 import GithubErrorBoundary from './GithubErrorBoundary';
@@ -45,13 +45,14 @@ function About({ classes, token, appDB }) {
       <Typography variant="body1" className={classes.centered}>
         Version: {VERSION}
       </Typography>
-      <Divider light className={classes.spaced} />
+      <Divider className={classes.spaced} sx={{
+        opacity: "0.6"
+      }} />
       <Typography variant="h6">About</Typography>
       <Typography variant="body1" className={classes.spaced}>
         neuPrintExplorer is web based tool to query and visualize inter and intra cellular
         interaction data stored in neuPrint+, a neo4j graph database.{' '}
       </Typography>
-
       <Typography variant="h6">Log an issue</Typography>
       <Typography variant="body1" className={classes.spaced}>
         Note that you currently need to have a GitHub account to submit issues.
@@ -60,12 +61,10 @@ function About({ classes, token, appDB }) {
           New issue
         </Button>
       </Typography>
-
       <Typography variant="h6">Open issue list</Typography>
       <GithubErrorBoundary>
         <AboutIssueList token={token} appDB={appDB} />
       </GithubErrorBoundary>
-
       <Typography variant="h6">Contact us</Typography>
       <Typography variant="body1" className={classes.spaced}>
         <Icon className={classes.contactIcon}>mail_outline</Icon>

@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
-import Accordion from '@material-ui/core/Accordion';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
-import { makeStyles } from '@material-ui/core/styles';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import makeStyles from '@mui/styles/makeStyles';
 import NeuronFilter from "./NeuronFilter";
 
 const useStyles = makeStyles((theme) => ({
@@ -181,14 +181,14 @@ export default function NeuronFilterNew({ callback, actions, datasetstr, neoServ
       // and that it is an array.
       if (!filter.choices || !Array.isArray(filter.choices)) {
         return (
-          <FormControl className={classes.formControl} key={filter.id}>
+          <FormControl variant="standard" className={classes.formControl} key={filter.id}>
             <FormLabel style={{ display: 'inline-flex' }}>{filter.name}</FormLabel>
             <TextField
               variant="outlined"
               margin="dense"
               rows={1}
               value={qsParams[filter.id] || ''}
-              rowsMax={1}
+              maxRows={1}
               className={classes.textField}
               onChange={(event) => handleTextChange(event, filter.id)}
             />
@@ -202,7 +202,7 @@ export default function NeuronFilterNew({ callback, actions, datasetstr, neoServ
         value: choice,
       }));
       return (
-        <FormControl className={classes.formControl} key={filter.id}>
+        <FormControl variant="standard" className={classes.formControl} key={filter.id}>
           <FormLabel style={{ display: 'inline-flex' }}>{filter.name}</FormLabel>
           <Select
             className={classes.select}
@@ -224,7 +224,7 @@ export default function NeuronFilterNew({ callback, actions, datasetstr, neoServ
           <Typography variant="subtitle1">Optional neuron/segment filters</Typography>
         </AccordionSummary>
         <AccordionDetails className={classes.nopad}>
-          <FormControl className={classes.formControl}>
+          <FormControl variant="standard" className={classes.formControl}>
             <Typography variant="subtitle1" component="p">
               Filter by:{' '}
             </Typography>
@@ -235,7 +235,7 @@ export default function NeuronFilterNew({ callback, actions, datasetstr, neoServ
               margin="dense"
               rows={1}
               value={qsParams.preThreshold}
-              rowsMax={1}
+              maxRows={1}
               className={classes.textField}
               onChange={(event) => handleTextChange(event, 'pre')}
             />
@@ -246,7 +246,7 @@ export default function NeuronFilterNew({ callback, actions, datasetstr, neoServ
               type="number"
               rows={1}
               value={qsParams.postThreshold}
-              rowsMax={1}
+              maxRows={1}
               className={classes.textField}
               onChange={(event) => handleTextChange(event, 'post')}
             />

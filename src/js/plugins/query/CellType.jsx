@@ -4,9 +4,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Button from '@material-ui/core/Button';
-import InputLabel from '@material-ui/core/InputLabel';
-import { withStyles } from '@material-ui/core/styles';
+import Button from '@mui/material/Button';
+import InputLabel from '@mui/material/InputLabel';
+import withStyles from '@mui/styles/withStyles';
 
 import CellTypeInputField from './shared/CellTypeInputField';
 

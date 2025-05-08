@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import ListItem from '@material-ui/core/ListItem';
-import Button from '@material-ui/core/Button';
-import { withStyles } from '@material-ui/core/styles';
+import ListItem from '@mui/material/ListItem';
+import Button from '@mui/material/Button';
+import withStyles from '@mui/styles/withStyles';
 
 const styles = () => ({
   button: {

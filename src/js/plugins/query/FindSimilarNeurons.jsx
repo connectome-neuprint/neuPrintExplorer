@@ -5,15 +5,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import FormControl from '@material-ui/core/FormControl';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormLabel from '@material-ui/core/FormLabel';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
+import withStyles from '@mui/styles/withStyles';
+import Button from '@mui/material/Button';
+import FormControl from '@mui/material/FormControl';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormLabel from '@mui/material/FormLabel';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
 
 import { ColorLegend } from 'plugins/MiniRoiHeatMap';
 import {
@@ -598,18 +598,18 @@ ORDER By x.score DESC`
 
     return (
       <div>
-        <FormControl fullWidth className={classes.formControl}>
+        <FormControl variant="standard" fullWidth className={classes.formControl}>
           <TextField
+            variant="standard"
             label="Neuron ID"
             multiline
             fullWidth
             rows={1}
             value={bodyId}
-            rowsMax={2}
+            maxRows={2}
             className={classes.textField}
             onChange={this.addNeuronBodyId}
-            onKeyDown={this.catchReturn}
-          />
+            onKeyDown={this.catchReturn} />
         </FormControl>
         {nBlastMatches ? (
           <>
@@ -633,7 +633,6 @@ ORDER By x.score DESC`
           actions={actions}
           neoServer={neoServerSettings.get('neoServer')}
         />) : ""}
-
         <Button
           variant="contained"
           color="primary"

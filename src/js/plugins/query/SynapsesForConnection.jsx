@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import { withStyles } from '@material-ui/core/styles';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import withStyles from '@mui/styles/withStyles';
 // eslint-disable-next-line import/no-unresolved
 import { round } from 'mathjs';
 import Select from 'react-select';
@@ -190,25 +190,25 @@ RETURN s.type, s.location.x ,s.location.y ,s.location.z, s.confidence, keys(s)`;
 
     return (
       <div>
-        <FormControl className={classes.formControl}>
+        <FormControl variant="standard" className={classes.formControl}>
           <TextField
+            variant="standard"
             label="Neuron ID A"
             fullWidth
             rows={1}
             value={bodyId1}
-            rowsMax={1}
+            maxRows={1}
             className={classes.textField}
-            onChange={this.addBodyId1}
-          />
+            onChange={this.addBodyId1} />
           <TextField
+            variant="standard"
             label="Neuron ID B"
             fullWidth
             rows={1}
             value={bodyId2}
-            rowsMax={1}
+            maxRows={1}
             className={classes.textField}
-            onChange={this.addBodyId2}
-          />
+            onChange={this.addBodyId2} />
         </FormControl>
         <InputLabel htmlFor="select-multiple-chip">Brain Regions</InputLabel>
         <Select

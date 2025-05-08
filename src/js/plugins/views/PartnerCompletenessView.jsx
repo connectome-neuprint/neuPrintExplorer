@@ -3,10 +3,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 
-import Typography from '@material-ui/core/Typography';
-import { withStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import Tooltip from '@material-ui/core/Tooltip';
+import Typography from '@mui/material/Typography';
+import withStyles from '@mui/styles/withStyles';
+import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
 
 import IndependentTable from './visualization/IndependentTable';
 
@@ -281,13 +281,13 @@ class PartnerCompletenessView extends React.Component {
           />
         </div>
         <TextField
+          variant="standard"
           id="orphanfilter"
           label="Filter (ignore #conn <=)"
           className={classes.textField}
           value={orphanFilter}
           onChange={this.handleChange}
-          margin="normal"
-        />
+          margin="normal" />
         <Typography variant="h6">Inputs</Typography>
         <Typography>
           {inputPercent} percent connections,{' '}

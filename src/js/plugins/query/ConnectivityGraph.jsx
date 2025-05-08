@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 
-import Button from '@material-ui/core/Button';
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
-import TextField from '@material-ui/core/TextField';
+import Button from '@mui/material/Button';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
+import TextField from '@mui/material/TextField';
 
 const pluginName = 'ConnectivityGraph';
 const pluginAbbrev = 'cg';
@@ -163,8 +163,9 @@ class ConnectivityGraph extends React.Component {
 
     return (
       <div>
-        <FormControl fullWidth className={classes.formControl}>
+        <FormControl variant="standard" fullWidth className={classes.formControl}>
           <TextField
+            variant="standard"
             label="Neuron IDs"
             multiline
             fullWidth
@@ -172,24 +173,23 @@ class ConnectivityGraph extends React.Component {
             rows={1}
             value={bodyIds}
             name="bodyIds"
-            rowsMax={4}
+            maxRows={4}
             helperText="Separate IDs with commas."
             onChange={this.addNeuronBodyIds}
-            onKeyDown={this.catchReturn}
-          />
+            onKeyDown={this.catchReturn} />
         </FormControl>
-        <FormControl className={classes.formControl}>
+        <FormControl variant="standard" className={classes.formControl}>
           <TextField
+            variant="standard"
             label="minimum weight"
             type="number"
             margin="dense"
             rows={1}
             value={minWeight}
-            rowsMax={1}
-            onChange={this.handleMinWeightChange}
-          />
+            maxRows={1}
+            onChange={this.handleMinWeightChange} />
         </FormControl>
-        <FormControl className={classes.formControl}>
+        <FormControl variant="standard" className={classes.formControl}>
           <FormControlLabel
             control={
               <Switch checked={includeAutapses} onChange={this.toggleAutapses} color="primary" />

@@ -3,10 +3,10 @@ import "./wdyr";
 import { Provider } from 'react-redux';
 import React from 'react';
 import { createStore, applyMiddleware, compose } from 'redux';
-import thunk from 'redux-thunk';
+import { thunk } from 'redux-thunk';
 
-import CssBaseline from '@material-ui/core/CssBaseline';
-import { createTheme, ThemeProvider } from '@material-ui/core/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { createTheme, ThemeProvider, StyledEngineProvider, adaptV4Theme } from '@mui/material/styles';
 import { CookiesProvider } from 'react-cookie';
 import { createRoot } from 'react-dom/client';
 
@@ -16,7 +16,7 @@ import AppReducers from './reducers';
 import loadPlugins from './helpers/initplugins';
 
 // set theme colors
-const theme = createTheme({
+const theme = createTheme(adaptV4Theme({
   typography: {
     useNextVariants: true
   },
@@ -34,7 +34,7 @@ const theme = createTheme({
       contrastText: '#000000'
     }
   }
-});
+}));
 
 // eslint-disable-next-line  no-underscore-dangle
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -86,11 +86,13 @@ function loadInterface() {
     <>
       <CssBaseline />
       <CookiesProvider>
-        <ThemeProvider theme={theme}>
-          <Provider store={store}>
-            <Master />
-          </Provider>
-        </ThemeProvider>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={theme}>
+            <Provider store={store}>
+              <Master />
+            </Provider>
+          </ThemeProvider>
+        </StyledEngineProvider>
       </CookiesProvider>
     </>
   );

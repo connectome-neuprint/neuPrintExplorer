@@ -1,14 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import AsyncSelect from 'react-select/async';
-import InputLabel from '@material-ui/core/InputLabel';
-import { withStyles } from '@material-ui/core/styles';
+import InputLabel from '@mui/material/InputLabel';
+import withStyles from '@mui/styles/withStyles';
 
 
 const styles = theme => ({
-  regexWarning: {
-    fontSize: '0.9em'
-  },
   select: {
     fontFamily: theme.typography.fontFamily,
     margin: '0.5em 0 1em 0'
@@ -57,15 +54,17 @@ class NeuronInputField extends React.Component {
   fetchOptions = inputValue => {
     const { dataSet } = this.props;
 
+    // If the input value is a number, then use it as the bodyId, if not
+    // then set the bodyId -1 to prevent it from matching anything in
+    // the database, but keep the cypher query valid.
     let bodyId = -1;
-
-    if (!Number.isNaN(inputValue)) {
+    if (/^\d+$/.test(inputValue)) {
       bodyId = inputValue;
     }
 
     const cypherString = `WITH
     toLower('${inputValue}') as q,
-    '${bodyId}' as user_body
+    ${bodyId} as user_body
 MATCH (n :Neuron)
 WHERE
     n.bodyId = user_body
@@ -210,6 +209,7 @@ ORDER BY priority, n.type, n.instance`
           placeholder="Type or Paste text for options"
           value={selectValue}
           isClearable
+          inputId="search-neuron-input"
           loadOptions={this.fetchOptions}
           onChange={this.handleChange}
         />

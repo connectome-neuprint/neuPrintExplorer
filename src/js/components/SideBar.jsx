@@ -7,17 +7,17 @@ import classNames from 'classnames';
 import { NavLink } from 'react-router-dom';
 import { withRouter } from 'react-router';
 
-import Drawer from '@material-ui/core/Drawer';
-import { withStyles } from '@material-ui/core/styles';
-import MenuList from '@material-ui/core/MenuList';
-import MenuItem from '@material-ui/core/MenuItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import Icon from '@material-ui/core/Icon';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import Divider from '@material-ui/core/Divider';
-import Tooltip from '@material-ui/core/Tooltip';
+import Drawer from '@mui/material/Drawer';
+import withStyles from '@mui/styles/withStyles';
+import MenuList from '@mui/material/MenuList';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Icon from '@mui/material/Icon';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import Divider from '@mui/material/Divider';
+import Tooltip from '@mui/material/Tooltip';
 
 import Contact from './Contact';
 import { getSiteParams, setQueryString } from '../helpers/queryString';
@@ -46,7 +46,7 @@ const styles = theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
     }),
-    width: theme.spacing(7)
+    width: 54
   },
   toolbar: theme.mixins.toolbar
 });
@@ -109,7 +109,7 @@ function SideBar({ classes, location }) {
       <div className={classes.toolbar} />
       <MenuList component="nav">
         <MenuItem button onClick={toggleClosed}>
-          <Tooltip title="Collapse Menu" aria-label="Collapse Menu" placement="top-end">
+          <Tooltip title={open ? "Collapse Menu" : "Expand Menu"} aria-label={open ? "Collapse Menu" : "Expand Menu"} placement="top-end">
             <ListItemIcon>{open ? <ChevronLeftIcon /> : <ChevronRightIcon />}</ListItemIcon>
           </Tooltip>
         </MenuItem>

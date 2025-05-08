@@ -6,12 +6,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 
-import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
+import withStyles from '@mui/styles/withStyles';
+import Button from '@mui/material/Button';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 
 const styles = (theme) => ({
   textField: {
@@ -199,60 +199,62 @@ export class CellObjectsSpatialQuery extends React.Component {
           onChange={this.handleChangeTypes}
           value={typeValues}
         />
-        <FormControl fullWidth className={classes.formControl}>
+        <FormControl variant="standard" fullWidth className={classes.formControl}>
           <TextField
             label="x"
             multiline
+            variant="standard"
             fullWidth
             rows={1}
             value={x}
-            rowsMax={1}
+            maxRows={1}
             className={classes.textField}
             onChange={(event) => this.setState({x: event.target.value})}
             onKeyDown={this.catchReturn}
           />
         </FormControl>
-        <FormControl fullWidth className={classes.formControl}>
+        <FormControl variant="standard" fullWidth className={classes.formControl}>
           <TextField
             label="y"
             multiline
+            variant="standard"
             fullWidth
             rows={1}
             value={y}
-            rowsMax={1}
+            maxRows={1}
             className={classes.textField}
             onChange={(event) => this.setState({y: event.target.value})}
             onKeyDown={this.catchReturn}
           />
         </FormControl>
-        <FormControl fullWidth className={classes.formControl}>
+        <FormControl variant="standard" fullWidth className={classes.formControl}>
           <TextField
             label="z"
             multiline
+            variant="standard"
             fullWidth
             rows={1}
             value={z}
-            rowsMax={1}
+            maxRows={1}
             className={classes.textField}
             onChange={(event) => this.setState({z: event.target.value})}
             onKeyDown={this.catchReturn}
           />
         </FormControl>
-        <FormControl fullWidth className={classes.formControl}>
+        <FormControl variant="standard" fullWidth className={classes.formControl}>
           <TextField
             label="radius"
             multiline
+            variant="standard"
             fullWidth
             rows={1}
             value={radius}
-            rowsMax={1}
+            maxRows={1}
             className={classes.textField}
             onChange={(event) => this.setState({radius: event.target.value})}
             onKeyDown={this.catchReturn}
           />
         </FormControl>
-
-
         <Button
           variant="contained"
           color="primary"

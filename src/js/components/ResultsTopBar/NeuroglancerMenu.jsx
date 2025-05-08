@@ -1,16 +1,16 @@
 import PropTypes from 'prop-types';
 import React, { useMemo, useContext, useState, useEffect } from 'react';
 
-import { withStyles } from '@material-ui/core/styles';
-import Tooltip from '@material-ui/core/Tooltip';
-import IconButton from '@material-ui/core/IconButton';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import ToggleOffIcon from '@material-ui/icons/ToggleOff';
-import DoubleArrowIcon from '@material-ui/icons/DoubleArrow';
+import withStyles from '@mui/styles/withStyles';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ToggleOffIcon from '@mui/icons-material/ToggleOff';
+import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
 
-import OpenInNewIcon from '@material-ui/icons/OpenInNew';
-import MenuIcon from '@material-ui/icons/Menu';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import MenuIcon from '@mui/icons-material/Menu';
 
 import { NgViewerContext } from 'contexts/NgViewerContext';
 
@@ -231,7 +231,7 @@ function NeuroglancerMenu({ classes, dataSet }) {
               className={classes.button}
               aria-label="Neuroglancer Menu"
               onClick={handleOpenMenu}
-            >
+              size="large">
               <MenuIcon style={{ fontSize: 18 }} />
             </IconButton>
           </Tooltip>
@@ -253,13 +253,12 @@ function NeuroglancerMenu({ classes, dataSet }) {
           </Menu>
         </>
       ) : null}
-
       <Tooltip title="Open in new window">
         <IconButton
           className={classes.button}
           aria-label="Open in new window"
           onClick={handleOpenInNewWindow}
-        >
+          size="large">
           <OpenInNewIcon style={newIconStyle} />
         </IconButton>
       </Tooltip>

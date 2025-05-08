@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
-import { withStyles } from '@material-ui/core/styles';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import withStyles from '@mui/styles/withStyles';
 
 const styles = () => ({
   regexWarning: {
@@ -31,16 +31,16 @@ class AdvancedNeuronInput extends React.Component {
     return (
       <>
         <TextField
+          variant="standard"
           label="Neuron Instance, Type or BodyID (optional)"
           multiline
           rows={1}
           fullWidth
           value={value}
-          rowsMax={4}
+          maxRows={4}
           className={classes.textField}
           onChange={this.handleChange}
-          onKeyDown={this.handleKeyDown}
-        />
+          onKeyDown={this.handleKeyDown} />
         <Typography color="error" className={classes.regexWarning}>
           Warning!! This is a regular expression search and characters like &#39;&#40;&#39; must be
           escaped. eg: to search for &#39;c(SFS)_R&#39; you would need to type

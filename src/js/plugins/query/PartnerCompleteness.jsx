@@ -4,9 +4,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
+import withStyles from '@mui/styles/withStyles';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 
 import { getBodyIdForTable } from './shared/pluginhelpers';
 
@@ -105,13 +105,12 @@ ORDER BY x.weight DESC`;
     return (
       <div>
         <TextField
+          variant="standard"
           label="Body Id"
           fullWidth
           value={bodyId}
           className={classes.textField}
-          onChange={this.addNeuron}
-        />
-
+          onChange={this.addNeuron} />
         <Button
           disabled={isQuerying}
           color="primary"

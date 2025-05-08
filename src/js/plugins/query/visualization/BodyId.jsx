@@ -1,9 +1,9 @@
 import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import Icon from '@material-ui/core/Icon';
-import Modal from '@material-ui/core/Modal';
-import Tooltip from '@material-ui/core/Tooltip';
+import withStyles from '@mui/styles/withStyles';
+import Icon from '@mui/material/Icon';
+import Modal from '@mui/material/Modal';
+import Tooltip from '@mui/material/Tooltip';
 import { SunburstLoader } from 'plugins/support';
 import SelectAndCopyText from '../shared/SelectAndCopyText';
 
@@ -15,6 +15,7 @@ const styles = theme => ({
     marginLeft: '3px',
     marginTop: '3px',
     cursor: 'pointer',
+    fontSize: '1em',
     color: theme.palette.primary.main
   },
   nblink: {
@@ -159,7 +160,7 @@ function BodyId(props) {
       <Icon
         className={classes.icon}
         onClick={() => handleRemoveClick()}
-        fontSize="inherit"
+        fontSize="small"
       >
         visibility_off
       </Icon>
@@ -170,7 +171,7 @@ function BodyId(props) {
       <Icon
         className={classes.icon}
         onClick={() => handleClick()}
-        fontSize="inherit"
+        fontSize="small"
       >
         visibility
       </Icon>
@@ -184,7 +185,7 @@ function BodyId(props) {
         <SelectAndCopyText text={children} actions={actions} />
         {options.skeleton ? (viewIcon) : ""}
         <Tooltip title="Synapse Connectivity">
-          <Icon className={classes.icon} onClick={() => setModal(!modal)} fontSize="inherit">
+          <Icon className={classes.icon} onClick={() => setModal(!modal)} fontSize="small">
             donut_small
           </Icon>
         </Tooltip>

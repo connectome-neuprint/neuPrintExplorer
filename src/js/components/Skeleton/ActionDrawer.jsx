@@ -2,19 +2,19 @@ import React, { useReducer } from 'react';
 import PropTypes from 'prop-types';
 import Immutable from 'immutable';
 
-import Drawer from '@material-ui/core/Drawer';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import Icon from '@material-ui/core/Icon';
-import CloseIcon from '@material-ui/icons/Close';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import DeleteIcon from '@material-ui/icons/Delete';
-import Tooltip from '@material-ui/core/Tooltip';
-import { withStyles } from '@material-ui/core/styles';
+import Drawer from '@mui/material/Drawer';
+import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import Icon from '@mui/material/Icon';
+import CloseIcon from '@mui/icons-material/Close';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Tooltip from '@mui/material/Tooltip';
+import withStyles from '@mui/styles/withStyles';
 
 import ColorPickerModal from './ColorPickerModal';
 import SynapseSelectionMenu from './SynapseSelectionMenu';
@@ -104,7 +104,7 @@ function ActionDrawer(props) {
                 href={swcDownload}
                 aria-label="Download"
                 className={classes.margin}
-              >
+                size="large">
                 <Icon style={{ fontSize: '1.5rem' }}>file_download</Icon>
               </IconButton>
             </Tooltip>
@@ -113,7 +113,7 @@ function ActionDrawer(props) {
                 onClick={() => dispatch({ type: 'updateBody', id: name, status: !state.has(name) })}
                 aria-label="Synapses"
                 className={classes.margin}
-              >
+                size="large">
                 <Icon style={{ fontSize: '1.5rem' }}>sync_alt</Icon>
               </IconButton>
             </Tooltip>
@@ -122,7 +122,7 @@ function ActionDrawer(props) {
                 onClick={() => bodyDeleteHandler(name)}
                 aria-label="Delete"
                 className={classes.margin}
-              >
+                size="large">
                 <DeleteIcon fontSize="small" />
               </IconButton>
             </Tooltip>
@@ -149,7 +149,7 @@ function ActionDrawer(props) {
           color="inherit"
           className={classes.close}
           onClick={showHandler}
-        >
+          size="large">
           <CloseIcon />
         </IconButton>
         <Typography variant="h5" gutterBottom className={classes.header}>

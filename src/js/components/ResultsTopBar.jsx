@@ -8,23 +8,23 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useResizeDetector } from 'react-resize-detector';
 
-import Typography from '@material-ui/core/Typography';
-import Icon from '@material-ui/core/Icon';
-import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Toolbar from '@material-ui/core/Toolbar';
-import Tooltip from '@material-ui/core/Tooltip';
-import { withStyles } from '@material-ui/core/styles';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogActions from '@material-ui/core/DialogActions';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import ThreeDRotation from '@material-ui/icons/ThreeDRotation';
-import Assignment from '@material-ui/icons/Assignment';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
+import Typography from '@mui/material/Typography';
+import Icon from '@mui/material/Icon';
+import IconButton from '@mui/material/IconButton';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Toolbar from '@mui/material/Toolbar';
+import Tooltip from '@mui/material/Tooltip';
+import withStyles from '@mui/styles/withStyles';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Dialog from '@mui/material/Dialog';
+import DialogContentText from '@mui/material/DialogContentText';
+import ThreeDRotation from '@mui/icons-material/ThreeDRotation';
+import Assignment from '@mui/icons-material/Assignment';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 
 import { authError, reAuth } from 'actions/user';
 import { launchNotification } from 'actions/app';
@@ -233,7 +233,7 @@ function ResultsTopBar({
                   actions.toggleCypherDisplay();
                 }}
                 aria-label="Show Query"
-              >
+                size="large">
                 <Icon style={{ fontSize: 18 }}>info</Icon>
               </IconButton>
             </Tooltip>
@@ -246,26 +246,26 @@ function ResultsTopBar({
                   onClick={() => {
                     handleCopyToClipboard();
                   }}
-                >
+                  size="large">
                   <Assignment style={{ fontSize: 18 }} />
                 </IconButton>
               </Tooltip>
             )}
             <Tooltip title="reload results">
-              <IconButton aria-label="Refresh" onClick={handleRefresh}>
+              <IconButton aria-label="Refresh" onClick={handleRefresh} size="large">
                 <Icon style={{ fontSize: 18 }}>refresh</Icon>
               </IconButton>
             </Tooltip>
             {addIdEnabled && (
               <Tooltip title="Add body id">
-                <IconButton aria-label="Add" onClick={handleAddId}>
+                <IconButton aria-label="Add" onClick={handleAddId} size="large">
                   <Icon style={{ fontSize: 18 }}>add</Icon>
                 </IconButton>
               </Tooltip>
             )}
             {saveEnabled && (
               <Tooltip title="Add to favorites">
-                <IconButton aria-label="Add favorite" onClick={openPopup}>
+                <IconButton aria-label="Add favorite" onClick={openPopup} size="large">
                   <Icon style={{ fontSize: 18 }}>star</Icon>
                 </IconButton>
               </Tooltip>
@@ -279,7 +279,7 @@ function ResultsTopBar({
                   onClick={() => {
                     handleSaveResults(index);
                   }}
-                >
+                  size="large">
                   <Icon style={{ fontSize: 18 }}>save</Icon>
                 </IconButton>
               </Tooltip>
@@ -293,7 +293,7 @@ function ResultsTopBar({
                   onClick={() => {
                     downloadCallback(index);
                   }}
-                >
+                  size="large">
                   <Icon style={{ fontSize: 18 }}>file_download</Icon>
                 </IconButton>
               </Tooltip>
@@ -303,7 +303,7 @@ function ResultsTopBar({
                 className={classes.button}
                 aria-label="Full Screen"
                 onClick={() => setQueryString({ rt: 'full' })}
-              >
+                size="large">
                 <Icon style={{ fontSize: 18 }}>fullscreen</Icon>
               </IconButton>
             </Tooltip>
@@ -314,7 +314,7 @@ function ResultsTopBar({
                 onClick={() => {
                   setQueryString({ ftab: index });
                 }}
-              >
+                size="large">
                 <Icon style={{ fontSize: 18 }}>push_pin</Icon>
               </IconButton>
             </Tooltip>
@@ -330,7 +330,7 @@ function ResultsTopBar({
                   onClick={() => {
                     download3DCallback(index);
                   }}
-                >
+                  size="large">
                   <ThreeDRotation style={{ fontSize: 18 }} />
                 </IconButton>
               </Tooltip>
@@ -343,7 +343,7 @@ function ResultsTopBar({
               aria-label="menu"
               className={classes.button}
               onClick={handleOpenMenu}
-            >
+              size="large">
               <Icon style={{ fontSize: 18 }}>menu</Icon>
             </IconButton>
             <Menu
@@ -429,7 +429,7 @@ function ResultsTopBar({
                 onClose();
               }
             }}
-          >
+            size="large">
             <Icon style={{ fontSize: 18 }}>close</Icon>
           </IconButton>
         </Tooltip>
@@ -439,13 +439,13 @@ function ResultsTopBar({
         <DialogContent>
           <DialogContentText>Name and save a query.</DialogContentText>
           <TextField
+            variant="standard"
             autoFocus
             margin="dense"
             id="name"
             label="bookmark name"
             fullWidth
-            onChange={(event) => setBookmarkname(event.target.value)}
-          />
+            onChange={(event) => setBookmarkname(event.target.value)} />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
@@ -456,7 +456,6 @@ function ResultsTopBar({
           </Button>
         </DialogActions>
       </Dialog>
-
       <AddIdModal open={addIdOpen} index={index} handleClose={() => setAddIdOpen(false)} />
       {clipboardCallback && resultData && (
         <CopyToClipboardModal

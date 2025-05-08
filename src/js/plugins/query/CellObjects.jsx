@@ -6,12 +6,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 
-import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
+import withStyles from '@mui/styles/withStyles';
+import Button from '@mui/material/Button';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 
 const styles = (theme) => ({
   textField: {
@@ -271,18 +271,18 @@ export class CellObjects extends React.Component {
           onChange={this.handleChangeTypes}
           value={typeValues}
         />
-        <FormControl fullWidth className={classes.formControl}>
+        <FormControl variant="standard" fullWidth className={classes.formControl}>
           <TextField
+            variant="standard"
             label="Body ID"
             multiline
             fullWidth
             rows={1}
             value={bodyId}
-            rowsMax={2}
+            maxRows={2}
             className={classes.textField}
             onChange={this.addBodyId}
-            onKeyDown={this.catchReturn}
-          />
+            onKeyDown={this.catchReturn} />
         </FormControl>
         <Button
           variant="contained"

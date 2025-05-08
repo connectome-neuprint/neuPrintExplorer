@@ -9,13 +9,13 @@ import { NavLink, withRouter } from 'react-router-dom';
 import { withCookies, Cookies } from 'react-cookie';
 import classNames from 'classnames';
 
-import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import Fab from '@material-ui/core/Fab';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
-import Badge from '@material-ui/core/Badge';
-import Avatar from '@material-ui/core/Avatar';
+import withStyles from '@mui/styles/withStyles';
+import Button from '@mui/material/Button';
+import Fab from '@mui/material/Fab';
+import MenuItem from '@mui/material/MenuItem';
+import Menu from '@mui/material/Menu';
+import Badge from '@mui/material/Badge';
+import Avatar from '@mui/material/Avatar';
 
 import C from '../reducers/constants';
 
@@ -23,7 +23,7 @@ import './Login.css';
 
 const styles = theme => ({
   buttonBasic: {
-    padding: `0 ${theme.spacing(1)}px`,
+    padding: `0 ${theme.spacing(1)}`,
     minWidth: 1,
     color: '#fff'
   },
@@ -47,7 +47,7 @@ class Login extends React.Component {
 
     // only bother fetching these if there is a login cookie to pass along
     // with the request.
-    if (props.cookies.get('flyem-services') || props.cookies.get('neuPrintHTTP')) {
+    if (props.cookies.get('flyem-services') || props.cookies.get('neuPrintHTTP') || process.env.NODE_ENV === 'development') {
       this.fetchProfile();
       this.fetchToken();
     }

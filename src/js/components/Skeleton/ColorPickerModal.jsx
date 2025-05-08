@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import { SketchPicker } from 'react-color';
 import randomColor from 'randomcolor';
 
-import Popover from '@material-ui/core/Popover';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import { withStyles } from '@material-ui/core/styles';
+import Popover from '@mui/material/Popover';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
+import withStyles from '@mui/styles/withStyles';
 
 const styles = () => ({
   colorBox: {
@@ -42,7 +42,10 @@ function ColorPickerModal(props) {
   return (
     <>
       <Tooltip title="Change Color" placement="top">
-        <IconButton onClick={event => setAnchorEl(event.currentTarget)} aria-label="Change color">
+        <IconButton
+          onClick={event => setAnchorEl(event.currentTarget)}
+          aria-label="Change color"
+          size="large">
           <div className={classes.colorBox} style={colorBoxStyle} />
         </IconButton>
       </Tooltip>

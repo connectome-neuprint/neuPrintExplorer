@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen } from '../../tests/test-utils';
 // eslint-disable-next-line import/no-unresolved
 import '@testing-library/jest-dom';
 import 'regenerator-runtime/runtime';

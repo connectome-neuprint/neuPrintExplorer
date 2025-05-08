@@ -4,10 +4,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import FormControl from '@material-ui/core/FormControl';
-import { withStyles } from '@material-ui/core/styles';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import FormControl from '@mui/material/FormControl';
+import withStyles from '@mui/styles/withStyles';
 
 import { Controlled as CodeMirror } from 'react-codemirror2';
 
@@ -201,7 +201,7 @@ export class CustomQuery extends React.Component {
     const { classes, isQuerying } = this.props;
     const { errorMessage, textValue = '' } = this.state;
     return (
-      <FormControl fullWidth className={classes.formControl}>
+      <FormControl variant="standard" fullWidth className={classes.formControl}>
         <Typography>Custom Cypher Query</Typography>
         <CodeMirror
           className={classes.textField}

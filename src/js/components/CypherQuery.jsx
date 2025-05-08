@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { withStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CardHeader from '@material-ui/core/CardHeader';
-import CloseIcon from '@material-ui/icons/Close';
-import IconButton from '@material-ui/core/IconButton';
+import withStyles from '@mui/styles/withStyles';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardHeader from '@mui/material/CardHeader';
+import CloseIcon from '@mui/icons-material/Close';
+import IconButton from '@mui/material/IconButton';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 import { launchNotification } from 'actions/app';
@@ -42,7 +42,7 @@ function CypherQuery(props) {
         <CardHeader
           title="Neo4j Cypher Query"
           action={
-            <IconButton aria-label="Close" onClick={handleClose}>
+            <IconButton aria-label="Close" onClick={handleClose} size="large">
               <CloseIcon />
             </IconButton>
           }

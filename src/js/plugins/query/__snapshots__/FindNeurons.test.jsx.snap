@@ -4,63 +4,74 @@ exports[`find neurons Plugin renders correctly 1`] = `
 <DocumentFragment>
   <div>
     <label
-      class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-animated"
+      class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-animated MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-animated css-1tkmop-MuiFormLabel-root-MuiInputLabel-root"
       for="select-multiple-chip"
     >
       Neuron Instance, Type or BodyId (optional)
     </label>
     <div
-      class="NeuronInputField-select-2 css-2b097c-container"
+      class="NeuronInputField-select-1 css-b62m3t-container"
     >
+      <span
+        class="css-1f43avz-a11yText-A11yText"
+        id="react-select-2-live-region"
+      />
+      <span
+        aria-atomic="false"
+        aria-live="polite"
+        aria-relevant="additions text"
+        class="css-1f43avz-a11yText-A11yText"
+        role="log"
+      />
       <div
-        class="asyncSelect__control css-yk16xz-control"
+        class="asyncSelect__control css-13cymwt-control"
       >
         <div
-          class="asyncSelect__value-container css-g1d714-ValueContainer"
+          class="asyncSelect__value-container css-hlgwow"
         >
           <div
-            class="asyncSelect__placeholder css-1wa3eu0-placeholder"
+            class="asyncSelect__placeholder css-1jqq78o-placeholder"
+            id="react-select-2-placeholder"
           >
             Type or Paste text for options
           </div>
           <div
-            class="css-b8ldur-Input"
+            class="asyncSelect__input-container css-19bb58m"
+            data-value=""
           >
-            <div
+            <input
+              aria-activedescendant=""
+              aria-autocomplete="list"
+              aria-describedby="react-select-2-placeholder"
+              aria-expanded="false"
+              aria-haspopup="true"
+              autocapitalize="none"
+              autocomplete="off"
+              autocorrect="off"
               class="asyncSelect__input"
-              style="display: inline-block;"
-            >
-              <input
-                aria-autocomplete="list"
-                autocapitalize="none"
-                autocomplete="off"
-                autocorrect="off"
-                id="react-select-2-input"
-                spellcheck="false"
-                style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
-                tabindex="0"
-                type="text"
-                value=""
-              />
-              <div
-                style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-              />
-            </div>
+              id="search-neuron-input"
+              role="combobox"
+              spellcheck="false"
+              style="opacity: 1; width: 100%; grid-area: 1 / 2; min-width: 2px; border: 0px; margin: 0px; outline: 0; padding: 0px;"
+              tabindex="0"
+              type="text"
+              value=""
+            />
           </div>
         </div>
         <div
-          class="asyncSelect__indicators css-1hb7zxy-IndicatorsContainer"
+          class="asyncSelect__indicators css-1wy0on6"
         >
           <span
-            class="asyncSelect__indicator-separator css-1okebmr-indicatorSeparator"
+            class="asyncSelect__indicator-separator css-1u9des2-indicatorSeparator"
           />
           <div
             aria-hidden="true"
-            class="asyncSelect__indicator asyncSelect__dropdown-indicator css-tlfecz-indicatorContainer"
+            class="asyncSelect__indicator asyncSelect__dropdown-indicator css-1xc3v61-indicatorContainer"
           >
             <svg
               aria-hidden="true"
-              class="css-6q0nyr-Svg"
+              class="css-tj5bde-Svg"
               focusable="false"
               height="20"
               viewBox="0 0 20 20"
@@ -76,63 +87,74 @@ exports[`find neurons Plugin renders correctly 1`] = `
     </div>
     <fieldset>
       <label
-        class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-animated"
+        class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-animated MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-animated css-1tkmop-MuiFormLabel-root-MuiInputLabel-root"
         for="select-multiple-chip"
       >
         Input Brain Regions
       </label>
       <div
-        class="BrainRegionInput-select-3 css-2b097c-container"
+        class="BrainRegionInput-select-2 css-b62m3t-container"
       >
+        <span
+          class="css-1f43avz-a11yText-A11yText"
+          id="react-select-3-live-region"
+        />
+        <span
+          aria-atomic="false"
+          aria-live="polite"
+          aria-relevant="additions text"
+          class="css-1f43avz-a11yText-A11yText"
+          role="log"
+        />
         <div
-          class=" css-yk16xz-control"
+          class="css-13cymwt-control"
         >
           <div
-            class=" css-g1d714-ValueContainer"
+            class="css-hlgwow"
           >
             <div
-              class=" css-1wa3eu0-placeholder"
+              class="css-1jqq78o-placeholder"
+              id="react-select-3-placeholder"
             >
               Select...
             </div>
             <div
-              class="css-b8ldur-Input"
+              class="css-19bb58m"
+              data-value=""
             >
-              <div
+              <input
+                aria-activedescendant=""
+                aria-autocomplete="list"
+                aria-describedby="react-select-3-placeholder"
+                aria-expanded="false"
+                aria-haspopup="true"
+                autocapitalize="none"
+                autocomplete="off"
+                autocorrect="off"
                 class=""
-                style="display: inline-block;"
-              >
-                <input
-                  aria-autocomplete="list"
-                  autocapitalize="none"
-                  autocomplete="off"
-                  autocorrect="off"
-                  id="react-select-3-input"
-                  spellcheck="false"
-                  style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
-                  tabindex="0"
-                  type="text"
-                  value=""
-                />
-                <div
-                  style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-                />
-              </div>
+                id="react-select-3-input"
+                role="combobox"
+                spellcheck="false"
+                style="opacity: 1; width: 100%; grid-area: 1 / 2; min-width: 2px; border: 0px; margin: 0px; outline: 0; padding: 0px;"
+                tabindex="0"
+                type="text"
+                value=""
+              />
             </div>
           </div>
           <div
-            class=" css-1hb7zxy-IndicatorsContainer"
+            class="css-1wy0on6"
           >
             <span
-              class=" css-1okebmr-indicatorSeparator"
+              class="css-1u9des2-indicatorSeparator"
             />
             <div
               aria-hidden="true"
-              class=" css-tlfecz-indicatorContainer"
+              class="css-1xc3v61-indicatorContainer"
             >
               <svg
                 aria-hidden="true"
-                class="css-6q0nyr-Svg"
+                class="css-tj5bde-Svg"
                 focusable="false"
                 height="20"
                 viewBox="0 0 20 20"
@@ -147,71 +169,63 @@ exports[`find neurons Plugin renders correctly 1`] = `
         </div>
       </div>
       <div
-        class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-1 MuiGrid-align-items-xs-center"
+        class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-1 css-1946b2z-MuiGrid-root"
       >
         <div
-          class="MuiGrid-root MuiGrid-item"
+          class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
         >
           <label
-            class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-1 MuiGrid-align-items-xs-center"
+            class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-1 css-1946b2z-MuiGrid-root"
           >
             <div
-              class="MuiGrid-root MuiGrid-item"
+              class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
             >
               Match All
             </div>
             <div
-              class="MuiGrid-root MuiGrid-item"
+              class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
             >
               <span
-                class="MuiSwitch-root"
+                class="MuiSwitch-root MuiSwitch-sizeMedium css-rehya9-MuiSwitch-root"
               >
                 <span
-                  aria-disabled="false"
-                  class="MuiButtonBase-root MuiIconButton-root PrivateSwitchBase-root-4 MuiSwitch-switchBase MuiSwitch-colorPrimary"
+                  class="MuiButtonBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary PrivateSwitchBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase"
                 >
+                  <input
+                    class="PrivateSwitchBase-input MuiSwitch-input css-j8yymo"
+                    name="checked"
+                    type="checkbox"
+                  />
                   <span
-                    class="MuiIconButton-label"
-                  >
-                    <input
-                      class="PrivateSwitchBase-input-7 MuiSwitch-input"
-                      name="checked"
-                      type="checkbox"
-                      value=""
-                    />
-                    <span
-                      class="MuiSwitch-thumb"
-                    />
-                  </span>
-                  <span
-                    class="MuiTouchRipple-root"
+                    class="MuiSwitch-thumb css-17jyosd-MuiSwitch-thumb"
                   />
                 </span>
                 <span
-                  class="MuiSwitch-track"
+                  class="MuiSwitch-track css-tj8d99-MuiSwitch-track"
                 />
               </span>
             </div>
             <div
-              class="MuiGrid-root MuiGrid-item"
+              class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
             >
               Any
             </div>
           </label>
         </div>
         <div
-          class="MuiGrid-root MuiGrid-item"
+          class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
           style="line-height: 0em;"
         >
           <svg
             aria-haspopup="true"
             aria-hidden="true"
-            class="MuiSvgIcon-root makeStyles-icon-10"
+            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium makeStyles-icon-5 css-1umw9bq-MuiSvgIcon-root"
+            data-testid="InfoIcon"
             focusable="false"
             viewBox="0 0 24 24"
           >
             <path
-              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m1 15h-2v-6h2zm0-8h-2V7h2z"
             />
           </svg>
         </div>
@@ -219,63 +233,74 @@ exports[`find neurons Plugin renders correctly 1`] = `
     </fieldset>
     <fieldset>
       <label
-        class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-animated"
+        class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-animated MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-animated css-1tkmop-MuiFormLabel-root-MuiInputLabel-root"
         for="select-multiple-chip"
       >
         Output Brain Regions
       </label>
       <div
-        class="BrainRegionInput-select-3 css-2b097c-container"
+        class="BrainRegionInput-select-2 css-b62m3t-container"
       >
+        <span
+          class="css-1f43avz-a11yText-A11yText"
+          id="react-select-4-live-region"
+        />
+        <span
+          aria-atomic="false"
+          aria-live="polite"
+          aria-relevant="additions text"
+          class="css-1f43avz-a11yText-A11yText"
+          role="log"
+        />
         <div
-          class=" css-yk16xz-control"
+          class="css-13cymwt-control"
         >
           <div
-            class=" css-g1d714-ValueContainer"
+            class="css-hlgwow"
           >
             <div
-              class=" css-1wa3eu0-placeholder"
+              class="css-1jqq78o-placeholder"
+              id="react-select-4-placeholder"
             >
               Select...
             </div>
             <div
-              class="css-b8ldur-Input"
+              class="css-19bb58m"
+              data-value=""
             >
-              <div
+              <input
+                aria-activedescendant=""
+                aria-autocomplete="list"
+                aria-describedby="react-select-4-placeholder"
+                aria-expanded="false"
+                aria-haspopup="true"
+                autocapitalize="none"
+                autocomplete="off"
+                autocorrect="off"
                 class=""
-                style="display: inline-block;"
-              >
-                <input
-                  aria-autocomplete="list"
-                  autocapitalize="none"
-                  autocomplete="off"
-                  autocorrect="off"
-                  id="react-select-4-input"
-                  spellcheck="false"
-                  style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
-                  tabindex="0"
-                  type="text"
-                  value=""
-                />
-                <div
-                  style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-                />
-              </div>
+                id="react-select-4-input"
+                role="combobox"
+                spellcheck="false"
+                style="opacity: 1; width: 100%; grid-area: 1 / 2; min-width: 2px; border: 0px; margin: 0px; outline: 0; padding: 0px;"
+                tabindex="0"
+                type="text"
+                value=""
+              />
             </div>
           </div>
           <div
-            class=" css-1hb7zxy-IndicatorsContainer"
+            class="css-1wy0on6"
           >
             <span
-              class=" css-1okebmr-indicatorSeparator"
+              class="css-1u9des2-indicatorSeparator"
             />
             <div
               aria-hidden="true"
-              class=" css-tlfecz-indicatorContainer"
+              class="css-1xc3v61-indicatorContainer"
             >
               <svg
                 aria-hidden="true"
-                class="css-6q0nyr-Svg"
+                class="css-tj5bde-Svg"
                 focusable="false"
                 height="20"
                 viewBox="0 0 20 20"
@@ -290,227 +315,190 @@ exports[`find neurons Plugin renders correctly 1`] = `
         </div>
       </div>
       <div
-        class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-1 MuiGrid-align-items-xs-center"
+        class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-1 css-1946b2z-MuiGrid-root"
       >
         <div
-          class="MuiGrid-root MuiGrid-item"
+          class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
         >
           <label
-            class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-1 MuiGrid-align-items-xs-center"
+            class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-1 css-1946b2z-MuiGrid-root"
           >
             <div
-              class="MuiGrid-root MuiGrid-item"
+              class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
             >
               Match All
             </div>
             <div
-              class="MuiGrid-root MuiGrid-item"
+              class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
             >
               <span
-                class="MuiSwitch-root"
+                class="MuiSwitch-root MuiSwitch-sizeMedium css-rehya9-MuiSwitch-root"
               >
                 <span
-                  aria-disabled="false"
-                  class="MuiButtonBase-root MuiIconButton-root PrivateSwitchBase-root-4 MuiSwitch-switchBase MuiSwitch-colorPrimary"
+                  class="MuiButtonBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary PrivateSwitchBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase"
                 >
+                  <input
+                    class="PrivateSwitchBase-input MuiSwitch-input css-j8yymo"
+                    name="checked"
+                    type="checkbox"
+                  />
                   <span
-                    class="MuiIconButton-label"
-                  >
-                    <input
-                      class="PrivateSwitchBase-input-7 MuiSwitch-input"
-                      name="checked"
-                      type="checkbox"
-                      value=""
-                    />
-                    <span
-                      class="MuiSwitch-thumb"
-                    />
-                  </span>
-                  <span
-                    class="MuiTouchRipple-root"
+                    class="MuiSwitch-thumb css-17jyosd-MuiSwitch-thumb"
                   />
                 </span>
                 <span
-                  class="MuiSwitch-track"
+                  class="MuiSwitch-track css-tj8d99-MuiSwitch-track"
                 />
               </span>
             </div>
             <div
-              class="MuiGrid-root MuiGrid-item"
+              class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
             >
               Any
             </div>
           </label>
         </div>
         <div
-          class="MuiGrid-root MuiGrid-item"
+          class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
           style="line-height: 0em;"
         >
           <svg
             aria-haspopup="true"
             aria-hidden="true"
-            class="MuiSvgIcon-root makeStyles-icon-10"
+            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium makeStyles-icon-5 css-1umw9bq-MuiSvgIcon-root"
+            data-testid="InfoIcon"
             focusable="false"
             viewBox="0 0 24 24"
           >
             <path
-              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m1 15h-2v-6h2zm0-8h-2V7h2z"
             />
           </svg>
         </div>
       </div>
     </fieldset>
     <div
-      class="MuiFormControl-root"
+      class="MuiFormControl-root css-1iw3t7y-MuiFormControl-root"
     >
       <label
-        class="MuiFormControlLabel-root"
+        class="MuiFormControlLabel-root MuiFormControlLabel-labelPlacementEnd css-19opgx6-MuiFormControlLabel-root"
       >
         <span
-          class="MuiSwitch-root"
+          class="MuiSwitch-root MuiSwitch-sizeMedium css-rehya9-MuiSwitch-root"
         >
           <span
-            aria-disabled="false"
-            class="MuiButtonBase-root MuiIconButton-root PrivateSwitchBase-root-4 MuiSwitch-switchBase MuiSwitch-colorPrimary"
+            class="MuiButtonBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary PrivateSwitchBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase"
           >
+            <input
+              class="PrivateSwitchBase-input MuiSwitch-input css-j8yymo"
+              type="checkbox"
+            />
             <span
-              class="MuiIconButton-label"
-            >
-              <input
-                class="PrivateSwitchBase-input-7 MuiSwitch-input"
-                type="checkbox"
-                value=""
-              />
-              <span
-                class="MuiSwitch-thumb"
-              />
-            </span>
-            <span
-              class="MuiTouchRipple-root"
+              class="MuiSwitch-thumb css-17jyosd-MuiSwitch-thumb"
             />
           </span>
           <span
-            class="MuiSwitch-track"
+            class="MuiSwitch-track css-tj8d99-MuiSwitch-track"
           />
         </span>
-        <span
-          class="MuiTypography-root MuiFormControlLabel-label MuiTypography-body1"
+        <h6
+          class="MuiTypography-root MuiTypography-subtitle1 css-1i3tsf3-MuiTypography-root"
+          style="display: inline-flex;"
         >
-          <h6
-            class="MuiTypography-root MuiTypography-subtitle1"
-            style="display: inline-flex;"
-          >
-            Allow all brain regions
-          </h6>
-        </span>
+          Allow all brain regions
+        </h6>
       </label>
     </div>
     <div
-      class="MuiFormControl-root"
+      class="MuiFormControl-root css-1iw3t7y-MuiFormControl-root"
     >
       <label
-        class="MuiFormControlLabel-root"
+        class="MuiFormControlLabel-root MuiFormControlLabel-labelPlacementEnd css-19opgx6-MuiFormControlLabel-root"
       >
         <span
-          class="MuiSwitch-root"
+          class="MuiSwitch-root MuiSwitch-sizeMedium css-rehya9-MuiSwitch-root"
         >
           <span
-            aria-disabled="false"
-            class="MuiButtonBase-root MuiIconButton-root PrivateSwitchBase-root-4 MuiSwitch-switchBase MuiSwitch-colorPrimary"
+            class="MuiButtonBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary PrivateSwitchBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase"
           >
+            <input
+              class="PrivateSwitchBase-input MuiSwitch-input css-j8yymo"
+              type="checkbox"
+            />
             <span
-              class="MuiIconButton-label"
-            >
-              <input
-                class="PrivateSwitchBase-input-7 MuiSwitch-input"
-                type="checkbox"
-                value=""
-              />
-              <span
-                class="MuiSwitch-thumb"
-              />
-            </span>
-            <span
-              class="MuiTouchRipple-root"
+              class="MuiSwitch-thumb css-17jyosd-MuiSwitch-thumb"
             />
           </span>
           <span
-            class="MuiSwitch-track"
+            class="MuiSwitch-track css-tj8d99-MuiSwitch-track"
           />
         </span>
-        <span
-          class="MuiTypography-root MuiFormControlLabel-label MuiTypography-body1"
+        <h6
+          class="MuiTypography-root MuiTypography-subtitle1 css-1i3tsf3-MuiTypography-root"
+          style="display: inline-flex;"
         >
-          <h6
-            class="MuiTypography-root MuiTypography-subtitle1"
-            style="display: inline-flex;"
-          >
-            Advanced input
-          </h6>
-        </span>
+          Advanced input
+        </h6>
       </label>
     </div>
     <div
-      class="makeStyles-expandablePanel-12"
+      class="makeStyles-expandablePanel-7"
     >
       <div
-        class="MuiPaper-root MuiAccordion-root MuiAccordion-rounded MuiPaper-elevation1 MuiPaper-rounded"
+        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiAccordion-root MuiAccordion-rounded MuiAccordion-gutters css-1808mag-MuiPaper-root-MuiAccordion-root"
+        style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
       >
-        <div
-          aria-disabled="false"
-          aria-expanded="false"
-          class="MuiButtonBase-root MuiAccordionSummary-root"
-          role="button"
-          tabindex="0"
+        <h3
+          class="MuiAccordion-heading css-cy7rkm-MuiAccordion-heading"
         >
-          <div
-            class="MuiAccordionSummary-content"
-          >
-            <h6
-              class="MuiTypography-root MuiTypography-subtitle1"
-            >
-              Optional neuron/segment filters
-            </h6>
-          </div>
-          <div
-            aria-disabled="false"
-            aria-hidden="true"
-            class="MuiButtonBase-root MuiIconButton-root MuiAccordionSummary-expandIcon MuiIconButton-edgeEnd"
+          <button
+            aria-expanded="false"
+            class="MuiButtonBase-root MuiAccordionSummary-root MuiAccordionSummary-gutters css-1f1pi2l-MuiButtonBase-root-MuiAccordionSummary-root"
+            tabindex="0"
+            type="button"
           >
             <span
-              class="MuiIconButton-label"
+              class="MuiAccordionSummary-content MuiAccordionSummary-contentGutters css-yfrx4k-MuiAccordionSummary-content"
+            >
+              <h6
+                class="MuiTypography-root MuiTypography-subtitle1 css-1i3tsf3-MuiTypography-root"
+              >
+                Optional neuron/segment filters
+              </h6>
+            </span>
+            <span
+              class="MuiAccordionSummary-expandIconWrapper css-1wqf3nl-MuiAccordionSummary-expandIconWrapper"
             >
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
+                data-testid="ExpandMoreIcon"
                 focusable="false"
                 viewBox="0 0 24 24"
               >
                 <path
-                  d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"
+                  d="M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z"
                 />
               </svg>
             </span>
-            <span
-              class="MuiTouchRipple-root"
-            />
-          </div>
-        </div>
+          </button>
+        </h3>
         <div
-          class="MuiCollapse-root MuiCollapse-hidden"
+          class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-hidden css-cwrbtg-MuiCollapse-root"
           style="min-height: 0px;"
         >
           <div
-            class="MuiCollapse-wrapper"
+            class="MuiCollapse-wrapper MuiCollapse-vertical css-1x6hinx-MuiCollapse-wrapper"
           >
             <div
-              class="MuiCollapse-wrapperInner"
+              class="MuiCollapse-wrapperInner MuiCollapse-vertical css-1i4ywhz-MuiCollapse-wrapperInner"
             >
               <div
+                class="MuiAccordion-region"
                 role="region"
               >
                 <div
-                  class="MuiAccordionDetails-root makeStyles-nopad-13"
+                  class="MuiAccordionDetails-root makeStyles-nopad-8 css-1lj39kh-MuiAccordionDetails-root"
                 >
                   <p>
                     Loading...
@@ -523,18 +511,11 @@ exports[`find neurons Plugin renders correctly 1`] = `
       </div>
     </div>
     <button
-      class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary"
+      class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-74d805-MuiButtonBase-root-MuiButton-root"
       tabindex="0"
       type="button"
     >
-      <span
-        class="MuiButton-label"
-      >
-        Submit
-      </span>
-      <span
-        class="MuiTouchRipple-root"
-      />
+      Submit
     </button>
   </div>
 </DocumentFragment>

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import withStyles from '@mui/styles/withStyles';
 import Cytoscape from './Cytoscape';
 
 // TODO: save positions of adjusted graph when user switches tabs

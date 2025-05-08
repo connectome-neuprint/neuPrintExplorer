@@ -4,23 +4,26 @@ exports[`synapses for connection Plugin renders correctly 1`] = `
 <DocumentFragment>
   <div>
     <div
-      class="MuiFormControl-root"
+      class="MuiFormControl-root css-1iw3t7y-MuiFormControl-root"
     >
       <div
-        class="MuiFormControl-root MuiTextField-root MuiFormControl-fullWidth"
+        class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-cmpglg-MuiFormControl-root-MuiTextField-root"
       >
         <label
-          class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
+          class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-standard MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-standard css-2hy7sk-MuiFormLabel-root-MuiInputLabel-root"
           data-shrink="false"
+          for=":r0:"
+          id=":r0:-label"
         >
           Neuron ID A
         </label>
         <div
-          class="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-fullWidth MuiInput-fullWidth MuiInputBase-formControl MuiInput-formControl"
+          class="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl css-6h9cc6-MuiInputBase-root-MuiInput-root"
         >
           <input
             aria-invalid="false"
-            class="MuiInputBase-input MuiInput-input"
+            class="MuiInputBase-input MuiInput-input css-1yrc8ca-MuiInputBase-input-MuiInput-input"
+            id=":r0:"
             rows="1"
             type="text"
             value=""
@@ -28,20 +31,23 @@ exports[`synapses for connection Plugin renders correctly 1`] = `
         </div>
       </div>
       <div
-        class="MuiFormControl-root MuiTextField-root MuiFormControl-fullWidth"
+        class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root css-cmpglg-MuiFormControl-root-MuiTextField-root"
       >
         <label
-          class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
+          class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-standard MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-sizeMedium MuiInputLabel-standard css-2hy7sk-MuiFormLabel-root-MuiInputLabel-root"
           data-shrink="false"
+          for=":r1:"
+          id=":r1:-label"
         >
           Neuron ID B
         </label>
         <div
-          class="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-fullWidth MuiInput-fullWidth MuiInputBase-formControl MuiInput-formControl"
+          class="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl css-6h9cc6-MuiInputBase-root-MuiInput-root"
         >
           <input
             aria-invalid="false"
-            class="MuiInputBase-input MuiInput-input"
+            class="MuiInputBase-input MuiInput-input css-1yrc8ca-MuiInputBase-input-MuiInput-input"
+            id=":r1:"
             rows="1"
             type="text"
             value=""
@@ -50,63 +56,74 @@ exports[`synapses for connection Plugin renders correctly 1`] = `
       </div>
     </div>
     <label
-      class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-animated"
+      class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-animated MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-animated css-1tkmop-MuiFormLabel-root-MuiInputLabel-root"
       for="select-multiple-chip"
     >
       Brain Regions
     </label>
     <div
-      class="[object Object] css-2b097c-container"
+      class="[object Object] css-b62m3t-container"
     >
+      <span
+        class="css-1f43avz-a11yText-A11yText"
+        id="react-select-2-live-region"
+      />
+      <span
+        aria-atomic="false"
+        aria-live="polite"
+        aria-relevant="additions text"
+        class="css-1f43avz-a11yText-A11yText"
+        role="log"
+      />
       <div
-        class=" css-yk16xz-control"
+        class="css-13cymwt-control"
       >
         <div
-          class=" css-g1d714-ValueContainer"
+          class="css-hlgwow"
         >
           <div
-            class=" css-1wa3eu0-placeholder"
+            class="css-1jqq78o-placeholder"
+            id="react-select-2-placeholder"
           >
             Select...
           </div>
           <div
-            class="css-b8ldur-Input"
+            class="css-19bb58m"
+            data-value=""
           >
-            <div
+            <input
+              aria-activedescendant=""
+              aria-autocomplete="list"
+              aria-describedby="react-select-2-placeholder"
+              aria-expanded="false"
+              aria-haspopup="true"
+              autocapitalize="none"
+              autocomplete="off"
+              autocorrect="off"
               class=""
-              style="display: inline-block;"
-            >
-              <input
-                aria-autocomplete="list"
-                autocapitalize="none"
-                autocomplete="off"
-                autocorrect="off"
-                id="react-select-2-input"
-                spellcheck="false"
-                style="box-sizing: content-box; width: 2px; border: 0px; opacity: 1; outline: 0; padding: 0px;"
-                tabindex="0"
-                type="text"
-                value=""
-              />
-              <div
-                style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-family: -webkit-small-control; letter-spacing: normal; text-transform: none;"
-              />
-            </div>
+              id="react-select-2-input"
+              role="combobox"
+              spellcheck="false"
+              style="opacity: 1; width: 100%; grid-area: 1 / 2; min-width: 2px; border: 0px; margin: 0px; outline: 0; padding: 0px;"
+              tabindex="0"
+              type="text"
+              value=""
+            />
           </div>
         </div>
         <div
-          class=" css-1hb7zxy-IndicatorsContainer"
+          class="css-1wy0on6"
         >
           <span
-            class=" css-1okebmr-indicatorSeparator"
+            class="css-1u9des2-indicatorSeparator"
           />
           <div
             aria-hidden="true"
-            class=" css-tlfecz-indicatorContainer"
+            class="css-1xc3v61-indicatorContainer"
           >
             <svg
               aria-hidden="true"
-              class="css-6q0nyr-Svg"
+              class="css-tj5bde-Svg"
               focusable="false"
               height="20"
               viewBox="0 0 20 20"
@@ -121,18 +138,11 @@ exports[`synapses for connection Plugin renders correctly 1`] = `
       </div>
     </div>
     <button
-      class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary"
+      class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-74d805-MuiButtonBase-root-MuiButton-root"
       tabindex="0"
       type="button"
     >
-      <span
-        class="MuiButton-label"
-      >
-        Submit
-      </span>
-      <span
-        class="MuiTouchRipple-root"
-      />
+      Submit
     </button>
   </div>
 </DocumentFragment>

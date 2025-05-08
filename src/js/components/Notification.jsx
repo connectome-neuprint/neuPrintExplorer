@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import Snackbar from '@material-ui/core/Snackbar';
-import Fade from '@material-ui/core/Fade';
+import Snackbar from '@mui/material/Snackbar';
+import Fade from '@mui/material/Fade';
 
 import { clearNotification } from '../actions/app';
 
@@ -20,12 +20,16 @@ class Notification extends React.Component {
         open={notificationMessage !== null}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
         onClose={this.handleClose}
-        TransitionComponent={Fade}
-        ContentProps={{
-          'aria-describedby': 'message-id'
-        }}
         message={<span id="message-id">{notificationMessage}</span>}
         autoHideDuration={2000}
+        slots={{
+          transition: Fade
+        }}
+        slotProps={{
+          content: {
+            'aria-describedby': 'message-id'
+          }
+        }}
       />
     );
   }
