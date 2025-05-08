@@ -54,15 +54,17 @@ class NeuronInputField extends React.Component {
   fetchOptions = inputValue => {
     const { dataSet } = this.props;
 
+    // If the input value is a number, then use it as the bodyId, if not
+    // then set the bodyId -1 to prevent it from matching anything in
+    // the database, but keep the cypher query valid.
     let bodyId = -1;
-
-    if (!Number.isNaN(inputValue)) {
+    if (/^\d+$/.test(inputValue)) {
       bodyId = inputValue;
     }
 
     const cypherString = `WITH
     toLower('${inputValue}') as q,
-    '${bodyId}' as user_body
+    ${bodyId} as user_body
 MATCH (n :Neuron)
 WHERE
     n.bodyId = user_body
