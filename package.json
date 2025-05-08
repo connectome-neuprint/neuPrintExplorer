@@ -19,10 +19,12 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@babel/preset-env": "^7.12.10",
     "@babel/preset-react": "^7.12.10",
+    "@playwright/test": "^1.52.0",
     "@size-limit/preset-app": "^7.0.8",
     "@testing-library/jest-dom": "^6.5.0",
     "@testing-library/react": "^16.0.1",
     "@testing-library/user-event": "^14.5.2",
+    "@types/node": "^22.15.15",
     "@welldone-software/why-did-you-render": "^8.0.3",
     "babel-loader": "^8.2.3",
     "caniuse-lite": "^1.0.30001667",
@@ -153,7 +155,12 @@
       "^views(.*)$": "<rootDir>/src/js/components/view-plugins$1",
       "^actions(.*)$": "<rootDir>/src/js/actions$1",
       "\\.(css|less)$": "identity-obj-proxy"
-    }
+    },
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/build/",
+      "/e2e/"
+    ]
   },
   "msw": {
     "workerDirectory": "public"
