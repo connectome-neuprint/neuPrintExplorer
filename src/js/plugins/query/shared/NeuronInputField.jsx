@@ -209,6 +209,7 @@ ORDER BY priority, n.type, n.instance`
           placeholder="Type or Paste text for options"
           value={selectValue}
           isClearable
+          inputId="search-neuron-input"
           loadOptions={this.fetchOptions}
           onChange={this.handleChange}
         />

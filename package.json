@@ -122,6 +122,7 @@
     "pretest": "eslint --ext .jsx,.js src/js/",
     "test": "jest --maxWorkers=4",
     "test-watch": "jest --watch",
+    "test:e2e": "playwright test --headed",
     "preversion": "npm test",
     "dev-server": "webpack-dev-server --open",
     "dev": "docker compose up -d && webpack --config webpack.dev.js",
