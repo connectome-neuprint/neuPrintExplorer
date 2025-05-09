@@ -55,7 +55,7 @@ export default function NeuroGlancerView({ query }) {
   const [layersLoading, setLayersLoading] = useState(true);
   const [loadingError, setLoadingError] = useState();
 
-  const incommingState = query?.result?.data
+  const incommingState = query?.result?.data;
   const defaultPosition = incommingState?.position;
 
   // we have to set the initial state of the bodyIds, so that the useEffect
@@ -75,7 +75,7 @@ export default function NeuroGlancerView({ query }) {
 
   // load the layers for the dataset
   useEffect(() => {
-    // if the dataset is already in the ngViewerState then don't load it again 
+    // if the dataset is already in the ngViewerState then don't load it again
     if (ngViewerState[dataset]) {
       setLayersLoading(false);
       return;
@@ -91,7 +91,7 @@ export default function NeuroGlancerView({ query }) {
       setLayersLoading(false);
     } catch (error) {
       setLoadingError(error);
-    };
+    }
     // We really only want to run this once when a new dataset
     // is loaded.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -161,8 +161,15 @@ export default function NeuroGlancerView({ query }) {
         // For some reason, when neuroglancer first loads, it ignores the position that
         // is passed in the state. So we have to set it to the defaultPosition if it has
         // changed the position value to [0,0,0] or values between 1 and 0.
-        if (state.position && state.position[0] <= 1 && state.position[1] <= 1 && state.position[2] <= 1) {
-          state.position = defaultPosition;
+        if (
+          state.position &&
+          state.position[0] <= 1 &&
+          state.position[1] <= 1 &&
+          state.position[2] <= 1
+        ) {
+          if (defaultPosition) {
+            state.position = defaultPosition;
+          }
         }
 
         // eslint-disable-line react-hooks/exhaustive-deps
