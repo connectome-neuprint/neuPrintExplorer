@@ -163,9 +163,9 @@ export default function NeuroGlancerView({ query }) {
         // changed the position value to [0,0,0] or values between 1 and 0.
         if (
           state.position &&
-          state.position[0] <= 1 &&
-          state.position[1] <= 1 &&
-          state.position[2] <= 1
+          state.position[0] < 1 &&
+          state.position[1] < 1 &&
+          state.position[2] < 1
         ) {
           if (defaultPosition) {
             state.position = defaultPosition;
