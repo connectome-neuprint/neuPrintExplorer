@@ -94,10 +94,12 @@ function NeuroglancerMenu({ classes, dataSet }) {
 
   const handleUpdateNgState = (newState) => {
     setNgViewerState((prevState) => {
-      const newNgState = { ...prevState, [dataSet]: newState };
+      const tabState = prevState[dataSet];
+      // Merge the existing tab state with the new state
+      const mergedTabState = { ...tabState, ...newState };
+      const newNgState = { ...prevState, [dataSet]: mergedTabState };
       return newNgState;
     });
-    handleCloseMenu();
   };
 
   const handleLayerUpdate = (layerName, layerUpdate) => {
@@ -118,7 +120,6 @@ function NeuroglancerMenu({ classes, dataSet }) {
       }
       return prevState;
     });
-    handleCloseMenu();
   };
 
   const handleLayerAttributeToggle = (layerName, attributeToToggle) => {
@@ -137,7 +138,6 @@ function NeuroglancerMenu({ classes, dataSet }) {
       }
       return prevState;
     });
-    handleCloseMenu();
   };
 
   const handleSkeletonMeshToggle = () => {
@@ -204,12 +204,17 @@ function NeuroglancerMenu({ classes, dataSet }) {
       if (option.stateUpdate) {
         handleUpdateNgState(option.stateUpdate);
       }
+			// State updates must occur before the layer updated. Not doing it in this order
+      // will cause an infinite loop in the neuroglancer state update.
+
       // if there is a layerUpdate/layerName, apply it to the layer specified
-      else if (option.layerUpdate && option.layerName) {
+      if (option.layerUpdate && option.layerName) {
         handleLayerUpdate(option.layerName, option.layerUpdate);
-      } else if (option.layerName && option.attributeToToggle) {
+      }
+      if (option.layerName && option.attributeToToggle) {
         handleLayerAttributeToggle(option.layerName, option.attributeToToggle);
       }
+      handleCloseMenu();
     };
     return (
       <MenuItem key={option.name} aria-label={option.name} onClick={onClick}>
