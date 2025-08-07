@@ -89,16 +89,57 @@ WHERE
     OR toLower(n.synonyms) CONTAINS q
     OR toLower(n.instance) CONTAINS q
 WITH n,
-    CASE
-        WHEN n.bodyId = user_body THEN 0
-        WHEN toLower(n.type) CONTAINS q THEN 1
-        WHEN toLower(n.instance) CONTAINS q THEN 2
-        WHEN toLower(n.hemibrainType) CONTAINS q THEN 3
-        WHEN toLower(n.flywireType) CONTAINS q THEN 4
-        WHEN toLower(n.systematicType) CONTAINS q THEN 5
-        WHEN toLower(n.synonyms) CONTAINS q THEN 6
-        ELSE 7
-    END AS priority,
+    // Assign a match score according to where the match occurs within the properties.
+    CASE WHEN
+        n.bodyId = user_body
+        THEN 0
+    ELSE CASE WHEN
+            // Exact match
+            toLower(n.type) = q
+            OR toLower(n.instance) = q
+            OR toLower(n.hemibrainType) = q
+            OR toLower(n.flywireType) = q
+            OR toLower(n.systematicType) = q
+            OR toLower(n.synonyms) = q
+        THEN 1
+    ELSE CASE WHEN
+            // Parenthesized exact match
+            toLower(n.type) = '(${inputValue.toLowerCase()})'
+            OR toLower(n.instance) =~ '(${inputValue.toLowerCase()}).*'
+            OR toLower(n.hemibrainType) = '(${inputValue.toLowerCase()})'
+            OR toLower(n.flywireType) = '(${inputValue.toLowerCase()})'
+            OR toLower(n.systematicType) = '(${inputValue.toLowerCase()})'
+            OR toLower(n.synonyms) = '(${inputValue.toLowerCase()})'
+        THEN 2
+    ELSE CASE WHEN
+            // Exact prefix
+            toLower(n.type) =~ '(^${inputValue.toLowerCase()}.*)'
+            OR toLower(n.instance) =~ '(^${inputValue.toLowerCase()}.*)'
+            OR toLower(n.hemibrainType) =~ '(^${inputValue.toLowerCase()}.*)'
+            OR toLower(n.flywireType) =~ '(^${inputValue.toLowerCase()}.*)'
+            OR toLower(n.systematicType) =~ '(^${inputValue.toLowerCase()}.*)'
+            OR toLower(n.synonyms) =~ '(^${inputValue.toLowerCase()}.*)'
+        THEN 3
+    ELSE CASE WHEN
+            // Parenthesized exact prefix
+            toLower(n.type) =~ '(^\\\\(${inputValue.toLowerCase()}.*)'
+            OR toLower(n.instance) =~ '(^\\\\(${inputValue.toLowerCase()}.*)'
+            OR toLower(n.hemibrainType) =~ '(^\\\\(${inputValue.toLowerCase()}.*)'
+            OR toLower(n.flywireType) =~ '(^\\\\(${inputValue.toLowerCase()}.*)'
+            OR toLower(n.systematicType) =~ '(^\\\\(${inputValue.toLowerCase()}.*)'
+            OR toLower(n.synonyms) =~ '(^\\\\(${inputValue.toLowerCase()}.*)'
+        THEN 4
+    ELSE CASE WHEN
+            // Any match in type, instance, or other fields
+            toLower(n.type) CONTAINS q
+            OR toLower(n.instance) CONTAINS q
+            OR toLower(n.hemibrainType) CONTAINS q
+            OR toLower(n.flywireType) CONTAINS q
+            OR toLower(n.systematicType) CONTAINS q
+            OR toLower(n.synonyms) CONTAINS q
+        THEN 5
+    ELSE 6
+    END END END END END END as priority,
     CASE
         WHEN toLower(n.type) =~ ('(?i)^' + q + '.*') THEN 0
         WHEN toLower(n.type) CONTAINS q THEN 1
@@ -265,7 +306,7 @@ ORDER BY priority, type_priority, n.type, n.instance
     return (
       <>
         <InputLabel htmlFor="select-multiple-chip">
-          Neuron Instance, Types or BodyId (optional)
+          Neuron Instance, Type or BodyId (optional)
         </InputLabel>
         <AsyncSelect
           className={classes.select}
