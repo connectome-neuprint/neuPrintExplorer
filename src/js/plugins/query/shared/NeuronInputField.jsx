@@ -11,21 +11,6 @@ const styles = (theme) => ({
   },
 });
 
-function truncateString(str, n, useWordBoundary) {
-  if (typeof str !== 'string') {
-    return str;
-  }
-
-  if (str.length <= n) {
-    return str;
-  }
-  const subString = str.substr(0, n - 1); // the original check
-  if (useWordBoundary) {
-    return `${subString.substr(0, subString.lastIndexOf(' '))}...`;
-  }
-  return `${subString}&hellip;`;
-}
-
 function formatOptionLabel({ label, additionalInfo }) {
   return (
     <div style={{ display: 'flex' }}>
@@ -202,8 +187,8 @@ ORDER BY priority, type_priority, n.type, n.instance
             flywireType,
             systematicType,
             synonyms,
-            priority,
-            type_priority,
+            ,
+            ,
           ] = item;
 
           // Check which fields actually match the search input (excluding synonyms, priority, type_priority)
