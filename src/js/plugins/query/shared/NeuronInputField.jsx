@@ -194,21 +194,42 @@ ORDER BY priority, type_priority, n.type, n.instance
         const additionalInfo = new Map();
 
         resp.data.forEach((item) => {
-          const [bodyId, type, instance, hemibrainType, flywireType, systematicType, synonyms, priority, type_priority] =
-            item;
+          const [
+            bodyId,
+            type,
+            instance,
+            hemibrainType,
+            flywireType,
+            systematicType,
+            synonyms,
+            priority,
+            type_priority,
+          ] = item;
+
+          // Check which fields actually match the search input (excluding synonyms, priority, type_priority)
+          const matchedInRelevantFields = [
+            bodyId && bodyId.toString().toLowerCase().includes(inputValue.toLowerCase()),
+            type && type.toLowerCase().includes(inputValue.toLowerCase()),
+            instance && instance.toLowerCase().includes(inputValue.toLowerCase()),
+            hemibrainType && hemibrainType.toLowerCase().includes(inputValue.toLowerCase()),
+            flywireType && flywireType.toLowerCase().includes(inputValue.toLowerCase()),
+            systematicType && systematicType.toLowerCase().includes(inputValue.toLowerCase()),
+          ].some((matched) => matched);
 
           // Collect unique values for each field
-          if (bodyId) {
+          // Only add bodyId if the match was in relevant fields (not just synonyms)
+          if (bodyId && matchedInRelevantFields) {
             uniqueValues.bodyIds.add(bodyId);
             // For body IDs, show instance or type as additional info
             additionalInfo.set(bodyId, instance || type || '');
           }
 
-          if (type) {
+          // Only add type and instance if the match was in relevant fields (not just synonyms)
+          if (type && matchedInRelevantFields) {
             uniqueValues.types.add(type);
           }
 
-          if (instance) {
+          if (instance && matchedInRelevantFields) {
             uniqueValues.instances.add(instance);
             // For instances, show type as additional info
             additionalInfo.set(instance, type || '');
