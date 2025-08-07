@@ -71,6 +71,10 @@ WHERE
     OR toLower(n.type) CONTAINS q
     OR toLower(n.instance) CONTAINS q
     OR toLower(n.notes) CONTAINS q
+    OR toLower(n.hemibrainType) CONTAINS q
+    OR toLower(n.synonyms) CONTAINS q
+    OR toLower(n.systematicType) CONTAINS q
+    OR toLower(n.flywireType) CONTAINS q
 WITH n,
     // Assign a match score according to where the match occurs within the properties.
     CASE WHEN
@@ -80,26 +84,46 @@ WITH n,
             // Exact match
             toLower(n.type) = q
             OR toLower(n.instance) = q
+            OR toLower(n.hemibrainType) = q
+            OR toLower(n.synonyms) = q
+            OR toLower(n.systematicType) = q
+            OR toLower(n.flywireType) = q
         THEN 1
     ELSE CASE WHEN
             // Parenthesized exact match
             toLower(n.type) = '(${inputValue.toLowerCase()})'
             OR toLower(n.instance) =~ '(${inputValue.toLowerCase()}).*'
+            OR toLower(n.hemibrainType) = '(${inputValue.toLowerCase()})'
+            OR toLower(n.synonyms) = '(${inputValue.toLowerCase()})'
+            OR toLower(n.systematicType) = '(${inputValue.toLowerCase()})'
+            OR toLower(n.flywireType) = '(${inputValue.toLowerCase()})'
         THEN 2
     ELSE CASE WHEN
             // Exact prefix
             toLower(n.type) =~ '(^${inputValue.toLowerCase()}.*)'
             OR toLower(n.instance) =~ '(^${inputValue.toLowerCase()}.*)'
+            OR toLower(n.hemibrainType) =~ '(^${inputValue.toLowerCase()}.*)'
+            OR toLower(n.synonyms) =~ '(^${inputValue.toLowerCase()}.*)'
+            OR toLower(n.systematicType) =~ '(^${inputValue.toLowerCase()}.*)'
+            OR toLower(n.flywireType) =~ '(^${inputValue.toLowerCase()}.*)'
         THEN 3
     ELSE CASE WHEN
             // Parenthesized exact prefix
             toLower(n.type) =~ '(^\\\\(${inputValue.toLowerCase()}.*)'
             OR toLower(n.instance) =~ '(^\\\\(${inputValue.toLowerCase()}.*)'
+            OR toLower(n.hemibrainType) =~ '(^\\\\(${inputValue.toLowerCase()}.*)'
+            OR toLower(n.synonyms) =~ '(^\\\\(${inputValue.toLowerCase()}.*)'
+            OR toLower(n.systematicType) =~ '(^\\\\(${inputValue.toLowerCase()}.*)'
+            OR toLower(n.flywireType) =~ '(^\\\\(${inputValue.toLowerCase()}.*)'
         THEN 4
     ELSE CASE WHEN
-            // Any match in type or instance
+            // Any match in type, instance, hemibrainType, synonyms, systematicType or flywireType
             toLower(n.type) CONTAINS q
             OR toLower(n.instance) CONTAINS q
+            OR toLower(n.hemibrainType) CONTAINS q
+            OR toLower(n.synonyms) CONTAINS q
+            OR toLower(n.systematicType) CONTAINS q
+            OR toLower(n.flywireType) CONTAINS q
         THEN 5
     // Lastly, matches in notes
     ELSE 6
@@ -108,7 +132,11 @@ RETURN
     toString(n.bodyId) AS bodyid,
     n.type AS type,
     n.instance AS instance,
-    n.notes AS notes
+    n.notes AS notes,
+    n.hemibrainType AS hemibrainType,
+    n.synonyms AS synonyms,
+    n.systematicType AS systematicType,
+    n.flywireType AS flywireType
 ORDER BY priority, n.type, n.instance`
 
     const body = JSON.stringify({
@@ -137,6 +165,10 @@ ORDER BY priority, n.type, n.instance`
 
         const bodyIds = new Set();
         const types = new Set();
+        const hemibrainTypes = new Set();
+        const synonyms = new Set();
+        const systematicTypes = new Set();
+        const flywireTypes = new Set();
         const instances = new Set();
 
         const bodyIdLabels = {};
@@ -161,6 +193,30 @@ ORDER BY priority, n.type, n.instance`
               true
             ) || ''}`;
           }
+          // if this is a hemibrainType match, add it to hemibrainTypes
+          if (item[4]) {
+            if (item[4].toLowerCase().includes(inputValue.toLowerCase())) {
+              hemibrainTypes.add(item[4]);
+            }
+          }
+          // if this is a synonyms match, add it to synonyms
+          if (item[5]) {
+            if (item[5].toLowerCase().includes(inputValue.toLowerCase())) {
+              synonyms.add(item[5]);
+            }
+          }
+          // if this is a systematicType match, add it to systematicTypes
+          if (item[6]) {
+            if (item[6].toLowerCase().includes(inputValue.toLowerCase())) {
+              systematicTypes.add(item[6]);
+            }
+          }
+          // if this is a flywireType match, add it to flywireTypes
+          if (item[7]) {
+            if (item[7].toLowerCase().includes(inputValue.toLowerCase())) {
+              flywireTypes.add(item[7]);
+            }
+          }
         });
 
         const options = [];
@@ -169,6 +225,38 @@ ORDER BY priority, n.type, n.instance`
           options.push({
             label: 'Types',
             options: [...types]
+              .slice(0, 10)
+              .map(item => ({ value: item, label: item }))
+          });
+        }
+        if (hemibrainTypes.size) {
+          options.push({
+            label: 'Hemibrain Types',
+            options: [...hemibrainTypes]
+              .slice(0, 10)
+              .map(item => ({ value: item, label: item }))
+          });
+        }
+        if (synonyms.size) {
+          options.push({
+            label: 'Synonyms',
+            options: [...synonyms]
+              .slice(0, 10)
+              .map(item => ({ value: item, label: item }))
+          });
+        }
+        if (systematicTypes.size) {
+          options.push({
+            label: 'Systematic Types',
+            options: [...systematicTypes]
+              .slice(0, 10)
+              .map(item => ({ value: item, label: item }))
+          });
+        }
+        if (flywireTypes.size) {
+          options.push({
+            label: 'Flywire Types',
+            options: [...flywireTypes]
               .slice(0, 10)
               .map(item => ({ value: item, label: item }))
           });

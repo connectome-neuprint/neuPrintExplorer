@@ -64,7 +64,7 @@ function neuronConditionCypher(neuronName, neuronId, useContains) {
   const regstr = useContains ? '=' : '=~';
 
   if (neuronName && neuronName !== '') {
-    return `(toLower(neuron.type) ${regstr} "${neuronName.toLowerCase()}" OR toLower(neuron.instance) ${regstr} "${neuronName.toLowerCase()}")`;
+    return `(toLower(neuron.type) ${regstr} "${neuronName.toLowerCase()}" OR toLower(neuron.instance) ${regstr} "${neuronName.toLowerCase()}" OR toLower(neuron.hemibrainType) ${regstr} "${neuronName.toLowerCase()}" OR toLower(neuron.synonyms) ${regstr} "${neuronName.toLowerCase()}" OR toLower(neuron.systematicType) ${regstr} "${neuronName.toLowerCase()}" OR toLower(neuron.flywireType) ${regstr} "${neuronName.toLowerCase()}")`;
   }
 
   if (neuronId) {
@@ -353,7 +353,10 @@ ORDER BY neuron.bodyId`
         name: 'group',
         id: 'group',
         status: false,
-      } /* The below attributes are being removed from the default list and need
+      },
+      { name: 'systematic type', id: 'systematicType', status: false },
+      { name: 'flywire type', id: 'flywireType', status: false }
+      /* The below attributes are being removed from the default list and need
       to be applied to individual datasets. This can be done by setting the
       n.neuronColumns meta information to add new columns or override the
       ones that are listed here. Eg, for some datasets, you might want to
@@ -365,7 +368,6 @@ ORDER BY neuron.bodyId`
       { name: 'long tract', id: "longTract", status: false },
       { name: 'subclass', id: "subclass", status: false },
       { name: 'synonyms', id: "synonyms", status: false },
-      { name: 'systematic type', id: "systematicType", status: false },
       { name: 'origin', id: "origin", status: false },
       { name: 'target', id: "target", status: false },
       { name: 'soma neuromere', id: "somaNeuromere", status: false },
