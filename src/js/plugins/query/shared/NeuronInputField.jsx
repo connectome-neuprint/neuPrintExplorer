@@ -4,12 +4,11 @@ import AsyncSelect from 'react-select/async';
 import InputLabel from '@mui/material/InputLabel';
 import withStyles from '@mui/styles/withStyles';
 
-
-const styles = theme => ({
+const styles = (theme) => ({
   select: {
     fontFamily: theme.typography.fontFamily,
-    margin: '0.5em 0 1em 0'
-  }
+    margin: '0.5em 0 1em 0',
+  },
 });
 
 function truncateString(str, n, useWordBoundary) {
@@ -38,11 +37,16 @@ function formatOptionLabel({ label, additionalInfo }) {
 
 formatOptionLabel.propTypes = {
   label: PropTypes.string.isRequired,
-  additionalInfo: PropTypes.string.isRequired
+  additionalInfo: PropTypes.string.isRequired,
 };
 
 class NeuronInputField extends React.Component {
-  handleChange = selected => {
+  constructor(props) {
+    super(props);
+    this.debounceTimer = null;
+  }
+
+  handleChange = (selected) => {
     const { onChange } = this.props;
     if (selected && selected.value) {
       onChange(selected.value);
@@ -51,7 +55,18 @@ class NeuronInputField extends React.Component {
     }
   };
 
-  fetchOptions = inputValue => {
+  fetchOptions = (inputValue) => {
+    return new Promise((resolve) => {
+      clearTimeout(this.debounceTimer);
+      this.debounceTimer = setTimeout(() => {
+        this.fetchOptionsImmediate(inputValue)
+          .then(resolve)
+          .catch(() => resolve([]));
+      }, 300);
+    });
+  };
+
+  fetchOptionsImmediate = (inputValue) => {
     const { dataSet } = this.props;
 
     // If the input value is a number, then use it as the bodyId, if not
@@ -62,219 +77,177 @@ class NeuronInputField extends React.Component {
       bodyId = inputValue;
     }
 
-    const cypherString = `WITH
-    toLower('${inputValue}') as q,
-    ${bodyId} as user_body
-MATCH (n :Neuron)
+    const cypherString = `
+WITH toLower('${inputValue}') as q, ${bodyId} as user_body
+MATCH (n:Neuron)
 WHERE
     n.bodyId = user_body
     OR toLower(n.type) CONTAINS q
-    OR toLower(n.instance) CONTAINS q
-    OR toLower(n.notes) CONTAINS q
     OR toLower(n.hemibrainType) CONTAINS q
-    OR toLower(n.synonyms) CONTAINS q
-    OR toLower(n.systematicType) CONTAINS q
     OR toLower(n.flywireType) CONTAINS q
+    OR toLower(n.systematicType) CONTAINS q
+    OR toLower(n.synonyms) CONTAINS q
+    OR toLower(n.instance) CONTAINS q
 WITH n,
-    // Assign a match score according to where the match occurs within the properties.
-    CASE WHEN
-        n.bodyId = user_body
-        THEN 0
-    ELSE CASE WHEN
-            // Exact match
-            toLower(n.type) = q
-            OR toLower(n.instance) = q
-            OR toLower(n.hemibrainType) = q
-            OR toLower(n.synonyms) = q
-            OR toLower(n.systematicType) = q
-            OR toLower(n.flywireType) = q
-        THEN 1
-    ELSE CASE WHEN
-            // Parenthesized exact match
-            toLower(n.type) = '(${inputValue.toLowerCase()})'
-            OR toLower(n.instance) =~ '(${inputValue.toLowerCase()}).*'
-            OR toLower(n.hemibrainType) = '(${inputValue.toLowerCase()})'
-            OR toLower(n.synonyms) = '(${inputValue.toLowerCase()})'
-            OR toLower(n.systematicType) = '(${inputValue.toLowerCase()})'
-            OR toLower(n.flywireType) = '(${inputValue.toLowerCase()})'
-        THEN 2
-    ELSE CASE WHEN
-            // Exact prefix
-            toLower(n.type) =~ '(^${inputValue.toLowerCase()}.*)'
-            OR toLower(n.instance) =~ '(^${inputValue.toLowerCase()}.*)'
-            OR toLower(n.hemibrainType) =~ '(^${inputValue.toLowerCase()}.*)'
-            OR toLower(n.synonyms) =~ '(^${inputValue.toLowerCase()}.*)'
-            OR toLower(n.systematicType) =~ '(^${inputValue.toLowerCase()}.*)'
-            OR toLower(n.flywireType) =~ '(^${inputValue.toLowerCase()}.*)'
-        THEN 3
-    ELSE CASE WHEN
-            // Parenthesized exact prefix
-            toLower(n.type) =~ '(^\\\\(${inputValue.toLowerCase()}.*)'
-            OR toLower(n.instance) =~ '(^\\\\(${inputValue.toLowerCase()}.*)'
-            OR toLower(n.hemibrainType) =~ '(^\\\\(${inputValue.toLowerCase()}.*)'
-            OR toLower(n.synonyms) =~ '(^\\\\(${inputValue.toLowerCase()}.*)'
-            OR toLower(n.systematicType) =~ '(^\\\\(${inputValue.toLowerCase()}.*)'
-            OR toLower(n.flywireType) =~ '(^\\\\(${inputValue.toLowerCase()}.*)'
-        THEN 4
-    ELSE CASE WHEN
-            // Any match in type, instance, hemibrainType, synonyms, systematicType or flywireType
-            toLower(n.type) CONTAINS q
-            OR toLower(n.instance) CONTAINS q
-            OR toLower(n.hemibrainType) CONTAINS q
-            OR toLower(n.synonyms) CONTAINS q
-            OR toLower(n.systematicType) CONTAINS q
-            OR toLower(n.flywireType) CONTAINS q
-        THEN 5
-    // Lastly, matches in notes
-    ELSE 6
-    END END END END END END as priority
-RETURN
-    toString(n.bodyId) AS bodyid,
-    n.type AS type,
-    n.instance AS instance,
-    n.notes AS notes,
-    n.hemibrainType AS hemibrainType,
-    n.synonyms AS synonyms,
-    n.systematicType AS systematicType,
-    n.flywireType AS flywireType
-ORDER BY priority, n.type, n.instance`
+    CASE
+        WHEN n.bodyId = user_body THEN 0
+        WHEN toLower(n.type) CONTAINS q THEN 1
+        WHEN toLower(n.instance) CONTAINS q THEN 2
+        WHEN toLower(n.hemibrainType) CONTAINS q THEN 3
+        WHEN toLower(n.flywireType) CONTAINS q THEN 4
+        WHEN toLower(n.systematicType) CONTAINS q THEN 5
+        WHEN toLower(n.synonyms) CONTAINS q THEN 6
+        ELSE 7
+    END AS priority,
+    CASE
+        WHEN toLower(n.type) =~ ('(?i)^' + q + '.*') THEN 0
+        WHEN toLower(n.type) CONTAINS q THEN 1
+        ELSE 2
+    END AS type_priority
+RETURN DISTINCT
+    toString(n.bodyId) as bodyId,
+    n.type as type,
+    n.instance as instance,
+    n.hemibrainType as hemibrainType,
+    n.flywireType as flywireType,
+    n.systematicType as systematicType,
+    n.synonyms as synonyms,
+    priority,
+    type_priority
+ORDER BY priority, type_priority, n.type, n.instance
+`;
 
     const body = JSON.stringify({
       cypher: cypherString,
-      dataSet
+      dataSet,
     });
 
     const settings = {
       headers: {
         'content-type': 'application/json',
-        Accept: 'application/json'
+        Accept: 'application/json',
       },
       body,
       method: 'POST',
-      credentials: 'include'
+      credentials: 'include',
     };
 
     const queryUrl = '/api/custom/custom?np_explorer=neuron_input_field';
 
     return fetch(queryUrl, settings)
-      .then(result => result.json())
-      .then(resp => {
-        // sort the results in the data key. Need to split out instances, types
-        // and bodyids into separate categories then load them in different
-        // sections of the drop down.
+      .then((result) => result.json())
+      .then((resp) => {
+        // Process the simplified query format where each row contains all neuron properties:
+        // [bodyId, type, instance, hemibrainType, flywireType, systematicType, synonyms, priority, type_priority]
 
-        const bodyIds = new Set();
-        const types = new Set();
-        const hemibrainTypes = new Set();
-        const synonyms = new Set();
-        const systematicTypes = new Set();
-        const flywireTypes = new Set();
-        const instances = new Set();
+        const uniqueValues = {
+          bodyIds: new Set(),
+          types: new Set(),
+          instances: new Set(),
+          hemibrainTypes: new Set(),
+          flywireTypes: new Set(),
+          systematicTypes: new Set(),
+          synonyms: new Set(),
+        };
 
-        const bodyIdLabels = {};
-        const instanceLabels = {};
+        const additionalInfo = new Map();
 
-        resp.data.forEach(item => {
-          if (item[0]) {
-            bodyIds.add(item[0].toString());
-            bodyIdLabels[item[0]] = `${item[2] || item[1] || ''}`;
+        resp.data.forEach((item) => {
+          const [bodyId, type, instance, hemibrainType, flywireType, systematicType, synonyms, priority, type_priority] =
+            item;
+
+          // Collect unique values for each field
+          if (bodyId) {
+            uniqueValues.bodyIds.add(bodyId);
+            // For body IDs, show instance or type as additional info
+            additionalInfo.set(bodyId, instance || type || '');
           }
-          if (item[1]) {
-            if (item[1].toLowerCase().includes(inputValue.toLowerCase())) {
-              types.add(item[1]);
-            }
+
+          if (type) {
+            uniqueValues.types.add(type);
           }
-          // if this is an instance, then also show the type and notes (item[3])
-          if (item[2]) {
-            instances.add(item[2]);
-            instanceLabels[item[2]] = `${item[1] || item[0] || ''} ${truncateString(
-              item[3],
-              25,
-              true
-            ) || ''}`;
+
+          if (instance) {
+            uniqueValues.instances.add(instance);
+            // For instances, show type as additional info
+            additionalInfo.set(instance, type || '');
           }
-          // if this is a hemibrainType match, add it to hemibrainTypes
-          if (item[4]) {
-            if (item[4].toLowerCase().includes(inputValue.toLowerCase())) {
-              hemibrainTypes.add(item[4]);
-            }
+
+          if (hemibrainType && hemibrainType.toLowerCase().includes(inputValue.toLowerCase())) {
+            uniqueValues.hemibrainTypes.add(hemibrainType);
           }
-          // if this is a synonyms match, add it to synonyms
-          if (item[5]) {
-            if (item[5].toLowerCase().includes(inputValue.toLowerCase())) {
-              synonyms.add(item[5]);
-            }
+
+          if (flywireType && flywireType.toLowerCase().includes(inputValue.toLowerCase())) {
+            uniqueValues.flywireTypes.add(flywireType);
           }
-          // if this is a systematicType match, add it to systematicTypes
-          if (item[6]) {
-            if (item[6].toLowerCase().includes(inputValue.toLowerCase())) {
-              systematicTypes.add(item[6]);
-            }
+
+          if (systematicType && systematicType.toLowerCase().includes(inputValue.toLowerCase())) {
+            uniqueValues.systematicTypes.add(systematicType);
           }
-          // if this is a flywireType match, add it to flywireTypes
-          if (item[7]) {
-            if (item[7].toLowerCase().includes(inputValue.toLowerCase())) {
-              flywireTypes.add(item[7]);
-            }
+
+          if (synonyms && synonyms.toLowerCase().includes(inputValue.toLowerCase())) {
+            uniqueValues.synonyms.add(synonyms);
           }
         });
 
         const options = [];
 
-        if (types.size) {
+        // Helper function to convert Set to options array
+        const setToOptions = (set, limit = 10, showAdditionalInfo = false) => {
+          return [...set].slice(0, limit).map((value) => ({
+            value: value,
+            label: value,
+            additionalInfo: showAdditionalInfo ? additionalInfo.get(value) || '' : '',
+          }));
+        };
+
+        // Add option groups in requested order: Types, Instances, Hemibrain Types, Flywire Types, Systematic Types, Body IDs, Synonyms
+        if (uniqueValues.types.size > 0) {
           options.push({
             label: 'Types',
-            options: [...types]
-              .slice(0, 10)
-              .map(item => ({ value: item, label: item }))
+            options: setToOptions(uniqueValues.types, 10, false),
           });
         }
-        if (hemibrainTypes.size) {
-          options.push({
-            label: 'Hemibrain Types',
-            options: [...hemibrainTypes]
-              .slice(0, 10)
-              .map(item => ({ value: item, label: item }))
-          });
-        }
-        if (synonyms.size) {
-          options.push({
-            label: 'Synonyms',
-            options: [...synonyms]
-              .slice(0, 10)
-              .map(item => ({ value: item, label: item }))
-          });
-        }
-        if (systematicTypes.size) {
-          options.push({
-            label: 'Systematic Types',
-            options: [...systematicTypes]
-              .slice(0, 10)
-              .map(item => ({ value: item, label: item }))
-          });
-        }
-        if (flywireTypes.size) {
-          options.push({
-            label: 'Flywire Types',
-            options: [...flywireTypes]
-              .slice(0, 10)
-              .map(item => ({ value: item, label: item }))
-          });
-        }
-        if (instances.size) {
+
+        if (uniqueValues.instances.size > 0) {
           options.push({
             label: 'Instances',
-            options: [...instances]
-              .slice(0, 10)
-              .map(item => ({ value: item, label: item, additionalInfo: instanceLabels[item] }))
+            options: setToOptions(uniqueValues.instances, 10, true),
           });
         }
-        if (bodyIds.size) {
+
+        if (uniqueValues.hemibrainTypes.size > 0) {
           options.push({
-            label: 'Body Ids',
-            options: [...bodyIds]
-              .slice(0, 10)
-              .map(item => ({ value: item, label: item, additionalInfo: bodyIdLabels[item] }))
+            label: 'Hemibrain Types',
+            options: setToOptions(uniqueValues.hemibrainTypes, 10, false),
+          });
+        }
+
+        if (uniqueValues.flywireTypes.size > 0) {
+          options.push({
+            label: 'Flywire Types',
+            options: setToOptions(uniqueValues.flywireTypes, 10, false),
+          });
+        }
+
+        if (uniqueValues.systematicTypes.size > 0) {
+          options.push({
+            label: 'Systematic Types',
+            options: setToOptions(uniqueValues.systematicTypes, 10, false),
+          });
+        }
+
+        if (uniqueValues.bodyIds.size > 0) {
+          options.push({
+            label: 'Body IDs',
+            options: setToOptions(uniqueValues.bodyIds, 10, true),
+          });
+        }
+
+        if (uniqueValues.synonyms.size > 0) {
+          options.push({
+            label: 'Synonyms',
+            options: setToOptions(uniqueValues.synonyms, 10, false),
           });
         }
 
@@ -282,13 +255,17 @@ ORDER BY priority, n.type, n.instance`
       });
   };
 
+  componentWillUnmount() {
+    clearTimeout(this.debounceTimer);
+  }
+
   render() {
     const { value, classes } = this.props;
     const selectValue = value ? { label: value, value } : null;
     return (
       <>
         <InputLabel htmlFor="select-multiple-chip">
-          Neuron Instance, Type or BodyId (optional)
+          Neuron Instance, Types or BodyId (optional)
         </InputLabel>
         <AsyncSelect
           className={classes.select}
@@ -310,12 +287,12 @@ NeuronInputField.propTypes = {
   classes: PropTypes.object.isRequired,
   onChange: PropTypes.func,
   dataSet: PropTypes.string.isRequired,
-  value: PropTypes.string
+  value: PropTypes.string,
 };
 
 NeuronInputField.defaultProps = {
   onChange: () => {},
-  value: ''
+  value: '',
 };
 
 export default withStyles(styles)(NeuronInputField);
