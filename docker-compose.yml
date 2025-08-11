@@ -1,6 +1,6 @@
 services:
   neuprinthttp:
-    image: gcr.io/flyem-public/connectome-neuprint/neuprinthttp:1.7.2-1.64.4-noauth
+    image: gcr.io/flyem-public/connectome-neuprint/neuprinthttp:1.7.5-1.64.9
     networks:
       - neuprint-net
     ports:
