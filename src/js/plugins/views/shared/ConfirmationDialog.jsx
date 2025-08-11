@@ -12,8 +12,62 @@ import ListItemText from '@mui/material/ListItemText';
 import Checkbox from '@mui/material/Checkbox';
 
 class ConfirmationDialog extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  getLocalStorageKey = () => {
+    const { dataSet } = this.props;
+    const baseKey = 'neuprint-column-selections';
+    console.log('getLocalStorageKey', baseKey, dataSet);
+    return dataSet ? `${baseKey}-${dataSet}` : baseKey;
+  };
+
+  componentDidMount() {
+    this.loadColumnSelections();
+  }
+
+  loadColumnSelections = () => {
+    try {
+      const saved = localStorage.getItem(this.getLocalStorageKey());
+      if (saved) {
+        const selections = JSON.parse(saved);
+        const { columns } = this.props;
+
+        columns.forEach((column, index) => {
+          if (!column.hidden && selections.hasOwnProperty(column.name)) {
+            const shouldBeSelected = selections[column.name];
+            if (column.status !== shouldBeSelected) {
+              this.props.onChange(index);
+            }
+          }
+        });
+      }
+    } catch (error) {
+      console.warn('Failed to load column selections from localStorage:', error);
+    }
+  };
+
+  saveColumnSelections = () => {
+    try {
+      const { columns } = this.props;
+      const selections = {};
+
+      columns.forEach(column => {
+        if (!column.hidden) {
+          selections[column.name] = column.status;
+        }
+      });
+
+      localStorage.setItem(this.getLocalStorageKey(), JSON.stringify(selections));
+    } catch (error) {
+      console.warn('Failed to save column selections to localStorage:', error);
+    }
+  };
+
   handleOk = () => {
     const { onConfirm } = this.props;
+    this.saveColumnSelections();
     onConfirm();
   };
 
@@ -40,6 +94,15 @@ class ConfirmationDialog extends React.Component {
       }
       onChange(index);
     });
+  }
+
+  handleRestoreDefaults = () => {
+    try {
+      localStorage.removeItem(this.getLocalStorageKey());
+      window.location.reload();
+    } catch (error) {
+      console.warn('Failed to restore defaults:', error);
+    }
   }
 
 
@@ -83,6 +146,9 @@ class ConfirmationDialog extends React.Component {
           <Button onClick={this.handleSelectNone} color="primary">
             Clear All
           </Button>
+          <Button onClick={this.handleRestoreDefaults} color="primary">
+            Restore Defaults
+          </Button>
           <List>{options}</List>
         </DialogContent>
         <DialogActions>
@@ -99,7 +165,8 @@ ConfirmationDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   columns: PropTypes.object.isRequired,
   onConfirm: PropTypes.func.isRequired,
-  onChange: PropTypes.func.isRequired
+  onChange: PropTypes.func.isRequired,
+  dataSet: PropTypes.string
 };
 
 export default ConfirmationDialog;

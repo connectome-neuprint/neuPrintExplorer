@@ -144,6 +144,7 @@ class SimpleTable extends React.Component {
           <ColumnSelection
             columns={visibleColumns}
             onChange={index => this.handleColumnChange(index)}
+            dataSet={query.pm.dataset}
           />
           {paginate ? (
             <TablePagination

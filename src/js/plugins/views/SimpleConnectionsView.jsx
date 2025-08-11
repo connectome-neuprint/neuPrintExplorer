@@ -100,6 +100,7 @@ class SimpleConnectionsView extends React.Component {
         <ColumnSelection
           columns={visibleColumns}
           onChange={columnIndex => this.handleColumnChange(columnIndex)}
+          dataSet={query.pm.dataset}
         />
         <CollapseButton checked={collapsed} callback={this.handleCollapse} />
         <div className={classes.scroll}>
@@ -149,6 +150,7 @@ class SimpleConnectionsView extends React.Component {
         <ColumnSelection
           columns={visibleColumns}
           onChange={columnIndex => this.handleColumnChange(columnIndex)}
+          dataSet={query.pm.dataset}
         />
         <CollapseButton checked={collapsed} callback={this.handleCollapse} />
           <Table>
