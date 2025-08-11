@@ -79,6 +79,7 @@ class CollapsibleTable extends React.Component {
                   <ColumnSelection
                     columns={visibleColumns}
                     onChange={columnIndex => this.handleColumnChange(columnIndex)}
+                    dataSet={query.pm.dataset}
                   />
                   <IndependentTable
                     data={row.data}
@@ -145,6 +146,7 @@ class CollapsibleTable extends React.Component {
                             <ColumnSelection
                               columns={visibleColumns}
                               onChange={columnIndex => this.handleColumnChange(columnIndex)}
+                              dataSet={query.pm.dataset}
                             />
                             <IndependentTable
                               data={row.data}

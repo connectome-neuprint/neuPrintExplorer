@@ -46,6 +46,7 @@ class ColumnSelection extends React.Component {
           columns={columns}
           onChange={onChange}
           onConfirm={this.handleClose}
+          dataSet={this.props.dataSet}
         />
       </>
     );
@@ -54,7 +55,8 @@ class ColumnSelection extends React.Component {
 
 ColumnSelection.propTypes = {
   columns: PropTypes.object.isRequired,
-  onChange: PropTypes.func.isRequired
+  onChange: PropTypes.func.isRequired,
+  dataSet: PropTypes.string
 };
 
 export default ColumnSelection;
