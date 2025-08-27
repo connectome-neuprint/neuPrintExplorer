@@ -28,7 +28,6 @@ const Favorites = React.lazy(() => import('./Favorites'));
 const NoMatch = React.lazy(() => import('./NoMatch'));
 const Workstation = React.lazy(() => import('../containers/Workstation'));
 const Login = React.lazy(() => import('./LoginPage'));
-const ReleaseNotes = React.lazy(() => import('./ReleaseNotes'));
 
 // adapted from material ui example
 const styles = theme => ({
@@ -107,7 +106,6 @@ function Master({ classes, user }) {
                 <PrivateRoute user={user} path="/account" component={Account} />
                 <Route path="/workstation" component={Workstation} />
                 <Route path="/view" component={Workstation} />
-                <Route path="/releasenotes" component={ReleaseNotes} />
                 <Route component={NoMatch} />
               </Switch>
             </Suspense>

@@ -181,20 +181,7 @@ function SideBar({ classes, location }) {
           <ListItemText primary="Help" />
         </MenuItem>
 
-        <MenuItem
-          selected={/^\/releasenotes/.test(location.pathname)}
-          component={NavLink}
-          to={{ pathname: '/releasenotes', search: queryString }}
-          button
-        >
-          <Tooltip title="Release Notes" aria-label="Release Notes" placement="top-end">
-            <ListItemIcon>
-              <Icon>list</Icon>
-            </ListItemIcon>
-          </Tooltip>
-          <ListItemText primary="Release Notes" />
-        </MenuItem>
-      </MenuList>
+        </MenuList>
       <Contact />
     </Drawer>
   );
