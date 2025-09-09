@@ -125,7 +125,7 @@
     "test:e2e": "playwright test --headed",
     "preversion": "npm test",
     "dev-server": "webpack-dev-server --open",
-    "dev": "docker compose up -d && webpack --config webpack.dev.js",
+    "dev": "podman compose up -d && webpack --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
     "size": "size-limit",
     "build-analysis": "webpack --config webpack.analysis.js",
