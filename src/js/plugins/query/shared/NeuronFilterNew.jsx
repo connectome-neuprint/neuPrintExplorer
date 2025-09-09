@@ -119,7 +119,8 @@ export default function NeuronFilterNew({ callback, actions, datasetstr, neoServ
       })
       .then((result) => {
         if (result.data && result.data[0] && result.data[0][0] !== null) {
-          setFilters(JSON.parse(result.data[0]));
+          const filters = JSON.parse(result.data[0]);
+          setFilters(filters);
         }
         setLoading(false);
       })
@@ -173,6 +174,8 @@ export default function NeuronFilterNew({ callback, actions, datasetstr, neoServ
   }
 
   const filterInputs = filters
+    // remove filters that we don't want to show in the search list.
+    .filter((filter) => filter.searchable !== false)
     .map((filter) => {
       if (filter.id.match(/^(bodyId|type|instance)$/) || filter.choices === undefined) {
         return null;
