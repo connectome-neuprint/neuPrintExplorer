@@ -17,6 +17,7 @@ import withStyles from '@mui/styles/withStyles';
 import { TablePaginationActions } from 'plugins/support';
 
 import { stableSort, getSorting, getRoiBarChartForConnection } from '../shared/vishelpers';
+import { createTypeBasedConnectionQueryObject, aggregateROIInfoList } from '../../query/shared/pluginhelpers';
 
 const styles = theme => ({
   root: {
@@ -81,9 +82,15 @@ class SimpleConnectionsTable extends React.Component {
     this.setState({ order: newOrder, orderBy: newOrderBy });
   };
 
-  toggleExpandPanel = (key, parameters, connectionWeight) => {
+  toggleExpandPanel = (key, parameters, connectionWeight, rowData) => {
     const { isExpanded, expansionPanels } = this.state;
     const { roiList, bodyIdA, bodyIdB } = parameters;
+
+    // Check if this is a collapsed row (type-based aggregation)
+    if (bodyIdA === '-' || bodyIdB === '-') {
+      this.handleTypeBasedExpansion(key, parameters, connectionWeight, rowData);
+      return;
+    }
     const newIsExpanded = { ...isExpanded };
     const newAccordions = { ...expansionPanels };
     if (isExpanded[key]) {
@@ -127,8 +134,126 @@ class SimpleConnectionsTable extends React.Component {
     this.setState({ isExpanded: newIsExpanded, expansionPanels: newAccordions });
   };
 
+  handleTypeBasedExpansion = (key, parameters, connectionWeight, rowData) => {
+    const { isExpanded, expansionPanels } = this.state;
+    const { roiList, bodyIdA, bodyIdB } = parameters;
+
+    const newIsExpanded = { ...isExpanded };
+    const newAccordions = { ...expansionPanels };
+
+    if (isExpanded[key]) {
+      delete newIsExpanded[key];
+      delete newAccordions[key];
+    } else {
+      newIsExpanded[key] = true;
+      newAccordions[key] = <div>loading...</div>;
+
+      // Extract type information from the row data
+      // Row structure: [queriedName, queriedId, type, name, status, connectionWeight, ...]
+      const cellType = rowData[2]; // Type column
+
+      // Determine the target bodyId and direction
+      // We need to determine if this is an input or output query based on the original query context
+      // For now, let's use the bodyIdB as the target if bodyIdA is '-', and vice versa
+      const targetBodyId = bodyIdA === '-' ? bodyIdB : bodyIdA;
+      const isInputDirection = bodyIdA === '-'; // If bodyIdA is '-', we're looking at inputs to the target
+
+      // Create type-based query
+      const typeQueryObject = createTypeBasedConnectionQueryObject(
+        parameters.dataset,
+        cellType,
+        targetBodyId,
+        connectionWeight,
+        roiList,
+        isInputDirection
+      );
+
+      fetch('/api/custom/custom?np_explorer=simple_connections_roi', {
+        headers: {
+          'content-type': 'application/json',
+          Accept: 'application/json'
+        },
+        body: JSON.stringify(typeQueryObject),
+        method: 'POST',
+        credentials: 'include'
+      })
+        .then(result => result.json())
+        .then(resp => {
+          if (resp.error) {
+            throw new Error(resp.error);
+          }
+
+          // The response contains multiple rows, each with an roiInfo object
+          // We need to aggregate all the roiInfo objects
+          let roiInfoList = [];
+          try {
+            // Each row in resp.data contains an roiInfo object
+            resp.data.forEach(row => {
+              if (row[0]) {
+                roiInfoList.push(row[0]);
+              }
+            });
+          } catch (parseError) {
+            console.error('Error collecting ROI info:', parseError);
+            console.error('Response structure:', resp.data);
+            throw new Error(`Failed to collect ROI info: ${parseError.message}`);
+          }
+
+          // Now aggregate all the ROI info objects
+          const aggregatedRoiInfo = aggregateROIInfoList(roiInfoList);
+
+          // Calculate the actual total connections from the aggregated data
+          // But only include ROIs that are in the roiList (since MiniROIBarGraph filters by this)
+          const actualConnectionWeight = Object.entries(aggregatedRoiInfo)
+            .filter(([roi]) => roiList.includes(roi))
+            .reduce((total, [roi, roiData]) => {
+              return total + (roiData.post || 0);
+            }, 0);
+
+          // Debug the aggregated ROI data for percentage calculation issues
+          console.log('Debugging aggregated ROI data:');
+          Object.entries(aggregatedRoiInfo).forEach(([roi, data]) => {
+            console.log(`  ${roi}:`, data, `post: ${data.post || 0}`);
+          });
+
+          // Check if all ROIs have valid post values
+          const roiWithZeroOrMissingPost = Object.entries(aggregatedRoiInfo).filter(([roi, data]) => !data.post || data.post === 0);
+          if (roiWithZeroOrMissingPost.length > 0) {
+            console.log('ROIs with zero or missing post values:', roiWithZeroOrMissingPost);
+          }
+
+          // Check which ROIs from aggregatedRoiInfo are in roiList
+          const aggregatedROINames = Object.keys(aggregatedRoiInfo);
+          const matchingROIs = aggregatedROINames.filter(roi => roiList.includes(roi));
+          const missingROIs = aggregatedROINames.filter(roi => !roiList.includes(roi));
+
+          console.log('Aggregated ROI names:', aggregatedROINames);
+          console.log('Matching ROIs (in roiList):', matchingROIs);
+          console.log('Missing ROIs (not in roiList):', missingROIs);
+          console.log('roiList length:', roiList.length);
+          console.log('Filtered connection weight (only matching ROIs):', actualConnectionWeight);
+
+          newAccordions[key] = getRoiBarChartForConnection(
+            aggregatedRoiInfo,
+            roiList,
+            actualConnectionWeight,
+            `${cellType} (type)`,
+            targetBodyId
+          );
+
+          this.setState({ expansionPanels: newAccordions });
+        })
+        .catch(error => {
+          newAccordions[key] = `Error: ${error}`;
+          this.setState({ expansionPanels: newAccordions });
+        });
+    }
+
+    this.setState({ isExpanded: newIsExpanded, expansionPanels: newAccordions });
+  };
+
   render() {
-    const { data = [], columns = [], disableSort, classes, visibleColumns } = this.props;
+    const { data = [], columns = [], disableSort, classes, visibleColumns, collapsed } = this.props;
     let { rowsPerPage } = this.state;
     const { paginate, orderBy, order, page, isExpanded, expansionPanels } = this.state;
 
@@ -164,7 +289,7 @@ class SimpleConnectionsTable extends React.Component {
         ? columnCells
         : columnCells.filter((column, i) => visibleColumns.getIn([i, 'status']));
 
-   
+
     return (
       <div className={classes.root}>
         <div className={classes.scroll}>
@@ -209,7 +334,7 @@ class SimpleConnectionsTable extends React.Component {
                               <TableCell key="expansionButton">
                                 <IconButton
                                   aria-label="Expand"
-                                  onClick={() => this.toggleExpandPanel(keyId, cell, row[5].sortBy)}
+                                  onClick={() => this.toggleExpandPanel(keyId, cell, row[5].sortBy, row)}
                                   size="large">
                                   {isExpanded[keyId] ? (
                                     <RemoveIcon style={this.removeIconStyle} />
@@ -275,7 +400,8 @@ SimpleConnectionsTable.propTypes = {
   rowsPerPage: PropTypes.number,
   classes: PropTypes.object.isRequired,
   disableSort: PropTypes.object,
-  visibleColumns: PropTypes.object.isRequired
+  visibleColumns: PropTypes.object.isRequired,
+  collapsed: PropTypes.bool
 };
 
 SimpleConnectionsTable.defaultProps = {
@@ -284,7 +410,8 @@ SimpleConnectionsTable.defaultProps = {
   orderBy: '',
   order: 'asc',
   rowsPerPage: 25,
-  disableSort: new Set([])
+  disableSort: new Set([]),
+  collapsed: false
 };
 
 export default withStyles(styles)(SimpleConnectionsTable);

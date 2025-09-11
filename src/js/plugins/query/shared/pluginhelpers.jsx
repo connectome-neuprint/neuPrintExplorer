@@ -268,6 +268,31 @@ RETURN x.roiInfo`;
   };
 }
 
+function createTypeBasedConnectionQueryObject(dataset, neuronType, targetBodyId, connectionWeight, roiList, isInputDirection) {
+  let cypher;
+  if (isInputDirection) {
+    // For inputs: type -> targetBodyId
+    cypher = `
+MATCH (n :Segment {type: "${neuronType}"})-[x :ConnectsTo]->(b :Segment {bodyId: ${targetBodyId}})
+RETURN x.roiInfo`;
+  } else {
+    // For outputs: targetBodyId -> type
+    cypher = `
+MATCH (n :Segment {bodyId: ${targetBodyId}})-[x :ConnectsTo]->(b :Segment {type: "${neuronType}"})
+RETURN x.roiInfo`;
+  }
+
+  return {
+    neuronType,
+    targetBodyId,
+    connectionWeight,
+    roiList,
+    cypher,
+    dataset,
+    isTypeQuery: true
+  };
+}
+
 export function combineROIJSONStrings(original, added) {
   const originalObject = JSON.parse(original) || {};
   const addedObject = added !== '' ? JSON.parse(added) : {};
@@ -309,6 +334,32 @@ export function combineROIJSONStrings(original, added) {
   });
 
   return JSON.stringify(combined);
+}
+
+function aggregateROIInfoList(roiInfoList) {
+  if (!roiInfoList || roiInfoList.length === 0) {
+    return {};
+  }
+
+  // Handle case where roiInfoList contains JSON strings
+  let firstItem = roiInfoList[0];
+  if (typeof firstItem === 'string') {
+    firstItem = JSON.parse(firstItem);
+  }
+
+  // Convert first ROI info object to JSON string
+  let combined = JSON.stringify(firstItem || {});
+
+  for (let i = 1; i < roiInfoList.length; i++) {
+    let roiInfoItem = roiInfoList[i];
+    if (typeof roiInfoItem === 'string') {
+      roiInfoItem = JSON.parse(roiInfoItem);
+    }
+    const roiInfoJSON = JSON.stringify(roiInfoItem || {});
+    combined = combineROIJSONStrings(combined, roiInfoJSON);
+  }
+
+  return JSON.parse(combined);
 }
 
 function combineRowsByType(rows, shouldCombine) {
@@ -598,5 +649,7 @@ const pluginHelpers = {
   computeSimilarity,
   createSimpleConnectionsResult
 };
+
+export { createTypeBasedConnectionQueryObject, aggregateROIInfoList };
 
 export default pluginHelpers;

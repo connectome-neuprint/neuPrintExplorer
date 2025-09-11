@@ -112,6 +112,7 @@ class SimpleConnectionsView extends React.Component {
                     visibleColumns={visibleColumns}
                     data={row.data}
                     columns={row.columns}
+                    collapsed={collapsed}
                   />
                 </TableCell>
               </TableRow>
@@ -182,6 +183,7 @@ class SimpleConnectionsView extends React.Component {
                               data={row.data}
                               columns={row.columns}
                               paginate={paginateExpansion.valueOf()}
+                              collapsed={collapsed}
                             />
                           </AccordionDetails>
                         </Accordion>
