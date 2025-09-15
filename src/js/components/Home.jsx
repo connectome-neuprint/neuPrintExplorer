@@ -34,10 +34,11 @@ const styles = (theme) => ({
     padding: theme.spacing(3),
   },
   roottext: {
-    textAlign: 'center',
+    textAlign: 'left',
   },
   description: {
-    margin: theme.spacing(2),
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
   },
   container: {
     alignContent: 'flex-start',
@@ -98,7 +99,7 @@ function Home(props) {
   return (
     <div className={classes.root}>
       <Grid container spacing={4} justifyContent="center" className={classes.container}>
-        <Grid item xs={loggedIn ? 8 : 12} className={classes.roottext}>
+        <Grid item xs={loggedIn ? 7 : 12} className={classes.roottext}>
           <Typography variant="h3">Analysis tools for connectomics and more</Typography>
           <Typography className={classes.description}>
             neuPrintExplorer provides tools to query and visualize inter- &amp; intra- cellular
@@ -114,7 +115,7 @@ function Home(props) {
           )}
         </Grid>
         {loggedIn && (
-          <Grid item xs={4}>
+          <Grid item xs={5}>
             <DataSetLogo dataSet={queryObject.dataset} datasetInfo={datasetInfo} />
           </Grid>
         )}
