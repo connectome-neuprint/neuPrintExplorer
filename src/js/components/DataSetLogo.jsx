@@ -51,14 +51,18 @@ const styles = (theme) => ({
 
 function DataSetLogo(props) {
   const [imgUrl, setImageUrl] = useState(null);
+  const [metaDescription, setMetaDescription] = useState(null);
 
   const { dataSet, classes, datasetInfo } = props;
   const altText = `data set logo for ${dataSet}`;
 
   useEffect(() => {
-    fetch('/api/custom/custom?np_explorer=dataset_logo', {
+    fetch('/api/custom/custom?np_explorer=dataset_meta', {
       credentials: 'include',
-      body: JSON.stringify({ cypher: `MATCH (m :Meta) RETURN m.logo`, dataset: dataSet }),
+      body: JSON.stringify({
+        cypher: `MATCH (m :Meta) RETURN m.logo, m.description`,
+        dataset: dataSet
+      }),
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -70,18 +74,79 @@ function DataSetLogo(props) {
         if (!('message' in resp)) {
           if (resp.data && resp.data[0]) {
             setImageUrl(resp.data[0][0]);
+            setMetaDescription(resp.data[0][1]);
           } else {
             setImageUrl(null);
+            setMetaDescription(null);
           }
         }
       })
       .catch(() => {
         setImageUrl(null);
+        setMetaDescription(null);
       });
   }, [dataSet]);
 
   const currentDatasetInfo = datasetInfo && datasetInfo[dataSet] ? datasetInfo[dataSet] : {};
   const { info: linkUrl, lastmod, uuid, description } = currentDatasetInfo;
+
+  // Function to parse and render description content (JSON or markdown with links)
+  const renderDescription = (desc) => {
+    if (!desc) return null;
+
+    try {
+      // Try to parse as JSON first
+      const jsonData = JSON.parse(desc);
+      if (jsonData.text) {
+        return renderTextWithLinks(jsonData.text);
+      }
+      return renderTextWithLinks(JSON.stringify(jsonData, null, 2));
+    } catch {
+      // If not JSON, treat as markdown/plain text with link parsing
+      return renderTextWithLinks(desc);
+    }
+  };
+
+  // Function to render text with embedded links
+  const renderTextWithLinks = (text) => {
+    // Simple markdown link pattern: [text](url)
+    const linkPattern = /\[([^\]]+)\]\(([^)]+)\)/g;
+    const parts = [];
+    let lastIndex = 0;
+    let match;
+
+    while ((match = linkPattern.exec(text)) !== null) {
+      // Add text before the link
+      if (match.index > lastIndex) {
+        parts.push(text.slice(lastIndex, match.index));
+      }
+
+      // Add the link
+      parts.push(
+        <Link
+          key={match.index}
+          href={match[2]}
+          target="_blank"
+          rel="noopener noreferrer"
+          variant="body2"
+        >
+          {match[1]}
+        </Link>
+      );
+
+      lastIndex = match.index + match[0].length;
+    }
+
+    // Add remaining text
+    if (lastIndex < text.length) {
+      parts.push(text.slice(lastIndex));
+    }
+
+    return parts.length > 0 ? parts : text;
+  };
+
+  // Use metaDescription from database first, fall back to datasetInfo description
+  const displayDescription = metaDescription || description;
 
   return (
     <Card className={classes.card}>
@@ -109,9 +174,9 @@ function DataSetLogo(props) {
           {dataSet}
         </Typography>
 
-        {description ? (
+        {displayDescription ? (
           <Typography variant="body2" className={classes.description}>
-            {description}
+            {renderDescription(displayDescription)}
           </Typography>
         ) : null}
 

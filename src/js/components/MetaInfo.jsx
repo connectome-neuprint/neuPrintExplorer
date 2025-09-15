@@ -33,7 +33,7 @@ function fetchDataSetColumnDefaults(datasets, setNeoDatasetColumnDefaults) {
       if (result.ok) {
         return result.json();
       }
-      throw new Error(
+      console.log(
         'Unable to fetch column headers, try reloading the page. If this error persists, please contact support.'
       );
     })
