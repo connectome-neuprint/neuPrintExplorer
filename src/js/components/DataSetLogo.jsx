@@ -1,26 +1,51 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import withStyles from '@mui/styles/withStyles';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
+import Box from '@mui/material/Box';
 
-const styles = () => ({
-  wrapper: {
-    position: 'relative',
-    height: '150px',
-    display: 'table-cell'
+const styles = (theme) => ({
+  card: {
+    margin: theme.spacing(1),
+    display: 'flex',
+    minHeight: 200,
+  },
+  media: {
+    width: 200,
+    minWidth: 200,
+    flexShrink: 0,
+    backgroundSize: 'contain',
+    backgroundPosition: 'center'
+  },
+  content: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    padding: theme.spacing(2),
+    minWidth: 0,
+    overflow: 'hidden'
   },
   title: {
-    width: '100%',
-    background: 'hsla(0, 0%, 0%, 0.5)',
-    padding: '0.3em 1em',
-    color: 'hsl(0, 0%, 100%)',
-    position: 'absolute',
-    bottom: 0,
-    textAlign: 'center',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    marginBottom: theme.spacing(1),
+    wordWrap: 'break-word',
+    overflowWrap: 'break-word'
   },
-  image: {
-    maxWidth: '100%',
-    maxHeight: '220px'
+  description: {
+    marginBottom: theme.spacing(1),
+    color: theme.palette.text.secondary,
+    flex: 1,
+    wordWrap: 'break-word',
+    overflowWrap: 'break-word',
+    overflow: 'auto'
+  },
+  linkContainer: {
+    marginTop: theme.spacing(1),
+    flexShrink: 0
   }
 });
 
@@ -45,6 +70,8 @@ function DataSetLogo(props) {
         if (!('message' in resp)) {
           if (resp.data && resp.data[0]) {
             setImageUrl(resp.data[0][0]);
+          } else {
+            setImageUrl(null);
           }
         }
       })
@@ -53,22 +80,56 @@ function DataSetLogo(props) {
       });
   }, [dataSet]);
 
-  let linkUrl = '';
-  if (datasetInfo && Object.prototype.hasOwnProperty.call(datasetInfo, dataSet)) {
-    linkUrl = datasetInfo[dataSet].info;
-  }
+  const currentDatasetInfo = datasetInfo && datasetInfo[dataSet] ? datasetInfo[dataSet] : {};
+  const { info: linkUrl, lastmod, uuid, description } = currentDatasetInfo;
 
-  if (imgUrl) {
-    return (
-      <div className={classes.wrapper}>
-        <p className={classes.title}>Data set: {dataSet}</p>
-        <a href={linkUrl}>
-          <img className={classes.image} src={imgUrl} alt={altText} />
-        </a>
-      </div>
-    );
-  }
-  return React.Fragment;
+  return (
+    <Card className={classes.card}>
+      {imgUrl ? (
+        <CardMedia
+          className={classes.media}
+          image={imgUrl}
+          title={altText}
+        />
+      ) : (
+        <Box
+          className={classes.media}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          bgcolor="#f0f0f0"
+        >
+          <Typography variant="caption" color="textSecondary" align="center" padding={2}>
+            {dataSet}
+          </Typography>
+        </Box>
+      )}
+      <CardContent className={classes.content}>
+        <Typography variant="h6" component="h2" className={classes.title}>
+          {dataSet}
+        </Typography>
+
+        {description ? (
+          <Typography variant="body2" className={classes.description}>
+            {description}
+          </Typography>
+        ) : null}
+
+        <Box className={classes.linkContainer}>
+          {linkUrl ? (
+            <Link
+              href={linkUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="body2"
+            >
+              More Information
+            </Link>
+          ) : null}
+        </Box>
+      </CardContent>
+    </Card>
+  );
 }
 
 DataSetLogo.propTypes = {
