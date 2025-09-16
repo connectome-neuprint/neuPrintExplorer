@@ -5,9 +5,9 @@
 ### "exploring inter and intra cellular interactions"
 
 neuPrintExplorer is a single page web application that provides simple interfaces to query
-an EM connectome stored in [neuPrint+](https://github.com/connectome-neuprint/neuPrint),
+an EM connectome stored in [neuPrint](https://github.com/connectome-neuprint/neuPrint),
 which uses the graph database Neo4j.  It contains a number of plugins to facilitate different
-types of queries. The application is written using REACT+Redux and Material-UI.
+types of queries. The application is written using REACT + Redux and Material-UI.
 
 ## Installation
 
@@ -37,7 +37,7 @@ and link them into your development copy of neuPrintExplorer. Please see the [RE
 ## Running
 
 This app is dependent on [neuPrintHTTP](https://github.com/connectome-neuprint/neuPrintHTTP), which is an http REST
-API for connectomics that connects to neuPrint+ and also serves this static application.  To launch neuPrintHTTP and
+API for connectomics that connects to neuPrint and also serves this static application.  To launch neuPrintHTTP and
 the web application:
 
     % neuPrintHTTP -port 11000 config.json

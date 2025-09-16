@@ -32,27 +32,22 @@ function HelpMain(props) {
     <div style={{ padding: 8 * 3, width: '100%' }}>
       <div className={classes.roottext}>
         <Typography variant="h5" gutterBottom>Overview</Typography>
-        <Typography variant="h6" gutterBottom>neuPrint+: exploring inter and intra cellular interactions</Typography>
-        <Typography gutterBottom>
-          neuPrint+ extends neuPrint by adding more capabilities for nesting sub-cellular
-          structures please see the new data model diagram at the bottom of this page for details.
-          In addition we have added new plugins to support access to this data.
-        </Typography>
+        <Typography variant="h6" gutterBottom>neuPrint: exploring inter and intra cellular interactions</Typography>
         <Typography>
           This web application allows users to
           explore connectome data interactively. To start exploring the available datasets, please
-          login using any google credential above. For more instructions on how to use neuPrint+ and
+          login using any google credential above. For more instructions on how to use neuPrint and
           the underlying data representation please consult the{' '}
           <a href="public/neuprintuserguide.pdf">user guide</a>. A technical neuPrint paper
           exists <a href="https://www.biorxiv.org/content/10.1101/2020.01.16.909465v1">here</a>. For
-          those that want to launch their own neuPrint+ ecosystem locally, please consult the
-          github page for <a href="https://github.com/connectome-neuprint/neuprint">neuPrint+</a>.
+          those that want to launch their own neuPrint ecosystem locally, please consult the
+          github page for <a href="https://github.com/connectome-neuprint/neuprint">neuPrint</a>.
         </Typography>
         <br />
       </div>
       <Typography>For new neuPrintExplorer users, please examine the quick guide below</Typography>
       <HelpTutorial />
-      <Typography>Shows how connectomic data is represented in neuPrint+</Typography>
+      <Typography>Shows how connectomic data is represented in neuPrint</Typography>
       <div className={classes.flex}>
         <Button onClick={() => setOpen(true)}>
           <img

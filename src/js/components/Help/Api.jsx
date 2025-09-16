@@ -15,7 +15,7 @@ function HelpApi() {
   return (
     <div style={{ padding: 8 * 3, width: '100%' }}>
       <Typography>
-        Documentation for accessing neuPrint+ through python is available at{' '}
+        Documentation for accessing neuPrint through python is available at{' '}
         <a href="https://github.com/connectome-neuprint/neuprint-python">neuprint-python</a>
       </Typography>
       <div id="swaggerContainer" />

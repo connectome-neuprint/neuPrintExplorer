@@ -105,7 +105,7 @@ function Home(props) {
           <Typography className={classes.description}>
             neuPrintExplorer provides tools to query and visualize inter- &amp; intra- cellular
             interactions data stored in{' '}
-            <a href="https://github.com/janelia-flyem/neuPrint">neuPrint+</a>, which uses a neo4j
+            <a href="https://github.com/janelia-flyem/neuPrint">neuPrint</a>, which uses a neo4j
             graph database.
           </Typography>
           {loggedIn && !queryObject.q && (
