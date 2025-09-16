@@ -62,4 +62,53 @@ export const handlers = [
 		return res(ctx.status(originalResponse.status), ctx.json(await originalResponse.json()));
   })*/
 
+  // Handler for DataSetLogo metadata query
+  rest.post('/api/custom/custom', async (req, res, ctx) => {
+    const npExplorer = req.url.searchParams.get('np_explorer');
+
+    if (npExplorer === 'dataset_meta') {
+      const dataset = req.body.dataset;
+
+      // Mock data with markdown examples for different datasets
+      const mockDatasetMeta = {
+        'hemibrain:v1.2.1': {
+          logo: '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',
+          description: 'The **hemibrain** dataset contains ~21,000 reconstructed neurons from an adult female *Drosophila melanogaster*. \n\nFor more information, see [Scheffer et al. 2020](https://elifesciences.org/articles/57443) and our [data release notes](https://www.janelia.org/project-team/flyem/hemibrain). \n\n[information][info]'
+        },
+        'optic-lobe:v1.0.1': {
+          logo: null,
+          description: 'The **MANC** (Male Adult Nerve Cord) dataset contains reconstructed neurons from the *Drosophila* ventral nerve cord.\n\nThis dataset includes:\n- Motor neurons\n- Sensory neurons\n- Interneurons\n\nFor details, visit [MANC project page](https://www.janelia.org/project-team/flyem/manc).'
+        },
+        'vnc:v0.5': {
+          logo: null,
+          description: 'A **partial reconstruction** of the *Drosophila* ventral nerve cord.\n\n### Features:\n- Partial neuron reconstructions\n- Limited connectivity data\n- Developmental analysis\n\nSee [VNC documentation](https://github.com/connectome-neuprint/neuPrintExplorer) for more details.'
+        }
+      };
+
+      const metaData = mockDatasetMeta[dataset];
+      if (metaData) {
+        return res(
+          ctx.status(200),
+          ctx.json({
+            data: [[metaData.logo, metaData.description]]
+          })
+        );
+      }
+
+      // Pass through if dataset not in mock data
+      const originalResponse = await ctx.fetch(req);
+      return res(
+        ctx.status(originalResponse.status),
+        ctx.json(await originalResponse.json())
+      );
+    }
+
+    // Pass through other requests
+    const originalResponse = await ctx.fetch(req);
+    return res(
+      ctx.status(originalResponse.status),
+      ctx.json(await originalResponse.json())
+    );
+  })
+
 ];
