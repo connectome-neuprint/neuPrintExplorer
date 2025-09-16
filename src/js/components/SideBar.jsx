@@ -68,9 +68,9 @@ function SideBar({ classes, location }) {
     if (lsTest()) {
       const saved = localStorage.getItem('collapse_menu');
       const initialValue = JSON.parse(saved);
-      return initialValue || false;
+      return initialValue ?? true;
     }
-    return false;
+    return true;
   });
 
   const qsParams = getSiteParams(location);

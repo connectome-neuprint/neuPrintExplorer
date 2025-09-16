@@ -10,7 +10,6 @@ import Box from '@mui/material/Box';
 
 const styles = (theme) => ({
   card: {
-    margin: theme.spacing(1),
     display: 'flex',
     minHeight: 200,
   },
