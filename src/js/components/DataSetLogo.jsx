@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from '@mui/styles/withStyles';
 import Card from '@mui/material/Card';
@@ -59,45 +59,14 @@ const styles = (theme) => ({
 });
 
 function DataSetLogo(props) {
-  const [imgUrl, setImageUrl] = useState(null);
-  const [metaDescription, setMetaDescription] = useState(null);
 
   const { dataSet, classes, datasetInfo } = props;
+
   const altText = `data set logo for ${dataSet}`;
 
-  useEffect(() => {
-    fetch('/api/custom/custom?np_explorer=dataset_meta', {
-      credentials: 'include',
-      body: JSON.stringify({
-        cypher: `MATCH (m :Meta) RETURN m.logo, m.description`,
-        dataset: dataSet
-      }),
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json'
-      }
-    })
-      .then(result => result.json())
-      .then(resp => {
-        if (!('message' in resp)) {
-          if (resp.data && resp.data[0]) {
-            setImageUrl(resp.data[0][0]);
-            setMetaDescription(resp.data[0][1]);
-          } else {
-            setImageUrl(null);
-            setMetaDescription(null);
-          }
-        }
-      })
-      .catch(() => {
-        setImageUrl(null);
-        setMetaDescription(null);
-      });
-  }, [dataSet]);
-
   const currentDatasetInfo = datasetInfo && datasetInfo[dataSet] ? datasetInfo[dataSet] : {};
-  const { info: linkUrl, lastmod, uuid, description } = currentDatasetInfo;
+  console.log('Current Dataset Info:', currentDatasetInfo);
+  const { info: linkUrl, description, logo } = currentDatasetInfo;
 
   // Function to render description content as markdown
   const renderDescription = (desc) => {
@@ -126,15 +95,12 @@ function DataSetLogo(props) {
     );
   };
 
-  // Use metaDescription from database first, fall back to datasetInfo description
-  const displayDescription = metaDescription || description;
-
   return (
     <Card className={classes.card}>
-      {imgUrl ? (
+      {logo ? (
         <CardMedia
           className={classes.media}
-          image={imgUrl}
+          image={logo}
           title={altText}
         />
       ) : (
@@ -155,9 +121,9 @@ function DataSetLogo(props) {
           {dataSet}
         </Typography>
 
-        {displayDescription ? (
+        {description ? (
           <div className={classes.description}>
-            {renderDescription(displayDescription)}
+            {renderDescription(description)}
           </div>
         ) : null}
 
