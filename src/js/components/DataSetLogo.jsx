@@ -99,55 +99,31 @@ function DataSetLogo(props) {
   const currentDatasetInfo = datasetInfo && datasetInfo[dataSet] ? datasetInfo[dataSet] : {};
   const { info: linkUrl, lastmod, uuid, description } = currentDatasetInfo;
 
-  // Function to parse and render description content (JSON or markdown)
+  // Function to render description content as markdown
   const renderDescription = (desc) => {
     if (!desc) return null;
 
-    try {
-      // Try to parse as JSON first
-      const jsonData = JSON.parse(desc);
-      if (jsonData.text) {
-        return (
-          <ReactMarkdown
-            components={{
-              a: ({ href, children }) => (
-                <Link
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  variant="body2"
-                >
-                  {children}
-                </Link>
-              )
-            }}
-          >
-            {jsonData.text}
-          </ReactMarkdown>
-        );
-      }
-      return <pre>{JSON.stringify(jsonData, null, 2)}</pre>;
-    } catch {
-      // If not JSON, treat as markdown
-      return (
-        <ReactMarkdown
-          components={{
-            a: ({ href, children }) => (
-              <Link
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                variant="body2"
-              >
-                {children}
-              </Link>
-            )
-          }}
-        >
-          {desc}
-        </ReactMarkdown>
-      );
-    }
+    // append the info link from linkUrl if available
+    desc += linkUrl ? `\n\n[info]: ${linkUrl}` : '';
+
+    return (
+      <ReactMarkdown
+        components={{
+          a: ({ href, children }) => (
+            <Link
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="body2"
+            >
+              {children}
+            </Link>
+          )
+        }}
+      >
+        {desc}
+      </ReactMarkdown>
+    );
   };
 
   // Use metaDescription from database first, fall back to datasetInfo description
@@ -185,18 +161,6 @@ function DataSetLogo(props) {
           </div>
         ) : null}
 
-        <Box className={classes.linkContainer}>
-          {linkUrl ? (
-            <Link
-              href={linkUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              variant="body2"
-            >
-              More Information
-            </Link>
-          ) : null}
-        </Box>
       </CardContent>
     </Card>
   );
