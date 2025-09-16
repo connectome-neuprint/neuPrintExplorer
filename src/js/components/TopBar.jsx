@@ -168,7 +168,7 @@ class TopBar extends React.Component {
                 />
               </Link>
             </Tooltip>
-            <p style={{margin: 0, marginTop: '-7px'}}> exploring inter and intra cellular interactions</p>
+            <p style={{margin: 0, marginTop: '-7px'}}>Connectome Explorer</p>
           </div>
           {loggedIn && (
             <Select
