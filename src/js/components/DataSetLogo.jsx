@@ -7,6 +7,7 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
+import ReactMarkdown from 'react-markdown';
 
 const styles = (theme) => ({
   card: {
@@ -40,7 +41,16 @@ const styles = (theme) => ({
     flex: 1,
     wordWrap: 'break-word',
     overflowWrap: 'break-word',
-    overflow: 'auto'
+    overflow: 'auto',
+    fontSize: theme.typography.body2.fontSize,
+    lineHeight: theme.typography.body2.lineHeight,
+    '& p': {
+      margin: 0,
+      marginBottom: theme.spacing(0.5)
+    },
+    '& p:last-child': {
+      marginBottom: 0
+    }
   },
   linkContainer: {
     marginTop: theme.spacing(1),
@@ -89,7 +99,7 @@ function DataSetLogo(props) {
   const currentDatasetInfo = datasetInfo && datasetInfo[dataSet] ? datasetInfo[dataSet] : {};
   const { info: linkUrl, lastmod, uuid, description } = currentDatasetInfo;
 
-  // Function to parse and render description content (JSON or markdown with links)
+  // Function to parse and render description content (JSON or markdown)
   const renderDescription = (desc) => {
     if (!desc) return null;
 
@@ -97,51 +107,47 @@ function DataSetLogo(props) {
       // Try to parse as JSON first
       const jsonData = JSON.parse(desc);
       if (jsonData.text) {
-        return renderTextWithLinks(jsonData.text);
+        return (
+          <ReactMarkdown
+            components={{
+              a: ({ href, children }) => (
+                <Link
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variant="body2"
+                >
+                  {children}
+                </Link>
+              )
+            }}
+          >
+            {jsonData.text}
+          </ReactMarkdown>
+        );
       }
-      return renderTextWithLinks(JSON.stringify(jsonData, null, 2));
+      return <pre>{JSON.stringify(jsonData, null, 2)}</pre>;
     } catch {
-      // If not JSON, treat as markdown/plain text with link parsing
-      return renderTextWithLinks(desc);
-    }
-  };
-
-  // Function to render text with embedded links
-  const renderTextWithLinks = (text) => {
-    // Simple markdown link pattern: [text](url)
-    const linkPattern = /\[([^\]]+)\]\(([^)]+)\)/g;
-    const parts = [];
-    let lastIndex = 0;
-    let match;
-
-    while ((match = linkPattern.exec(text)) !== null) {
-      // Add text before the link
-      if (match.index > lastIndex) {
-        parts.push(text.slice(lastIndex, match.index));
-      }
-
-      // Add the link
-      parts.push(
-        <Link
-          key={match.index}
-          href={match[2]}
-          target="_blank"
-          rel="noopener noreferrer"
-          variant="body2"
+      // If not JSON, treat as markdown
+      return (
+        <ReactMarkdown
+          components={{
+            a: ({ href, children }) => (
+              <Link
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="body2"
+              >
+                {children}
+              </Link>
+            )
+          }}
         >
-          {match[1]}
-        </Link>
+          {desc}
+        </ReactMarkdown>
       );
-
-      lastIndex = match.index + match[0].length;
     }
-
-    // Add remaining text
-    if (lastIndex < text.length) {
-      parts.push(text.slice(lastIndex));
-    }
-
-    return parts.length > 0 ? parts : text;
   };
 
   // Use metaDescription from database first, fall back to datasetInfo description
@@ -174,9 +180,9 @@ function DataSetLogo(props) {
         </Typography>
 
         {displayDescription ? (
-          <Typography variant="body2" className={classes.description}>
+          <div className={classes.description}>
             {renderDescription(displayDescription)}
-          </Typography>
+          </div>
         ) : null}
 
         <Box className={classes.linkContainer}>
