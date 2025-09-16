@@ -51,7 +51,7 @@ function About({ classes, token, appDB }) {
       <Typography variant="h6">About</Typography>
       <Typography variant="body1" className={classes.spaced}>
         neuPrintExplorer is web based tool to query and visualize inter and intra cellular
-        interaction data stored in neuPrint+, a neo4j graph database.{' '}
+        interaction data stored in neuPrint, a neo4j graph database.{' '}
       </Typography>
       <Typography variant="h6">Log an issue</Typography>
       <Typography variant="body1" className={classes.spaced}>

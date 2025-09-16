@@ -36,9 +36,28 @@ export const handlers = [
     );
   }),
 
-  /* rest.get('/api/dbmeta/datasets', (req, res, ctx) =>
-    res(ctx.status(200), ctx.json(datasets))
-  ),*/
+  rest.get('/api/dbmeta/datasets', async (req, res, ctx) => {
+    // Get original response or use mock datasets
+    let datasetsData;
+    try {
+      const originalResponse = await ctx.fetch(req);
+      datasetsData = await originalResponse.json();
+    } catch {
+      datasetsData = datasets;
+    }
+
+    // Add logo and description to all datasets
+    const enhancedDatasets = {};
+    Object.keys(datasetsData).forEach(datasetKey => {
+      enhancedDatasets[datasetKey] = {
+        ...datasetsData[datasetKey],
+        logo: '/mock-image',
+        description: `**${datasetKey}** dataset containing reconstructed neurons and connectivity data.\n\nThis dataset includes:\n- Detailed neuron reconstructions\n- Synaptic connectivity\n- Region of interest (ROI) annotations\n\nFor more information, visit our [documentation](https://neuprint.janelia.org/)\n\n[information][info].`
+      };
+    });
+
+    return res(ctx.status(200), ctx.json(enhancedDatasets));
+  }),
 
   // Handles a GET /user request
   rest.get('/user', null),
@@ -61,5 +80,6 @@ export const handlers = [
 		const originalResponse = await ctx.fetch(req);
 		return res(ctx.status(originalResponse.status), ctx.json(await originalResponse.json()));
   })*/
+
 
 ];
