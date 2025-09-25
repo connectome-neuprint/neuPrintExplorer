@@ -80,10 +80,23 @@ function Home(props) {
 
   const dataSetNames = Object.keys(datasetInfo) || [];
 
-  const defaultDS = dataSetNames
-    // set the default dataset by using the last modified date.
-    .sort((a, b) => new Date(datasetInfo[b].lastmod) - new Date(datasetInfo[a].lastmod))
-    .filter((name) => datasetInfo[name].hidden === false)[0];
+  const nonHiddenDatasets = dataSetNames.filter((name) => datasetInfo[name].hidden === false);
+
+  // First check for datasets with default attribute set to true or 'true'
+  const defaultDatasets = nonHiddenDatasets.filter((name) =>
+    datasetInfo[name].default === true || datasetInfo[name].default === 'true'
+  );
+
+  let defaultDS;
+  if (defaultDatasets.length > 0) {
+    // If multiple datasets have default=true, sort by lastmod and take the most recent
+    defaultDS = defaultDatasets
+      .sort((a, b) => new Date(datasetInfo[b].lastmod) - new Date(datasetInfo[a].lastmod))[0];
+  } else {
+    // If no default dataset found, fall back to sorting by last modified date
+    defaultDS = nonHiddenDatasets
+      .sort((a, b) => new Date(datasetInfo[b].lastmod) - new Date(datasetInfo[a].lastmod))[0];
+  }
 
   if (loggedIn && (!queryObject.dataset || !queryObject.qt) && defaultDS) {
     return (

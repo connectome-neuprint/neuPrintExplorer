@@ -54,6 +54,14 @@ export const handlers = [
         logo: '/mock-image',
         description: `**${datasetKey}** dataset containing reconstructed neurons and connectivity data.\n\nThis dataset includes:\n- Detailed neuron reconstructions\n- Synaptic connectivity\n- Region of interest (ROI) annotations\n\nFor more information, visit our [documentation](https://neuprint.janelia.org/)\n\n[information][info].`
       };
+      // Set default and hidden datasets to test default setting works
+      if (datasetKey === 'vnc') {
+        enhancedDatasets[datasetKey].default = true;
+      }
+      if (datasetKey === 'cns') {
+        enhancedDatasets[datasetKey].default = true;
+        enhancedDatasets[datasetKey].hidden = true;
+      }
     });
 
     return res(ctx.status(200), ctx.json(enhancedDatasets));
