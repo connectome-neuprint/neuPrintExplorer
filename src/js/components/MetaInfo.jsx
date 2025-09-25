@@ -143,6 +143,7 @@ class MetaInfo extends React.Component {
               maxVolumeSize: data.maxVolumeSize,
               logo: data.logo,
               description: data.description,
+              default: data.default,
             };
           });
           setNeoDatasets(datasets, rois, superRois, datasetInfo);
