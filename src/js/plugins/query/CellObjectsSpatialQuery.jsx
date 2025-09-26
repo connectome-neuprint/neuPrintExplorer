@@ -134,9 +134,25 @@ export class CellObjectsSpatialQuery extends React.Component {
     };
   }
 
+  isValidCoordinate = (value) => {
+    return value !== undefined && value !== '' && !isNaN(Number(value));
+  };
+
   submitQuery = () => {
     const { dataSet, submit } = this.props;
     const { x, y, z, radius, types } = this.state;
+
+    if (!this.isValidCoordinate(x) || !this.isValidCoordinate(y) || !this.isValidCoordinate(z)) {
+      this.setState({ errorMessage: 'Please enter valid numbers for all coordinates (x, y, z)' });
+      return;
+    }
+
+    if (!this.isValidCoordinate(radius)) {
+      this.setState({ errorMessage: 'Please enter a valid number for radius' });
+      return;
+    }
+
+    this.setState({ errorMessage: '' });
 
     let whereClause = '';
     if (types && types.length > 0) {
@@ -281,7 +297,7 @@ export class CellObjectsSpatialQuery extends React.Component {
           color="primary"
           className={classes.button}
           onClick={this.submitQuery}
-          disabled={isQuerying}
+          disabled={isQuerying || !this.isValidCoordinate(x) || !this.isValidCoordinate(y) || !this.isValidCoordinate(z) || !this.isValidCoordinate(radius)}
         >
           Search
         </Button>

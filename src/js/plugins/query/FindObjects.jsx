@@ -155,9 +155,20 @@ export class FindObjects extends React.Component {
     };
   }
 
+  isValidCoordinate = (value) => {
+    return value !== undefined && value !== '' && !isNaN(Number(value));
+  };
+
   submitQuery = () => {
     const { dataSet, submit } = this.props;
     const { x, y, z } = this.state;
+
+    if (!this.isValidCoordinate(x) || !this.isValidCoordinate(y) || !this.isValidCoordinate(z)) {
+      this.setState({ errorMessage: 'Please enter valid numbers for all coordinates (x, y, z)' });
+      return;
+    }
+
+    this.setState({ errorMessage: '' });
 
     const cypher = `MATCH (n :Element)-[x]-(m :Element)
 WHERE n.location = Point({x:${x} ,y:${y} ,z:${z}})
@@ -223,7 +234,6 @@ RETURN ID(m),
             fullWidth
             rows={1}
             value={x}
-            maxRows={1}
             className={classes.textField}
             onChange={(event) => this.setState({x: event.target.value})}
             onKeyDown={this.catchReturn}
@@ -239,7 +249,6 @@ RETURN ID(m),
             fullWidth
             rows={1}
             value={y}
-            maxRows={1}
             className={classes.textField}
             onChange={(event) => this.setState({y: event.target.value})}
             onKeyDown={this.catchReturn}
@@ -254,7 +263,6 @@ RETURN ID(m),
             fullWidth
             rows={1}
             value={z}
-            maxRows={1}
             className={classes.textField}
             onChange={(event) => this.setState({z: event.target.value})}
             onKeyDown={this.catchReturn}
@@ -266,7 +274,7 @@ RETURN ID(m),
           color="primary"
           className={classes.button}
           onClick={this.submitQuery}
-          disabled={isQuerying}
+          disabled={isQuerying || !this.isValidCoordinate(x) || !this.isValidCoordinate(y) || !this.isValidCoordinate(z)}
         >
           Search By Coordinates
         </Button>
