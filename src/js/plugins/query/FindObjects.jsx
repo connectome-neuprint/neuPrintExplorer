@@ -155,9 +155,20 @@ export class FindObjects extends React.Component {
     };
   }
 
+  isValidCoordinate = (value) => {
+    return value !== undefined && value !== '' && !isNaN(Number(value));
+  };
+
   submitQuery = () => {
     const { dataSet, submit } = this.props;
     const { x, y, z } = this.state;
+
+    if (!this.isValidCoordinate(x) || !this.isValidCoordinate(y) || !this.isValidCoordinate(z)) {
+      this.setState({ errorMessage: 'Please enter valid numbers for all coordinates (x, y, z)' });
+      return;
+    }
+
+    this.setState({ errorMessage: '' });
 
     const cypher = `MATCH (n :Element)-[x]-(m :Element)
 WHERE n.location = Point({x:${x} ,y:${y} ,z:${z}})
@@ -195,6 +206,20 @@ RETURN ID(m),
     }
   };
 
+  handlePaste = (event) => {
+    const pastedText = event.clipboardData.getData('text');
+    const coordinates = pastedText.split(',').map(coord => coord.trim());
+
+    if (coordinates.length === 3) {
+      event.preventDefault();
+      this.setState({
+        x: coordinates[0],
+        y: coordinates[1],
+        z: coordinates[2],
+      });
+    }
+  };
+
   render() {
     const { classes, isQuerying } = this.props;
     const { x, y, z, errorMessage } = this.state;
@@ -209,10 +234,12 @@ RETURN ID(m),
             fullWidth
             rows={1}
             value={x}
-            maxRows={1}
             className={classes.textField}
             onChange={(event) => this.setState({x: event.target.value})}
-            onKeyDown={this.catchReturn} />
+            onKeyDown={this.catchReturn}
+            onPaste={this.handlePaste}
+            InputLabelProps={{ shrink: x !== undefined && x !== '' ? true : undefined }}
+            helperText="Tip: Paste comma-separated coordinates (x,y,z) into any field, to populate them all at once." />
         </FormControl>
         <FormControl variant="standard" fullWidth className={classes.formControl}>
           <TextField
@@ -222,10 +249,11 @@ RETURN ID(m),
             fullWidth
             rows={1}
             value={y}
-            maxRows={1}
             className={classes.textField}
             onChange={(event) => this.setState({y: event.target.value})}
-            onKeyDown={this.catchReturn} />
+            onKeyDown={this.catchReturn}
+            onPaste={this.handlePaste}
+            InputLabelProps={{ shrink: y !== undefined && y !== '' ? true : undefined }} />
         </FormControl>
         <FormControl variant="standard" fullWidth className={classes.formControl}>
           <TextField
@@ -235,17 +263,18 @@ RETURN ID(m),
             fullWidth
             rows={1}
             value={z}
-            maxRows={1}
             className={classes.textField}
             onChange={(event) => this.setState({z: event.target.value})}
-            onKeyDown={this.catchReturn} />
+            onKeyDown={this.catchReturn}
+            onPaste={this.handlePaste}
+            InputLabelProps={{ shrink: z !== undefined && z !== '' ? true : undefined }} />
         </FormControl>
         <Button
           variant="contained"
           color="primary"
           className={classes.button}
           onClick={this.submitQuery}
-          disabled={isQuerying}
+          disabled={isQuerying || !this.isValidCoordinate(x) || !this.isValidCoordinate(y) || !this.isValidCoordinate(z)}
         >
           Search By Coordinates
         </Button>

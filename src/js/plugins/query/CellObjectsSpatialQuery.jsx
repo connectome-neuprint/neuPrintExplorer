@@ -134,9 +134,25 @@ export class CellObjectsSpatialQuery extends React.Component {
     };
   }
 
+  isValidCoordinate = (value) => {
+    return value !== undefined && value !== '' && !isNaN(Number(value));
+  };
+
   submitQuery = () => {
     const { dataSet, submit } = this.props;
     const { x, y, z, radius, types } = this.state;
+
+    if (!this.isValidCoordinate(x) || !this.isValidCoordinate(y) || !this.isValidCoordinate(z)) {
+      this.setState({ errorMessage: 'Please enter valid numbers for all coordinates (x, y, z)' });
+      return;
+    }
+
+    if (!this.isValidCoordinate(radius)) {
+      this.setState({ errorMessage: 'Please enter a valid number for radius' });
+      return;
+    }
+
+    this.setState({ errorMessage: '' });
 
     let whereClause = '';
     if (types && types.length > 0) {
@@ -170,6 +186,20 @@ export class CellObjectsSpatialQuery extends React.Component {
     if (event.keyCode === 13) {
       event.preventDefault();
       this.submitQuery();
+    }
+  };
+
+  handlePaste = (event) => {
+    const pastedText = event.clipboardData.getData('text');
+    const coordinates = pastedText.split(',').map(coord => coord.trim());
+
+    if (coordinates.length === 3) {
+      event.preventDefault();
+      this.setState({
+        x: coordinates[0],
+        y: coordinates[1],
+        z: coordinates[2],
+      });
     }
   };
 
@@ -211,6 +241,9 @@ export class CellObjectsSpatialQuery extends React.Component {
             className={classes.textField}
             onChange={(event) => this.setState({x: event.target.value})}
             onKeyDown={this.catchReturn}
+            onPaste={this.handlePaste}
+            InputLabelProps={{ shrink: x !== undefined && x !== '' ? true : undefined }}
+            helperText="Tip: Paste comma-separated coordinates (x,y,z) into any field, to populate them all at once."
           />
         </FormControl>
         <FormControl variant="standard" fullWidth className={classes.formControl}>
@@ -225,6 +258,8 @@ export class CellObjectsSpatialQuery extends React.Component {
             className={classes.textField}
             onChange={(event) => this.setState({y: event.target.value})}
             onKeyDown={this.catchReturn}
+            onPaste={this.handlePaste}
+            InputLabelProps={{ shrink: y !== undefined && y !== '' ? true : undefined }}
           />
         </FormControl>
         <FormControl variant="standard" fullWidth className={classes.formControl}>
@@ -239,6 +274,8 @@ export class CellObjectsSpatialQuery extends React.Component {
             className={classes.textField}
             onChange={(event) => this.setState({z: event.target.value})}
             onKeyDown={this.catchReturn}
+            onPaste={this.handlePaste}
+            InputLabelProps={{ shrink: z !== undefined && z !== '' ? true : undefined }}
           />
         </FormControl>
         <FormControl variant="standard" fullWidth className={classes.formControl}>
@@ -260,7 +297,7 @@ export class CellObjectsSpatialQuery extends React.Component {
           color="primary"
           className={classes.button}
           onClick={this.submitQuery}
-          disabled={isQuerying}
+          disabled={isQuerying || !this.isValidCoordinate(x) || !this.isValidCoordinate(y) || !this.isValidCoordinate(z) || !this.isValidCoordinate(radius)}
         >
           Search
         </Button>
