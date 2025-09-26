@@ -195,6 +195,20 @@ RETURN ID(m),
     }
   };
 
+  handlePaste = (event) => {
+    const pastedText = event.clipboardData.getData('text');
+    const coordinates = pastedText.split(',').map(coord => coord.trim());
+
+    if (coordinates.length === 3) {
+      event.preventDefault();
+      this.setState({
+        x: coordinates[0],
+        y: coordinates[1],
+        z: coordinates[2],
+      });
+    }
+  };
+
   render() {
     const { classes, isQuerying } = this.props;
     const { x, y, z, errorMessage } = this.state;
@@ -212,7 +226,10 @@ RETURN ID(m),
             maxRows={1}
             className={classes.textField}
             onChange={(event) => this.setState({x: event.target.value})}
-            onKeyDown={this.catchReturn} />
+            onKeyDown={this.catchReturn}
+            onPaste={this.handlePaste}
+            InputLabelProps={{ shrink: x !== undefined && x !== '' ? true : undefined }}
+            helperText="Tip: Paste comma-separated coordinates (x,y,z) into any field, to populate them all at once." />
         </FormControl>
         <FormControl variant="standard" fullWidth className={classes.formControl}>
           <TextField
@@ -225,7 +242,9 @@ RETURN ID(m),
             maxRows={1}
             className={classes.textField}
             onChange={(event) => this.setState({y: event.target.value})}
-            onKeyDown={this.catchReturn} />
+            onKeyDown={this.catchReturn}
+            onPaste={this.handlePaste}
+            InputLabelProps={{ shrink: y !== undefined && y !== '' ? true : undefined }} />
         </FormControl>
         <FormControl variant="standard" fullWidth className={classes.formControl}>
           <TextField
@@ -238,7 +257,9 @@ RETURN ID(m),
             maxRows={1}
             className={classes.textField}
             onChange={(event) => this.setState({z: event.target.value})}
-            onKeyDown={this.catchReturn} />
+            onKeyDown={this.catchReturn}
+            onPaste={this.handlePaste}
+            InputLabelProps={{ shrink: z !== undefined && z !== '' ? true : undefined }} />
         </FormControl>
         <Button
           variant="contained"
