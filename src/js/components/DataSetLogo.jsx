@@ -15,8 +15,8 @@ const styles = (theme) => ({
     minHeight: 200,
   },
   media: {
-    width: 200,
-    minWidth: 200,
+    width: 300,
+    minWidth: 300,
     flexShrink: 0,
     backgroundSize: 'contain',
     backgroundPosition: 'center'
