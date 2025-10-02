@@ -15,6 +15,7 @@ import CallMadeIcon from '@mui/icons-material/CallMade';
 import Divider from '@mui/material/Divider';
 
 import { getQueryObject } from 'helpers/queryString';
+import { parseDatasetTimestamp } from 'helpers/datasetUtils';
 import { clearResultsCache } from 'actions/plugins';
 import { metaInfoError } from 'plugins/support';
 
@@ -57,6 +58,7 @@ const styles = (theme) => ({
   },
 });
 
+
 function Home(props) {
   const { classes, actions, loggedIn, datasetInfo, ...rest } = props;
 
@@ -91,11 +93,11 @@ function Home(props) {
   if (defaultDatasets.length > 0) {
     // If multiple datasets have default=true, sort by lastmod and take the most recent
     defaultDS = defaultDatasets
-      .sort((a, b) => new Date(datasetInfo[b].lastmod) - new Date(datasetInfo[a].lastmod))[0];
+      .sort((a, b) => parseDatasetTimestamp(datasetInfo[b].lastmod) - parseDatasetTimestamp(datasetInfo[a].lastmod))[0];
   } else {
     // If no default dataset found, fall back to sorting by last modified date
     defaultDS = nonHiddenDatasets
-      .sort((a, b) => new Date(datasetInfo[b].lastmod) - new Date(datasetInfo[a].lastmod))[0];
+      .sort((a, b) => parseDatasetTimestamp(datasetInfo[b].lastmod) - parseDatasetTimestamp(datasetInfo[a].lastmod))[0];
   }
 
   if (loggedIn && (!queryObject.dataset || !queryObject.qt) && defaultDS) {
