@@ -30,9 +30,11 @@ const styles = (theme) => ({
   media: {
     width: 300,
     minWidth: 300,
+    minHeight: 300,
     flexShrink: 0,
     backgroundSize: 'contain',
-    backgroundPosition: 'center'
+    backgroundPosition: 'center',
+    margin: '1rem'
   },
   content: {
     flex: 1,
@@ -55,8 +57,8 @@ const styles = (theme) => ({
     wordWrap: 'break-word',
     overflowWrap: 'break-word',
     overflow: 'auto',
-    fontSize: theme.typography.body2.fontSize,
-    lineHeight: theme.typography.body2.lineHeight,
+    fontSize: theme.typography.body1.fontSize,
+    lineHeight: theme.typography.body1.lineHeight,
     '& p': {
       margin: 0,
       marginBottom: theme.spacing(0.5)
