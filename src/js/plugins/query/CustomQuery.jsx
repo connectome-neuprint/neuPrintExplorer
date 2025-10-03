@@ -75,12 +75,19 @@ export class CustomQuery extends React.Component {
       const data = apiResponse.data.map(row =>
         row.map(item => (typeof item === 'object' ? JSON.stringify(item) : item))
       );
-      return {
+      const result = {
         columns: apiResponse.columns,
         data,
         debug: apiResponse.debug,
         title: 'Custom Query'
       };
+
+      // Pass through the unsafe number warning if present
+      if (apiResponse.unsafeNumberWarning) {
+        result.unsafeNumberWarning = apiResponse.unsafeNumberWarning;
+      }
+
+      return result;
     }
     return {
       columns: [],

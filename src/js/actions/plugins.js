@@ -1,6 +1,7 @@
 import isEqual from 'react-fast-compare';
 import clone from 'clone';
 import C from '../reducers/constants';
+import { checkForUnsafeNumbers } from '../helpers/numberUtils';
 
 export function pluginResponseError(error) {
   return {
@@ -135,6 +136,16 @@ export function fetchData(params, plugin, tabPosition, token) {
         if (resp.error) {
           throw new Error(resp.error);
         }
+
+        // Check for unsafe numbers in the response
+        const numberCheck = checkForUnsafeNumbers(resp);
+        if (numberCheck.hasUnsafeNumbers) {
+          resp.unsafeNumberWarning = {
+            message: 'Warning: This response contains numbers too large for JavaScript to represent accurately. Some values may be rounded. Please use the toString() method in your CYPHER to get precise values. eg:   RETURN toString(neuron.bodyId) as bodyId',
+            paths: numberCheck.unsafePaths
+          };
+        }
+
         dispatch(dataLoaded(resp, params, tabPosition, label));
       })
       .catch(error => {

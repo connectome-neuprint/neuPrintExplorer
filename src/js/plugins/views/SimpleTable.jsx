@@ -9,6 +9,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TablePagination from '@mui/material/TablePagination';
 import TableSortLabel from '@mui/material/TableSortLabel';
+import Alert from '@mui/material/Alert';
 import withStyles from '@mui/styles/withStyles';
 
 import { TablePaginationActions } from 'plugins/support';
@@ -146,6 +147,13 @@ class SimpleTable extends React.Component {
             onChange={index => this.handleColumnChange(index)}
             dataSet={query.pm.dataset}
           />
+
+          {result.unsafeNumberWarning ? (
+            <Alert severity="warning" style={{ marginBottom: '16px' }}>
+              {result.unsafeNumberWarning.message}
+            </Alert>
+          ) : null}
+
           {paginate ? (
             <TablePagination
               component="div"
