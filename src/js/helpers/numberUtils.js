@@ -1,11 +1,12 @@
 // Utility functions for handling large numbers in JSON responses
 
 /**
- * Checks if a number is too large to be safely represented in JavaScript
+ * Checks if an integer is too large to be safely represented in JavaScript
  * JavaScript can safely represent integers up to Number.MAX_SAFE_INTEGER (2^53 - 1)
+ * Only checks integers, not floating point numbers
  */
 export function isUnsafeNumber(value) {
-  return typeof value === 'number' && !Number.isSafeInteger(value);
+  return typeof value === 'number' && Number.isInteger(value) && !Number.isSafeInteger(value);
 }
 
 /**
