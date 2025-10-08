@@ -13,7 +13,7 @@ describe('numberUtils', () => {
     it('should identify unsafe numbers as unsafe', () => {
       expect(isUnsafeNumber(Number.MAX_SAFE_INTEGER + 1)).toBe(true);
       expect(isUnsafeNumber(Number.MIN_SAFE_INTEGER - 1)).toBe(true);
-      expect(isUnsafeNumber(Number.MAX_VALUE)).toBe(true);
+      expect(isUnsafeNumber(9007199254740992)).toBe(true); // 2^53, unsafe integer
     });
 
     it('should handle non-numbers', () => {
@@ -21,6 +21,30 @@ describe('numberUtils', () => {
       expect(isUnsafeNumber(null)).toBe(false);
       expect(isUnsafeNumber(undefined)).toBe(false);
       expect(isUnsafeNumber({})).toBe(false);
+    });
+
+    it('should NOT flag floating point numbers as unsafe', () => {
+      expect(isUnsafeNumber(0.7484406232833862)).toBe(false);
+      expect(isUnsafeNumber(3.14159)).toBe(false);
+      expect(isUnsafeNumber(0.1 + 0.2)).toBe(false); // 0.30000000000000004
+      expect(isUnsafeNumber(123.456)).toBe(false); // Regular float
+      expect(isUnsafeNumber(Number.MIN_VALUE)).toBe(false); // Tiny float
+      expect(isUnsafeNumber(1.23e-10)).toBe(false); // Scientific notation float
+      expect(isUnsafeNumber(999999.999)).toBe(false); // Large but safe float
+    });
+
+    it('should only flag unsafe INTEGERS, not floats', () => {
+      // Unsafe integers
+      expect(isUnsafeNumber(Number.MAX_SAFE_INTEGER + 1)).toBe(true);
+      expect(isUnsafeNumber(Number.MIN_SAFE_INTEGER - 1)).toBe(true);
+
+      // Safe integers
+      expect(isUnsafeNumber(Number.MAX_SAFE_INTEGER)).toBe(false);
+      expect(isUnsafeNumber(Number.MIN_SAFE_INTEGER)).toBe(false);
+
+      // Floats should never be flagged
+      expect(isUnsafeNumber(123456.789)).toBe(false); // Regular float
+      expect(isUnsafeNumber(-987.654)).toBe(false); // Negative float
     });
 
     it('should NOT flag large numbers when they are strings', () => {
