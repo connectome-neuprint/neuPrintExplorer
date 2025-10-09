@@ -15,8 +15,8 @@ import NeuronFilter from "./NeuronFilter";
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
-    minWidth: 250,
-    maxWidth: 350,
+    minWidth: 300,
+    maxWidth: 300,
   },
   expandablePanel: {
     margin: theme.spacing(1),
@@ -30,7 +30,8 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1),
   },
   textField: {
-    maxWidth: 230,
+    maxWidth: 300,
+    minWidth: 300,
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
   },
@@ -173,55 +174,83 @@ export default function NeuronFilterNew({ callback, actions, datasetstr, neoServ
     setQsParams(newParams);
   }
 
-  const filterInputs = filters
-    // remove filters that we don't want to show in the search list.
-    .filter((filter) => filter.searchable !== false)
-    .map((filter) => {
-      if (filter.id.match(/^(bodyId|type|instance)$/) || filter.choices === undefined) {
-        return null;
-      }
-      // have to check here to make sure someone has provided a choices attribute
-      // and that it is an array.
-      if (!filter.choices || !Array.isArray(filter.choices)) {
-        return (
-          <FormControl variant="standard" className={classes.formControl} key={filter.id}>
-            <FormLabel style={{ display: 'inline-flex' }}>{filter.name}</FormLabel>
-            <TextField
-              variant="outlined"
-              margin="dense"
-              rows={1}
-              value={qsParams[filter.id] || ''}
-              maxRows={1}
-              className={classes.textField}
-              onChange={(event) => handleTextChange(event, filter.id)}
-            />
-          </FormControl>
-        );
-      }
-      // if we are provided with choices, then we can use a select box to allow the user
-      // to select the correct choice.
-      const options = filter.choices.map((choice) => ({
-        label: choice,
-        value: choice,
-      }));
+  // Helper function to create filter input
+  const createFilterInput = (filter, isRequired = false) => {
+    // Always exclude bodyId, type, instance regardless of optional status
+    if (filter.id.match(/^(bodyId|type|instance)$/)) {
+      return null;
+    }
+
+    if (!isRequired && filter.choices === undefined) {
+      return null;
+    }
+
+    // have to check here to make sure someone has provided a choices attribute
+    // and that it is an array, or if it's a required filter allow text input
+    if (!filter.choices || !Array.isArray(filter.choices)) {
       return (
-        <FormControl variant="standard" className={classes.formControl} key={filter.id}>
+        <FormControl variant="standard" className={isRequired ? '' : classes.formControl} key={filter.id} style={isRequired ? { marginBottom: '16px', width: '100%' } : { width: '100%' }}>
           <FormLabel style={{ display: 'inline-flex' }}>{filter.name}</FormLabel>
-          <Select
-            className={classes.select}
-            isMulti
-            // value={modalityValue}
-            onChange={(event) => handleChange(event, filter.id)}
-            options={options}
-            closeMenuOnSelect={false}
+          <TextField
+            variant="outlined"
+            margin="dense"
+            rows={1}
+            value={qsParams[filter.id] || ''}
+            maxRows={1}
+            style={{ width: '100%' }}
+            size="small"
+            onChange={(event) => handleTextChange(event, filter.id)}
           />
         </FormControl>
       );
-    })
+    }
+    // if we are provided with choices, then we can use a select box to allow the user
+    // to select the correct choice.
+    const options = filter.choices.map((choice) => ({
+      label: choice,
+      value: choice,
+    }));
+    return (
+      <FormControl variant="standard" className={isRequired ? '' : classes.formControl} key={filter.id} style={isRequired ? { width: '100%', marginBottom: '16px' } : { width: '100%' }}>
+        <FormLabel style={{ display: 'inline-flex' }}>{filter.name}</FormLabel>
+        <Select
+          className={classes.select}
+          isMulti
+          // value={modalityValue}
+          onChange={(event) => handleChange(event, filter.id)}
+          options={options}
+          closeMenuOnSelect={false}
+        />
+      </FormControl>
+    );
+  };
+
+  // Separate filters into required and optional
+  const searchableFilters = filters.filter((filter) => filter.searchable !== false);
+
+  const requiredFilterInputs = searchableFilters
+    .filter((filter) => filter.optional === false)
+    .map((filter) => createFilterInput(filter, true))
+    .filter((input) => input !== null);
+
+  const optionalFilterInputs = searchableFilters
+    .filter((filter) => filter.optional !== false) // Default to optional if missing or true
+    .map((filter) => createFilterInput(filter, false))
     .filter((input) => input !== null);
 
   return (
     <div className={classes.expandablePanel}>
+      {/* Required filters section - shown above accordion */}
+      {requiredFilterInputs.length > 0 && (
+        <div>
+          <Typography variant="subtitle1" component="p">
+            Additional Filters:
+          </Typography>
+          {requiredFilterInputs}
+        </div>
+      )}
+
+      {/* Optional filters accordion */}
       <Accordion>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography variant="subtitle1">Optional neuron/segment filters</Typography>
@@ -241,6 +270,7 @@ export default function NeuronFilterNew({ callback, actions, datasetstr, neoServ
               maxRows={1}
               className={classes.textField}
               onChange={(event) => handleTextChange(event, 'pre')}
+              size="small"
             />
             <FormLabel style={{ display: 'inline-flex' }}>minimum # post (optional)</FormLabel>
             <TextField
@@ -252,8 +282,9 @@ export default function NeuronFilterNew({ callback, actions, datasetstr, neoServ
               maxRows={1}
               className={classes.textField}
               onChange={(event) => handleTextChange(event, 'post')}
+              size="small"
             />
-            {filterInputs}
+            {optionalFilterInputs}
           </FormControl>
         </AccordionDetails>
       </Accordion>

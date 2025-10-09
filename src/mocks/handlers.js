@@ -73,7 +73,7 @@ export const handlers = [
   /* rest.post('/api/custom/custom', async (req, res, ctx) => {
 		const npExplorer = req.url.searchParams.get('np_explorer');
 
-		if (npExplorer === 'find_neurons') {
+    if (npExplorer === 'find_neurons') {
 			return res(ctx.status(200), ctx.json(findNeurons))
 		}
 		const originalResponse = await ctx.fetch(req);
@@ -85,6 +85,18 @@ export const handlers = [
 		if (npExplorer === 'column_request') {
 			return res(ctx.status(200), ctx.json(columnRequest))
 		}
+
+		if (npExplorer === 'neuron_filter_options') {
+			// Return the same neuronColumns data as column_request but only the first element
+			const neuronFilterResponse = {
+				...columnRequest,
+				data: [
+					[columnRequest.data[0][0]] // Only return the neuronColumns data, not neuronColumnsVisible
+				]
+			};
+			return res(ctx.status(200), ctx.json(neuronFilterResponse))
+		}
+
 		const originalResponse = await ctx.fetch(req);
 		return res(ctx.status(originalResponse.status), ctx.json(await originalResponse.json()));
   })*/
