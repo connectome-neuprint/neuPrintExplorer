@@ -11,6 +11,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import Tooltip from '@mui/material/Tooltip';
 
 import { ColorLegend } from 'plugins/MiniRoiHeatMap';
 import NeuronInputField from './shared/NeuronInputField';
@@ -557,6 +558,18 @@ ORDER BY neuron.bodyId`
           </div>
         );
       }
+
+      // Add tooltip if description is available
+      if (header.description) {
+        return (
+          <Tooltip title={header.description} arrow>
+            <span style={{ borderBottom: '1px dotted', cursor: 'help' }}>
+              {header.name}
+            </span>
+          </Tooltip>
+        );
+      }
+
       return header.name;
     });
 
