@@ -399,7 +399,10 @@ ORDER BY neuron.bodyId`
 
     const orderedColumns = orderColumns(mergedColumns, onError);
 
-    return orderedColumns;
+    // Filter out columns that have enabled explicitly set to false (defaults to true)
+    const enabledColumns = orderedColumns.filter(column => column.enabled !== false);
+
+    return enabledColumns;
   }
 
   // this function will parse the results from the query to the
