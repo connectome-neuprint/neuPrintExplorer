@@ -359,6 +359,56 @@ ORDER BY neuron.bodyId`
       { name: 'flywire type', id: 'flywireType', status: false }
     );
 
+    // Check if we have metadata for this dataset
+    if (defaultDatasetColumns && query.ds in defaultDatasetColumns) {
+      const serverDefaultColumns = defaultDatasetColumns[query.ds];
+
+      // Check if this data came from neuronColumnsOrdered (reliable marker)
+      const isOrderedColumns = serverDefaultColumns._isOrderedColumns === true;
+
+      if (isOrderedColumns) {
+        // New metadata-driven system: use columns as they are provided
+        // Build column map for fallback lookups
+        const columnMap = columnIds.reduce((map, col) => {
+          map[col.id] = col;
+          return map;
+        }, {});
+
+        // Add ROI columns to the map
+        if (rois.length > 0) {
+          rois.forEach((roi) => {
+            columnMap[`roiPost${roi}`] = { name: `${roi} #post`, id: `roiPost${roi}`, status: true };
+            columnMap[`roiPre${roi}`] = { name: `${roi} #pre`, id: `roiPre${roi}`, status: true };
+          });
+        }
+
+        // Process server columns and handle placeholders
+        const orderedColumns = [];
+        serverDefaultColumns.forEach(serverCol => {
+          // Check if this is a placeholder that needs expansion
+          if (serverCol.id === 'ROI_COLUMNS_PLACEHOLDER') {
+            // Replace placeholder with generated ROI columns
+            if (rois.length > 0) {
+              rois.forEach((roi) => {
+                orderedColumns.push({ name: `${roi} #post`, id: `roiPost${roi}`, status: true });
+                orderedColumns.push({ name: `${roi} #pre`, id: `roiPre${roi}`, status: true });
+              });
+            }
+          } else {
+            // Regular column processing
+            const baseColumn = columnMap[serverCol.id];
+            orderedColumns.push(baseColumn ? { ...baseColumn, ...serverCol } : serverCol);
+          }
+        });
+
+        // Filter out columns that have enabled explicitly set to false (defaults to true)
+        const enabledColumns = orderedColumns.filter(column => column.enabled !== false);
+
+        return enabledColumns;
+      }
+    }
+
+    // Fallback to existing system for backward compatibility
     // look for neuronColumns and neuronColumns visible in the
     // dataset Meta
     // if present, add the columns to the returned array.

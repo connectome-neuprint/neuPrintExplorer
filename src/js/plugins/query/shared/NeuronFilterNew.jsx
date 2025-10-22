@@ -104,7 +104,7 @@ export default function NeuronFilterNew({ callback, actions, datasetstr, neoServ
       },
       body: JSON.stringify({
         dataset: datasetstr,
-        cypher: `MATCH (n:Meta) RETURN n.neuronColumns`,
+        cypher: `MATCH (n:Meta) RETURN n.neuronColumns, n.neuronColumnsOrdered`,
       }),
       method: 'POST',
       credentials: 'include',
@@ -119,8 +119,20 @@ export default function NeuronFilterNew({ callback, actions, datasetstr, neoServ
         return null;
       })
       .then((result) => {
-        if (result.data && result.data[0] && result.data[0][0] !== null) {
-          const filters = JSON.parse(result.data[0]);
+        if (result.data && result.data[0]) {
+          // Check if neuronColumnsOrdered is available (second column)
+          const neuronColumnsOrdered = result.data[0][1];
+          const neuronColumns = result.data[0][0];
+
+          let filters = [];
+          if (neuronColumnsOrdered !== null && neuronColumnsOrdered !== undefined) {
+            // Use neuronColumnsOrdered when available
+            filters = JSON.parse(neuronColumnsOrdered);
+          } else if (neuronColumns !== null) {
+            // Fall back to legacy neuronColumns
+            filters = JSON.parse(neuronColumns);
+          }
+
           setFilters(filters);
         }
         setLoading(false);

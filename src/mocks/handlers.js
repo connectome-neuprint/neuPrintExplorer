@@ -1,7 +1,6 @@
 import { rest } from 'msw';
 import ngLayers from './ng-layers.json';
 import datasets from './datasets.json';
-import findNeurons from './find-neurons.json';
 import columnRequest from './column-request.json';
 
 const base64Image =
@@ -64,6 +63,17 @@ export const handlers = [
       }
     });
 
+    // Test datasets for column ordering (commented out until MSW handlers are enabled)
+    /* enhancedDatasets['test-ordered'] = {
+      logo: '/mock-image',
+      description: '**Test dataset** for new neuronColumnsOrdered system.\n\nThis dataset demonstrates the new metadata-driven column ordering where the array order in neuronColumnsOrdered determines the final column display order.'
+    };
+
+    enhancedDatasets['test-legacy'] = {
+      logo: '/mock-image',
+      description: '**Test dataset** for legacy column ordering system.\n\nThis dataset uses the traditional neuronColumns with "after" properties and orderColumns() function for backward compatibility.'
+    }; */
+
     return res(ctx.status(200), ctx.json(enhancedDatasets));
   }),
 
@@ -79,27 +89,84 @@ export const handlers = [
 		const originalResponse = await ctx.fetch(req);
 		return res(ctx.status(originalResponse.status), ctx.json(await originalResponse.json()));
   }), */
-  /* rest.post('/api/custom/custom', async (req, res, ctx) => {
+  rest.post('/api/custom/custom', (req, res, ctx) => {
 		const npExplorer = req.url.searchParams.get('np_explorer');
+		const dataset = req.body?.dataset;
+
+		// Define the test column order here - EASY TO MODIFY! (shared between handlers)
+		const testColumns = [
+          { name: 'id', id: 'bodyId', status: true },
+          { name: 'instance', id: 'instance', status: false },
+          { name: 'brain region heatmap', id: 'roiHeatMap', status: false },
+          { name: 'brain region breakdown', id: 'roiBarGraph', status: true },
+          {id: "celltypePredictedNtConfidence", name: "celltype NT confidence", choices: null, visible: false},
+          { name: 'type', id: 'type', status: true },
+          { name: 'predicted nt', id: 'predictedNt', status: false, choices: null },
+          { name: 'status', id: 'status', status: true },
+          { name: 'inputs (#post)', id: 'post', status: true },
+          { name: 'outputs (#pre)', id: 'pre', status: true },
+
+					// PLACEHOLDER: This will be replaced with actual ROI columns based on query
+					{ name: "ROI Columns", id: "ROI_COLUMNS_PLACEHOLDER", visible: false },
+          { name: '#voxels', id: 'size', status: false },
+          { name: 'mitochondria', id: 'mitoTotal', status: false },
+          { name: 'mitochondria by brain region', id: 'mitoByRegion', status: false },
+          { name: 'top mitochondria by type', id: 'mitoByType', status: false },
+          { name: 'class', id: 'class', status: false },
+          { name: 'group', id: 'group', status: false },
+          { name: 'systematic type', id: 'systematicType', status: false },
+          { name: 'flywire type', id: 'flywireType', status: false }
+				];
 
 		if (npExplorer === 'column_request') {
-			return res(ctx.status(200), ctx.json(columnRequest))
+			// Test the new ordering system with VNC dataset
+			if (dataset === 'vnc') {
+				const vncOrderedResponse = {
+					columns: ["n.neuronColumns", "n.neuronColumnsVisible", "n.neuronColumnsOrdered"],
+					data: [
+						[
+							// Original neuronColumns (will be ignored when neuronColumnsOrdered is present)
+              /* JSON.stringify([
+								{ id: "bodyId", name: "body ID", choices: null, visible: true },
+								{ id: "type", name: "type", choices: null, visible: true },
+								{ id: "instance", name: "instance", choices: null, visible: false },
+								{ id: "predictedNt", name: "predicted NT", choices: ["acetylcholine", "gaba", "glutamate", "unclear", "unknown"], visible: false },
+								{ id: "status", choices: ["Anchor", "Assign", "Orphan", "Traced", "Unimportant"], name: "status", visible: true }
+              ]),*/
+              JSON.stringify([]),
+
+							// neuronColumnsVisible
+							JSON.stringify(["bodyId", "type", "status"]),
+
+							// NEW: neuronColumnsOrdered with CUSTOM ORDER
+							JSON.stringify(testColumns)
+						]
+					],
+					debug: "MATCH (n:`vnc_Meta`) RETURN n.neuronColumns, n.neuronColumnsVisible, n.neuronColumnsOrdered"
+				};
+				return res(ctx.status(200), ctx.json(vncOrderedResponse));
+			}
 		}
 
 		if (npExplorer === 'neuron_filter_options') {
-			// Return the same neuronColumns data as column_request but only the first element
-			const neuronFilterResponse = {
-				...columnRequest,
-				data: [
-					[columnRequest.data[0][0]] // Only return the neuronColumns data, not neuronColumnsVisible
-				]
-			};
-			return res(ctx.status(200), ctx.json(neuronFilterResponse))
+			// For VNC dataset, return both neuronColumns and neuronColumnsOrdered like column_request
+			if (dataset === 'vnc') {
+				const neuronFilterResponse = {
+					columns: ["n.neuronColumns", "n.neuronColumnsOrdered"],
+					data: [
+						[
+							JSON.stringify([]), // Empty legacy neuronColumns (ignored when neuronColumnsOrdered present)
+							JSON.stringify(testColumns) // Use the same testColumns as column_request
+						]
+					],
+					debug: "MATCH (n:`vnc_Meta`) RETURN n.neuronColumns, n.neuronColumnsOrdered"
+				};
+				return res(ctx.status(200), ctx.json(neuronFilterResponse));
+			}
 		}
-
-		const originalResponse = await ctx.fetch(req);
-		return res(ctx.status(originalResponse.status), ctx.json(await originalResponse.json()));
-  })*/
+		// For MSW 0.38, fall through to default handling
+		return;
+  })
 
 
 ];

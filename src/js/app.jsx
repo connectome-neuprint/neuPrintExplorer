@@ -1,4 +1,4 @@
-import "./wdyr";
+// import "./wdyr";
 
 import { Provider } from 'react-redux';
 import React from 'react';
