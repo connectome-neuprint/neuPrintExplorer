@@ -253,7 +253,7 @@ class SimpleConnectionsTable extends React.Component {
   };
 
   render() {
-    const { data = [], columns = [], disableSort, classes, visibleColumns, collapsed } = this.props;
+    const { data = [], columns = [], disableSort, classes, visibleColumns } = this.props;
     let { rowsPerPage } = this.state;
     const { paginate, orderBy, order, page, isExpanded, expansionPanels } = this.state;
 
@@ -401,7 +401,6 @@ SimpleConnectionsTable.propTypes = {
   classes: PropTypes.object.isRequired,
   disableSort: PropTypes.object,
   visibleColumns: PropTypes.object.isRequired,
-  collapsed: PropTypes.bool
 };
 
 SimpleConnectionsTable.defaultProps = {
@@ -411,7 +410,6 @@ SimpleConnectionsTable.defaultProps = {
   order: 'asc',
   rowsPerPage: 25,
   disableSort: new Set([]),
-  collapsed: false
 };
 
 export default withStyles(styles)(SimpleConnectionsTable);
