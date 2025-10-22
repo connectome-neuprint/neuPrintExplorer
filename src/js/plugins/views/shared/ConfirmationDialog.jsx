@@ -12,9 +12,6 @@ import ListItemText from '@mui/material/ListItemText';
 import Checkbox from '@mui/material/Checkbox';
 
 class ConfirmationDialog extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
   getLocalStorageKey = () => {
     const { dataSet } = this.props;
