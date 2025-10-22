@@ -357,27 +357,6 @@ ORDER BY neuron.bodyId`
       },
       { name: 'systematic type', id: 'systematicType', status: false },
       { name: 'flywire type', id: 'flywireType', status: false }
-      /* The below attributes are being removed from the default list and need
-      to be applied to individual datasets. This can be done by setting the
-      n.neuronColumns meta information to add new columns or override the
-      ones that are listed here. Eg, for some datasets, you might want to
-      turn off one of the columns by default.
-       */
-      /* { name: 'entry nerve', id: "entryNerve", status: false },
-      { name: 'exit nerve', id: "exitNerve", status: false },
-      { name: 'hemilineage', id: "hemilineage", status: false },
-      { name: 'long tract', id: "longTract", status: false },
-      { name: 'subclass', id: "subclass", status: false },
-      { name: 'synonyms', id: "synonyms", status: false },
-      { name: 'origin', id: "origin", status: false },
-      { name: 'target', id: "target", status: false },
-      { name: 'soma neuromere', id: "somaNeuromere", status: false },
-      { name: 'soma side', id: "somaSide", status: false },
-      { name: 'birth time', id: "birthtime", status: false },
-      { name: 'serial', id: "serial", status: false },
-      { name: 'serial motif', id: "serialMotif", status: false },
-      { name: 'modality', id: "modality", status: false },
-      { name: 'notes', id: "notes", status: false }, */
     );
 
     // look for neuronColumns and neuronColumns visible in the
