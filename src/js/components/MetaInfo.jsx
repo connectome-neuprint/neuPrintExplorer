@@ -24,7 +24,7 @@ function fetchDataSetColumnDefaults(datasets, setNeoDatasetColumnDefaults) {
     },
     body: JSON.stringify({
       dataset,
-      cypher: `MATCH (n:Meta) RETURN n.neuronColumns, n.neuronColumnsVisible`,
+      cypher: `MATCH (n:Meta) RETURN n.neuronColumns, n.neuronColumnsVisible, n.neuronColumnsOrdered`,
     }),
     method: 'POST',
     credentials: 'include',
@@ -44,18 +44,42 @@ function fetchDataSetColumnDefaults(datasets, setNeoDatasetColumnDefaults) {
     const columnsByDataSet = {};
 
     defaults.forEach(dataset => {
-      if (dataset[1]?.data[0] && dataset[1]?.data[0][0]) {
-        const parsedColumnData = JSON.parse(dataset[1]?.data[0][0]);
-        const fixedColumnData = parsedColumnData.map(column => {
-          const updatedColumn = {...column};
-          if (updatedColumn.id === "bodyId") {
-            updatedColumn.name = 'id';
-          }
-          updatedColumn.status = column.visible;
-          delete updatedColumn.visible;
-          return updatedColumn;
-        });
-        columnsByDataSet[dataset[0]] = fixedColumnData;
+      if (dataset[1]?.data[0]) {
+        const neuronColumns = dataset[1]?.data[0][0];
+        const neuronColumnsOrdered = dataset[1]?.data[0][2];
+
+        // Prefer the new neuronColumnsOrdered if available
+        if (neuronColumnsOrdered) {
+          const parsedOrderedData = JSON.parse(neuronColumnsOrdered);
+          const fixedOrderedData = parsedOrderedData.map(column => {
+            const updatedColumn = {...column};
+            if (updatedColumn.id === "bodyId") {
+              updatedColumn.name = 'id';
+            }
+            // For ordered columns, use 'visible' if available, otherwise 'status'
+            updatedColumn.status = column.visible !== undefined ? column.visible : column.status;
+            if (column.visible !== undefined) {
+              delete updatedColumn.visible;
+            }
+            return updatedColumn;
+          });
+          // Add a marker to indicate this data came from neuronColumnsOrdered
+          fixedOrderedData._isOrderedColumns = true;
+          columnsByDataSet[dataset[0]] = fixedOrderedData;
+        } else if (neuronColumns) {
+          // Fallback to existing neuronColumns processing
+          const parsedColumnData = JSON.parse(neuronColumns);
+          const fixedColumnData = parsedColumnData.map(column => {
+            const updatedColumn = {...column};
+            if (updatedColumn.id === "bodyId") {
+              updatedColumn.name = 'id';
+            }
+            updatedColumn.status = column.visible;
+            delete updatedColumn.visible;
+            return updatedColumn;
+          });
+          columnsByDataSet[dataset[0]] = fixedColumnData;
+        }
       }
     });
     setNeoDatasetColumnDefaults(columnsByDataSet);

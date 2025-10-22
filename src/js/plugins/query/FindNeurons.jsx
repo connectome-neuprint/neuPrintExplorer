@@ -11,6 +11,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import Tooltip from '@mui/material/Tooltip';
 
 import { ColorLegend } from 'plugins/MiniRoiHeatMap';
 import NeuronInputField from './shared/NeuronInputField';
@@ -356,29 +357,58 @@ ORDER BY neuron.bodyId`
       },
       { name: 'systematic type', id: 'systematicType', status: false },
       { name: 'flywire type', id: 'flywireType', status: false }
-      /* The below attributes are being removed from the default list and need
-      to be applied to individual datasets. This can be done by setting the
-      n.neuronColumns meta information to add new columns or override the
-      ones that are listed here. Eg, for some datasets, you might want to
-      turn off one of the columns by default.
-       */
-      /* { name: 'entry nerve', id: "entryNerve", status: false },
-      { name: 'exit nerve', id: "exitNerve", status: false },
-      { name: 'hemilineage', id: "hemilineage", status: false },
-      { name: 'long tract', id: "longTract", status: false },
-      { name: 'subclass', id: "subclass", status: false },
-      { name: 'synonyms', id: "synonyms", status: false },
-      { name: 'origin', id: "origin", status: false },
-      { name: 'target', id: "target", status: false },
-      { name: 'soma neuromere', id: "somaNeuromere", status: false },
-      { name: 'soma side', id: "somaSide", status: false },
-      { name: 'birth time', id: "birthtime", status: false },
-      { name: 'serial', id: "serial", status: false },
-      { name: 'serial motif', id: "serialMotif", status: false },
-      { name: 'modality', id: "modality", status: false },
-      { name: 'notes', id: "notes", status: false }, */
     );
 
+    // Check if we have metadata for this dataset
+    if (defaultDatasetColumns && query.ds in defaultDatasetColumns) {
+      const serverDefaultColumns = defaultDatasetColumns[query.ds];
+
+      // Check if this data came from neuronColumnsOrdered (reliable marker)
+      const isOrderedColumns = serverDefaultColumns._isOrderedColumns === true;
+
+      if (isOrderedColumns) {
+        // New metadata-driven system: use columns as they are provided
+        // Build column map for fallback lookups
+        const columnMap = columnIds.reduce((map, col) => {
+          map[col.id] = col;
+          return map;
+        }, {});
+
+        // Add ROI columns to the map
+        if (rois.length > 0) {
+          rois.forEach((roi) => {
+            columnMap[`roiPost${roi}`] = { name: `${roi} #post`, id: `roiPost${roi}`, status: true };
+            columnMap[`roiPre${roi}`] = { name: `${roi} #pre`, id: `roiPre${roi}`, status: true };
+          });
+        }
+
+        // Process server columns and handle placeholders
+        const orderedColumns = [];
+        serverDefaultColumns.forEach(serverCol => {
+          // Check if this is a placeholder that needs expansion
+          if (serverCol.id === 'ROI_COLUMNS_PLACEHOLDER') {
+            // Replace placeholder with generated ROI columns
+            if (rois.length > 0) {
+              rois.forEach((roi) => {
+                orderedColumns.push({ name: `${roi} #post`, id: `roiPost${roi}`, status: true });
+                orderedColumns.push({ name: `${roi} #pre`, id: `roiPre${roi}`, status: true });
+              });
+            }
+          } else {
+            // Regular column processing
+            const baseColumn = columnMap[serverCol.id];
+            orderedColumns.push(baseColumn ? { ...baseColumn, ...serverCol } : serverCol);
+          }
+        });
+
+        // Filter out columns that have enabled explicitly set to false (defaults to true)
+        const enabledColumns = orderedColumns.filter(column => column.enabled !== false);
+
+        return enabledColumns;
+      }
+    }
+
+    // Fallback to existing system for backward compatibility
     // look for neuronColumns and neuronColumns visible in the
     // dataset Meta
     // if present, add the columns to the returned array.
@@ -399,7 +429,10 @@ ORDER BY neuron.bodyId`
 
     const orderedColumns = orderColumns(mergedColumns, onError);
 
-    return orderedColumns;
+    // Filter out columns that have enabled explicitly set to false (defaults to true)
+    const enabledColumns = orderedColumns.filter(column => column.enabled !== false);
+
+    return enabledColumns;
   }
 
   // this function will parse the results from the query to the
@@ -554,6 +587,18 @@ ORDER BY neuron.bodyId`
           </div>
         );
       }
+
+      // Add tooltip if description is available
+      if (header.description) {
+        return (
+          <Tooltip title={header.description} arrow>
+            <span style={{ borderBottom: '1px dotted', cursor: 'help' }}>
+              {header.name}
+            </span>
+          </Tooltip>
+        );
+      }
+
       return header.name;
     });
 
