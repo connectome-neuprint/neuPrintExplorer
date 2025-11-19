@@ -498,7 +498,7 @@ class SkeletonView extends React.Component {
       })
         .then(result => result.text())
         .then(result => {
-          this.skeletonLoadedCompartment(id, result);
+          this.skeletonLoadedCompartment(id, dataSet, result);
         })
         .catch(error => {
           this.setState({ loadingError: error });
@@ -591,16 +591,18 @@ class SkeletonView extends React.Component {
     });
   }
 
-  skeletonLoadedCompartment(id, result) {
+  skeletonLoadedCompartment(id, dataSet, result) {
     const { db, compartments } = this.state;
+    const cacheKey = `${dataSet}_${id}`;
     const compartment = Immutable.Map({
       name: id,
+      cacheKey,
       obj: 'localStorage',
       visible: true,
       color: '#000000'
     });
     return db
-      .putAttachment(id, 'obj', btoa(result), 'text/plain')
+      .putAttachment(cacheKey, 'obj', btoa(result), 'text/plain')
       .then(() => {
         const updated = compartments.set(id, compartment);
         this.setState({ compartments: updated });
@@ -832,7 +834,7 @@ class SkeletonView extends React.Component {
           sharkViewer.loadCompartment(roi.get('name'), roi.get('color'), reader.result, moveCamera);
         });
 
-        db.getAttachment(roi.get('name'), 'obj').then(obj => {
+        db.getAttachment(roi.get('cacheKey'), 'obj').then(obj => {
           reader.readAsText(obj);
         });
       }
