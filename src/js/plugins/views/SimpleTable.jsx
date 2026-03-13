@@ -114,7 +114,8 @@ class SimpleTable extends React.Component {
     const { highlightIndex } = result;
 
     const columns = result.columns.map((header, index) => {
-      const headerKey = header;
+      // Use index as key since header might be a React object
+      const headerKey = `column-${index}`;
       if ('disableSort' in result && result.disableSort.has(index)) {
         return <TableCell key={headerKey}>{header}</TableCell>;
       }
