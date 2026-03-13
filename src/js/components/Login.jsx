@@ -47,14 +47,14 @@ class Login extends React.Component {
 
     // only bother fetching these if there is a login cookie to pass along
     // with the request.
-    if (props.cookies.get('flyem-services') || props.cookies.get('neuPrintHTTP') || process.env.NODE_ENV === 'development') {
+    if (props.cookies.get('dsg_token') || props.cookies.get('flyem-services') || props.cookies.get('neuPrintHTTP') || process.env.NODE_ENV === 'development') {
       this.fetchProfile();
       this.fetchToken();
     }
   }
 
   fetchProfile = () => {
-    const { loginUser, checkingUser, loginFailed } = this.props;
+    const { loginUser, checkingUser, loginFailed, tosRequired } = this.props;
     checkingUser();
     fetch('/profile', {
       credentials: 'include'
@@ -66,6 +66,10 @@ class Login extends React.Component {
         return result.json();
       })
       .then(userInfo => {
+        if (userInfo.TOSRequired) {
+          tosRequired();
+          return;
+        }
         loginUser(userInfo);
         this.setState({ isLoggedIn: true });
       })
@@ -197,6 +201,11 @@ const LoginDispatch = dispatch => ({
       type: C.LOGOUT_USER
     });
   },
+  tosRequired() {
+    dispatch({
+      type: C.TOS_REQUIRED
+    });
+  },
   setUserToken(token) {
     dispatch({
       type: C.SET_USER_TOKEN,
@@ -211,6 +220,7 @@ Login.propTypes = {
   loginUser: PropTypes.func.isRequired,
   loginFailed: PropTypes.func.isRequired,
   checkingUser: PropTypes.func.isRequired,
+  tosRequired: PropTypes.func.isRequired,
   setUserToken: PropTypes.func.isRequired,
   userInfo: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
