@@ -95,27 +95,34 @@ export const handlers = [
 
 		// Define the test column order here - EASY TO MODIFY! (shared between handlers)
 		const testColumns = [
-          { name: 'id', id: 'bodyId', status: true },
-          { name: 'instance', id: 'instance', status: false },
+          { name: 'id', id: 'bodyId', status: true, description: 'Unique identifier for the neuron' },
+          { name: 'instance', id: 'instance', status: false, description: 'Hemibrain-style instance with cell type detail' },
           { name: 'brain region heatmap', id: 'roiHeatMap', status: false },
           { name: 'brain region breakdown', id: 'roiBarGraph', status: true },
-          {id: "celltypePredictedNtConfidence", name: "celltype NT confidence", choices: null, visible: false},
-          { name: 'type', id: 'type', status: true },
-          { name: 'predicted nt', id: 'predictedNt', status: false, choices: null },
-          { name: 'status', id: 'status', status: true },
-          { name: 'inputs (#post)', id: 'post', status: true },
-          { name: 'outputs (#pre)', id: 'pre', status: true },
+          {id: "celltypePredictedNtConfidence", name: "celltype NT confidence", choices: null, visible: false, description: 'Confidence score for NT prediction'},
+          { name: 'type', id: 'type', status: true, description: 'Cell type classification' },
+          { name: 'predicted nt', id: 'predictedNt', status: false, choices: null, description: 'Predicted neurotransmitter' },
+          { name: 'status', id: 'status', status: true, description: 'Curation status' },
+          { name: 'inputs (#post)', id: 'post', status: true, description: 'Number of postsynaptic connections' },
+          { name: 'outputs (#pre)', id: 'pre', status: true, description: 'Number of presynaptic connections' },
 
 					// PLACEHOLDER: This will be replaced with actual ROI columns based on query
 					{ name: "ROI Columns", id: "ROI_COLUMNS_PLACEHOLDER", visible: false },
-          { name: '#voxels', id: 'size', status: false },
-          { name: 'mitochondria', id: 'mitoTotal', status: false },
-          { name: 'mitochondria by brain region', id: 'mitoByRegion', status: false },
-          { name: 'top mitochondria by type', id: 'mitoByType', status: false },
-          { name: 'class', id: 'class', status: false },
+          { name: '#voxels', id: 'size', status: false, enabled: false },
+          { name: 'mitochondria', id: 'mitoTotal', status: false, description: 'Total mitochondria count' },
+          { name: 'mitochondria by brain region', id: 'mitoByRegion', status: false, description: 'Mitochondria breakdown by region' },
+          { name: 'top mitochondria by type', id: 'mitoByType', status: false, description: 'Top mitochondria by cell type' },
+          { name: 'class', id: 'class', status: false, description: 'Broad cell class category' },
+
+          // Test enabled: false - should be completely excluded
+          { name: 'DISABLED TEST COLUMN', id: 'disabledTestColumn', visible: true, enabled: false },
+
           { name: 'group', id: 'group', status: false },
           { name: 'systematic type', id: 'systematicType', status: false },
-          { name: 'flywire type', id: 'flywireType', status: false }
+          { name: 'flywire type', id: 'flywireType', status: false },
+
+          // Test enabled: false with visible: false - should still be excluded
+          { name: 'OBSOLETE COLUMN', id: 'obsoleteColumn', visible: false, enabled: false }
 				];
 
 		if (npExplorer === 'column_request') {

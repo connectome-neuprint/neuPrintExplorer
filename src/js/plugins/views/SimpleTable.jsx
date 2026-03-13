@@ -99,6 +99,39 @@ class SimpleTable extends React.Component {
     actions.setColumnStatus(index, columnIndex, !visibleColumns.getIn([columnIndex, 'status']));
   };
 
+  // Extract a stable string key from header (string or React element)
+  getHeaderKey = (header, index) => {
+    // If header is a string, use it directly
+    if (typeof header === 'string') {
+      return header;
+    }
+
+    // If header is a React element, try to extract text content
+    if (header && typeof header === 'object' && header.props) {
+      // For Tooltip components, the actual text is in props.children.props.children
+      if (header.props.title && header.props.children?.props?.children) {
+        return header.props.children.props.children;
+      }
+      // For div elements with children, try to get text content
+      if (header.props.children) {
+        const children = header.props.children;
+        // If children is a string, use it
+        if (typeof children === 'string') {
+          return children;
+        }
+        // If children is an array, join text nodes
+        if (Array.isArray(children)) {
+          return children
+            .filter(child => typeof child === 'string')
+            .join(' ');
+        }
+      }
+    }
+
+    // Fallback to index if we can't extract a stable key
+    return `column-${index}`;
+  };
+
   render() {
     const { query, classes, visibleColumns } = this.props;
     const { visProps = {}, result } = query;
@@ -114,7 +147,8 @@ class SimpleTable extends React.Component {
     const { highlightIndex } = result;
 
     const columns = result.columns.map((header, index) => {
-      const headerKey = header;
+      // Extract stable key from header (handles strings and React objects)
+      const headerKey = this.getHeaderKey(header, index);
       if ('disableSort' in result && result.disableSort.has(index)) {
         return <TableCell key={headerKey}>{header}</TableCell>;
       }

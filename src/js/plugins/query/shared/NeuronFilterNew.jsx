@@ -238,7 +238,19 @@ export default function NeuronFilterNew({ callback, actions, datasetstr, neoServ
   };
 
   // Separate filters into required and optional, and filter out disabled columns
-  const searchableFilters = filters.filter((filter) => filter.searchable !== false && filter.enabled !== false);
+  // enabled: false = completely disabled, not available at all
+  // visible: false = available but may be in advanced/optional section
+  const searchableFilters = filters.filter((filter) => {
+    // Must be searchable
+    if (filter.searchable === false) {
+      return false;
+    }
+    // Only exclude if explicitly disabled
+    if (filter.enabled === false) {
+      return false;
+    }
+    return true;
+  });
 
   const requiredFilterInputs = searchableFilters
     .filter((filter) => filter.optional === false)

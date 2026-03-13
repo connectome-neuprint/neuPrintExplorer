@@ -56,10 +56,10 @@ function fetchDataSetColumnDefaults(datasets, setNeoDatasetColumnDefaults) {
             if (updatedColumn.id === "bodyId") {
               updatedColumn.name = 'id';
             }
-            // For ordered columns, use 'visible' if available, otherwise 'status'
-            updatedColumn.status = column.visible !== undefined ? column.visible : column.status;
-            if (column.visible !== undefined) {
-              delete updatedColumn.visible;
+            // Keep both 'visible' and 'enabled' properties
+            // Set 'status' for backward compatibility with 'visible'
+            if (column.visible !== undefined && column.status === undefined) {
+              updatedColumn.status = column.visible;
             }
             return updatedColumn;
           });
@@ -74,8 +74,10 @@ function fetchDataSetColumnDefaults(datasets, setNeoDatasetColumnDefaults) {
             if (updatedColumn.id === "bodyId") {
               updatedColumn.name = 'id';
             }
-            updatedColumn.status = column.visible;
-            delete updatedColumn.visible;
+            // Set 'status' from 'visible' for backward compatibility
+            if (column.visible !== undefined && column.status === undefined) {
+              updatedColumn.status = column.visible;
+            }
             return updatedColumn;
           });
           columnsByDataSet[dataset[0]] = fixedColumnData;

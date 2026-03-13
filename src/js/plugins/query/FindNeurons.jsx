@@ -401,7 +401,8 @@ ORDER BY neuron.bodyId`
           }
         });
 
-        // Filter out columns that have enabled explicitly set to false (defaults to true)
+        // Filter out columns that are completely disabled (enabled: false)
+        // Keep columns with visible: false - they should be available in column selector
         const enabledColumns = orderedColumns.filter(column => column.enabled !== false);
 
         return enabledColumns;
@@ -429,7 +430,8 @@ ORDER BY neuron.bodyId`
 
     const orderedColumns = orderColumns(mergedColumns, onError);
 
-    // Filter out columns that have enabled explicitly set to false (defaults to true)
+    // Filter out columns that are completely disabled (enabled: false)
+    // Keep columns with visible: false - they should be available in column selector
     const enabledColumns = orderedColumns.filter(column => column.enabled !== false);
 
     return enabledColumns;
