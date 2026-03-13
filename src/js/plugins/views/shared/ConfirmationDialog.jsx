@@ -15,8 +15,7 @@ class ConfirmationDialog extends React.Component {
 
   getLocalStorageKey = () => {
     const { dataSet } = this.props;
-    // Version the key to invalidate stale localStorage when column structure changes
-    const baseKey = 'neuprint-column-selections-v2';
+    const baseKey = 'neuprint-column-selections';
     console.log('getLocalStorageKey', baseKey, dataSet);
     return dataSet ? `${baseKey}-${dataSet}` : baseKey;
   };
@@ -32,17 +31,10 @@ class ConfirmationDialog extends React.Component {
         const selections = JSON.parse(saved);
         const { columns } = this.props;
 
-        // Validate that selections is an object
-        if (!selections || typeof selections !== 'object') {
-          console.warn('Invalid column selections in localStorage, ignoring');
-          return;
-        }
-
         columns.forEach((column, index) => {
           if (!column.hidden && selections.hasOwnProperty(column.name)) {
             const shouldBeSelected = selections[column.name];
-            // Only apply if it's a boolean value
-            if (typeof shouldBeSelected === 'boolean' && column.status !== shouldBeSelected) {
+            if (column.status !== shouldBeSelected) {
               this.props.onChange(index);
             }
           }
@@ -50,12 +42,6 @@ class ConfirmationDialog extends React.Component {
       }
     } catch (error) {
       console.warn('Failed to load column selections from localStorage:', error);
-      // Clear corrupted localStorage
-      try {
-        localStorage.removeItem(this.getLocalStorageKey());
-      } catch (e) {
-        // Ignore if we can't clear it
-      }
     }
   };
 
