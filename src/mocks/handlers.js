@@ -108,14 +108,21 @@ export const handlers = [
 
 					// PLACEHOLDER: This will be replaced with actual ROI columns based on query
 					{ name: "ROI Columns", id: "ROI_COLUMNS_PLACEHOLDER", visible: false },
-          { name: '#voxels', id: 'size', status: false },
+          { name: '#voxels', id: 'size', status: false, enabled: false },
           { name: 'mitochondria', id: 'mitoTotal', status: false },
           { name: 'mitochondria by brain region', id: 'mitoByRegion', status: false },
           { name: 'top mitochondria by type', id: 'mitoByType', status: false },
           { name: 'class', id: 'class', status: false },
+
+          // Test enabled: false - should be completely excluded
+          { name: 'DISABLED TEST COLUMN', id: 'disabledTestColumn', visible: true, enabled: false },
+
           { name: 'group', id: 'group', status: false },
           { name: 'systematic type', id: 'systematicType', status: false },
-          { name: 'flywire type', id: 'flywireType', status: false }
+          { name: 'flywire type', id: 'flywireType', status: false },
+
+          // Test enabled: false with visible: false - should still be excluded
+          { name: 'OBSOLETE COLUMN', id: 'obsoleteColumn', visible: false, enabled: false }
 				];
 
 		if (npExplorer === 'column_request') {
