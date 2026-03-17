@@ -45,16 +45,16 @@ class Login extends React.Component {
       useAvatarImg: true
     };
 
-    // only bother fetching these if there is a login cookie to pass along
-    // with the request.
-    if (props.cookies.get('dsg_token') || props.cookies.get('flyem-services') || props.cookies.get('neuPrintHTTP') || process.env.NODE_ENV === 'development') {
-      this.fetchProfile();
-      this.fetchToken();
-    }
+    // Always attempt to fetch profile — the dsg_token cookie is HttpOnly
+    // so JavaScript can't check for it, but fetch with credentials: 'include'
+    // will send it. If no valid cookie exists, /profile returns 401 and
+    // loginFailed() handles it gracefully.
+    this.fetchProfile();
+    this.fetchToken();
   }
 
   fetchProfile = () => {
-    const { loginUser, checkingUser, loginFailed, tosRequired } = this.props;
+    const { loginUser, checkingUser, loginFailed } = this.props;
     checkingUser();
     fetch('/profile', {
       credentials: 'include'
@@ -66,10 +66,6 @@ class Login extends React.Component {
         return result.json();
       })
       .then(userInfo => {
-        if (userInfo.TOSRequired) {
-          tosRequired();
-          return;
-        }
         loginUser(userInfo);
         this.setState({ isLoggedIn: true });
       })
@@ -83,12 +79,18 @@ class Login extends React.Component {
     fetch('/token', {
       credentials: 'include'
     })
-      .then(result => result.json())
+      .then(result => {
+        if (!result.ok) return null;
+        return result.json();
+      })
       .then(data => {
-        if (!('message' in data)) {
+        if (data && typeof data === 'object' && !('message' in data)) {
           setUserToken(data.token);
+        } else if (typeof data === 'string') {
+          setUserToken(data);
         }
-      });
+      })
+      .catch(() => {});
   };
 
   login = () => {
@@ -102,7 +104,10 @@ class Login extends React.Component {
     const { logoutUser } = this.props;
     this.setState({ isLoggedIn: false });
     logoutUser();
-    window.location = '/';
+    // POST to /logout so the server can clear the HttpOnly dsg_token
+    // cookie via DSG's logout endpoint.
+    fetch('/logout', { method: 'POST', credentials: 'include' })
+      .finally(() => { window.location = '/'; });
   };
 
   launchUserPopup = event => {
