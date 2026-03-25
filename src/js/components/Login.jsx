@@ -54,7 +54,7 @@ class Login extends React.Component {
   }
 
   fetchProfile = () => {
-    const { loginUser, checkingUser, loginFailed } = this.props;
+    const { loginUser, checkingUser, loginFailed, tosRequired } = this.props;
     checkingUser();
     fetch('/profile', {
       credentials: 'include'
@@ -66,6 +66,10 @@ class Login extends React.Component {
         return result.json();
       })
       .then(userInfo => {
+        if (userInfo.tos_required) {
+          tosRequired();
+          return;
+        }
         loginUser(userInfo);
         this.setState({ isLoggedIn: true });
       })
@@ -81,13 +85,18 @@ class Login extends React.Component {
     })
       .then(result => {
         if (!result.ok) return null;
-        return result.json();
+        return result.text();
       })
-      .then(data => {
-        if (data && typeof data === 'object' && !('message' in data)) {
-          setUserToken(data.token);
-        } else if (typeof data === 'string') {
-          setUserToken(data);
+      .then(text => {
+        if (!text) return;
+        try {
+          const data = JSON.parse(text);
+          if (typeof data === 'object' && data !== null && !('message' in data)) {
+            setUserToken(data.token);
+          }
+        } catch (e) {
+          // Not JSON — treat raw text as the token
+          setUserToken(text);
         }
       })
       .catch(() => {});

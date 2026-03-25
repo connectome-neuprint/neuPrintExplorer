@@ -31,9 +31,7 @@ export default function userReducer(state = userState, action) {
     }
     case C.LOGOUT_USER: {
       // clear the login cookie(s) here.
-      Cookies.remove('dsg_token');
-      Cookies.remove('dsg_token', { path: '/', domain: '.janelia.org' });
-      Cookies.remove('dsg_token', { path: '/', domain: window.location.hostname });
+      // Note: dsg_token is HttpOnly — cleared server-side via POST /logout
       Cookies.remove('neuPrintHTTP');
       Cookies.remove('neuPrintHTTP', { path: '/', domain: '.janelia.org' });
       Cookies.remove('neuPrintHTTP', { path: '/', domain: window.location.hostname });

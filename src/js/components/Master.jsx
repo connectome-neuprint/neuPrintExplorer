@@ -59,7 +59,11 @@ function PrivateRoute({ component: Component, user, ...rest }) {
       return (
         <Route
           {...rest}
-          render={privateProps => <TOSPage {...privateProps} />}
+          render={privateProps => (
+            <Suspense fallback={<div>loading...</div>}>
+              <TOSPage {...privateProps} />
+            </Suspense>
+          )}
         />
       );
     }

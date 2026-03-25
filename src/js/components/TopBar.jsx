@@ -114,7 +114,10 @@ class TopBar extends React.Component {
   }
 
   handleChange = selectedDataSet => {
-    const { location } = this.props;
+    const applyDatasetSwitch = () => {
+      setQueryString({ dataset: selectedDataSet.value });
+      setQueryString({ plugins: [] });
+    };
 
     // Check dataset access (including TOS) before switching
     fetch(`/dataset-access?dataset=${encodeURIComponent(selectedDataSet.value)}`, {
@@ -133,30 +136,11 @@ class TopBar extends React.Component {
           alert(data.message);
           return;
         }
-        // Access granted — proceed with dataset selection
-        const qsParams = getSiteParams(location);
-        const newdatasets = [selectedDataSet.value];
-        const oldparams = qsParams;
-        oldparams.datasets = newdatasets;
-        setQueryString({
-          dataset: selectedDataSet.value
-        });
-        setQueryString({
-          plugins: []
-        });
+        applyDatasetSwitch();
       })
       .catch(() => {
         // If access check fails, proceed anyway (backward compat)
-        const qsParams = getSiteParams(location);
-        const newdatasets = [selectedDataSet.value];
-        const oldparams = qsParams;
-        oldparams.datasets = newdatasets;
-        setQueryString({
-          dataset: selectedDataSet.value
-        });
-        setQueryString({
-          plugins: []
-        });
+        applyDatasetSwitch();
       });
   };
 
