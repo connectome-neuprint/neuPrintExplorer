@@ -51,8 +51,22 @@ const styles = theme => ({
   toolbar: theme.mixins.toolbar
 });
 
+const TOSPage = React.lazy(() => import('./TOSPage'));
+
 function PrivateRoute({ component: Component, user, ...rest }) {
   if (!user.get('loggedIn')) {
+    if (user.get('tosRequired')) {
+      return (
+        <Route
+          {...rest}
+          render={privateProps => (
+            <Suspense fallback={<div>loading...</div>}>
+              <TOSPage {...privateProps} />
+            </Suspense>
+          )}
+        />
+      );
+    }
     if (user.get('loaded')) {
       // have to encode the uri here to make sure the &'s are escaped. If they aren't
       // they wont make it through the redirect code.

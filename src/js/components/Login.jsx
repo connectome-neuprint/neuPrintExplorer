@@ -45,16 +45,16 @@ class Login extends React.Component {
       useAvatarImg: true
     };
 
-    // only bother fetching these if there is a login cookie to pass along
-    // with the request.
-    if (props.cookies.get('flyem-services') || props.cookies.get('neuPrintHTTP') || process.env.NODE_ENV === 'development') {
-      this.fetchProfile();
-      this.fetchToken();
-    }
+    // Always attempt to fetch profile — the dsg_token cookie is HttpOnly
+    // so JavaScript can't check for it, but fetch with credentials: 'include'
+    // will send it. If no valid cookie exists, /profile returns 401 and
+    // loginFailed() handles it gracefully.
+    this.fetchProfile();
+    this.fetchToken();
   }
 
   fetchProfile = () => {
-    const { loginUser, checkingUser, loginFailed } = this.props;
+    const { loginUser, checkingUser, loginFailed, tosRequired } = this.props;
     checkingUser();
     fetch('/profile', {
       credentials: 'include'
@@ -66,6 +66,10 @@ class Login extends React.Component {
         return result.json();
       })
       .then(userInfo => {
+        if (userInfo.tos_required) {
+          tosRequired();
+          return;
+        }
         loginUser(userInfo);
         this.setState({ isLoggedIn: true });
       })
@@ -79,12 +83,23 @@ class Login extends React.Component {
     fetch('/token', {
       credentials: 'include'
     })
-      .then(result => result.json())
-      .then(data => {
-        if (!('message' in data)) {
-          setUserToken(data.token);
+      .then(result => {
+        if (!result.ok) return null;
+        return result.text();
+      })
+      .then(text => {
+        if (!text) return;
+        try {
+          const data = JSON.parse(text);
+          if (typeof data === 'object' && data !== null && !('message' in data)) {
+            setUserToken(data.token);
+          }
+        } catch (e) {
+          // Not JSON — treat raw text as the token
+          setUserToken(text);
         }
-      });
+      })
+      .catch(() => {});
   };
 
   login = () => {
@@ -98,7 +113,10 @@ class Login extends React.Component {
     const { logoutUser } = this.props;
     this.setState({ isLoggedIn: false });
     logoutUser();
-    window.location = '/';
+    // POST to /logout so the server can clear the HttpOnly dsg_token
+    // cookie via DSG's logout endpoint.
+    fetch('/logout', { method: 'POST', credentials: 'include' })
+      .finally(() => { window.location = '/'; });
   };
 
   launchUserPopup = event => {
@@ -197,6 +215,11 @@ const LoginDispatch = dispatch => ({
       type: C.LOGOUT_USER
     });
   },
+  tosRequired() {
+    dispatch({
+      type: C.TOS_REQUIRED
+    });
+  },
   setUserToken(token) {
     dispatch({
       type: C.SET_USER_TOKEN,
@@ -211,6 +234,7 @@ Login.propTypes = {
   loginUser: PropTypes.func.isRequired,
   loginFailed: PropTypes.func.isRequired,
   checkingUser: PropTypes.func.isRequired,
+  tosRequired: PropTypes.func.isRequired,
   setUserToken: PropTypes.func.isRequired,
   userInfo: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
