@@ -12,6 +12,10 @@ import Switch from '@mui/material/Switch';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import { ColorLegend } from 'plugins/MiniRoiHeatMap';
 import NeuronInputField from './shared/NeuronInputField';
@@ -812,75 +816,6 @@ ORDER BY neuron.bodyId`
             handleSubmit={this.processRequest}
           />
         )}
-        <fieldset className={classes.fieldset}>
-          <InputLabel htmlFor="select-multiple-chip">Input Brain Regions</InputLabel>
-          <BrainRegionInput
-            rois={selectedROIs}
-            value={inputValue}
-            roiInfo={roiInfo}
-            onChange={this.handleChangeROIsIn}
-          />
-          <Grid container alignItems="center" spacing={1}>
-            <Grid item>
-              <Grid component="label" container alignItems="center" spacing={1}>
-                <Grid item>Match All</Grid>
-                <Grid item>
-                  <Switch
-                    checked={inputMatchAny}
-                    onChange={this.handleChangeInputMatch}
-                    name="checked"
-                    color="primary"
-                  />
-                </Grid>
-                <Grid item>Any</Grid>
-              </Grid>
-            </Grid>
-            <Grid item style={{ lineHeight: '0em' }}>
-              <BrainRegionPopover />
-            </Grid>
-          </Grid>
-        </fieldset>
-        <fieldset className={classes.fieldset}>
-          <InputLabel htmlFor="select-multiple-chip">Output Brain Regions</InputLabel>
-          <BrainRegionInput
-            rois={selectedROIs}
-            value={outputValue}
-            roiInfo={roiInfo}
-            onChange={this.handleChangeROIsOut}
-          />
-          <Grid container alignItems="center" spacing={1}>
-            <Grid item>
-              <Grid component="label" container alignItems="center" spacing={1}>
-                <Grid item>Match All</Grid>
-                <Grid item>
-                  <Switch
-                    checked={outputMatchAny}
-                    onChange={this.handleChangeOutputMatch}
-                    name="checked"
-                    color="primary"
-                  />
-                </Grid>
-                <Grid item>Any</Grid>
-              </Grid>
-            </Grid>
-            <Grid item style={{ lineHeight: '0em' }}>
-              <BrainRegionPopover />
-            </Grid>
-          </Grid>
-        </fieldset>
-        {dataSet.match(/optic-lobe/) ? (
-          <ColumnSelectModal dataset={dataSet} callback={this.enableAllROIs} />
-        ) : null}
-        <FormControl variant="standard" className={classes.formControl}>
-          <FormControlLabel
-            control={<Switch checked={!useSuper} onChange={this.toggleSuper} color="primary" />}
-            label={
-              <Typography variant="subtitle1" style={{ display: 'inline-flex' }}>
-                Allow all brain regions
-              </Typography>
-            }
-          />
-        </FormControl>
         <FormControl variant="standard" className={classes.formControl}>
           <FormControlLabel
             control={
@@ -899,6 +834,83 @@ ORDER BY neuron.bodyId`
           actions={actions}
           neoServer={neoServerSettings.get('neoServer')}
         />
+        <Accordion>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="subtitle1">Brain region filters</Typography>
+          </AccordionSummary>
+          <AccordionDetails style={{ flexDirection: 'column' }}>
+            <fieldset className={classes.fieldset}>
+              <InputLabel htmlFor="select-multiple-chip">Input Brain Regions</InputLabel>
+              <BrainRegionInput
+                rois={selectedROIs}
+                value={inputValue}
+                roiInfo={roiInfo}
+                onChange={this.handleChangeROIsIn}
+              />
+              <Grid container alignItems="center" spacing={1}>
+                <Grid item>
+                  <Grid component="label" container alignItems="center" spacing={1}>
+                    <Grid item>Match All</Grid>
+                    <Grid item>
+                      <Switch
+                        checked={inputMatchAny}
+                        onChange={this.handleChangeInputMatch}
+                        name="checked"
+                        color="primary"
+                      />
+                    </Grid>
+                    <Grid item>Any</Grid>
+                  </Grid>
+                </Grid>
+                <Grid item style={{ lineHeight: '0em' }}>
+                  <BrainRegionPopover />
+                </Grid>
+              </Grid>
+            </fieldset>
+            <fieldset className={classes.fieldset}>
+              <InputLabel htmlFor="select-multiple-chip">Output Brain Regions</InputLabel>
+              <BrainRegionInput
+                rois={selectedROIs}
+                value={outputValue}
+                roiInfo={roiInfo}
+                onChange={this.handleChangeROIsOut}
+              />
+              <Grid container alignItems="center" spacing={1}>
+                <Grid item>
+                  <Grid component="label" container alignItems="center" spacing={1}>
+                    <Grid item>Match All</Grid>
+                    <Grid item>
+                      <Switch
+                        checked={outputMatchAny}
+                        onChange={this.handleChangeOutputMatch}
+                        name="checked"
+                        color="primary"
+                      />
+                    </Grid>
+                    <Grid item>Any</Grid>
+                  </Grid>
+                </Grid>
+                <Grid item style={{ lineHeight: '0em' }}>
+                  <BrainRegionPopover />
+                </Grid>
+              </Grid>
+            </fieldset>
+            {dataSet.match(/optic-lobe/) ? (
+              <ColumnSelectModal dataset={dataSet} callback={this.enableAllROIs} />
+            ) : null}
+            <FormControl variant="standard" className={classes.formControl}>
+              <FormControlLabel
+                control={<Switch checked={!useSuper} onChange={this.toggleSuper} color="primary" />}
+                label={
+                  <Typography variant="subtitle1" style={{ display: 'inline-flex' }}>
+                    Allow all brain regions
+                  </Typography>
+                }
+              />
+            </FormControl>
+          </AccordionDetails>
+        </Accordion>
+        <div style={{ marginTop: '1em' }} />
         <Button
           disabled={isQuerying}
           color="primary"
