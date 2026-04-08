@@ -154,7 +154,7 @@ export class FindNeurons extends React.Component {
       displayName: 'Find neurons',
       abbr: pluginAbbrev,
       category: 'top-level',
-      description: 'Find neurons that have inputs or outputs in selected brain regions',
+      description: 'Search for neurons by their properties or input/output brain regions',
       visType: 'SimpleTable',
     };
   }
