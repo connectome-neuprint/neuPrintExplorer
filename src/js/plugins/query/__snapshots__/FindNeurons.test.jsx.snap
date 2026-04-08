@@ -85,330 +85,6 @@ exports[`find neurons Plugin renders correctly 1`] = `
         </div>
       </div>
     </div>
-    <fieldset>
-      <label
-        class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-animated MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-animated css-1tkmop-MuiFormLabel-root-MuiInputLabel-root"
-        for="select-multiple-chip"
-      >
-        Input Brain Regions
-      </label>
-      <div
-        class="BrainRegionInput-select-2 css-b62m3t-container"
-      >
-        <span
-          class="css-1f43avz-a11yText-A11yText"
-          id="react-select-3-live-region"
-        />
-        <span
-          aria-atomic="false"
-          aria-live="polite"
-          aria-relevant="additions text"
-          class="css-1f43avz-a11yText-A11yText"
-          role="log"
-        />
-        <div
-          class="css-13cymwt-control"
-        >
-          <div
-            class="css-hlgwow"
-          >
-            <div
-              class="css-1jqq78o-placeholder"
-              id="react-select-3-placeholder"
-            >
-              Select...
-            </div>
-            <div
-              class="css-19bb58m"
-              data-value=""
-            >
-              <input
-                aria-activedescendant=""
-                aria-autocomplete="list"
-                aria-describedby="react-select-3-placeholder"
-                aria-expanded="false"
-                aria-haspopup="true"
-                autocapitalize="none"
-                autocomplete="off"
-                autocorrect="off"
-                class=""
-                id="react-select-3-input"
-                role="combobox"
-                spellcheck="false"
-                style="opacity: 1; width: 100%; grid-area: 1 / 2; min-width: 2px; border: 0px; margin: 0px; outline: 0; padding: 0px;"
-                tabindex="0"
-                type="text"
-                value=""
-              />
-            </div>
-          </div>
-          <div
-            class="css-1wy0on6"
-          >
-            <span
-              class="css-1u9des2-indicatorSeparator"
-            />
-            <div
-              aria-hidden="true"
-              class="css-1xc3v61-indicatorContainer"
-            >
-              <svg
-                aria-hidden="true"
-                class="css-tj5bde-Svg"
-                focusable="false"
-                height="20"
-                viewBox="0 0 20 20"
-                width="20"
-              >
-                <path
-                  d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
-                />
-              </svg>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-1 css-1946b2z-MuiGrid-root"
-      >
-        <div
-          class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
-        >
-          <label
-            class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-1 css-1946b2z-MuiGrid-root"
-          >
-            <div
-              class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
-            >
-              Match All
-            </div>
-            <div
-              class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
-            >
-              <span
-                class="MuiSwitch-root MuiSwitch-sizeMedium css-rehya9-MuiSwitch-root"
-              >
-                <span
-                  class="MuiButtonBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary PrivateSwitchBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase"
-                >
-                  <input
-                    class="PrivateSwitchBase-input MuiSwitch-input css-j8yymo"
-                    name="checked"
-                    type="checkbox"
-                  />
-                  <span
-                    class="MuiSwitch-thumb css-17jyosd-MuiSwitch-thumb"
-                  />
-                </span>
-                <span
-                  class="MuiSwitch-track css-tj8d99-MuiSwitch-track"
-                />
-              </span>
-            </div>
-            <div
-              class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
-            >
-              Any
-            </div>
-          </label>
-        </div>
-        <div
-          class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
-          style="line-height: 0em;"
-        >
-          <svg
-            aria-haspopup="true"
-            aria-hidden="true"
-            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium makeStyles-icon-5 css-1umw9bq-MuiSvgIcon-root"
-            data-testid="InfoIcon"
-            focusable="false"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m1 15h-2v-6h2zm0-8h-2V7h2z"
-            />
-          </svg>
-        </div>
-      </div>
-    </fieldset>
-    <fieldset>
-      <label
-        class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-animated MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-animated css-1tkmop-MuiFormLabel-root-MuiInputLabel-root"
-        for="select-multiple-chip"
-      >
-        Output Brain Regions
-      </label>
-      <div
-        class="BrainRegionInput-select-2 css-b62m3t-container"
-      >
-        <span
-          class="css-1f43avz-a11yText-A11yText"
-          id="react-select-4-live-region"
-        />
-        <span
-          aria-atomic="false"
-          aria-live="polite"
-          aria-relevant="additions text"
-          class="css-1f43avz-a11yText-A11yText"
-          role="log"
-        />
-        <div
-          class="css-13cymwt-control"
-        >
-          <div
-            class="css-hlgwow"
-          >
-            <div
-              class="css-1jqq78o-placeholder"
-              id="react-select-4-placeholder"
-            >
-              Select...
-            </div>
-            <div
-              class="css-19bb58m"
-              data-value=""
-            >
-              <input
-                aria-activedescendant=""
-                aria-autocomplete="list"
-                aria-describedby="react-select-4-placeholder"
-                aria-expanded="false"
-                aria-haspopup="true"
-                autocapitalize="none"
-                autocomplete="off"
-                autocorrect="off"
-                class=""
-                id="react-select-4-input"
-                role="combobox"
-                spellcheck="false"
-                style="opacity: 1; width: 100%; grid-area: 1 / 2; min-width: 2px; border: 0px; margin: 0px; outline: 0; padding: 0px;"
-                tabindex="0"
-                type="text"
-                value=""
-              />
-            </div>
-          </div>
-          <div
-            class="css-1wy0on6"
-          >
-            <span
-              class="css-1u9des2-indicatorSeparator"
-            />
-            <div
-              aria-hidden="true"
-              class="css-1xc3v61-indicatorContainer"
-            >
-              <svg
-                aria-hidden="true"
-                class="css-tj5bde-Svg"
-                focusable="false"
-                height="20"
-                viewBox="0 0 20 20"
-                width="20"
-              >
-                <path
-                  d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
-                />
-              </svg>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-1 css-1946b2z-MuiGrid-root"
-      >
-        <div
-          class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
-        >
-          <label
-            class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-1 css-1946b2z-MuiGrid-root"
-          >
-            <div
-              class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
-            >
-              Match All
-            </div>
-            <div
-              class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
-            >
-              <span
-                class="MuiSwitch-root MuiSwitch-sizeMedium css-rehya9-MuiSwitch-root"
-              >
-                <span
-                  class="MuiButtonBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary PrivateSwitchBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase"
-                >
-                  <input
-                    class="PrivateSwitchBase-input MuiSwitch-input css-j8yymo"
-                    name="checked"
-                    type="checkbox"
-                  />
-                  <span
-                    class="MuiSwitch-thumb css-17jyosd-MuiSwitch-thumb"
-                  />
-                </span>
-                <span
-                  class="MuiSwitch-track css-tj8d99-MuiSwitch-track"
-                />
-              </span>
-            </div>
-            <div
-              class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
-            >
-              Any
-            </div>
-          </label>
-        </div>
-        <div
-          class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
-          style="line-height: 0em;"
-        >
-          <svg
-            aria-haspopup="true"
-            aria-hidden="true"
-            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium makeStyles-icon-5 css-1umw9bq-MuiSvgIcon-root"
-            data-testid="InfoIcon"
-            focusable="false"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m1 15h-2v-6h2zm0-8h-2V7h2z"
-            />
-          </svg>
-        </div>
-      </div>
-    </fieldset>
-    <div
-      class="MuiFormControl-root css-1iw3t7y-MuiFormControl-root"
-    >
-      <label
-        class="MuiFormControlLabel-root MuiFormControlLabel-labelPlacementEnd css-19opgx6-MuiFormControlLabel-root"
-      >
-        <span
-          class="MuiSwitch-root MuiSwitch-sizeMedium css-rehya9-MuiSwitch-root"
-        >
-          <span
-            class="MuiButtonBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary PrivateSwitchBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase"
-          >
-            <input
-              class="PrivateSwitchBase-input MuiSwitch-input css-j8yymo"
-              type="checkbox"
-            />
-            <span
-              class="MuiSwitch-thumb css-17jyosd-MuiSwitch-thumb"
-            />
-          </span>
-          <span
-            class="MuiSwitch-track css-tj8d99-MuiSwitch-track"
-          />
-        </span>
-        <h6
-          class="MuiTypography-root MuiTypography-subtitle1 css-1i3tsf3-MuiTypography-root"
-          style="display: inline-flex;"
-        >
-          Allow all brain regions
-        </h6>
-      </label>
-    </div>
     <div
       class="MuiFormControl-root css-1iw3t7y-MuiFormControl-root"
     >
@@ -442,7 +118,7 @@ exports[`find neurons Plugin renders correctly 1`] = `
       </label>
     </div>
     <div
-      class="makeStyles-expandablePanel-7"
+      class="makeStyles-expandablePanel-3"
     >
       <div
         class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiAccordion-root MuiAccordion-rounded MuiAccordion-gutters css-1808mag-MuiPaper-root-MuiAccordion-root"
@@ -463,7 +139,7 @@ exports[`find neurons Plugin renders correctly 1`] = `
               <h6
                 class="MuiTypography-root MuiTypography-subtitle1 css-1i3tsf3-MuiTypography-root"
               >
-                Optional neuron/segment filters
+                Neuron/segment filters
               </h6>
             </span>
             <span
@@ -498,7 +174,8 @@ exports[`find neurons Plugin renders correctly 1`] = `
                 role="region"
               >
                 <div
-                  class="MuiAccordionDetails-root makeStyles-nopad-8 css-1lj39kh-MuiAccordionDetails-root"
+                  class="MuiAccordionDetails-root css-1lj39kh-MuiAccordionDetails-root"
+                  style="flex-direction: column;"
                 >
                   <p>
                     Loading...
@@ -510,6 +187,396 @@ exports[`find neurons Plugin renders correctly 1`] = `
         </div>
       </div>
     </div>
+    <div
+      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiAccordion-root MuiAccordion-rounded MuiAccordion-gutters css-1808mag-MuiPaper-root-MuiAccordion-root"
+      style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
+    >
+      <h3
+        class="MuiAccordion-heading css-cy7rkm-MuiAccordion-heading"
+      >
+        <button
+          aria-expanded="false"
+          class="MuiButtonBase-root MuiAccordionSummary-root MuiAccordionSummary-gutters css-1f1pi2l-MuiButtonBase-root-MuiAccordionSummary-root"
+          tabindex="0"
+          type="button"
+        >
+          <span
+            class="MuiAccordionSummary-content MuiAccordionSummary-contentGutters css-yfrx4k-MuiAccordionSummary-content"
+          >
+            <h6
+              class="MuiTypography-root MuiTypography-subtitle1 css-1i3tsf3-MuiTypography-root"
+            >
+              Brain region filters
+            </h6>
+          </span>
+          <span
+            class="MuiAccordionSummary-expandIconWrapper css-1wqf3nl-MuiAccordionSummary-expandIconWrapper"
+          >
+            <svg
+              aria-hidden="true"
+              class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
+              data-testid="ExpandMoreIcon"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z"
+              />
+            </svg>
+          </span>
+        </button>
+      </h3>
+      <div
+        class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-hidden css-cwrbtg-MuiCollapse-root"
+        style="min-height: 0px;"
+      >
+        <div
+          class="MuiCollapse-wrapper MuiCollapse-vertical css-1x6hinx-MuiCollapse-wrapper"
+        >
+          <div
+            class="MuiCollapse-wrapperInner MuiCollapse-vertical css-1i4ywhz-MuiCollapse-wrapperInner"
+          >
+            <div
+              class="MuiAccordion-region"
+              role="region"
+            >
+              <div
+                class="MuiAccordionDetails-root css-1lj39kh-MuiAccordionDetails-root"
+                style="flex-direction: column;"
+              >
+                <fieldset>
+                  <label
+                    class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-animated MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-animated css-1tkmop-MuiFormLabel-root-MuiInputLabel-root"
+                    for="select-multiple-chip"
+                  >
+                    Input Brain Regions
+                  </label>
+                  <div
+                    class="BrainRegionInput-select-7 css-b62m3t-container"
+                  >
+                    <span
+                      class="css-1f43avz-a11yText-A11yText"
+                      id="react-select-3-live-region"
+                    />
+                    <span
+                      aria-atomic="false"
+                      aria-live="polite"
+                      aria-relevant="additions text"
+                      class="css-1f43avz-a11yText-A11yText"
+                      role="log"
+                    />
+                    <div
+                      class="css-13cymwt-control"
+                    >
+                      <div
+                        class="css-hlgwow"
+                      >
+                        <div
+                          class="css-1jqq78o-placeholder"
+                          id="react-select-3-placeholder"
+                        >
+                          Select...
+                        </div>
+                        <div
+                          class="css-19bb58m"
+                          data-value=""
+                        >
+                          <input
+                            aria-activedescendant=""
+                            aria-autocomplete="list"
+                            aria-describedby="react-select-3-placeholder"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            class=""
+                            id="react-select-3-input"
+                            role="combobox"
+                            spellcheck="false"
+                            style="opacity: 1; width: 100%; grid-area: 1 / 2; min-width: 2px; border: 0px; margin: 0px; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                        </div>
+                      </div>
+                      <div
+                        class="css-1wy0on6"
+                      >
+                        <span
+                          class="css-1u9des2-indicatorSeparator"
+                        />
+                        <div
+                          aria-hidden="true"
+                          class="css-1xc3v61-indicatorContainer"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="css-tj5bde-Svg"
+                            focusable="false"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            width="20"
+                          >
+                            <path
+                              d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-1 css-1946b2z-MuiGrid-root"
+                  >
+                    <div
+                      class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
+                    >
+                      <label
+                        class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-1 css-1946b2z-MuiGrid-root"
+                      >
+                        <div
+                          class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
+                        >
+                          Match All
+                        </div>
+                        <div
+                          class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
+                        >
+                          <span
+                            class="MuiSwitch-root MuiSwitch-sizeMedium css-rehya9-MuiSwitch-root"
+                          >
+                            <span
+                              class="MuiButtonBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary PrivateSwitchBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase"
+                            >
+                              <input
+                                class="PrivateSwitchBase-input MuiSwitch-input css-j8yymo"
+                                name="checked"
+                                type="checkbox"
+                              />
+                              <span
+                                class="MuiSwitch-thumb css-17jyosd-MuiSwitch-thumb"
+                              />
+                            </span>
+                            <span
+                              class="MuiSwitch-track css-tj8d99-MuiSwitch-track"
+                            />
+                          </span>
+                        </div>
+                        <div
+                          class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
+                        >
+                          Any
+                        </div>
+                      </label>
+                    </div>
+                    <div
+                      class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
+                      style="line-height: 0em;"
+                    >
+                      <svg
+                        aria-haspopup="true"
+                        aria-hidden="true"
+                        class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium makeStyles-icon-10 css-1umw9bq-MuiSvgIcon-root"
+                        data-testid="InfoIcon"
+                        focusable="false"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m1 15h-2v-6h2zm0-8h-2V7h2z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </fieldset>
+                <fieldset>
+                  <label
+                    class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-animated MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-animated css-1tkmop-MuiFormLabel-root-MuiInputLabel-root"
+                    for="select-multiple-chip"
+                  >
+                    Output Brain Regions
+                  </label>
+                  <div
+                    class="BrainRegionInput-select-7 css-b62m3t-container"
+                  >
+                    <span
+                      class="css-1f43avz-a11yText-A11yText"
+                      id="react-select-4-live-region"
+                    />
+                    <span
+                      aria-atomic="false"
+                      aria-live="polite"
+                      aria-relevant="additions text"
+                      class="css-1f43avz-a11yText-A11yText"
+                      role="log"
+                    />
+                    <div
+                      class="css-13cymwt-control"
+                    >
+                      <div
+                        class="css-hlgwow"
+                      >
+                        <div
+                          class="css-1jqq78o-placeholder"
+                          id="react-select-4-placeholder"
+                        >
+                          Select...
+                        </div>
+                        <div
+                          class="css-19bb58m"
+                          data-value=""
+                        >
+                          <input
+                            aria-activedescendant=""
+                            aria-autocomplete="list"
+                            aria-describedby="react-select-4-placeholder"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            autocapitalize="none"
+                            autocomplete="off"
+                            autocorrect="off"
+                            class=""
+                            id="react-select-4-input"
+                            role="combobox"
+                            spellcheck="false"
+                            style="opacity: 1; width: 100%; grid-area: 1 / 2; min-width: 2px; border: 0px; margin: 0px; outline: 0; padding: 0px;"
+                            tabindex="0"
+                            type="text"
+                            value=""
+                          />
+                        </div>
+                      </div>
+                      <div
+                        class="css-1wy0on6"
+                      >
+                        <span
+                          class="css-1u9des2-indicatorSeparator"
+                        />
+                        <div
+                          aria-hidden="true"
+                          class="css-1xc3v61-indicatorContainer"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            class="css-tj5bde-Svg"
+                            focusable="false"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            width="20"
+                          >
+                            <path
+                              d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-1 css-1946b2z-MuiGrid-root"
+                  >
+                    <div
+                      class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
+                    >
+                      <label
+                        class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-1 css-1946b2z-MuiGrid-root"
+                      >
+                        <div
+                          class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
+                        >
+                          Match All
+                        </div>
+                        <div
+                          class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
+                        >
+                          <span
+                            class="MuiSwitch-root MuiSwitch-sizeMedium css-rehya9-MuiSwitch-root"
+                          >
+                            <span
+                              class="MuiButtonBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary PrivateSwitchBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase"
+                            >
+                              <input
+                                class="PrivateSwitchBase-input MuiSwitch-input css-j8yymo"
+                                name="checked"
+                                type="checkbox"
+                              />
+                              <span
+                                class="MuiSwitch-thumb css-17jyosd-MuiSwitch-thumb"
+                              />
+                            </span>
+                            <span
+                              class="MuiSwitch-track css-tj8d99-MuiSwitch-track"
+                            />
+                          </span>
+                        </div>
+                        <div
+                          class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
+                        >
+                          Any
+                        </div>
+                      </label>
+                    </div>
+                    <div
+                      class="MuiGrid-root MuiGrid-item css-13i4rnv-MuiGrid-root"
+                      style="line-height: 0em;"
+                    >
+                      <svg
+                        aria-haspopup="true"
+                        aria-hidden="true"
+                        class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium makeStyles-icon-10 css-1umw9bq-MuiSvgIcon-root"
+                        data-testid="InfoIcon"
+                        focusable="false"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m1 15h-2v-6h2zm0-8h-2V7h2z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </fieldset>
+                <div
+                  class="MuiFormControl-root css-1iw3t7y-MuiFormControl-root"
+                >
+                  <label
+                    class="MuiFormControlLabel-root MuiFormControlLabel-labelPlacementEnd css-19opgx6-MuiFormControlLabel-root"
+                  >
+                    <span
+                      class="MuiSwitch-root MuiSwitch-sizeMedium css-rehya9-MuiSwitch-root"
+                    >
+                      <span
+                        class="MuiButtonBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary PrivateSwitchBase-root MuiSwitch-switchBase MuiSwitch-colorPrimary css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase"
+                      >
+                        <input
+                          class="PrivateSwitchBase-input MuiSwitch-input css-j8yymo"
+                          type="checkbox"
+                        />
+                        <span
+                          class="MuiSwitch-thumb css-17jyosd-MuiSwitch-thumb"
+                        />
+                      </span>
+                      <span
+                        class="MuiSwitch-track css-tj8d99-MuiSwitch-track"
+                      />
+                    </span>
+                    <h6
+                      class="MuiTypography-root MuiTypography-subtitle1 css-1i3tsf3-MuiTypography-root"
+                      style="display: inline-flex;"
+                    >
+                      Allow all brain regions
+                    </h6>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      style="margin-top: 1em;"
+    />
     <button
       class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-74d805-MuiButtonBase-root-MuiButton-root"
       tabindex="0"
