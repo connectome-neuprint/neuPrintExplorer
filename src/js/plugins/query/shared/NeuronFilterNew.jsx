@@ -15,11 +15,10 @@ import NeuronFilter from "./NeuronFilter";
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
-    minWidth: 300,
-    maxWidth: 300,
+    width: '100%',
   },
   expandablePanel: {
-    margin: theme.spacing(1),
+    marginBottom: '1em',
   },
   nopad: {
     padding: 0,
@@ -30,8 +29,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1),
   },
   textField: {
-    maxWidth: 300,
-    minWidth: 300,
+    width: '100%',
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
   },
@@ -150,9 +148,9 @@ export default function NeuronFilterNew({ callback, actions, datasetstr, neoServ
       <div className={classes.expandablePanel}>
         <Accordion>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="subtitle1">Optional neuron/segment filters</Typography>
+            <Typography variant="subtitle1">Neuron/segment filters</Typography>
           </AccordionSummary>
-          <AccordionDetails className={classes.nopad}>
+          <AccordionDetails style={{ flexDirection: 'column' }}>
             <p>Loading...</p>
           </AccordionDetails>
         </Accordion>
@@ -277,9 +275,9 @@ export default function NeuronFilterNew({ callback, actions, datasetstr, neoServ
       {/* Optional filters accordion */}
       <Accordion>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="subtitle1">Optional neuron/segment filters</Typography>
+          <Typography variant="subtitle1">Neuron/segment filters</Typography>
         </AccordionSummary>
-        <AccordionDetails className={classes.nopad}>
+        <AccordionDetails style={{ flexDirection: 'column' }}>
           <FormControl variant="standard" className={classes.formControl}>
             <Typography variant="subtitle1" component="p">
               Filter by:{' '}
