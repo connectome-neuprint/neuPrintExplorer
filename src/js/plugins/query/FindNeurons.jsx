@@ -69,7 +69,21 @@ function neuronConditionCypher(neuronName, neuronId, useContains) {
   const regstr = useContains ? '=' : '=~';
 
   if (neuronName && neuronName !== '') {
-    return `(toLower(neuron.type) ${regstr} "${neuronName.toLowerCase()}" OR toLower(neuron.instance) ${regstr} "${neuronName.toLowerCase()}" OR toLower(neuron.hemibrainType) ${regstr} "${neuronName.toLowerCase()}" OR toLower(neuron.synonyms) ${regstr} "${neuronName.toLowerCase()}" OR toLower(neuron.systematicType) ${regstr} "${neuronName.toLowerCase()}" OR toLower(neuron.flywireType) ${regstr} "${neuronName.toLowerCase()}")`;
+    const name = neuronName.toLowerCase();
+    const fields = [
+      'neuron.type',
+      'neuron.instance',
+      'neuron.hemibrainType',
+      'neuron.synonyms',
+      'neuron.systematicType',
+      'neuron.flywireType',
+      'neuron.itoleeHl',
+      'neuron.trumanHl',
+      'neuron.class',
+      'neuron.entryNerve',
+      'neuron.exitNerve',
+    ];
+    return `(${fields.map((field) => `toLower(${field}) ${regstr} "${name}"`).join(' OR ')})`;
   }
 
   if (neuronId) {
