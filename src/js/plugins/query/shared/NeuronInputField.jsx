@@ -184,9 +184,9 @@ RETURN 'find_neurons_fulltext_properties_index' IN indexNames as hasIndex`;
   handleChange = (selected) => {
     const { onChange } = this.props;
     if (selected && selected.value) {
-      onChange(selected.value);
+      onChange(selected.value, selected.field || null);
     } else {
-      onChange(selected);
+      onChange(selected, null);
     }
   };
 
@@ -321,10 +321,11 @@ RETURN 'find_neurons_fulltext_properties_index' IN indexNames as hasIndex`;
 
       const options = [];
 
-      const setToOptions = (set, limit = 10, showAdditionalInfo = false) => {
+      const setToOptions = (set, field, limit = 10, showAdditionalInfo = false) => {
         return [...set].slice(0, limit).map((value) => ({
           value,
           label: value,
+          field,
           additionalInfo: showAdditionalInfo ? additionalInfo.get(value) || '' : '',
         }));
       };
@@ -332,84 +333,84 @@ RETURN 'find_neurons_fulltext_properties_index' IN indexNames as hasIndex`;
       if (uniqueValues.types.size > 0) {
         options.push({
           label: 'Types',
-          options: setToOptions(uniqueValues.types, 10, false),
+          options: setToOptions(uniqueValues.types, 'type', 10, false),
         });
       }
 
       if (uniqueValues.instances.size > 0) {
         options.push({
           label: 'Instances',
-          options: setToOptions(uniqueValues.instances, 10, true),
+          options: setToOptions(uniqueValues.instances, 'instance', 10, true),
         });
       }
 
       if (uniqueValues.hemibrainTypes.size > 0) {
         options.push({
           label: 'Hemibrain Types',
-          options: setToOptions(uniqueValues.hemibrainTypes, 10, false),
+          options: setToOptions(uniqueValues.hemibrainTypes, 'hemibrainType', 10, false),
         });
       }
 
       if (uniqueValues.flywireTypes.size > 0) {
         options.push({
           label: 'Flywire Types',
-          options: setToOptions(uniqueValues.flywireTypes, 10, false),
+          options: setToOptions(uniqueValues.flywireTypes, 'flywireType', 10, false),
         });
       }
 
       if (uniqueValues.systematicTypes.size > 0) {
         options.push({
           label: 'Systematic Types',
-          options: setToOptions(uniqueValues.systematicTypes, 10, false),
+          options: setToOptions(uniqueValues.systematicTypes, 'systematicType', 10, false),
         });
       }
 
       if (uniqueValues.itoLeeHlValues.size > 0) {
         options.push({
           label: 'Ito-Lee Hemilineage',
-          options: setToOptions(uniqueValues.itoLeeHlValues, 10, false),
+          options: setToOptions(uniqueValues.itoLeeHlValues, 'itoleeHl', 10, false),
         });
       }
 
       if (uniqueValues.trumanHlValues.size > 0) {
         options.push({
           label: 'Truman Hemilineage',
-          options: setToOptions(uniqueValues.trumanHlValues, 10, false),
+          options: setToOptions(uniqueValues.trumanHlValues, 'trumanHl', 10, false),
         });
       }
 
       if (uniqueValues.classes.size > 0) {
         options.push({
           label: 'Classes',
-          options: setToOptions(uniqueValues.classes, 10, false),
+          options: setToOptions(uniqueValues.classes, 'class', 10, false),
         });
       }
 
       if (uniqueValues.entryNerves.size > 0) {
         options.push({
           label: 'Entry Nerves',
-          options: setToOptions(uniqueValues.entryNerves, 10, false),
+          options: setToOptions(uniqueValues.entryNerves, 'entryNerve', 10, false),
         });
       }
 
       if (uniqueValues.exitNerves.size > 0) {
         options.push({
           label: 'Exit Nerves',
-          options: setToOptions(uniqueValues.exitNerves, 10, false),
+          options: setToOptions(uniqueValues.exitNerves, 'exitNerve', 10, false),
         });
       }
 
       if (uniqueValues.bodyIds.size > 0) {
         options.push({
           label: 'Body IDs',
-          options: setToOptions(uniqueValues.bodyIds, 10, true),
+          options: setToOptions(uniqueValues.bodyIds, 'bodyId', 10, true),
         });
       }
 
       if (uniqueValues.synonyms.size > 0) {
         options.push({
           label: 'Synonyms',
-          options: setToOptions(uniqueValues.synonyms, 10, false),
+          options: setToOptions(uniqueValues.synonyms, 'synonyms', 10, false),
         });
       }
 
