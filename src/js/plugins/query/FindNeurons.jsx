@@ -65,11 +65,17 @@ const styles = (theme) => ({
 const pluginName = 'FindNeurons';
 const pluginAbbrev = 'fn';
 
-function neuronConditionCypher(neuronName, neuronId, useContains) {
+function neuronConditionCypher(neuronName, neuronId, useContains, neuronField) {
   const regstr = useContains ? '=' : '=~';
 
   if (neuronName && neuronName !== '') {
     const name = neuronName.toLowerCase();
+
+    // If a specific field was selected from autocomplete, only search that field
+    if (neuronField) {
+      return `(toLower(neuron.${neuronField}) ${regstr} "${name}")`;
+    }
+
     const fields = [
       'neuron.type',
       'neuron.instance',
@@ -193,7 +199,7 @@ export class FindNeurons extends React.Component {
       : [];
 
     const conditions = [
-      neuronConditionCypher(params.neuron_name, params.neuron_id, params.enable_contains),
+      neuronConditionCypher(params.neuron_name, params.neuron_id, params.enable_contains, params.neuron_field),
       thresholdCypher('pre', params.pre),
       thresholdCypher('post', params.post),
       statusCypher(params.statuses),
@@ -659,6 +665,7 @@ ORDER BY neuron.bodyId`
       pre,
       post,
       neuronInstance,
+      neuronField,
       neuronType,
       inputROIs,
       inputMatchAny,
@@ -713,6 +720,9 @@ ORDER BY neuron.bodyId`
       } else {
         parameters.neuron_name = neuronInstance;
       }
+      if (neuronField) {
+        parameters.neuron_field = neuronField;
+      }
     }
 
     if (neuronType !== '') {
@@ -747,8 +757,8 @@ ORDER BY neuron.bodyId`
     this.setState({ outputROIs: rois });
   };
 
-  addNeuronInstance = (neuronInstance) => {
-    this.setState({ neuronInstance });
+  addNeuronInstance = (neuronInstance, neuronField = null) => {
+    this.setState({ neuronInstance, neuronField });
   };
 
   loadNeuronFiltersNew = (filters) => {
