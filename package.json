@@ -162,7 +162,8 @@
       "/node_modules/",
       "/build/",
       "/e2e/"
-    ]
+    ],
+    "watchman": false
   },
   "msw": {
     "workerDirectory": "public"
