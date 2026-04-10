@@ -25,18 +25,168 @@ formatOptionLabel.propTypes = {
   additionalInfo: PropTypes.string.isRequired,
 };
 
+function buildFastQuery(inputValue, bodyId) {
+  return `WITH toLower('${inputValue}') as q, ${bodyId} as user_body
+
+// Full-text search wrapped in subquery to preserve pipeline when no results
+CALL {
+  WITH q
+  CALL db.index.fulltext.queryNodes('find_neurons_fulltext_properties_index', '*' + q + '*')
+  YIELD node as n
+  RETURN collect(n) as textMatches
+}
+
+// Add bodyId match if specified
+OPTIONAL MATCH (b:Neuron) WHERE user_body <> 0 AND b.bodyId = user_body
+WITH textMatches + collect(b) as allMatches, q, user_body
+UNWIND allMatches as n
+
+WITH DISTINCT n, q, user_body,
+     [toLower(n.type), toLower(n.instance), toLower(n.hemibrainType),
+      toLower(n.flywireType), toLower(n.systematicType), toLower(n.itoleeHl),
+      toLower(n.trumanHl), toLower(n.synonyms), toLower(n.class),
+      toLower(n.entryNerve), toLower(n.exitNerve)] as props
+WITH n, q, props, user_body,
+     CASE
+         WHEN n.bodyId = user_body AND user_body <> 0 THEN 0
+         WHEN any(p IN props WHERE p = q) THEN 1
+         WHEN any(p IN props WHERE p STARTS WITH q) THEN 2
+         WHEN any(p IN props WHERE p STARTS WITH '(' + q) THEN 3
+         WHEN any(p IN props WHERE p CONTAINS q) THEN 4
+         ELSE 5
+     END as priority,
+     CASE
+         WHEN toLower(n.type) STARTS WITH q THEN 0
+         WHEN toLower(n.type) CONTAINS q THEN 1
+         ELSE 2
+     END as type_priority
+RETURN
+    toString(n.bodyId) as bodyId,
+    n.type as type,
+    n.instance as instance,
+    n.hemibrainType as hemibrainType,
+    n.flywireType as flywireType,
+    n.systematicType as systematicType,
+    n.itoleeHl as itoLeeHl,
+    n.trumanHl as trumanHl,
+    n.synonyms as synonyms,
+    n.class as class,
+    n.entryNerve as entryNerve,
+    n.exitNerve as exitNerve,
+    priority,
+    type_priority
+ORDER BY priority, type_priority, n.type, n.instance`;
+}
+
+function buildSlowQuery(inputValue, bodyId) {
+  return `WITH toLower('${inputValue}') as q, ${bodyId} as user_body, '(' + toLower('${inputValue}') as parenQ
+MATCH (n:Neuron)
+WHERE n.bodyId = user_body
+   OR any(prop IN [
+       n.type, n.instance, n.hemibrainType, n.flywireType,
+       n.systematicType, n.itoleeHl, n.trumanHl, n.synonyms,
+       n.class, n.entryNerve, n.exitNerve
+   ] WHERE toLower(prop) CONTAINS q)
+WITH n, q, parenQ, user_body,
+     [toLower(n.type), toLower(n.instance), toLower(n.hemibrainType),
+      toLower(n.flywireType), toLower(n.systematicType), toLower(n.itoleeHl),
+      toLower(n.trumanHl), toLower(n.synonyms), toLower(n.class),
+      toLower(n.entryNerve), toLower(n.exitNerve)] as props
+WITH n, q, parenQ, props, user_body,
+     CASE
+         WHEN n.bodyId = user_body AND user_body <> 0 THEN 0
+         WHEN any(p IN props WHERE p = q) THEN 1
+         WHEN any(p IN props WHERE p STARTS WITH q) THEN 2
+         WHEN any(p IN props WHERE p STARTS WITH parenQ) THEN 3
+         WHEN any(p IN props WHERE p CONTAINS q) THEN 4
+         ELSE 5
+     END as priority,
+     CASE
+         WHEN toLower(n.type) STARTS WITH q THEN 0
+         WHEN toLower(n.type) CONTAINS q THEN 1
+         ELSE 2
+     END as type_priority
+RETURN
+    toString(n.bodyId) as bodyId,
+    n.type as type,
+    n.instance as instance,
+    n.hemibrainType as hemibrainType,
+    n.flywireType as flywireType,
+    n.systematicType as systematicType,
+    n.itoleeHl as itoLeeHl,
+    n.trumanHl as trumanHl,
+    n.synonyms as synonyms,
+    n.class as class,
+    n.entryNerve as entryNerve,
+    n.exitNerve as exitNerve,
+    priority,
+    type_priority
+ORDER BY priority, type_priority, n.type, n.instance`;
+}
+
+function runCypher(dataSet, cypher) {
+  return fetch('/api/custom/custom?np_explorer=neuron_input_field', {
+    headers: {
+      'content-type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify({ cypher, dataSet }),
+    method: 'POST',
+    credentials: 'include',
+  }).then((result) => result.json());
+}
+
 class NeuronInputField extends React.Component {
   constructor(props) {
     super(props);
     this.debounceTimer = null;
+    this.state = {
+      useFastQuery: false,
+    };
+  }
+
+  componentDidMount() {
+    this.checkFulltextSupport();
+  }
+
+  checkFulltextSupport() {
+    const { dataSet } = this.props;
+
+    const versionCypher = `CALL dbms.components() YIELD versions
+RETURN versions[0] as version`;
+
+    runCypher(dataSet, versionCypher)
+      .then((resp) => {
+        if (!resp.data || !resp.data[0]) {
+          return;
+        }
+        const version = resp.data[0][0];
+        const majorMinor = parseFloat(version);
+        if (majorMinor < 4.4) {
+          return;
+        }
+
+        const indexCypher = `CALL db.indexes() YIELD name
+WITH collect(name) as indexNames
+RETURN 'find_neurons_fulltext_properties_index' IN indexNames as hasIndex`;
+
+        return runCypher(dataSet, indexCypher).then((indexResp) => {
+          if (indexResp.data && indexResp.data[0] && indexResp.data[0][0] === true) {
+            this.setState({ useFastQuery: true });
+          }
+        });
+      })
+      .catch(() => {
+        // If the check fails, fall back to the slow query
+      });
   }
 
   handleChange = (selected) => {
     const { onChange } = this.props;
     if (selected && selected.value) {
-      onChange(selected.value);
+      onChange(selected.value, selected.field || null);
     } else {
-      onChange(selected);
+      onChange(selected, null);
     }
   };
 
@@ -53,253 +203,219 @@ class NeuronInputField extends React.Component {
 
   fetchOptionsImmediate = (inputValue) => {
     const { dataSet } = this.props;
+    const { useFastQuery } = this.state;
 
-    // If the input value is a number, then use it as the bodyId, if not
-    // then set the bodyId -1 to prevent it from matching anything in
-    // the database, but keep the cypher query valid.
     let bodyId = -1;
     if (/^\d+$/.test(inputValue)) {
       bodyId = inputValue;
     }
 
-    const cypherString = `
-WITH toLower('${inputValue}') as q, ${bodyId} as user_body
-MATCH (n:Neuron)
-WHERE
-    n.bodyId = user_body
-    OR toLower(n.type) CONTAINS q
-    OR toLower(n.hemibrainType) CONTAINS q
-    OR toLower(n.flywireType) CONTAINS q
-    OR toLower(n.systematicType) CONTAINS q
-    OR toLower(n.synonyms) CONTAINS q
-    OR toLower(n.instance) CONTAINS q
-WITH n,
-    // Assign a match score according to where the match occurs within the properties.
-    CASE WHEN
-        n.bodyId = user_body
-        THEN 0
-    ELSE CASE WHEN
-            // Exact match
-            toLower(n.type) = q
-            OR toLower(n.instance) = q
-            OR toLower(n.hemibrainType) = q
-            OR toLower(n.flywireType) = q
-            OR toLower(n.systematicType) = q
-            OR toLower(n.synonyms) = q
-        THEN 1
-    ELSE CASE WHEN
-            // Parenthesized exact match
-            toLower(n.type) = '(${inputValue.toLowerCase()})'
-            OR toLower(n.instance) =~ '(${inputValue.toLowerCase()}).*'
-            OR toLower(n.hemibrainType) = '(${inputValue.toLowerCase()})'
-            OR toLower(n.flywireType) = '(${inputValue.toLowerCase()})'
-            OR toLower(n.systematicType) = '(${inputValue.toLowerCase()})'
-            OR toLower(n.synonyms) = '(${inputValue.toLowerCase()})'
-        THEN 2
-    ELSE CASE WHEN
-            // Exact prefix
-            toLower(n.type) =~ '(^${inputValue.toLowerCase()}.*)'
-            OR toLower(n.instance) =~ '(^${inputValue.toLowerCase()}.*)'
-            OR toLower(n.hemibrainType) =~ '(^${inputValue.toLowerCase()}.*)'
-            OR toLower(n.flywireType) =~ '(^${inputValue.toLowerCase()}.*)'
-            OR toLower(n.systematicType) =~ '(^${inputValue.toLowerCase()}.*)'
-            OR toLower(n.synonyms) =~ '(^${inputValue.toLowerCase()}.*)'
-        THEN 3
-    ELSE CASE WHEN
-            // Parenthesized exact prefix
-            toLower(n.type) =~ '(^\\\\(${inputValue.toLowerCase()}.*)'
-            OR toLower(n.instance) =~ '(^\\\\(${inputValue.toLowerCase()}.*)'
-            OR toLower(n.hemibrainType) =~ '(^\\\\(${inputValue.toLowerCase()}.*)'
-            OR toLower(n.flywireType) =~ '(^\\\\(${inputValue.toLowerCase()}.*)'
-            OR toLower(n.systematicType) =~ '(^\\\\(${inputValue.toLowerCase()}.*)'
-            OR toLower(n.synonyms) =~ '(^\\\\(${inputValue.toLowerCase()}.*)'
-        THEN 4
-    ELSE CASE WHEN
-            // Any match in type, instance, or other fields
-            toLower(n.type) CONTAINS q
-            OR toLower(n.instance) CONTAINS q
-            OR toLower(n.hemibrainType) CONTAINS q
-            OR toLower(n.flywireType) CONTAINS q
-            OR toLower(n.systematicType) CONTAINS q
-            OR toLower(n.synonyms) CONTAINS q
-        THEN 5
-    ELSE 6
-    END END END END END END as priority,
-    CASE
-        WHEN toLower(n.type) =~ ('(?i)^' + q + '.*') THEN 0
-        WHEN toLower(n.type) CONTAINS q THEN 1
-        ELSE 2
-    END AS type_priority
-RETURN DISTINCT
-    toString(n.bodyId) as bodyId,
-    n.type as type,
-    n.instance as instance,
-    n.hemibrainType as hemibrainType,
-    n.flywireType as flywireType,
-    n.systematicType as systematicType,
-    n.synonyms as synonyms,
-    priority,
-    type_priority
-ORDER BY priority, type_priority, n.type, n.instance
-`;
+    const cypherString = useFastQuery
+      ? buildFastQuery(inputValue, bodyId)
+      : buildSlowQuery(inputValue, bodyId);
 
-    const body = JSON.stringify({
-      cypher: cypherString,
-      dataSet,
-    });
+    return runCypher(dataSet, cypherString).then((resp) => {
+      // Both queries return rows with:
+      // [bodyId, type, instance, hemibrainType, flywireType, systematicType,
+      //  itoLeeHl, trumanHl, synonyms, class, entryNerve, exitNerve, priority, type_priority]
 
-    const settings = {
-      headers: {
-        'content-type': 'application/json',
-        Accept: 'application/json',
-      },
-      body,
-      method: 'POST',
-      credentials: 'include',
-    };
+      const uniqueValues = {
+        bodyIds: new Set(),
+        types: new Set(),
+        instances: new Set(),
+        hemibrainTypes: new Set(),
+        flywireTypes: new Set(),
+        systematicTypes: new Set(),
+        itoLeeHlValues: new Set(),
+        trumanHlValues: new Set(),
+        synonyms: new Set(),
+        classes: new Set(),
+        entryNerves: new Set(),
+        exitNerves: new Set(),
+      };
 
-    const queryUrl = '/api/custom/custom?np_explorer=neuron_input_field';
+      const additionalInfo = new Map();
 
-    return fetch(queryUrl, settings)
-      .then((result) => result.json())
-      .then((resp) => {
-        // Process the simplified query format where each row contains all neuron properties:
-        // [bodyId, type, instance, hemibrainType, flywireType, systematicType, synonyms, priority, type_priority]
+      resp.data.forEach((item) => {
+        const [
+          bodyId,
+          type,
+          instance,
+          hemibrainType,
+          flywireType,
+          systematicType,
+          itoLeeHl,
+          trumanHl,
+          synonyms,
+          neuronClass,
+          entryNerve,
+          exitNerve,
+        ] = item;
 
-        const uniqueValues = {
-          bodyIds: new Set(),
-          types: new Set(),
-          instances: new Set(),
-          hemibrainTypes: new Set(),
-          flywireTypes: new Set(),
-          systematicTypes: new Set(),
-          synonyms: new Set(),
-        };
+        const lowerInput = inputValue.toLowerCase();
 
-        const additionalInfo = new Map();
+        const matchedInRelevantFields = [
+          bodyId && bodyId.toString().toLowerCase().includes(lowerInput),
+          type && type.toLowerCase().includes(lowerInput),
+          instance && instance.toLowerCase().includes(lowerInput),
+          hemibrainType && hemibrainType.toLowerCase().includes(lowerInput),
+          flywireType && flywireType.toLowerCase().includes(lowerInput),
+          systematicType && systematicType.toLowerCase().includes(lowerInput),
+          itoLeeHl && itoLeeHl.toLowerCase().includes(lowerInput),
+          trumanHl && trumanHl.toLowerCase().includes(lowerInput),
+          neuronClass && neuronClass.toLowerCase().includes(lowerInput),
+          entryNerve && entryNerve.toLowerCase().includes(lowerInput),
+          exitNerve && exitNerve.toLowerCase().includes(lowerInput),
+        ].some((matched) => matched);
 
-        resp.data.forEach((item) => {
-          const [
-            bodyId,
-            type,
-            instance,
-            hemibrainType,
-            flywireType,
-            systematicType,
-            synonyms,
-            ,
-            ,
-          ] = item;
-
-          // Check which fields actually match the search input (excluding synonyms, priority, type_priority)
-          const matchedInRelevantFields = [
-            bodyId && bodyId.toString().toLowerCase().includes(inputValue.toLowerCase()),
-            type && type.toLowerCase().includes(inputValue.toLowerCase()),
-            instance && instance.toLowerCase().includes(inputValue.toLowerCase()),
-            hemibrainType && hemibrainType.toLowerCase().includes(inputValue.toLowerCase()),
-            flywireType && flywireType.toLowerCase().includes(inputValue.toLowerCase()),
-            systematicType && systematicType.toLowerCase().includes(inputValue.toLowerCase()),
-          ].some((matched) => matched);
-
-          // Collect unique values for each field
-          // Only add bodyId if the match was in relevant fields (not just synonyms)
-          if (bodyId && matchedInRelevantFields) {
-            uniqueValues.bodyIds.add(bodyId);
-            // For body IDs, show instance or type as additional info
-            additionalInfo.set(bodyId, instance || type || '');
-          }
-
-          // Only add type and instance if the match was in relevant fields (not just synonyms)
-          if (type && matchedInRelevantFields) {
-            uniqueValues.types.add(type);
-          }
-
-          if (instance && matchedInRelevantFields) {
-            uniqueValues.instances.add(instance);
-            // For instances, show type as additional info
-            additionalInfo.set(instance, type || '');
-          }
-
-          if (hemibrainType && hemibrainType.toLowerCase().includes(inputValue.toLowerCase())) {
-            uniqueValues.hemibrainTypes.add(hemibrainType);
-          }
-
-          if (flywireType && flywireType.toLowerCase().includes(inputValue.toLowerCase())) {
-            uniqueValues.flywireTypes.add(flywireType);
-          }
-
-          if (systematicType && systematicType.toLowerCase().includes(inputValue.toLowerCase())) {
-            uniqueValues.systematicTypes.add(systematicType);
-          }
-
-          if (synonyms && synonyms.toLowerCase().includes(inputValue.toLowerCase())) {
-            uniqueValues.synonyms.add(synonyms);
-          }
-        });
-
-        const options = [];
-
-        // Helper function to convert Set to options array
-        const setToOptions = (set, limit = 10, showAdditionalInfo = false) => {
-          return [...set].slice(0, limit).map((value) => ({
-            value: value,
-            label: value,
-            additionalInfo: showAdditionalInfo ? additionalInfo.get(value) || '' : '',
-          }));
-        };
-
-        // Add option groups in requested order: Types, Instances, Hemibrain Types, Flywire Types, Systematic Types, Body IDs, Synonyms
-        if (uniqueValues.types.size > 0) {
-          options.push({
-            label: 'Types',
-            options: setToOptions(uniqueValues.types, 10, false),
-          });
+        if (bodyId && matchedInRelevantFields) {
+          uniqueValues.bodyIds.add(bodyId);
+          additionalInfo.set(bodyId, instance || type || '');
         }
 
-        if (uniqueValues.instances.size > 0) {
-          options.push({
-            label: 'Instances',
-            options: setToOptions(uniqueValues.instances, 10, true),
-          });
+        if (type && matchedInRelevantFields) {
+          uniqueValues.types.add(type);
         }
 
-        if (uniqueValues.hemibrainTypes.size > 0) {
-          options.push({
-            label: 'Hemibrain Types',
-            options: setToOptions(uniqueValues.hemibrainTypes, 10, false),
-          });
+        if (instance && matchedInRelevantFields) {
+          uniqueValues.instances.add(instance);
+          additionalInfo.set(instance, type || '');
         }
 
-        if (uniqueValues.flywireTypes.size > 0) {
-          options.push({
-            label: 'Flywire Types',
-            options: setToOptions(uniqueValues.flywireTypes, 10, false),
-          });
+        if (hemibrainType && hemibrainType.toLowerCase().includes(lowerInput)) {
+          uniqueValues.hemibrainTypes.add(hemibrainType);
         }
 
-        if (uniqueValues.systematicTypes.size > 0) {
-          options.push({
-            label: 'Systematic Types',
-            options: setToOptions(uniqueValues.systematicTypes, 10, false),
-          });
+        if (flywireType && flywireType.toLowerCase().includes(lowerInput)) {
+          uniqueValues.flywireTypes.add(flywireType);
         }
 
-        if (uniqueValues.bodyIds.size > 0) {
-          options.push({
-            label: 'Body IDs',
-            options: setToOptions(uniqueValues.bodyIds, 10, true),
-          });
+        if (systematicType && systematicType.toLowerCase().includes(lowerInput)) {
+          uniqueValues.systematicTypes.add(systematicType);
         }
 
-        if (uniqueValues.synonyms.size > 0) {
-          options.push({
-            label: 'Synonyms',
-            options: setToOptions(uniqueValues.synonyms, 10, false),
-          });
+        if (itoLeeHl && itoLeeHl.toLowerCase().includes(lowerInput)) {
+          uniqueValues.itoLeeHlValues.add(itoLeeHl);
         }
 
-        return options;
+        if (trumanHl && trumanHl.toLowerCase().includes(lowerInput)) {
+          uniqueValues.trumanHlValues.add(trumanHl);
+        }
+
+        if (synonyms && synonyms.toLowerCase().includes(lowerInput)) {
+          uniqueValues.synonyms.add(synonyms);
+        }
+
+        if (neuronClass && neuronClass.toLowerCase().includes(lowerInput)) {
+          uniqueValues.classes.add(neuronClass);
+        }
+
+        if (entryNerve && entryNerve.toLowerCase().includes(lowerInput)) {
+          uniqueValues.entryNerves.add(entryNerve);
+        }
+
+        if (exitNerve && exitNerve.toLowerCase().includes(lowerInput)) {
+          uniqueValues.exitNerves.add(exitNerve);
+        }
       });
+
+      const options = [];
+
+      const setToOptions = (set, field, limit = 10, showAdditionalInfo = false) => {
+        return [...set].slice(0, limit).map((value) => ({
+          value,
+          label: value,
+          field,
+          additionalInfo: showAdditionalInfo ? additionalInfo.get(value) || '' : '',
+        }));
+      };
+
+      if (uniqueValues.types.size > 0) {
+        options.push({
+          label: 'Types',
+          options: setToOptions(uniqueValues.types, 'type', 10, false),
+        });
+      }
+
+      if (uniqueValues.instances.size > 0) {
+        options.push({
+          label: 'Instances',
+          options: setToOptions(uniqueValues.instances, 'instance', 10, true),
+        });
+      }
+
+      if (uniqueValues.hemibrainTypes.size > 0) {
+        options.push({
+          label: 'Hemibrain Types',
+          options: setToOptions(uniqueValues.hemibrainTypes, 'hemibrainType', 10, false),
+        });
+      }
+
+      if (uniqueValues.flywireTypes.size > 0) {
+        options.push({
+          label: 'Flywire Types',
+          options: setToOptions(uniqueValues.flywireTypes, 'flywireType', 10, false),
+        });
+      }
+
+      if (uniqueValues.systematicTypes.size > 0) {
+        options.push({
+          label: 'Systematic Types',
+          options: setToOptions(uniqueValues.systematicTypes, 'systematicType', 10, false),
+        });
+      }
+
+      if (uniqueValues.itoLeeHlValues.size > 0) {
+        options.push({
+          label: 'Ito-Lee Hemilineage',
+          options: setToOptions(uniqueValues.itoLeeHlValues, 'itoleeHl', 10, false),
+        });
+      }
+
+      if (uniqueValues.trumanHlValues.size > 0) {
+        options.push({
+          label: 'Truman Hemilineage',
+          options: setToOptions(uniqueValues.trumanHlValues, 'trumanHl', 10, false),
+        });
+      }
+
+      if (uniqueValues.classes.size > 0) {
+        options.push({
+          label: 'Classes',
+          options: setToOptions(uniqueValues.classes, 'class', 10, false),
+        });
+      }
+
+      if (uniqueValues.entryNerves.size > 0) {
+        options.push({
+          label: 'Entry Nerves',
+          options: setToOptions(uniqueValues.entryNerves, 'entryNerve', 10, false),
+        });
+      }
+
+      if (uniqueValues.exitNerves.size > 0) {
+        options.push({
+          label: 'Exit Nerves',
+          options: setToOptions(uniqueValues.exitNerves, 'exitNerve', 10, false),
+        });
+      }
+
+      if (uniqueValues.bodyIds.size > 0) {
+        options.push({
+          label: 'Body IDs',
+          options: setToOptions(uniqueValues.bodyIds, 'bodyId', 10, true),
+        });
+      }
+
+      if (uniqueValues.synonyms.size > 0) {
+        options.push({
+          label: 'Synonyms',
+          options: setToOptions(uniqueValues.synonyms, 'synonyms', 10, false),
+        });
+      }
+
+      return options;
+    });
   };
 
   componentWillUnmount() {
