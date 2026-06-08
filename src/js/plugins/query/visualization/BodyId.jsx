@@ -189,7 +189,7 @@ function BodyId(props) {
             donut_small
           </Icon>
         </Tooltip>
-        {/hemibrain|manc/.test(dataSet) && (
+        {/hemibrain|manc|male-cns/.test(dataSet) && (
           <Tooltip title="NeuronBridge">
             <a className={classes.nblink} href={neuronbridgeLink}>
               NB
