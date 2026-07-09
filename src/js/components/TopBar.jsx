@@ -126,9 +126,12 @@ class TopBar extends React.Component {
       .then(result => result.json())
       .then(data => {
         if (data.tos_required) {
-          // Redirect through login with dataset param to trigger TOS acceptance
-          const redirectUrl = encodeURIComponent(`/?dataset=${selectedDataSet.value}`);
-          window.open(`/login?redirect=${redirectUrl}&dataset=${selectedDataSet.value}`, '_self');
+          if (data.tos_url) {
+            window.open(data.tos_url, '_self');
+          } else {
+            const redirectUrl = encodeURIComponent(`/?dataset=${selectedDataSet.value}`);
+            window.open(`/login?redirect=${redirectUrl}&dataset=${selectedDataSet.value}`, '_self');
+          }
           return;
         }
         if (data.message && !data.access) {
