@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
@@ -21,14 +22,7 @@ const styles = theme => ({
   }
 });
 
-function TOSPage({ classes, location }) {
-  const handleAccept = () => {
-    const redirectUrl = encodeURIComponent(
-      `${location.pathname}${location.search}`
-    );
-    window.open(`/login?redirect=${redirectUrl}`, '_self');
-  };
-
+function TOSPage({ classes, dataset, onAccept }) {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -36,14 +30,14 @@ function TOSPage({ classes, location }) {
           Terms of Service Required
         </Typography>
         <Typography variant="body1" paragraph>
-          Before you can access this service, you need to review and accept the
-          Terms of Service. Click the button below to proceed.
+          Terms of Service required for {dataset}. Before you can access this service, you need to
+          review and accept the Terms of Service. Click the button below to proceed.
         </Typography>
         <Button
           variant="contained"
           color="primary"
           className={classes.button}
-          onClick={handleAccept}
+          onClick={onAccept}
         >
           Review Terms of Service
         </Button>
@@ -51,5 +45,12 @@ function TOSPage({ classes, location }) {
     </div>
   );
 }
+
+TOSPage.propTypes = {
+  classes: PropTypes.object.isRequired,
+  dataset: PropTypes.string.isRequired,
+  tosUrl: PropTypes.string,
+  onAccept: PropTypes.func.isRequired
+};
 
 export default withStyles(styles)(TOSPage);
