@@ -7,7 +7,7 @@ const state = Immutable.Map({
   userInfo: 'existinguserinfo',
   loading: false,
   loaded: true,
-  tosRequired: false,
+  tosPending: null,
   token: 'existingxyz',
   loggedIn: true
 });
@@ -16,7 +16,7 @@ const initialState = Immutable.Map({
   userInfo: {},
   loading: false,
   loaded: false,
-  tosRequired: false,
+  tosPending: null,
   token: '',
   loggedIn: false
 });
@@ -27,8 +27,8 @@ describe('user Reducer', () => {
       type: C.LOGIN_USER,
       userInfo: 'newuserinfo',
     };
-    expect(reducer(undefined, action)).toEqual(initialState.set('userInfo', 'newuserinfo').set('tosRequired', false).set('loggedIn', true).set('loaded', true));
-    expect(reducer(state, action)).toEqual(state.set('userInfo', 'newuserinfo').set('tosRequired', false));
+    expect(reducer(undefined, action)).toEqual(initialState.set('userInfo', 'newuserinfo').set('loggedIn', true).set('loaded', true));
+    expect(reducer(state, action)).toEqual(state.set('userInfo', 'newuserinfo'));
   });
 
   it('LOGOUT_USER success', () => {
@@ -39,16 +39,25 @@ describe('user Reducer', () => {
     expect(reducer(state, action)).toEqual(initialState);
   });
 
-  it('TOS_REQUIRED success', () => {
+  it('SET_TOS_PENDING sets and clears the pending card', () => {
     const action = {
-      type: C.TOS_REQUIRED,
+      type: C.SET_TOS_PENDING,
+      tosPending: {
+        dataset: 'dataset',
+        tosUrl: 'https://tos.example/dataset'
+      }
     };
     expect(reducer(undefined, action)).toEqual(
-      initialState.set('loaded', true).set('tosRequired', true).set('loggedIn', false)
+      initialState.set('tosPending', action.tosPending)
     );
     expect(reducer(state, action)).toEqual(
-      state.set('loading', false).set('loaded', true).set('tosRequired', true).set('loggedIn', false)
+      state.set('tosPending', action.tosPending)
     );
+
+    expect(reducer(state.set('tosPending', action.tosPending), {
+      type: C.SET_TOS_PENDING,
+      tosPending: null
+    })).toEqual(state);
   });
 
   it('SET_USER_TOKEN success', () => {

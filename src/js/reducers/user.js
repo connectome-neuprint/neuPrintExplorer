@@ -10,7 +10,7 @@ const userState = Immutable.Map({
   loggedIn: false,
   loading: false,
   loaded: false,
-  tosRequired: false,
+  tosPending: null,
   userInfo: {},
   token: ''
 });
@@ -24,10 +24,10 @@ export default function userReducer(state = userState, action) {
       return state.set('loading', false).set('loaded', true);
     }
     case C.LOGIN_USER: {
-      return state.set('loading', false).set('loaded', true).set('tosRequired', false).set('userInfo', action.userInfo).set('loggedIn', true);
+      return state.set('loading', false).set('loaded', true).set('userInfo', action.userInfo).set('loggedIn', true);
     }
-    case C.TOS_REQUIRED: {
-      return state.set('loading', false).set('loaded', true).set('tosRequired', true).set('loggedIn', false);
+    case C.SET_TOS_PENDING: {
+      return state.set('tosPending', action.tosPending);
     }
     case C.LOGOUT_USER: {
       // clear the login cookie(s) here.
@@ -38,7 +38,7 @@ export default function userReducer(state = userState, action) {
       Cookies.remove('flyem-services');
       Cookies.remove('flyem-services', { path: '/', domain: '.janelia.org' });
       Cookies.remove('flyem-services', { path: '/', domain: window.location.hostname });
-      return state.set('loaded', false).set('tosRequired', false).set('userInfo', {}).set('token', '').set('loggedIn', false);
+      return state.set('loaded', false).set('tosPending', null).set('userInfo', {}).set('token', '').set('loggedIn', false);
     }
     case C.SET_USER_TOKEN: {
       return state.set('token', action.token);
