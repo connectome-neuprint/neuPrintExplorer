@@ -25,6 +25,14 @@ export const handlers = [
     return res(ctx.status(200), ctx.json({"ImageURL":"/mock-image","Email":"test@test.com","AuthLevel":"admin"}));
   }),
 
+  rest.get('/dataset-access', (req, res, ctx) => {
+    return res(ctx.status(200), ctx.json({
+      access: true,
+      tos_required: false,
+      dataset: req.url.searchParams.get('dataset'),
+      level: 'readwrite'
+    }));
+  }),
 
   rest.get('/mock-image', (req, res, ctx) => {
     const binary = Uint8Array.from(atob(base64Image), c => c.charCodeAt(0));
