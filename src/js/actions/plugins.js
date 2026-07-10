@@ -136,6 +136,9 @@ export function fetchData(params, plugin, tabPosition, token) {
         if (resp.error) {
           throw new Error(resp.error);
         }
+        if (resp.tos_required) {
+          throw new Error(resp.message || 'Terms of Service acceptance required');
+        }
 
         // Check for unsafe numbers in the response
         const numberCheck = checkForUnsafeNumbers(resp);
