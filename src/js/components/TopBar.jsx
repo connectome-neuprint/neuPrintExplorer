@@ -21,6 +21,15 @@ import Tooltip from '@mui/material/Tooltip';
 import MetaInfo from './MetaInfo';
 import Login from './Login';
 import { getSiteParams, setQueryString } from '../helpers/queryString';
+import C from '../reducers/constants';
+import {
+  buildDatasetNext,
+  checkDatasetAccess,
+  clearTosGuard,
+  datasetAccessGate,
+  hasTosGuard,
+  setTosGuard
+} from '../helpers/datasetAccess';
 
 import './TopBar.css';
 
@@ -105,42 +114,106 @@ function getDatasetOptions(datasetInfo, isAdmin) {
   }));
 }
 
-class TopBar extends React.Component {
+export class TopBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       showBrainRegions: false
     };
+    this.requestGeneration = 0;
+    this.lastGatedDataset = null;
   }
 
+  componentDidMount() {
+    this.gateLoadedDataset();
+  }
+
+  componentDidUpdate() {
+    this.gateLoadedDataset();
+  }
+
+  applyAccessGate = (dataset, origin, requestedGeneration, result, proceed) => {
+    const gate = datasetAccessGate({
+      origin,
+      requestedGeneration,
+      currentGeneration: this.requestGeneration,
+      result,
+      guardSet: hasTosGuard(dataset)
+    });
+
+    if (gate.action === 'ignore') {
+      return;
+    }
+    if (gate.action === 'redirect') {
+      setTosGuard(dataset);
+      window.open(gate.tosUrl, '_self');
+      return;
+    }
+    if (gate.action === 'card') {
+      this.props.setTosPending({ dataset, tosUrl: gate.tosUrl });
+      return;
+    }
+    if (gate.action === 'deny') {
+      alert(gate.message);
+      return;
+    }
+    if (gate.clearGuard) {
+      clearTosGuard(dataset);
+      const { tosPending, setTosPending } = this.props;
+      if (origin === 'load' && tosPending && tosPending.dataset === dataset) {
+        setTosPending(null);
+      }
+    }
+    proceed();
+  };
+
+  gateLoadedDataset = () => {
+    const { loggedIn, location } = this.props;
+    const dataset = getSiteParams(location).get('dataset');
+    if (!loggedIn || !dataset || dataset === this.lastGatedDataset) {
+      return;
+    }
+
+    this.lastGatedDataset = dataset;
+    const requestedGeneration = ++this.requestGeneration;
+    const next = `${location.pathname}${location.search}`;
+    checkDatasetAccess(dataset, next)
+      .then(result => {
+        this.applyAccessGate(dataset, 'load', requestedGeneration, result, () => {});
+      })
+      .catch(() => {
+        this.applyAccessGate(dataset, 'load', requestedGeneration, null, () => {});
+      });
+  };
+
   handleChange = selectedDataSet => {
+    const dataset = selectedDataSet.value;
     const applyDatasetSwitch = () => {
-      setQueryString({ dataset: selectedDataSet.value });
+      const { location, setTosPending } = this.props;
+      const currentDataset = getSiteParams(location).get('dataset');
+      if (currentDataset && currentDataset !== dataset) {
+        clearTosGuard(currentDataset);
+      }
+      setTosPending(null);
+      setQueryString({ dataset });
       setQueryString({ plugins: [] });
     };
 
-    // Check dataset access (including TOS) before switching
-    fetch(`/dataset-access?dataset=${encodeURIComponent(selectedDataSet.value)}`, {
-      credentials: 'include'
-    })
-      .then(result => result.json())
-      .then(data => {
-        if (data.tos_required) {
-          // Redirect through login with dataset param to trigger TOS acceptance
-          const redirectUrl = encodeURIComponent(`/?dataset=${selectedDataSet.value}`);
-          window.open(`/login?redirect=${redirectUrl}&dataset=${selectedDataSet.value}`, '_self');
-          return;
-        }
-        if (data.message && !data.access) {
-          // No access at all
-          alert(data.message);
-          return;
-        }
-        applyDatasetSwitch();
+    const next = buildDatasetNext(this.props.location, dataset);
+    const requestedGeneration = ++this.requestGeneration;
+    checkDatasetAccess(dataset, next)
+      .then(result => {
+        this.applyAccessGate(dataset, 'selection', requestedGeneration, result, () => {
+          this.lastGatedDataset = dataset;
+          applyDatasetSwitch();
+        });
       })
       .catch(() => {
         // If access check fails, proceed anyway (backward compat)
-        applyDatasetSwitch();
+        if (requestedGeneration === this.requestGeneration) {
+          this.lastGatedDataset = dataset;
+          applyDatasetSwitch();
+        }
       });
   };
 
@@ -228,13 +301,25 @@ TopBar.propTypes = {
   location: PropTypes.object.isRequired,
   loggedIn: PropTypes.bool.isRequired,
   userInfo: PropTypes.object.isRequired,
-  datasetInfo: PropTypes.object.isRequired
+  datasetInfo: PropTypes.object.isRequired,
+  tosPending: PropTypes.object,
+  setTosPending: PropTypes.func.isRequired
 };
 
 const TopBarState = state => ({
   loggedIn: state.user.get('loggedIn'),
   userInfo: state.user.get('userInfo'),
-  datasetInfo: state.neo4jsettings.get('datasetInfo')
+  datasetInfo: state.neo4jsettings.get('datasetInfo'),
+  tosPending: state.user.get('tosPending')
 });
 
-export default withRouter(withStyles(styles)(connect(TopBarState, null)(TopBar)));
+const TopBarDispatch = dispatch => ({
+  setTosPending(tosPending) {
+    dispatch({
+      type: C.SET_TOS_PENDING,
+      tosPending
+    });
+  }
+});
+
+export default withRouter(withStyles(styles)(connect(TopBarState, TopBarDispatch)(TopBar)));

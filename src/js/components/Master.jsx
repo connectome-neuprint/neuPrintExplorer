@@ -16,6 +16,8 @@ import Errors from './Errors';
 import Notification from './Notification';
 import ErrorBoundary from './ErrorBoundary';
 import { NgViewerProvider } from '../contexts/NgViewerContext';
+import C from '../reducers/constants';
+import { acceptPendingTos } from '../helpers/datasetAccess';
 
 import './Master.css';
 
@@ -55,18 +57,6 @@ const TOSPage = React.lazy(() => import('./TOSPage'));
 
 function PrivateRoute({ component: Component, user, ...rest }) {
   if (!user.get('loggedIn')) {
-    if (user.get('tosRequired')) {
-      return (
-        <Route
-          {...rest}
-          render={privateProps => (
-            <Suspense fallback={<div>loading...</div>}>
-              <TOSPage {...privateProps} />
-            </Suspense>
-          )}
-        />
-      );
-    }
     if (user.get('loaded')) {
       // have to encode the uri here to make sure the &'s are escaped. If they aren't
       // they wont make it through the redirect code.
@@ -92,7 +82,10 @@ PrivateRoute.propTypes = {
 
 
 
-function Master({ classes, user }) {
+function Master({ classes, user, setTosPending }) {
+  const tosPending = user.get('tosPending');
+  const acceptPendingTosCard = () =>
+    acceptPendingTos(tosPending.dataset, history.location, () => setTosPending(null));
 
   // TODO: Have a router switch for logged in vs logged out users.
   // - loggedIn application has all the details and code we need for the full
@@ -111,17 +104,25 @@ function Master({ classes, user }) {
             <div className={classes.toolbar} />
             <NgViewerProvider>
             <Suspense fallback={<div>loading...</div>}>
-              <Switch>
-                <Route exact path="/" component={Home} />
-                  <PrivateRoute user={user} path="/results" component={Results} />
-                <Route path="/help" component={Help} />
-                <PrivateRoute user={user} path="/favorites" component={Favorites} />
-                <Route path="/about" component={About} />
-                <PrivateRoute user={user} path="/account" component={Account} />
-                <Route path="/workstation" component={Workstation} />
-                <Route path="/view" component={Workstation} />
-                <Route component={NoMatch} />
-              </Switch>
+              {tosPending ? (
+                <TOSPage
+                  dataset={tosPending.dataset}
+                  tosUrl={tosPending.tosUrl}
+                  onAccept={acceptPendingTosCard}
+                />
+              ) : (
+                <Switch>
+                  <Route exact path="/" component={Home} />
+                    <PrivateRoute user={user} path="/results" component={Results} />
+                  <Route path="/help" component={Help} />
+                  <PrivateRoute user={user} path="/favorites" component={Favorites} />
+                  <Route path="/about" component={About} />
+                  <PrivateRoute user={user} path="/account" component={Account} />
+                  <Route path="/workstation" component={Workstation} />
+                  <Route path="/view" component={Workstation} />
+                  <Route component={NoMatch} />
+                </Switch>
+              )}
             </Suspense>
             </NgViewerProvider>
           </main>
@@ -135,11 +136,21 @@ function Master({ classes, user }) {
 
 Master.propTypes = {
   classes: PropTypes.object.isRequired,
-  user: PropTypes.object.isRequired
+  user: PropTypes.object.isRequired,
+  setTosPending: PropTypes.func.isRequired
 };
 
 const MasterState = state => ({
   user: state.user
 });
 
-export default withStyles(styles)(connect(MasterState)(Master));
+const MasterDispatch = dispatch => ({
+  setTosPending(tosPending) {
+    dispatch({
+      type: C.SET_TOS_PENDING,
+      tosPending
+    });
+  }
+});
+
+export default withStyles(styles)(connect(MasterState, MasterDispatch)(Master));
