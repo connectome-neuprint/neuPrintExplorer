@@ -59,80 +59,82 @@ function BodyId(props) {
   const [modal, setModal] = useState(false);
   const { ngViewerState, setNgViewerState } = useContext(NgViewerContext);
 
+  // Both updaters replace the layer rather than editing it in place.
+  // react-neuroglancer decides whether to push state into the viewer by
+  // comparing serialised state, so an in-place edit is invisible to it: the
+  // previous and next props end up referencing the same mutated layer object
+  // and the update is dropped.
+  function withUpdatedSegments(datasetState, dataSet, segments) {
+    return {
+      ...datasetState,
+      layers: datasetState.layers.map((layer) =>
+        layer.name === dataSet ? { ...layer, segments } : layer
+      ),
+    };
+  }
+
   function removeBodyFromNGstate(bodyId, dataSet) {
     setNgViewerState((prevState) => {
-      const newDatasetState = { ...prevState[dataSet] };
+      const datasetState = prevState[dataSet];
       // if the layers haven't loaded yet, then don't do anything
-      if (!newDatasetState.layers) {
+      if (!datasetState || !datasetState.layers) {
         return prevState;
       }
 
-      const layerOfInterest = newDatasetState.layers.find((layer) => layer.name === dataSet);
+      const layerOfInterest = datasetState.layers.find((layer) => layer.name === dataSet);
 
-      if (!layerOfInterest) {
+      if (!layerOfInterest || !layerOfInterest.segments) {
         return prevState;
       }
 
       // remove the bodyId from the layer segments array
-      if (layerOfInterest && layerOfInterest.segments) {
-        const updatedSegments = layerOfInterest.segments.filter((id) => id !== bodyId);
-        layerOfInterest.segments = updatedSegments;
+      const segments = layerOfInterest.segments.filter((id) => id !== bodyId);
+      if (segments.length === layerOfInterest.segments.length) {
+        return prevState;
       }
 
-      const newState = { ...prevState, [dataSet]: newDatasetState };
-      return newState;
+      return { ...prevState, [dataSet]: withUpdatedSegments(datasetState, dataSet, segments) };
     });
     // remove the bodyID from the json stored in the url.
     actions.removeBodyFrom3D(bodyId, dataSet);
   }
 
+  function addBodyToNGstate(bodyId, dataSet) {
+    const maxRetries = 20; // Retry up to 20 times (100ms * 20 = 2 seconds)
+    let attempts = 0;
 
-  function addBodyToNGstate(bodyId, dataSet, color) {
-		const maxRetries = 20; // Retry up to 20 times (100ms * 20 = 2 seconds)
-		let attempts = 0;
-
-		function tryUpdateState() {
-			setNgViewerState((prevState) => {
-				const newDatasetState = { ...prevState[dataSet] };
+    function tryUpdateState() {
+      setNgViewerState((prevState) => {
+        const datasetState = prevState[dataSet];
         // If layers haven't loaded, retry
-        if (!newDatasetState.layers) {
+        if (!datasetState || !datasetState.layers) {
           if (attempts < maxRetries) {
-            attempts++;
+            attempts += 1;
             setTimeout(tryUpdateState, 100); // Retry after 100ms
-            return prevState;
           }
           return prevState; // Give up after maxRetries
         }
 
-				const layerOfInterest = newDatasetState.layers.find((layer) => layer.name === dataSet);
+        const layerOfInterest = datasetState.layers.find((layer) => layer.name === dataSet);
 
-				if (!layerOfInterest) {
-					return prevState;
-				}
-				// if the bodyIds list hasn't changed, then don't do anything
-				if (layerOfInterest && layerOfInterest.segments) {
-					if (layerOfInterest.segments.includes(bodyId)) {
-						return prevState;
-					}
-				}
+        if (!layerOfInterest) {
+          return prevState;
+        }
 
-				// merge the new bodyIds into the layer segments array
-				if (layerOfInterest) {
-					if (layerOfInterest.segments) {
-						const bodyIds = [bodyId];
-						const updatedSegments = [...new Set([...layerOfInterest.segments, ...bodyIds])];
-						updatedSegments.sort((a, b) => a.localeCompare(b));
-						layerOfInterest.segments = updatedSegments;
-					} else {
-						layerOfInterest.segments = [bodyId];
-					}
-				}
+        // if the bodyIds list hasn't changed, then don't do anything
+        const currentSegments = layerOfInterest.segments || [];
+        if (currentSegments.includes(bodyId)) {
+          return prevState;
+        }
 
-				const newState = { ...prevState, [dataSet]: newDatasetState };
-				return newState;
-			});
-		}
-		tryUpdateState();
+        // merge the new bodyId into the layer segments array
+        const segments = [...new Set([...currentSegments, bodyId])];
+        segments.sort((a, b) => a.localeCompare(b));
+
+        return { ...prevState, [dataSet]: withUpdatedSegments(datasetState, dataSet, segments) };
+      });
+    }
+    tryUpdateState();
   }
 
   function handleRemoveClick() {
@@ -142,7 +144,7 @@ function BodyId(props) {
 
   function handleClick() {
     show3DView(children, dataSet, actions, options.color);
-    addBodyToNGstate(children.toString(), dataSet, options.color);
+    addBodyToNGstate(children.toString(), dataSet);
   }
 
 

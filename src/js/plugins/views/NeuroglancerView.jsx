@@ -3,7 +3,14 @@ import PropTypes from 'prop-types';
 import { setQueryString, getQueryObject } from 'helpers/queryString';
 import { NgViewerContext } from 'contexts/NgViewerContext';
 
-const Neuroglancer = React.lazy(() => import('@janelia-flyem/react-neuroglancer'));
+const Neuroglancer = React.lazy(() =>
+  // The viewer's stylesheet is a module import in neuroglancer 3, so it loads with
+  // the same lazy chunk rather than from a copied ng.css in index.html.
+  Promise.all([
+    import('@janelia-flyem/neuroglancer/janelia/style.css'),
+    import('@janelia-flyem/react-neuroglancer'),
+  ]).then(([, neuroglancerModule]) => neuroglancerModule)
+);
 
 function debounce(func, wait, immediate) {
   let timeout;
@@ -120,19 +127,29 @@ export default function NeuroGlancerView({ query }) {
         }
       }
 
-      // merge the new bodyIds into the layer segments array
-      if (layerOfInterest) {
-        if (layerOfInterest.segments) {
-          const updatedSegments = [...new Set([...layerOfInterest.segments, ...bodyIds])];
-          updatedSegments.sort((a, b) => a.localeCompare(b));
-          layerOfInterest.segments = updatedSegments;
-        } else if (bodyIds.length > 0) {
-          layerOfInterest.segments = bodyIds;
-        }
+      // merge the new bodyIds into the layer segments array, replacing the layer
+      // rather than editing it in place: react-neuroglancer compares serialised
+      // state to decide whether to push it into the viewer, and an in-place edit
+      // leaves the previous and next props pointing at the same object.
+      let segments = layerOfInterest.segments;
+      if (segments) {
+        segments = [...new Set([...segments, ...bodyIds])];
+        segments.sort((a, b) => a.localeCompare(b));
+      } else if (bodyIds.length > 0) {
+        segments = bodyIds;
+      } else {
+        return prevState;
       }
 
-      const newState = { ...prevState, [dataset]: newDatasetState };
-      return newState;
+      return {
+        ...prevState,
+        [dataset]: {
+          ...newDatasetState,
+          layers: newDatasetState.layers.map((layer) =>
+            layer.name === dataset ? { ...layer, segments } : layer
+          ),
+        },
+      };
     });
     // We really only want to run this once when a new dataset
     // is loaded.
