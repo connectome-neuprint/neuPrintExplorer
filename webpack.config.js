@@ -16,21 +16,8 @@ const miniCssExtractPlugin = new MiniCssExtractPlugin({
 const copyWebpackPlugin = new CopyWebpackPlugin({
   patterns: [
     { from: 'public', to: 'public', toType: 'dir' },
-    {
-      from: 'node_modules/@janelia-flyem/neuroglancer/dist/module/chunk_worker.bundle.js',
-      to: 'chunk_worker.bundle.js',
-      toType: 'file'
-    },
-    {
-      from: 'node_modules/@janelia-flyem/neuroglancer/dist/module/async_computation.bundle.js',
-      to: 'async_computation.bundle.js',
-      toType: 'file'
-    },
-    {
-      from: 'node_modules/@janelia-flyem/neuroglancer/dist/module/main.css',
-      to: 'ng.css',
-      toType: 'file'
-    },
+    // Neuroglancer 3 spawns its workers with `new Worker(new URL(...), { type: 'module' })`
+    // and imports its own stylesheets from JS, so webpack emits both. Nothing to copy.
     {
       from: 'public/mockServiceWorker.js',
       to: 'mockServiceWorker.js',
