@@ -63,7 +63,13 @@ module.exports = {
       {
         test: /\.jsx?$/,
         use: ['source-map-loader'],
-        exclude: [/node_modules\/@janelia-flyem\/neuroglancer/, /node_modules\/swagger-client/],
+        // nifti-reader-js is a neuroglancer dependency that ships source maps
+        // pointing at .ts files it does not publish.
+        exclude: [
+          /node_modules\/@janelia-flyem\/neuroglancer/,
+          /node_modules\/nifti-reader-js/,
+          /node_modules\/swagger-client/,
+        ],
         enforce: 'pre'
       },
       {
