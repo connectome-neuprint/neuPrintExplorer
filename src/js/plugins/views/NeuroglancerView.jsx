@@ -162,7 +162,9 @@ export default function NeuroGlancerView({ query }) {
   const onViewerStateChanged = useCallback(
     debounce(
       (state) => {
-        const layer = state.layers.find((l) => l.name === dataset);
+        // The viewer can report a state with no layers while it is rebuilding them,
+        // and this callback is debounced so it can land in that window.
+        const layer = state.layers?.find((l) => l.name === dataset);
         let neuroglancerBodyIds = [];
         if (layer && layer.segments) {
           neuroglancerBodyIds = layer.segments;
