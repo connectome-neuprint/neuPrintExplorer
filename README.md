@@ -43,3 +43,14 @@ the web application:
     % neuPrintHTTP -port 11000 config.json
 
 config.json is a configuration file for accessing the backend and pointing to the 'build' created by this distribution.  For examples, please see neuPrintHTTP documentation.
+
+## Authentication
+
+From v1.68.0 onward, neuPrintExplorer's login and dataset-access flow expects a
+[neuPrintHTTP](https://github.com/connectome-neuprint/neuPrintHTTP) server (v1.8.0 or later)
+backed by a [DatasetGateway](https://github.com/JaneliaSciComp/DatasetGateway) (DSG),
+which manages user grants, terms-of-service acceptance, and public/anonymous access.
+
+Deployments that use the legacy Google-auth / `authorized.json` model should build the
+pre-DSG pairing instead: neuPrintExplorer **v1.67.3** (which includes the Neuroglancer 3
+viewer; use v1.67.2 for the older viewer) with neuPrintHTTP **v1.7.10**.
