@@ -109,10 +109,7 @@ class Login extends React.Component {
     const { logoutUser } = this.props;
     this.setState({ isLoggedIn: false });
     logoutUser();
-    // POST to /logout so the server can clear the HttpOnly dsg_token
-    // cookie via DSG's logout endpoint.
-    fetch('/logout', { method: 'POST', credentials: 'include' })
-      .finally(() => { window.location = '/'; });
+    window.location.assign('/logout');
   };
 
   launchUserPopup = event => {
