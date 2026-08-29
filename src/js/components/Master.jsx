@@ -15,6 +15,7 @@ import QueryDrawer from './QueryDrawer';
 import Errors from './Errors';
 import Notification from './Notification';
 import ErrorBoundary from './ErrorBoundary';
+import AnnouncementBanner from './AnnouncementBanner';
 import { NgViewerProvider } from '../contexts/NgViewerContext';
 import C from '../reducers/constants';
 import { acceptPendingTos } from '../helpers/datasetAccess';
@@ -33,9 +34,15 @@ const Login = React.lazy(() => import('./LoginPage'));
 
 // adapted from material ui example
 const styles = theme => ({
-  root: {
+  master: {
     height: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    overflow: 'hidden'
+  },
+  root: {
     flexGrow: 1,
+    minHeight: 0,
     zIndex: 1,
     overflow: 'hidden',
     position: 'relative',
@@ -94,43 +101,46 @@ function Master({ classes, user, setTosPending }) {
   // lifting code.
   // eg: return user ? <AuthenticatedApp /> : <UnauthenticatedApp />
   return (
-    <Router history={history}>
-      <div className={classes.root}>
-        <ErrorBoundary>
-          <TopBar />
-          <SideBar />
-          <QueryDrawer />
-          <main className={classes.content}>
-            <div className={classes.toolbar} />
-            <NgViewerProvider>
-            <Suspense fallback={<div>loading...</div>}>
-              {tosPending ? (
-                <TOSPage
-                  dataset={tosPending.dataset}
-                  tosUrl={tosPending.tosUrl}
-                  onAccept={acceptPendingTosCard}
-                />
-              ) : (
-                <Switch>
-                  <Route exact path="/" component={Home} />
-                    <PrivateRoute user={user} path="/results" component={Results} />
-                  <Route path="/help" component={Help} />
-                  <PrivateRoute user={user} path="/favorites" component={Favorites} />
-                  <Route path="/about" component={About} />
-                  <PrivateRoute user={user} path="/account" component={Account} />
-                  <Route path="/workstation" component={Workstation} />
-                  <Route path="/view" component={Workstation} />
-                  <Route component={NoMatch} />
-                </Switch>
-              )}
-            </Suspense>
-            </NgViewerProvider>
-          </main>
-          <Errors />
-          <Notification />
-        </ErrorBoundary>
-      </div>
-    </Router>
+    <div className={classes.master}>
+      <AnnouncementBanner />
+      <Router history={history}>
+        <div className={classes.root}>
+          <ErrorBoundary>
+            <TopBar />
+            <SideBar />
+            <QueryDrawer />
+            <main className={classes.content}>
+              <div className={classes.toolbar} />
+              <NgViewerProvider>
+              <Suspense fallback={<div>loading...</div>}>
+                {tosPending ? (
+                  <TOSPage
+                    dataset={tosPending.dataset}
+                    tosUrl={tosPending.tosUrl}
+                    onAccept={acceptPendingTosCard}
+                  />
+                ) : (
+                  <Switch>
+                    <Route exact path="/" component={Home} />
+                      <PrivateRoute user={user} path="/results" component={Results} />
+                    <Route path="/help" component={Help} />
+                    <PrivateRoute user={user} path="/favorites" component={Favorites} />
+                    <Route path="/about" component={About} />
+                    <PrivateRoute user={user} path="/account" component={Account} />
+                    <Route path="/workstation" component={Workstation} />
+                    <Route path="/view" component={Workstation} />
+                    <Route component={NoMatch} />
+                  </Switch>
+                )}
+              </Suspense>
+              </NgViewerProvider>
+            </main>
+            <Errors />
+            <Notification />
+          </ErrorBoundary>
+        </div>
+      </Router>
+    </div>
   );
 };
 
