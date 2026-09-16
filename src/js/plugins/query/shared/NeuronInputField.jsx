@@ -162,6 +162,18 @@ class NeuronInputField extends React.Component {
     this.checkFulltextSupport();
   }
 
+  componentDidUpdate(prevProps) {
+    const { dataSet } = this.props;
+    // useFastQuery describes one dataset's capabilities, and datasets differ:
+    // of the 16 currently deployed, only 6 carry the fulltext index. Carrying a
+    // stale 'true' into a dataset without it makes queryNodes throw, which
+    // fetchOptions turns into an empty suggestion list rather than an error.
+    // Reset first so the gap before the re-check resolves uses the slow query.
+    if (dataSet !== prevProps.dataSet) {
+      this.setState({ useFastQuery: false }, () => this.checkFulltextSupport());
+    }
+  }
+
   checkFulltextSupport() {
     const { dataSet } = this.props;
 
