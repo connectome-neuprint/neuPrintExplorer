@@ -25,20 +25,33 @@ formatOptionLabel.propTypes = {
   additionalInfo: PropTypes.string.isRequired,
 };
 
+// The fulltext index buildFastQuery depends on. A dataset without it cannot
+// serve that query at all -- db.index.fulltext.queryNodes throws
+// IllegalArgumentException rather than returning no rows -- so
+// checkFulltextSupport() below looks for it by name before enabling the query.
+const FULLTEXT_INDEX_NAME = 'find_neurons_fulltext_properties_index';
+
 function buildFastQuery(inputValue, bodyId) {
   return `WITH toLower('${inputValue}') as q, ${bodyId} as user_body
 
 // Full-text search wrapped in subquery to preserve pipeline when no results
 CALL {
   WITH q
-  CALL db.index.fulltext.queryNodes('find_neurons_fulltext_properties_index', '*' + q + '*')
+  CALL db.index.fulltext.queryNodes('${FULLTEXT_INDEX_NAME}', '*' + q + '*')
   YIELD node as n
   RETURN collect(n) as textMatches
 }
 
-// Add bodyId match if specified
+// Add bodyId match if specified.
+//
+// The aggregation is deliberately split across two WITH clauses. Combining
+// collect(b) with the 'textMatches + ...' expression in a single clause makes
+// textMatches an implicit grouping key; Cypher 4.4 accepted that, and Cypher 5
+// rejects it (42I18). Splitting it aggregates first, then adds the lists, which
+// both language versions accept.
 OPTIONAL MATCH (b:Neuron) WHERE user_body <> 0 AND b.bodyId = user_body
-WITH textMatches + collect(b) as allMatches, q, user_body
+WITH textMatches, q, user_body, collect(b) as bodyMatches
+WITH textMatches + bodyMatches as allMatches, q, user_body
 UNWIND allMatches as n
 
 WITH DISTINCT n, q, user_body,
@@ -149,35 +162,62 @@ class NeuronInputField extends React.Component {
     this.checkFulltextSupport();
   }
 
+  componentDidUpdate(prevProps) {
+    const { dataSet } = this.props;
+    // useFastQuery describes one dataset's capabilities, and datasets differ:
+    // of the 16 currently deployed, only 6 carry the fulltext index. Carrying a
+    // stale 'true' into a dataset without it makes queryNodes throw, which
+    // fetchOptions turns into an empty suggestion list rather than an error.
+    // Reset first so the gap before the re-check resolves uses the slow query.
+    if (dataSet !== prevProps.dataSet) {
+      this.setState({ useFastQuery: false }, () => this.checkFulltextSupport());
+    }
+  }
+
   checkFulltextSupport() {
     const { dataSet } = this.props;
 
-    const versionCypher = `CALL dbms.components() YIELD versions
+    // Pinned to the kernel row: on the CalVer line dbms.components() returns a
+    // second row for Cypher (versions ["5", "25"]), so reading the first row
+    // blind depends on row order rather than on asking for what we mean.
+    const versionCypher = `CALL dbms.components() YIELD name, versions
+WITH name, versions WHERE name = 'Neo4j Kernel'
 RETURN versions[0] as version`;
 
     runCypher(dataSet, versionCypher)
       .then((resp) => {
         if (!resp.data || !resp.data[0]) {
-          return;
+          return null;
         }
         const version = resp.data[0][0];
-        const majorMinor = parseFloat(version);
-        if (majorMinor < 4.4) {
-          return;
+        // 4.4 is the floor because buildFastQuery uses a CALL {} subquery,
+        // which 3.5 cannot parse. parseFloat yields 3.5 for '3.5.3' and 2026
+        // for '2026.08.1', so both ends of the deployed fleet classify right.
+        if (parseFloat(version) < 4.4) {
+          return null;
         }
 
-        const indexCypher = `CALL db.indexes() YIELD name
-WITH collect(name) as indexNames
-RETURN 'find_neurons_fulltext_properties_index' IN indexNames as hasIndex`;
+        // SHOW INDEXES, not db.indexes(): that procedure was removed in Neo4j
+        // 5.0, so against a 5.x or CalVer server the old call threw, the catch
+        // below swallowed it, and the fast query was silently never used --
+        // correct results, but permanently on the slow path. SHOW INDEXES is
+        // accepted by 4.4 and every later version alike.
+        const indexCypher = `SHOW INDEXES YIELD name, state
+WHERE name = '${FULLTEXT_INDEX_NAME}'
+RETURN state`;
 
         return runCypher(dataSet, indexCypher).then((indexResp) => {
-          if (indexResp.data && indexResp.data[0] && indexResp.data[0][0] === true) {
+          const state = indexResp.data && indexResp.data[0] && indexResp.data[0][0];
+          // Require ONLINE: a POPULATING index answers queries with partial
+          // results, which would drop matches with no error anywhere.
+          if (state === 'ONLINE') {
             this.setState({ useFastQuery: true });
           }
         });
       })
       .catch(() => {
-        // If the check fails, fall back to the slow query
+        // Any failure leaves useFastQuery false, which is the safe direction:
+        // buildSlowQuery returns the same rows without needing the index.
       });
   }
 
