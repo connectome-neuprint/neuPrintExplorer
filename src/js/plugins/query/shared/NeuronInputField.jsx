@@ -31,6 +31,32 @@ formatOptionLabel.propTypes = {
 // checkFulltextSupport() below looks for it by name before enabling the query.
 const FULLTEXT_INDEX_NAME = 'find_neurons_fulltext_properties_index';
 
+// The properties both queries rank on. The fulltext index must cover all of
+// them before buildFastQuery can be used: the index is how that query finds
+// candidates at all, so a neuron whose only match is in an unindexed property
+// is never considered, and the search quietly returns fewer rows than
+// buildSlowQuery would -- no error anywhere. Measured on
+// neuprint-test.janelia.org: flywire-fafb:v783b has an ONLINE index covering
+// only type/instance/synonyms, and searching "a" there returned 22,371 rows
+// against the slow query's 53,226, losing 58% of results.
+//
+// Kept in step by hand with the two lists inside buildFastQuery and
+// buildSlowQuery below; those are left byte-identical because their exact text
+// has been verified equivalent against production data.
+const SEARCH_PROPERTIES = [
+  'type',
+  'instance',
+  'hemibrainType',
+  'flywireType',
+  'systematicType',
+  'itoleeHl',
+  'trumanHl',
+  'synonyms',
+  'class',
+  'entryNerve',
+  'exitNerve',
+];
+
 function buildFastQuery(inputValue, bodyId) {
   return `WITH toLower('${inputValue}') as q, ${bodyId} as user_body
 
@@ -202,15 +228,31 @@ RETURN versions[0] as version`;
         // below swallowed it, and the fast query was silently never used --
         // correct results, but permanently on the slow path. SHOW INDEXES is
         // accepted by 4.4 and every later version alike.
-        const indexCypher = `SHOW INDEXES YIELD name, state
+        // Ask for the indexed properties as well as the state. An index that
+        // exists is not enough -- it has to cover every property the query
+        // ranks on, or results go missing silently. See SEARCH_PROPERTIES.
+        //
+        // The comparison is done here rather than in Cypher because UNWIND is
+        // not accepted after SHOW INDEXES on every supported version, while
+        // YIELD ... WHERE ... RETURN is. Verified to return the same shape on
+        // 4.4.16 and on 2026.08.1.
+        const indexCypher = `SHOW INDEXES YIELD name, state, properties
 WHERE name = '${FULLTEXT_INDEX_NAME}'
-RETURN state`;
+RETURN state, properties`;
 
         return runCypher(dataSet, indexCypher).then((indexResp) => {
-          const state = indexResp.data && indexResp.data[0] && indexResp.data[0][0];
+          const row = indexResp.data && indexResp.data[0];
+          if (!row) {
+            return;
+          }
+          const [state, properties] = row;
           // Require ONLINE: a POPULATING index answers queries with partial
           // results, which would drop matches with no error anywhere.
-          if (state === 'ONLINE') {
+          if (state !== 'ONLINE' || !Array.isArray(properties)) {
+            return;
+          }
+          const covered = SEARCH_PROPERTIES.every((prop) => properties.includes(prop));
+          if (covered) {
             this.setState({ useFastQuery: true });
           }
         });
