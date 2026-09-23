@@ -68,21 +68,41 @@ The client deployed on `neuprint.janelia.org` enables the fast path whenever
 the index *name* exists -- it checks neither `ONLINE` nor coverage. Measured
 coverage of every indexed dataset across the four production servers:
 
-| server | dataset | index | covered |
-|---|---|---|---|
-| `neuprint` | `male-cns:v1.0` | ONLINE | **11/11** |
-| `neuprint-yakuba` | `yakuba-vnc` | ONLINE | 3/11 |
-| `neuprint-fish2` | `fish2` | ONLINE | 3/11 |
-| `neuprint-fish2` | `fish2:v0.6` | ONLINE | 3/11 |
+| server | dataset | index | covered | served vs complete, term `a` |
+|---|---|---|---|---|
+| `neuprint` | `banc:v888` | ONLINE | 3/11 | 29,131 / 87,189 -- **66.6% lost** |
+| `neuprint` | `male-cns:v1.0` | ONLINE | **11/11** | 67,449 / 67,449 -- none lost |
+| `neuprint-yakuba` | `yakuba-vnc` | ONLINE | 3/11 | 6,002 / 9,564 -- **37.2% lost** |
+| `neuprint-fish2` | `fish2` | ONLINE | 3/11 | 4,288 / 4,288 -- none lost |
+| `neuprint-fish2` | `fish2:v0.7` | ONLINE | 3/11 | 4,077 / 4,077 -- none lost |
 
-Every other dataset on those four servers has no fulltext index at all, or is
-served from Neo4j 3.5, and so is on the slow query already -- correct results,
-no fast path. `neuprint-pre` has no indexed dataset. Only the four above can
-take the fast path, so the table is the whole exposure.
+Every dataset on all four servers was enumerated with a token and probed, so
+this is the complete exposure: five indexed datasets, four of them 3/11, two
+of those currently losing rows. `neuprint-pre` has no fulltext index on
+either of its datasets. Everything not listed has no index or is served from
+Neo4j 3.5, so it is already on the slow query -- correct results, no fast
+path.
 
-The three-property ones are all missing the same eight: `hemibrainType`,
-`flywireType`, `systematicType`, `itoleeHl`, `trumanHl`, `class`,
-`entryNerve`, `exitNerve`.
+`banc:v888` on the primary production server is the worst case in the fleet,
+worse than `flywire-fafb:v783b`'s 58% on the test server.
+
+Two notes on reading these numbers. They drift: yakuba measured
+5,983 / 9,541 one day and 6,002 / 9,564 the next, because it is under active
+annotation. And the fish2 snapshot rolls -- `fish2:v0.6` became `fish2:v0.7`
+within a week, and the new one was built with the same 3/11 index, which
+confirms the incomplete index comes from the ingestion pipeline rather than
+from a one-off.
+
+The four three-property indexes are all missing the same eight:
+`hemibrainType`, `flywireType`, `systematicType`, `itoleeHl`, `trumanHl`,
+`class`, `entryNerve`, `exitNerve`.
+
+**Audit these servers authenticated.** `/api/dbmeta/datasets` returns a
+different set depending on the token: an unauthenticated client sees nine
+datasets on `neuprint.janelia.org`, a token holder sees ten. `banc:v888` --
+the single worst case here -- is one of the hidden ones, and an earlier
+unauthenticated pass concluded the whole server was unaffected because of it.
+A clean result from an anonymous audit means nothing.
 
 ### The gap is not the damage
 
@@ -102,6 +122,11 @@ nothing. The difference is annotation, not indexing: when the index builder
 was fixed in `flyem-snapshot`, `class` was measured at 24% populated on
 yakuba and under 1% on fish2. That also matches the 42% figure taken
 independently at the time.
+
+So the gap sets the ceiling and annotation decides how much of it is
+realised. `banc:v888` shows the ceiling is high: same 3/11 gap, and it loses
+66.6% because its uncovered properties are heavily populated. fish2 is the
+same gap with the loss not yet realised.
 
 ### Reproducing it in the browser
 
@@ -141,7 +166,9 @@ Two things follow, and the second is the reason to fix this rather than wait:
   the regression against. Yakuba is what that looks like after it happens.
 
 `male-cns:v1.0` is 11/11 and was verified to return identical rows from both
-queries, so `neuprint.janelia.org` itself is unaffected.
+queries, so a complete index does behave correctly under the fast path. It is
+not representative of its server, though: `banc:v888` sits alongside it on
+`neuprint.janelia.org` with a 3/11 index and loses two thirds of its results.
 
 ### How bad is this really, and is class search even wanted?
 
@@ -262,11 +289,71 @@ rather than a paraphrase of it. The useful checks:
 2. For any dataset where the decision is *fast*: run both queries with the
    same term and compare the full row sets, not just the counts. They must be
    identical.
-3. Dataset switching cannot be checked through the API. In the browser, start
-   a search on a dataset that uses the fast path, switch to one that does not
-   without reloading, and confirm suggestions still appear. `useFastQuery` is
-   reset on a dataset change precisely because a stale `true` makes
-   `queryNodes` throw, and `fetchOptions` turns that into an empty list.
+3. Dataset switching cannot be checked through the API; it needs a browser.
+   Switch datasets without reloading and confirm the search still behaves.
+
+   **Pick the target dataset carefully.** "Confirm suggestions still appear"
+   is only a valid test when the new dataset has *no* index, because that is
+   what makes a stale `useFastQuery: true` throw
+   `IllegalArgumentException` and leaves the dropdown empty. Switch to a
+   dataset that *has* an incomplete index and a stale flag does not throw at
+   all -- the fast query runs and simply returns less, so the dropdown looks
+   fine. The discriminator there is which groups appear, not whether any do.
+
+### Verified in the browser
+
+Run against `neuprint-test.janelia.org` with this branch deployed,
+2026-09-23:
+
+| check | dataset | result |
+|---|---|---|
+| coverage check falls back | `flywire-fafb:v783b` (3/11) | searching `visual` offers a `Classes` group -- previously nothing from `class` |
+| fast path still used | `male-cns:v1.0` (11/11) | searching `DN` returns suggestions as before |
+| flag re-evaluated on switch | `male-cns:v1.0` -> `flywire-fafb:v783b`, no reload | `Classes` group appears, so the flag was re-checked rather than carried over |
+
+The third is the first time the `componentDidUpdate` reset added in `5571890`
+has actually been exercised; it shipped in PR #383 untested, because the API
+cannot reach it. It used the positive discriminator described above rather
+than an empty-dropdown test, for the reason given there.
+
+`visual` was chosen because 11,386 neurons on `flywire-fafb:v783b` carry it in
+`class` and it appears in no `type`, `instance` or `synonyms`, so only a
+`class` search can find them. `DN` matches on all three datasets, so a switch
+cannot come up empty merely because the term does not apply.
+
+### Nothing is lost any more, measured
+
+The table under *Why coverage matters* compares the two **queries**, and those
+numbers are unchanged by this branch: `flywire-fafb:v783b` still has a 3/11
+index, so its fast query still loses 58%. What changed is which query runs.
+
+So the useful measure is what a user now actually receives versus the complete
+result set. For every dataset on `neuprint-test.janelia.org`, the query the
+client would choose was run and compared against `buildSlowQuery` as ground
+truth. Term `a`, the worst case from the earlier table:
+
+| dataset | query used | rows served | complete | lost |
+|---|---|---|---|---|
+| `flywire-fafb:v783b` | slow | 53,226 | 53,226 | **0** |
+| `hemibrain:v1.2.1` | slow | 9,058 | 9,058 | **0** |
+| `male-cns:v0.9` | slow | 67,411 | 67,411 | **0** |
+| `male-cns:v1.0` | **fast** | 67,449 | 67,449 | **0** |
+| `manc:v1.0` | slow | 15,474 | 15,474 | **0** |
+| `manc:v1.2.1` | slow | 16,457 | 16,457 | **0** |
+| `manc:v1.2.3` | slow | 16,459 | 16,459 | **0** |
+| `mushroombody` | slow | 302 | 302 | **0** |
+| `optic-lobe:v1.0.1` | slow | 7,294 | 7,294 | **0** |
+| `optic-lobe:v1.1` | slow | 7,946 | 7,946 | **0** |
+
+`flywire-fafb:v783b` is the row that matters: 53,226 of 53,226 where the fast
+query would have returned 22,371. `male-cns:v1.0` is the other one -- it still
+takes the fast path, and still returns the complete set, so the check is not
+merely disabling the optimisation everywhere.
+
+The cost is on that first row too. `flywire-fafb:v783b` now scans all 167,914
+neurons with eleven `CONTAINS` tests per row on every keystroke. Correct but
+slow is the intended trade; the way to get correct *and* fast is to give the
+dataset a complete index.
 
 ## A known duplication
 
