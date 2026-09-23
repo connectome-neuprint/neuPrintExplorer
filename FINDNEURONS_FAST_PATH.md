@@ -242,6 +242,51 @@ That leaves a product question this repository cannot answer on its own:
 The coverage check is worth having either way: it only ensures the fast
 and slow queries agree, whatever set of fields they end up searching.
 
+#### Four different answers to "what is searchable"
+
+The question is sharper than it first looks, because the eleven searched
+properties are hardcoded while a dataset's own annotation vocabulary is not.
+Four parts of the UI disagree:
+
+| where | what it says is searchable |
+|---|---|
+| the input's label | "Neuron Instance, Type or BodyId" -- three fields |
+| `buildSlowQuery` / `buildFastQuery` | eleven hardcoded properties |
+| the dropdown's groups | twelve sections, including `Classes` |
+| the results columns | per dataset, from `neuronColumns` in `Meta` |
+
+Only the last is dataset-aware. `FindNeurons` reads its columns from
+`neuronColumns` / `neuronColumnsOrdered`, so each dataset declares its own.
+
+`banc:v888` shows what that costs. Its declared columns are `superclass`,
+`cellClass` and `subclass` -- none of which appears anywhere in this
+codebase, and none of which either query searches. Meanwhile it *does* carry
+a populated `class` (body 720575941415606556 has
+`class = 'abdomen_motor_neuron'`, `type = 'EFFabg07'`), which the queries do
+search but which the UI cannot display, because `class` is not among that
+dataset's declared columns.
+
+So on banc:
+
+- the fields curators actually use are **unsearchable**, by either query,
+  index or no index
+- the field that *is* searched is **invisible** in the results table
+- and until this branch, searching it returned incomplete results anyway
+
+That third point is what the coverage check fixes. The first two are
+untouched by it, are not index problems, and are worth raising separately:
+a hardcoded search list cannot keep up with per-dataset vocabularies. Whether
+`class` is legacy and `cellClass` superseded it on banc is worth
+establishing before deciding anything.
+
+To inspect this for a dataset, the Custom Cypher plugin will show both
+vocabularies side by side:
+
+```cypher
+MATCH (n:Neuron) WHERE n.bodyId = 720575941415606556
+RETURN n.bodyId, n.type, n.class, n.cellClass, n.superclass, n.subclass
+```
+
 ### The faster remedy
 
 Tightening the client makes results correct by falling back to the slow query.
