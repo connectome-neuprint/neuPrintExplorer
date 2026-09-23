@@ -321,6 +321,34 @@ than an empty-dropdown test, for the reason given there.
 `class` search can find them. `DN` matches on all three datasets, so a switch
 cannot come up empty merely because the term does not apply.
 
+### Before and after, on the production server
+
+The controlled comparison: same server, same term, same datasets, with only
+the client differing. The capability queries were extracted from `master` and
+from this branch in turn and each replayed against
+`neuprint.janelia.org`.
+
+| client | `banc:v888` | served | complete | lost |
+|---|---|---|---|---|
+| `master` (state and name only) | fast | 29,131 | 87,189 | **58,058 -- 66.6%** |
+| this branch (state and coverage) | slow | 87,189 | 87,189 | **0** |
+
+**58,058 search results restored on the primary production server.** And
+`male-cns:v1.0` stays on the fast path in both runs, so the check is not
+bluntly switching the optimisation off -- it withdraws it exactly where the
+index cannot support it. Every other dataset on that server was already on
+the slow query and is unchanged.
+
+Note what the first row means: **merging PR #383 would not have fixed this.**
+That row *is* current `master`, with #383 in it. `banc:v888`'s index is
+`ONLINE`, merely incomplete, so a state-only check passes it straight through
+to the fast query. Coverage is the part that matters.
+
+The cost is visible in the same table. `banc:v888` now falls back to scanning
+for 87,189 matches on every keystroke. Correct but slower is the intended
+trade; the way to get correct *and* fast is a complete index, which is
+`flyem-snapshot`'s `644158a`.
+
 ### Nothing is lost any more, measured
 
 The table under *Why coverage matters* compares the two **queries**, and those
@@ -350,10 +378,9 @@ query would have returned 22,371. `male-cns:v1.0` is the other one -- it still
 takes the fast path, and still returns the complete set, so the check is not
 merely disabling the optimisation everywhere.
 
-The cost is on that first row too. `flywire-fafb:v783b` now scans all 167,914
-neurons with eleven `CONTAINS` tests per row on every keystroke. Correct but
-slow is the intended trade; the way to get correct *and* fast is to give the
-dataset a complete index.
+The same performance caveat applies as on `banc:v888` above:
+`flywire-fafb:v783b` now scans all 167,914 neurons with eleven `CONTAINS`
+tests per row on every keystroke.
 
 ## A known duplication
 
