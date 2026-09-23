@@ -1,8 +1,16 @@
 # The FindNeurons fast search path
 
 How the neuron autocomplete in `NeuronInputField.jsx` decides between two
-queries, what a server has to provide before the faster one is safe, and why
-the check is stricter than "does the index exist".
+queries, what a server has to provide before the faster one is used, and what
+an incomplete index costs when it is.
+
+**The index is the contract.** Whatever properties the fulltext index covers
+are what can be searched on that dataset. The client does not check the index
+against the property list the queries rank on, and does not fall back to a
+label scan when it falls short. An index covering less than it should is for
+the ingestion pipeline to fix, not something the browser works around on
+every keystroke. The measurements below are what that costs while an index is
+incomplete, and they are the argument for keeping indexes complete.
 
 ## Two queries, same results
 
@@ -23,17 +31,18 @@ query needs nothing from the server and returns the complete result set.
 
 ## What the fast path requires
 
-Three things, each checked:
+Two things, each checked:
 
 | requirement | why | how |
 |---|---|---|
 | Neo4j **4.4 or later** | `buildFastQuery` wraps its search in a `CALL {}` subquery, which 3.5 cannot parse | `dbms.components()`, kernel row, `parseFloat(version) < 4.4` |
 | the fulltext index **exists and is ONLINE** | `db.index.fulltext.queryNodes` throws `IllegalArgumentException` on an unknown index; a `POPULATING` index answers with partial results | `SHOW INDEXES ... RETURN state` |
-| the index **covers all eleven** searched properties | the index is how the query finds candidates at all, so an unindexed property makes matches invisible | `SHOW INDEXES ... RETURN properties`, compared against `SEARCH_PROPERTIES` |
 
-The third is the subtle one, and it is why this file exists.
+Coverage is deliberately **not** a third condition. What the index covers is
+taken as the definition of what is searchable on that dataset. The rest of
+this document measures what that means in practice.
 
-## Why coverage matters, measured
+## What an incomplete index costs
 
 `buildFastQuery` finds candidates **only** through the index, then ranks them.
 A neuron whose sole match is in a property the index does not cover is never a
@@ -174,10 +183,9 @@ b.bodyId = user_body`, which does not touch the index, so the neuron appears
 under `Body IDs`. Note the dropdown shows `instance || type` as the secondary
 text for a body ID, so it will not display the `class` value itself.
 
-Either remedy fixes this symptom: rebuilding the index lets the fast query
-find them, and the coverage check falls back to the slow query, whose
-`CONTAINS` test covers `class` directly. The rebuild is the better outcome
-because it keeps the search fast as well as correct.
+Rebuilding the index with all eleven properties fixes this: the fast query
+then finds them, and stays fast. That is the only remedy in play -- the
+client does not fall back to a label scan on account of an incomplete index.
 
 Counting suggestions is not a usable test, by the way: neither query has a
 `LIMIT`, so a broad term returns thousands of rows into a scrollable list and
@@ -239,8 +247,9 @@ That leaves a product question this repository cannot answer on its own:
   instance/type/bodyId and drop the extra dropdown groups. That would also
   make every dataset consistent, and make both queries cheaper.
 
-The coverage check is worth having either way: it only ensures the fast
-and slow queries agree, whatever set of fields they end up searching.
+Either way the answer belongs in the index: what it covers is what is
+searchable, so narrowing or widening the search means changing what
+`flyem-snapshot` indexes, not what the client tolerates.
 
 #### Four different answers to "what is searchable"
 
@@ -278,9 +287,9 @@ Counting how many neurons actually carry each field makes the cost concrete.
 | `cellClass` | 0 | 0% | declared as a column, never populated |
 
 banc's most populated annotation field is `superclass`, on more neurons than
-`type`, and no query touches it. Even once the coverage check sends `class`
-back through the slow query, the richest field on the dataset stays invisible
-to search. `cellClass` is stranger still: banc declares it as a results
+`type`, and no query touches it. Even with a complete index, the richest
+field on the dataset would stay invisible to search, because it is not one of
+the eleven the queries name. `cellClass` is stranger still: banc declares it as a results
 column while no neuron carries it, so the UI offers a column that can only
 ever be empty.
 
@@ -300,12 +309,12 @@ neurons than `instance` is, and is unsearchable.
 So there are two independent gaps, and only the first is an index problem:
 
 1. **Searched but unindexed** -- `class` and friends. Causes the silent loss
-   measured throughout this document. Fixed by the coverage check.
+   measured throughout this document. Fixed by indexing all eleven.
 2. **Populated but never searched** -- `superclass`, `subclass`, `cellClass`.
    No index would help; the property names are simply not in the query. This
    affects datasets with good indexes exactly as much as bad ones.
 
-The second is untouched by this branch and worth raising separately: a
+The second is a separate matter worth raising on its own: a
 hardcoded list of eleven property names cannot track vocabularies that each
 dataset declares for itself. Whether `class` is legacy and `superclass`
 superseded it is worth establishing before deciding anything.
@@ -335,9 +344,9 @@ ON EACH [n.`type`, n.`instance`, n.`hemibrainType`, n.`flywireType`,
 ```
 
 The label must match the existing index's `labelsOrTypes`, and the rebuild runs
-in the background -- the index reports `POPULATING` until it finishes. A client
-that requires `ONLINE`, as the amended check does, falls back to the slow query
-meanwhile, which is the correct behaviour. Re-ingesting the dataset with a
+in the background -- the index reports `POPULATING` until it finishes. The client requires
+`ONLINE`, so it uses the slow query meanwhile, which is the correct
+behaviour. Re-ingesting the dataset with a
 current `flyem-snapshot` achieves the same thing.
 
 ## Fleet state
@@ -408,94 +417,53 @@ rather than a paraphrase of it. The useful checks:
 
 ### Verified in the browser
 
-Run against `neuprint-test.janelia.org` with this branch deployed,
-2026-09-23:
+Run against `neuprint-test.janelia.org`, 2026-09-23, while the coverage check
+described below was briefly deployed. Two of the three results carry over to
+the current behaviour; the first does not, and is kept because it is the
+measurement that established what an incomplete index costs.
 
 | check | dataset | result |
 |---|---|---|
-| coverage check falls back | `flywire-fafb:v783b` (3/11) | searching `visual` offers a `Classes` group -- previously nothing from `class` |
-| fast path still used | `male-cns:v1.0` (11/11) | searching `DN` returns suggestions as before |
-| flag re-evaluated on switch | `male-cns:v1.0` -> `flywire-fafb:v783b`, no reload | `Classes` group appears, so the flag was re-checked rather than carried over |
+| fast path used where the index is ONLINE | `male-cns:v1.0` | searching `DN` returns suggestions |
+| flag re-evaluated on dataset switch | `male-cns:v1.0` -> `flywire-fafb:v783b`, no reload | behaves correctly without a reload |
+| (coverage check, since removed) | `flywire-fafb:v783b` (3/11) | fell back to the slow query and offered a `Classes` group for `visual` |
 
-The third is the first time the `componentDidUpdate` reset added in `5571890`
-has actually been exercised; it shipped in PR #383 untested, because the API
-cannot reach it. It used the positive discriminator described above rather
-than an empty-dropdown test, for the reason given there.
+The second is the first time the `componentDidUpdate` reset added in
+`5571890` was actually exercised; it shipped in PR #383 untested, because the
+API cannot reach it.
 
-`visual` was chosen because 11,386 neurons on `flywire-fafb:v783b` carry it in
-`class` and it appears in no `type`, `instance` or `synonyms`, so only a
-`class` search can find them. `DN` matches on all three datasets, so a switch
-cannot come up empty merely because the term does not apply.
+### The alternative that was tried and rejected
 
-### Before and after, on the production server
-
-The controlled comparison: same server, same term, same datasets, with only
-the client differing. The capability queries were extracted from `master` and
-from this branch in turn and each replayed against
-`neuprint.janelia.org`.
+A coverage check was briefly on `master`: the client compared the index's
+properties against the eleven and fell back to the slow query unless all were
+present. It worked, and was measured against `neuprint.janelia.org` -- same
+server, same term, only the client differing:
 
 | client | `banc:v888` | served | complete | lost |
 |---|---|---|---|---|
-| `master` (state and name only) | fast | 29,131 | 87,189 | **58,058 -- 66.6%** |
-| this branch (state and coverage) | slow | 87,189 | 87,189 | **0** |
+| without the check | fast | 29,131 | 87,189 | 58,058 -- 66.6% |
+| with the check | slow | 87,189 | 87,189 | 0 |
 
-**58,058 search results restored on the primary production server.** And
-`male-cns:v1.0` stays on the fast path in both runs, so the check is not
-bluntly switching the optimisation off -- it withdraws it exactly where the
-index cannot support it. Every other dataset on that server was already on
-the slow query and is unchanged.
+It was removed deliberately. Restoring 58,058 rows that way means a full
+`:Neuron` scan with eleven `CONTAINS` tests on every keystroke -- on banc,
+across 175,420 neurons -- to compensate for an index that should simply have
+been built with all eleven properties. That is a pipeline problem, and
+`flyem-snapshot` has emitted all eleven since its master of 2026-09-21, so
+rebuilt datasets index them.
 
-Note what the first row means: **merging PR #383 would not have fixed this.**
-That row *is* current `master`, with #383 in it. `banc:v888`'s index is
-`ONLINE`, merely incomplete, so a state-only check passes it straight through
-to the fast query. Coverage is the part that matters.
-
-The cost is visible in the same table. `banc:v888` now falls back to scanning
-for 87,189 matches on every keystroke. Correct but slower is the intended
-trade; the way to get correct *and* fast is a complete index, which is
-`flyem-snapshot`'s `644158a`.
-
-### Nothing is lost any more, measured
-
-The table under *Why coverage matters* compares the two **queries**, and those
-numbers are unchanged by this branch: `flywire-fafb:v783b` still has a 3/11
-index, so its fast query still loses 58%. What changed is which query runs.
-
-So the useful measure is what a user now actually receives versus the complete
-result set. For every dataset on `neuprint-test.janelia.org`, the query the
-client would choose was run and compared against `buildSlowQuery` as ground
-truth. Term `a`, the worst case from the earlier table:
-
-| dataset | query used | rows served | complete | lost |
-|---|---|---|---|---|
-| `flywire-fafb:v783b` | slow | 53,226 | 53,226 | **0** |
-| `hemibrain:v1.2.1` | slow | 9,058 | 9,058 | **0** |
-| `male-cns:v0.9` | slow | 67,411 | 67,411 | **0** |
-| `male-cns:v1.0` | **fast** | 67,449 | 67,449 | **0** |
-| `manc:v1.0` | slow | 15,474 | 15,474 | **0** |
-| `manc:v1.2.1` | slow | 16,457 | 16,457 | **0** |
-| `manc:v1.2.3` | slow | 16,459 | 16,459 | **0** |
-| `mushroombody` | slow | 302 | 302 | **0** |
-| `optic-lobe:v1.0.1` | slow | 7,294 | 7,294 | **0** |
-| `optic-lobe:v1.1` | slow | 7,946 | 7,946 | **0** |
-
-`flywire-fafb:v783b` is the row that matters: 53,226 of 53,226 where the fast
-query would have returned 22,371. `male-cns:v1.0` is the other one -- it still
-takes the fast path, and still returns the complete set, so the check is not
-merely disabling the optimisation everywhere.
-
-The same performance caveat applies as on `banc:v888` above:
-`flywire-fafb:v783b` now scans all 167,914 neurons with eleven `CONTAINS`
-tests per row on every keystroke.
+The consequence, stated plainly: until a dataset is rebuilt, searches against
+its unindexed properties return fewer results, silently. The numbers earlier
+in this document are the size of that.
 
 ## A known duplication
 
-`SEARCH_PROPERTIES` lists the eleven properties for the coverage check, and the
-same eleven appear inside `buildFastQuery` and `buildSlowQuery` as Cypher
-fragments. They have to agree.
+The eleven properties appear twice inside this file, in `buildFastQuery` and
+`buildSlowQuery`, and again in `flyem-snapshot`'s `indexes.py`, which decides
+what the index covers. Nothing keeps them in step.
 
-The lists were deliberately not consolidated: the query text has been verified
+They were deliberately not consolidated here: the query text has been verified
 equivalent against production data across many datasets and millions of rows,
-and regenerating it from an array to save one duplication risks changing it by
-accident. If a twelfth searchable property is ever added, it has to be added in
-three places — and to `flyem-snapshot`'s `indexes.py`, which builds the index.
+and regenerating it from an array to save a duplication risks changing it by
+accident. Adding a twelfth searchable property means editing both queries and
+`indexes.py` -- and, since the index is the contract, the `indexes.py` change
+is the one that decides whether the new property is searchable at all.
