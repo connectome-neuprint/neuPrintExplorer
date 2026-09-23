@@ -266,18 +266,49 @@ a populated `class` (body 720575941415606556 has
 search but which the UI cannot display, because `class` is not among that
 dataset's declared columns.
 
-So on banc:
+Counting how many neurons actually carry each field makes the cost concrete.
+`banc:v888`, 175,420 neurons:
 
-- the fields curators actually use are **unsearchable**, by either query,
-  index or no index
-- the field that *is* searched is **invisible** in the results table
-- and until this branch, searching it returned incomplete results anyway
+| field | populated | % | searchable? |
+|---|---|---|---|
+| `superclass` | 154,669 | **88.2%** | **never searched** |
+| `type` | 117,740 | 67.1% | searched and indexed |
+| `class` | 89,409 | 51.0% | searched, not indexed -- the 66.6% loss |
+| `subclass` | 38,120 | 21.7% | **never searched** |
+| `cellClass` | 0 | 0% | declared as a column, never populated |
 
-That third point is what the coverage check fixes. The first two are
-untouched by it, are not index problems, and are worth raising separately:
-a hardcoded search list cannot keep up with per-dataset vocabularies. Whether
-`class` is legacy and `cellClass` superseded it on banc is worth
-establishing before deciding anything.
+banc's most populated annotation field is `superclass`, on more neurons than
+`type`, and no query touches it. Even once the coverage check sends `class`
+back through the slow query, the richest field on the dataset stays invisible
+to search. `cellClass` is stranger still: banc declares it as a results
+column while no neuron carries it, so the UI offers a column that can only
+ever be empty.
+
+This is not banc-specific. Across the datasets that can be read without a
+token:
+
+| dataset | `superclass` | `subclass` | `class` |
+|---|---|---|---|
+| `male-cns:v1.0` | **94.5%** | 12.4% | 15.0% |
+| `flywire-fafb:v783b` | **82.9%** | 15.4% | 64.0% |
+| `manc:v1.2.3` | 0% | 21.6% | 23.6% |
+
+On `male-cns:v1.0` -- the one dataset whose index is 11/11, and which this
+document otherwise describes as healthy -- `superclass` is populated on more
+neurons than `instance` is, and is unsearchable.
+
+So there are two independent gaps, and only the first is an index problem:
+
+1. **Searched but unindexed** -- `class` and friends. Causes the silent loss
+   measured throughout this document. Fixed by the coverage check.
+2. **Populated but never searched** -- `superclass`, `subclass`, `cellClass`.
+   No index would help; the property names are simply not in the query. This
+   affects datasets with good indexes exactly as much as bad ones.
+
+The second is untouched by this branch and worth raising separately: a
+hardcoded list of eleven property names cannot track vocabularies that each
+dataset declares for itself. Whether `class` is legacy and `superclass`
+superseded it is worth establishing before deciding anything.
 
 To inspect this for a dataset, the Custom Cypher plugin will show both
 vocabularies side by side:
