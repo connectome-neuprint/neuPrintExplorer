@@ -72,7 +72,7 @@ coverage of every indexed dataset across the four production servers:
 |---|---|---|---|---|
 | `neuprint` | `banc:v888` | ONLINE | 3/11 | 29,131 / 87,189 -- **66.6% lost** |
 | `neuprint` | `male-cns:v1.0` | ONLINE | **11/11** | 67,449 / 67,449 -- none lost |
-| `neuprint-yakuba` | `yakuba-vnc` | ONLINE | 3/11 | 6,002 / 9,564 -- **37.2% lost** |
+| `neuprint-yakuba` | `yakuba-vnc` | ONLINE | 3/11 | 6,002 / 9,564 -- **37.2% lost**; term `e` loses **98.5%** |
 | `neuprint-fish2` | `fish2` | ONLINE | 3/11 | 4,288 / 4,288 -- none lost |
 | `neuprint-fish2` | `fish2:v0.7` | ONLINE | 3/11 | 4,077 / 4,077 -- none lost |
 
@@ -83,8 +83,11 @@ either of its datasets. Everything not listed has no index or is served from
 Neo4j 3.5, so it is already on the slow query -- correct results, no fast
 path.
 
-`banc:v888` on the primary production server is the worst case in the fleet,
-worse than `flywire-fafb:v783b`'s 58% on the test server.
+`banc:v888` is the largest loss for term `a`, and it is on the primary
+production server -- worse there than `flywire-fafb:v783b`'s 58% on the test
+server. Ranking datasets against each other only makes sense per term,
+though: `yakuba-vnc` loses 37% on `a` but 98.5% on `e`, for reasons covered
+under *The gap is not the damage* below.
 
 Two notes on reading these numbers. They drift: yakuba measured
 5,983 / 9,541 one day and 6,002 / 9,564 the next, because it is under active
@@ -127,6 +130,33 @@ So the gap sets the ceiling and annotation decides how much of it is
 realised. `banc:v888` shows the ceiling is high: same 3/11 gap, and it loses
 66.6% because its uncovered properties are heavily populated. fish2 is the
 same gap with the loss not yet realised.
+
+**And the search term moves it enormously.** On `yakuba-vnc`:
+
+| term | fast | slow | lost | % missing |
+|---|---|---|---|---|
+| `lc` | 0 | 0 | 0 | 0% |
+| `ps` | 6 | 6 | 0 | 0% |
+| `dn` | 1,260 | 1,260 | 0 | 0% |
+| `a` | 6,002 | 9,565 | 3,563 | 37.3% |
+| `e` | **318** | **21,183** | **20,865** | **98.5%** |
+
+`e` is close to a worst case, and the reason is structural rather than
+accidental: `class` on a VNC dataset is a controlled vocabulary in which
+every value contains an `e` -- `intrinsic neuron`, `sensory neuron`,
+`ascending neuron`, `descending neuron`, `motor neuron`. Searching `e`
+therefore matches almost everything through `class`, which is exactly the
+property the index does not cover.
+
+The same shape is visible on `manc:v1.2.3`, where 18,750 of the 23,658
+neurons matching `e` are reachable *only* through `class`. manc has no
+fulltext index, so it is on the slow query and unaffected -- but it shows
+that a dataset acquiring a three-property index would immediately lose
+around 79% of that search.
+
+So "37% lost" understates it. For the wrong term the fast query returns
+almost nothing, and which terms those are depends on the dataset's
+annotation vocabulary rather than on anything a user could anticipate.
 
 ### Reproducing it in the browser
 
