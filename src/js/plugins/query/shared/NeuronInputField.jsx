@@ -41,8 +41,9 @@ const FULLTEXT_INDEX_NAME = 'find_neurons_fulltext_properties_index';
 // against the slow query's 53,226, losing 58% of results.
 //
 // Kept in step by hand with the two lists inside buildFastQuery and
-// buildSlowQuery below; those are left byte-identical because their exact text
-// has been verified equivalent against production data.
+// buildSlowQuery below. Those lists are deliberately not generated from this
+// array: their exact text has been verified equivalent against production
+// data, so it is changed only when there is a reason to.
 const SEARCH_PROPERTIES = [
   'type',
   'instance',
@@ -57,13 +58,51 @@ const SEARCH_PROPERTIES = [
   'exitNerve',
 ];
 
+// Make a search term safe to embed in a single-quoted Cypher literal. Without
+// this, typing an apostrophe -- ordinary in names like "Dm9'" -- interpolates
+// straight into toLower('...') and the whole query fails with a syntax error,
+// so the dropdown goes empty. 863 neurons on male-cns:v1.0 carry an
+// apostrophe in type or instance, so users have reason to type one.
+function escapeForCypher(value) {
+  return String(value).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+
+// Build the Lucene query for the fulltext index.
+//
+// The term cannot simply be wrapped as '*' + q + '*'. The index analyzer
+// splits on punctuation, so "R1-R6" is stored as the tokens r1 and r6 and no
+// token equals "r1-r6" -- a wildcard search for it matches nothing at all.
+// Measured on male-cns:v1.0, whose index covers all eleven properties:
+// searching R1-R6 returned 0 of 3,377 matching neurons, SNta02,SNta09 0 of
+// 241, VP1l+_lvPN 0 of 9. Punctuation that Lucene treats as an operator made
+// it worse: "(" matched 167,995 of 176,422 neurons, and "/" made the query
+// throw outright.
+//
+// Splitting the term the same way the analyzer does, and requiring every
+// token, fixes all of those and leaves single-token searches -- the common
+// case -- producing exactly the query they did before.
+//
+// Over-matching here is harmless: every row is re-tested client-side with
+// includes(inputValue) before it reaches the dropdown, so this query only has
+// to return a superset. Under-matching is what loses results.
+function buildLuceneQuery(inputValue) {
+  const tokens = String(inputValue)
+    .toLowerCase()
+    .split(/[^a-z0-9_]+/)
+    .filter((token) => token.length > 0);
+  if (tokens.length === 0) {
+    return '*';
+  }
+  return tokens.map((token) => `*${token}*`).join(' AND ');
+}
+
 function buildFastQuery(inputValue, bodyId) {
-  return `WITH toLower('${inputValue}') as q, ${bodyId} as user_body
+  return `WITH toLower('${escapeForCypher(inputValue)}') as q, ${bodyId} as user_body
 
 // Full-text search wrapped in subquery to preserve pipeline when no results
 CALL {
   WITH q
-  CALL db.index.fulltext.queryNodes('${FULLTEXT_INDEX_NAME}', '*' + q + '*')
+  CALL db.index.fulltext.queryNodes('${FULLTEXT_INDEX_NAME}', '${buildLuceneQuery(inputValue)}')
   YIELD node as n
   RETURN collect(n) as textMatches
 }
@@ -118,7 +157,7 @@ ORDER BY priority, type_priority, n.type, n.instance`;
 }
 
 function buildSlowQuery(inputValue, bodyId) {
-  return `WITH toLower('${inputValue}') as q, ${bodyId} as user_body, '(' + toLower('${inputValue}') as parenQ
+  return `WITH toLower('${escapeForCypher(inputValue)}') as q, ${bodyId} as user_body, '(' + toLower('${escapeForCypher(inputValue)}') as parenQ
 MATCH (n:Neuron)
 WHERE n.bodyId = user_body
    OR any(prop IN [
