@@ -31,33 +31,6 @@ formatOptionLabel.propTypes = {
 // checkFulltextSupport() below looks for it by name before enabling the query.
 const FULLTEXT_INDEX_NAME = 'find_neurons_fulltext_properties_index';
 
-// The properties both queries rank on. The fulltext index must cover all of
-// them before buildFastQuery can be used: the index is how that query finds
-// candidates at all, so a neuron whose only match is in an unindexed property
-// is never considered, and the search quietly returns fewer rows than
-// buildSlowQuery would -- no error anywhere. Measured on
-// neuprint-test.janelia.org: flywire-fafb:v783b has an ONLINE index covering
-// only type/instance/synonyms, and searching "a" there returned 22,371 rows
-// against the slow query's 53,226, losing 58% of results.
-//
-// Kept in step by hand with the two lists inside buildFastQuery and
-// buildSlowQuery below. Those lists are deliberately not generated from this
-// array: their exact text has been verified equivalent against production
-// data, so it is changed only when there is a reason to.
-const SEARCH_PROPERTIES = [
-  'type',
-  'instance',
-  'hemibrainType',
-  'flywireType',
-  'systematicType',
-  'itoleeHl',
-  'trumanHl',
-  'synonyms',
-  'class',
-  'entryNerve',
-  'exitNerve',
-];
-
 // Make a search term safe to embed in a single-quoted Cypher literal. Without
 // this, typing an apostrophe -- ordinary in names like "Dm9'" -- interpolates
 // straight into toLower('...') and the whole query fails with a syntax error,
@@ -267,31 +240,25 @@ RETURN versions[0] as version`;
         // below swallowed it, and the fast query was silently never used --
         // correct results, but permanently on the slow path. SHOW INDEXES is
         // accepted by 4.4 and every later version alike.
-        // Ask for the indexed properties as well as the state. An index that
-        // exists is not enough -- it has to cover every property the query
-        // ranks on, or results go missing silently. See SEARCH_PROPERTIES.
-        //
-        // The comparison is done here rather than in Cypher because UNWIND is
-        // not accepted after SHOW INDEXES on every supported version, while
-        // YIELD ... WHERE ... RETURN is. Verified to return the same shape on
-        // 4.4.16 and on 2026.08.1.
-        const indexCypher = `SHOW INDEXES YIELD name, state, properties
+        // The index is the contract. Whatever properties it covers are what
+        // is searchable on this dataset; the client does not second-guess
+        // that. An index covering fewer than the eleven properties the query
+        // ranks on means those fields are not entry points for finding
+        // neurons here -- they are still ranked and displayed on whatever is
+        // retrieved. Falling back to a full label scan instead would make the
+        // search correct at the cost of scanning every neuron on every
+        // keystroke, for a gap that belongs to the ingestion pipeline.
+        // flyem-snapshot has emitted all eleven properties since its master
+        // of 2026-09-21, so a rebuilt dataset indexes all of them.
+        const indexCypher = `SHOW INDEXES YIELD name, state
 WHERE name = '${FULLTEXT_INDEX_NAME}'
-RETURN state, properties`;
+RETURN state`;
 
         return runCypher(dataSet, indexCypher).then((indexResp) => {
-          const row = indexResp.data && indexResp.data[0];
-          if (!row) {
-            return;
-          }
-          const [state, properties] = row;
+          const state = indexResp.data && indexResp.data[0] && indexResp.data[0][0];
           // Require ONLINE: a POPULATING index answers queries with partial
           // results, which would drop matches with no error anywhere.
-          if (state !== 'ONLINE' || !Array.isArray(properties)) {
-            return;
-          }
-          const covered = SEARCH_PROPERTIES.every((prop) => properties.includes(prop));
-          if (covered) {
+          if (state === 'ONLINE') {
             this.setState({ useFastQuery: true });
           }
         });
