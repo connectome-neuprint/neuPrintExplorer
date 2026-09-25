@@ -452,9 +452,17 @@ server, same term, only the client differing:
 It was removed deliberately. Restoring 58,058 rows that way means a full
 `:Neuron` scan with eleven `CONTAINS` tests on every keystroke -- on banc,
 across 175,420 neurons -- to compensate for an index that should simply have
-been built with all eleven properties. That is a pipeline problem, and
-`flyem-snapshot` has emitted all eleven since its master of 2026-09-21, so
-rebuilt datasets index them.
+been built with all eleven properties. That is a pipeline problem, and it is
+fixed there: a dataset's config in `snapshot-configs` can list all eleven
+under `find-neurons-fulltext-index-properties`, and its next rebuild indexes
+them.
+
+Note that this is not yet automatic. `flyem-snapshot`'s **default is still
+three properties** on master; the eleven-property default is commit
+`644158a`, which at the time of writing sits on its `neo4j-5-upgrade` branch.
+Until that lands, each dataset needs the list spelled out in its own config,
+and one that does not have it keeps getting a three-property index however
+often it is rebuilt.
 
 The consequence, stated plainly: until a dataset is rebuilt, searches against
 its unindexed properties return fewer results, silently. The numbers earlier
@@ -463,14 +471,15 @@ in this document are the size of that.
 ### The rebuild remedy, demonstrated
 
 That argument rested on an assumption -- that an incomplete index is
-temporary, corrected by the next rebuild. It was worth doubting:
-`flyem-snapshot` had emitted all eleven properties since its master of
-2026-09-21, yet `yakuba-vnc` still measured 3/11 on the 23rd despite
-rebuilding nightly. If the pipeline in service were not the fixed one, the
-degradation accepted above would be permanent rather than transient.
+temporary, corrected by the next rebuild. `yakuba-vnc` is the demonstration
+that the remedy works, and also that it is not yet automatic. It measured
+3/11 on the 23rd despite rebuilding nightly, because nightly rebuilds alone
+do not fix it.
 
-It was the fixed one. `yakuba-vnc` was rebuilt on 2026-09-24 through the
-normal automated pipeline -- not by hand -- and the result settles it:
+What fixed it was listing the eleven properties explicitly under
+`find-neurons-fulltext-index-properties` in that dataset's
+`yakuba-master-snapshot.yaml`, then rebuilding through the normal pipeline on
+2026-09-24:
 
 | | before the rebuild | after |
 |---|---|---|
@@ -479,10 +488,12 @@ normal automated pipeline -- not by hand -- and the result settles it:
 | term `a` | 6,002 of 9,564 -- 37.2% lost | 9,587 of 9,587 -- **none** |
 | `lc`, `dn`, `ps` | none lost | none lost |
 
-The earlier 3/11 reading simply predated the pipeline update; no rebuild had
-run since. So rebuilding is the remedy, it is automated, and it restores
-results while keeping the search fast -- which is the whole case for letting
-the index be the contract rather than having the client compensate.
+So rebuilding is the remedy, and it restores results while keeping the search
+fast -- which is the case for letting the index be the contract rather than
+having the client compensate. The qualification is that it currently takes a
+config edit per dataset. A dataset nobody edits keeps its three-property
+index indefinitely, and on that dataset the losses measured earlier in this
+document persist rather than expiring.
 
 ### Both changes validated after deployment
 
