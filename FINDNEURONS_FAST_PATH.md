@@ -81,12 +81,17 @@ coverage of every indexed dataset across the four production servers:
 |---|---|---|---|---|
 | `neuprint` | `banc:v888` | ONLINE | 3/11 | 29,131 / 87,189 -- **66.6% lost** |
 | `neuprint` | `male-cns:v1.0` | ONLINE | **11/11** | 67,449 / 67,449 -- none lost |
-| `neuprint-yakuba` | `yakuba-vnc` | ONLINE | 3/11 | 6,002 / 9,564 -- **37.2% lost**; term `e` loses **98.5%** |
+| `neuprint-yakuba` | `yakuba-vnc` | ONLINE | 3/11 -- **since rebuilt to 11/11** | 6,002 / 9,564 -- 37.2% lost; term `e` lost 98.5% |
 | `neuprint-fish2` | `fish2` | ONLINE | 3/11 | 4,288 / 4,288 -- none lost |
 | `neuprint-fish2` | `fish2:v0.7` | ONLINE | 3/11 | 4,077 / 4,077 -- none lost |
 
+Measured 2026-09-23. `yakuba-vnc` has since been rebuilt and now covers all
+eleven; see *The rebuild remedy, demonstrated* below. The rest of this
+section is left as measured, because it is the evidence the decisions were
+made on -- treat the figures as a snapshot, not as current state.
+
 Every dataset on all four servers was enumerated with a token and probed, so
-this is the complete exposure: five indexed datasets, four of them 3/11, two
+this was the complete exposure: five indexed datasets, four of them 3/11, two
 of those currently losing rows. `neuprint-pre` has no fulltext index on
 either of its datasets. Everything not listed has no index or is served from
 Neo4j 3.5, so it is already on the slow query -- correct results, no fast
@@ -454,6 +459,50 @@ rebuilt datasets index them.
 The consequence, stated plainly: until a dataset is rebuilt, searches against
 its unindexed properties return fewer results, silently. The numbers earlier
 in this document are the size of that.
+
+### The rebuild remedy, demonstrated
+
+That argument rested on an assumption -- that an incomplete index is
+temporary, corrected by the next rebuild. It was worth doubting:
+`flyem-snapshot` had emitted all eleven properties since its master of
+2026-09-21, yet `yakuba-vnc` still measured 3/11 on the 23rd despite
+rebuilding nightly. If the pipeline in service were not the fixed one, the
+degradation accepted above would be permanent rather than transient.
+
+It was the fixed one. `yakuba-vnc` was rebuilt on 2026-09-24 through the
+normal automated pipeline -- not by hand -- and the result settles it:
+
+| | before the rebuild | after |
+|---|---|---|
+| index coverage | 3/11 | **11/11, ONLINE** |
+| term `e` | 318 of 21,183 -- 98.5% lost | 21,182 of 21,182 -- **none** |
+| term `a` | 6,002 of 9,564 -- 37.2% lost | 9,587 of 9,587 -- **none** |
+| `lc`, `dn`, `ps` | none lost | none lost |
+
+The earlier 3/11 reading simply predated the pipeline update; no rebuild had
+run since. So rebuilding is the remedy, it is automated, and it restores
+results while keeping the search fast -- which is the whole case for letting
+the index be the contract rather than having the client compensate.
+
+### Both changes validated after deployment
+
+Released in **v1.72.3** and checked against `neuprint-test.janelia.org` once
+deployed, by executing the query builders out of the deployed source:
+
+| term | Lucene sent | fast | slow | missed |
+|---|---|---|---|---|
+| `R1-R6` | `*r1* AND *r6*` | 3,377 | 3,377 | none (was 0 of 3,377) |
+| `SNta02,SNta09` | `*snta02* AND *snta09*` | 241 | 241 | none (was 0 of 241) |
+| `KCab-s` | `*kcab* AND *s*` | 1,678 | 1,678 | none |
+| `KCg` | `*kcg*` | 1,557 | 1,557 | none -- unchanged, as intended |
+| `Dm9'` | `*dm9*` | 431 | 0 | none -- no longer a syntax error |
+
+Two of those over-match, which is the design working: the index returns a
+superset and the client narrows it with `includes(inputValue)`.
+
+The served bundle was also read directly to confirm what is actually running
+rather than what was merged -- it carries the Cypher-escape helper, the token
+splitter, and a state-only index probe with no coverage comparison.
 
 ## A known duplication
 
