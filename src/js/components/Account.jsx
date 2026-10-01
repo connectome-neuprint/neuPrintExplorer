@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -24,6 +24,7 @@ function Account(props) {
   const [rotating, setRotating] = useState(false);
   const [rotateError, setRotateError] = useState(null);
   const [rotated, setRotated] = useState(false);
+  const inFlight = useRef(false);
   const token = user.get('token');
 
   const pinnedSkeleton = JSON.parse(localStorage.getItem('use_skeleton'));
@@ -38,10 +39,28 @@ function Account(props) {
     }
   }
 
+  // After a failed or uncertain rotation (a second tab rotated first, or the
+  // response was lost after the server committed), ask for the current token
+  // and show it if it changed; otherwise report the original error.
+  const reconcile = message =>
+    fetch('/token', { credentials: 'include' })
+      .then(result => (result.ok ? result.json() : {}))
+      .catch(() => ({}))
+      .then(data => {
+        if (data && data.token && data.token !== token) {
+          setUserToken(data.token);
+          setRotated(true);
+        } else {
+          setRotateError(message);
+        }
+      });
+
   // Revoking replaces the token in one step: the server deletes the old one
   // and returns a new one. The old token is sent as the bearer so a forged
   // cross-site request cannot trigger a rotation.
   const handleRevoke = () => {
+    if (inFlight.current) return;
+    inFlight.current = true;
     setConfirmOpen(false);
     setRotating(true);
     setRotateError(null);
@@ -57,14 +76,22 @@ function Account(props) {
           .then(data => ({ ok: result.ok, status: result.status, data }))
       )
       .then(({ ok, status, data }) => {
-        if (!ok || !data.token) {
-          throw new Error(data.message || data.detail || `Token revocation failed (status ${status}).`);
+        if (ok && data.token) {
+          setUserToken(data.token);
+          setRotated(true);
+          return null;
         }
-        setUserToken(data.token);
-        setRotated(true);
+        if (status === 404 || status === 405) {
+          setRotateError('This server does not support revoking tokens yet.');
+          return null;
+        }
+        return reconcile(data.message || data.detail || `Token revocation failed (status ${status}).`);
       })
-      .catch(error => setRotateError(error.message))
-      .finally(() => setRotating(false));
+      .catch(error => reconcile(error.message))
+      .finally(() => {
+        inFlight.current = false;
+        setRotating(false);
+      });
   };
 
   const avatar = imgAvatar ?  (
@@ -126,7 +153,7 @@ function Account(props) {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setConfirmOpen(false)}>Cancel</Button>
-          <Button color="error" onClick={handleRevoke}>
+          <Button color="error" disabled={rotating} onClick={handleRevoke}>
             Revoke
           </Button>
         </DialogActions>
