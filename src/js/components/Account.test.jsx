@@ -36,33 +36,36 @@ function fetchMock(rotate, current) {
   return jest.fn(url => (url === '/token/rotate' ? rotate() : current()));
 }
 
-function confirmRevoke() {
-  fireEvent.click(screen.getByRole('button', { name: 'Revoke' }));
-  return screen.getAllByRole('button', { name: 'Revoke' }).pop();
+const REGENERATE = 'Revoke & Regenerate';
+
+function confirmRegenerate() {
+  fireEvent.click(screen.getByRole('button', { name: REGENERATE }));
+  expect(screen.getByText('Revoke & regenerate your token?')).toBeTruthy();
+  return screen.getAllByRole('button', { name: REGENERATE }).pop();
 }
 
-describe('Account token revoke', () => {
+describe('Account token revoke & regenerate', () => {
   afterEach(() => {
     delete global.fetch;
   });
 
-  it('shows the Revoke button next to the token', () => {
+  it('shows the Revoke & Regenerate button next to the token', () => {
     renderAccount();
     const token = screen.getByText('tok-old');
-    const button = screen.getByRole('button', { name: 'Revoke' });
+    const button = screen.getByRole('button', { name: REGENERATE });
     expect(token.parentElement).toBe(button.parentElement);
     expect(token.nextSibling).toBe(button);
   });
 
-  it('disables Revoke when there is no token', () => {
+  it('disables Revoke & Regenerate when there is no token', () => {
     renderAccount('');
-    expect(screen.getByRole('button', { name: 'Revoke' }).disabled).toBe(true);
+    expect(screen.getByRole('button', { name: REGENERATE }).disabled).toBe(true);
   });
 
   it('does nothing when the confirmation is cancelled', () => {
     global.fetch = jest.fn();
     const store = renderAccount();
-    fireEvent.click(screen.getByRole('button', { name: 'Revoke' }));
+    fireEvent.click(screen.getByRole('button', { name: REGENERATE }));
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
     expect(global.fetch).not.toHaveBeenCalled();
     expect(store.getState().user.get('token')).toBe('tok-old');
@@ -71,7 +74,7 @@ describe('Account token revoke', () => {
   it('rotates with the old token as bearer and shows the new token', async () => {
     global.fetch = fetchMock(() => jsonResponse(200, { token: 'tok-new' }));
     const store = renderAccount();
-    fireEvent.click(confirmRevoke());
+    fireEvent.click(confirmRegenerate());
 
     expect(await screen.findByText('tok-new')).toBeTruthy();
     expect(screen.queryByText('tok-old')).toBeNull();
@@ -81,13 +84,24 @@ describe('Account token revoke', () => {
       method: 'POST',
       headers: { Authorization: 'Bearer tok-old' }
     });
-    expect(screen.getByText(/The old token was revoked/)).toBeTruthy();
+    expect(
+      screen.getByText(/The old token was revoked and a new token generated\. Update your scripts/)
+    ).toBeTruthy();
+  });
+
+  it('labels the button while the request is in flight', () => {
+    global.fetch = fetchMock(() => new Promise(() => {}));
+    renderAccount();
+    fireEvent.click(confirmRegenerate());
+    // The closing dialog still hides the page from the accessibility tree.
+    const busy = screen.getByRole('button', { name: 'Revoking & Regenerating…', hidden: true });
+    expect(busy.disabled).toBe(true);
   });
 
   it('sends one request when the confirmation is clicked twice', async () => {
     global.fetch = fetchMock(() => jsonResponse(200, { token: 'tok-new' }));
     renderAccount();
-    const confirm = confirmRevoke();
+    const confirm = confirmRegenerate();
     fireEvent.click(confirm);
     fireEvent.click(confirm);
     expect(await screen.findByText('tok-new')).toBeTruthy();
@@ -100,7 +114,7 @@ describe('Account token revoke', () => {
       () => jsonResponse(200, { token: 'tok-current' })
     );
     const store = renderAccount();
-    fireEvent.click(confirmRevoke());
+    fireEvent.click(confirmRegenerate());
 
     expect(await screen.findByText('tok-current')).toBeTruthy();
     expect(store.getState().user.get('token')).toBe('tok-current');
@@ -113,7 +127,7 @@ describe('Account token revoke', () => {
       () => jsonResponse(200, { token: 'tok-new' })
     );
     const store = renderAccount();
-    fireEvent.click(confirmRevoke());
+    fireEvent.click(confirmRegenerate());
 
     expect(await screen.findByText('tok-new')).toBeTruthy();
     expect(store.getState().user.get('token')).toBe('tok-new');
@@ -125,31 +139,46 @@ describe('Account token revoke', () => {
       () => jsonResponse(200, { token: 'tok-old' })
     );
     const store = renderAccount();
-    fireEvent.click(confirmRevoke());
+    fireEvent.click(confirmRegenerate());
 
     expect(await screen.findByText('not allowed')).toBeTruthy();
     expect(store.getState().user.get('token')).toBe('tok-old');
   });
 
-  it('explains when the server does not support revocation', async () => {
+  it('reports the status when the server gives no reason', async () => {
+    global.fetch = fetchMock(
+      () => jsonResponse(500, {}),
+      () => jsonResponse(200, { token: 'tok-old' })
+    );
+    renderAccount();
+    fireEvent.click(confirmRegenerate());
+
+    expect(
+      await screen.findByText('Revoking and regenerating the token failed (status 500).')
+    ).toBeTruthy();
+  });
+
+  it('explains when the server does not support regeneration', async () => {
     global.fetch = fetchMock(() => jsonResponse(405, { message: 'Method Not Allowed' }));
     renderAccount();
-    fireEvent.click(confirmRevoke());
+    fireEvent.click(confirmRegenerate());
 
-    expect(await screen.findByText(/does not support revoking tokens/)).toBeTruthy();
+    expect(
+      await screen.findByText('This server does not support revoking and regenerating tokens yet.')
+    ).toBeTruthy();
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 
-  it('re-enables Revoke after a failure', async () => {
+  it('re-enables Revoke & Regenerate after a failure', async () => {
     global.fetch = fetchMock(
       () => jsonResponse(500, { message: 'boom' }),
       () => jsonResponse(200, { token: 'tok-old' })
     );
     renderAccount();
-    fireEvent.click(confirmRevoke());
+    fireEvent.click(confirmRegenerate());
     expect(await screen.findByText('boom')).toBeTruthy();
     await waitFor(() =>
-      expect(screen.getByRole('button', { name: 'Revoke' }).disabled).toBe(false)
+      expect(screen.getByRole('button', { name: REGENERATE }).disabled).toBe(false)
     );
   });
 });

@@ -55,10 +55,10 @@ function Account(props) {
         }
       });
 
-  // Revoking replaces the token in one step: the server deletes the old one
-  // and returns a new one. The old token is sent as the bearer so a forged
-  // cross-site request cannot trigger a rotation.
-  const handleRevoke = () => {
+  // Revoke & regenerate replaces the token in one step: the server deletes
+  // the old one and returns a new one. The old token is sent as the bearer so
+  // a forged cross-site request cannot trigger a rotation.
+  const handleRegenerate = () => {
     if (inFlight.current) return;
     inFlight.current = true;
     setConfirmOpen(false);
@@ -82,10 +82,12 @@ function Account(props) {
           return null;
         }
         if (status === 404 || status === 405) {
-          setRotateError('This server does not support revoking tokens yet.');
+          setRotateError('This server does not support revoking and regenerating tokens yet.');
           return null;
         }
-        return reconcile(data.message || data.detail || `Token revocation failed (status ${status}).`);
+        return reconcile(
+          data.message || data.detail || `Revoking and regenerating the token failed (status ${status}).`
+        );
       })
       .catch(error => reconcile(error.message))
       .finally(() => {
@@ -124,16 +126,17 @@ function Account(props) {
             variant="outlined"
             color="error"
             size="small"
-            className={classes.revoke}
+            className={classes.regenerate}
             disabled={!token || rotating}
             onClick={() => setConfirmOpen(true)}
           >
-            {rotating ? 'Revoking…' : 'Revoke'}
+            {rotating ? 'Revoking & Regenerating…' : 'Revoke & Regenerate'}
           </Button>
         </div>
         {rotated ? (
           <Typography className={classes.tokenNote}>
-            The old token was revoked. Update your scripts and config files with the new token above.
+            The old token was revoked and a new token generated. Update your scripts and config files
+            with the new token above.
           </Typography>
         ) : null}
         {rotateError ? (
@@ -143,7 +146,7 @@ function Account(props) {
         ) : null}
       </Paper>
       <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
-        <DialogTitle>Revoke this token?</DialogTitle>
+        <DialogTitle>Revoke &amp; regenerate your token?</DialogTitle>
         <DialogContent>
           <DialogContentText>
             A new token will be issued and shown here right away. Anything still using the old
@@ -153,8 +156,8 @@ function Account(props) {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setConfirmOpen(false)}>Cancel</Button>
-          <Button color="error" disabled={rotating} onClick={handleRevoke}>
-            Revoke
+          <Button color="error" disabled={rotating} onClick={handleRegenerate}>
+            Revoke &amp; Regenerate
           </Button>
         </DialogActions>
       </Dialog>
@@ -219,7 +222,7 @@ const styles = theme => ({
     minWidth: 0,
     wordBreak: 'break-all'
   },
-  revoke: {
+  regenerate: {
     marginLeft: theme.spacing(2),
     flexShrink: 0
   },
