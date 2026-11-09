@@ -53,7 +53,7 @@ export class SynapsesForConnection extends React.Component {
     if (rois.length > 0) {
       roiPredicate = ' WHERE (';
       rois.forEach(roi => {
-        roiPredicate += `exists(s.\`${roi}\`) AND `;
+        roiPredicate += `s.\`${roi}\` IS NOT NULL AND `;
       });
       roiPredicate = roiPredicate.slice(0, -5);
       roiPredicate += ')';

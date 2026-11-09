@@ -52,6 +52,29 @@ describe('synapses for connection Plugin', () => {
     });
   });
 
+  describe('builds the roi predicate', () => {
+    it('should use IS NOT NULL, which works on Neo4j 3.5 through 5.x', () => {
+      const { cypherQuery } = SynapsesForConnection.fetchParameters({
+        bodyId1: '123456',
+        bodyId2: '645321',
+        rois: ['roiA', 'roiB']
+      });
+      // exists(n.prop) was removed in Neo4j 5, so it must not appear.
+      expect(cypherQuery).not.toContain('exists(');
+      expect(cypherQuery).toContain(
+        'WHERE (s.`roiA` IS NOT NULL AND s.`roiB` IS NOT NULL)'
+      );
+    });
+    it('should omit the where clause when no roi is selected', () => {
+      const { cypherQuery } = SynapsesForConnection.fetchParameters({
+        bodyId1: '123456',
+        bodyId2: '645321',
+        rois: []
+      });
+      expect(cypherQuery).not.toContain('WHERE');
+    });
+  });
+
   /*
   describe('processes returned results', () => {
     it('should produce error, empty data object if results are empty', () => {
