@@ -13,6 +13,8 @@ import InputLabel from '@mui/material/InputLabel';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
+import { fetchKernelVersion, kernelMajor } from './shared/neo4jVersion';
+
 const styles = (theme) => ({
   textField: {
     margin: 4,
@@ -86,6 +88,39 @@ function formatRow(type, data) {
   return [data.location.coordinates.join(','), pctFormatter.format(data.confidence)];
 }
 
+// The name of the Cypher function that measures the distance between two
+// points, for a server with the given kernel version.
+//
+// No single name works on every server this build talks to. Neo4j 5.0 removed
+// distance() in favour of point.distance(): 3.5 has only distance(), 4.4 has
+// both, and 5.x and CalVer have only point.distance(). Measured on 3.5.3,
+// 4.4.16 and 2026.08.1. Servers below 5 keep distance(), so the 3.5 and 4.4
+// servers receive the function they always have.
+//
+// Returns null when the version cannot be read. Guessing would send one
+// generation a query it is certain to reject.
+export function distanceFunction(kernelVersion) {
+  const major = kernelMajor(kernelVersion);
+  if (major === null) {
+    return null;
+  }
+  return major >= 5 ? 'point.distance' : 'distance';
+}
+
+// Build the Cypher that finds the objects within radius of a point. distance
+// is the function name that distanceFunction() chose for the server.
+export function buildSpatialCypher({ x, y, z, radius, types = [], distance }) {
+  let typeFilter = '';
+  if (types && types.length > 0) {
+    const conditions = types.map((type) => `n.type = '${type}'`).join(' OR ');
+    // The parentheses matter: AND binds tighter than OR, so without them
+    // every type after the first would match at any distance.
+    typeFilter = ` AND (${conditions})`;
+  }
+
+  return `MATCH (n :Element) WHERE ${distance}(point({x:${x}, y:${y}, z:${z}}), n.location) < ${radius}${typeFilter} return ID(n), n.type, n`;
+}
+
 export class CellObjectsSpatialQuery extends React.Component {
   static get details() {
     return {
@@ -132,6 +167,16 @@ export class CellObjectsSpatialQuery extends React.Component {
       errorMessage: '',
       types: [],
     };
+    this.lookingUpVersion = false;
+    this.mounted = false;
+  }
+
+  componentDidMount() {
+    this.mounted = true;
+  }
+
+  componentWillUnmount() {
+    this.mounted = false;
   }
 
   isValidCoordinate = (value) => {
@@ -154,31 +199,59 @@ export class CellObjectsSpatialQuery extends React.Component {
 
     this.setState({ errorMessage: '' });
 
-    let whereClause = '';
-    if (types && types.length > 0) {
-      const conditions = types.map((type) => `n.type = '${type}'`).join(' OR ');
-      whereClause = ` AND ${conditions} `;
+    // The version lookup below takes a moment. Ignore a second click until it
+    // is done, so that one search does not submit twice.
+    if (this.lookingUpVersion) {
+      return;
     }
-    const cypher = `MATCH (n :Element) WHERE distance(point({x:${x}, y:${y}, z:${z}}), n.location) < ${radius} ${whereClause} return ID(n), n.type, n`;
+    this.lookingUpVersion = true;
 
-    const query = {
-      dataSet,
-      plugin: pluginName,
-      pluginCode: pluginAbbrev,
-      parameters: {
-        cypherQuery: cypher,
-        dataset: dataSet,
-        radius,
-        x,
-        y,
-        z,
-      },
-      visProps: {
-        rowsPerPage: 25,
-      },
-    };
+    // Ask which Neo4j version holds this dataset before building the query.
+    // The form values and the dataset were read above, so the search that
+    // runs is the one the user submitted, whatever changes meanwhile.
+    fetchKernelVersion(dataSet)
+      .then((version) => ({ distance: distanceFunction(version) }))
+      // Any failure so far, in the request or in reading its answer, ends in
+      // the message below, and the guard is always released.
+      .catch((error) => ({ distance: null, error }))
+      .then(({ distance, error }) => {
+        this.lookingUpVersion = false;
 
-    submit(query);
+        // The form is gone, so the user has moved on to another plugin, page
+        // or dataset. Drop the search rather than take them to its results.
+        if (!this.mounted) {
+          return;
+        }
+
+        if (distance === null) {
+          const reason = error && error.message ? ` (${error.message})` : '';
+          this.setState({
+            errorMessage: `Could not read the Neo4j version of this dataset${reason}, so the search was not sent. Please try again.`,
+          });
+          return;
+        }
+
+        const cypher = buildSpatialCypher({ x, y, z, radius, types, distance });
+
+        const query = {
+          dataSet,
+          plugin: pluginName,
+          pluginCode: pluginAbbrev,
+          parameters: {
+            cypherQuery: cypher,
+            dataset: dataSet,
+            radius,
+            x,
+            y,
+            z,
+          },
+          visProps: {
+            rowsPerPage: 25,
+          },
+        };
+
+        submit(query);
+      });
   };
 
   catchReturn = (event) => {
