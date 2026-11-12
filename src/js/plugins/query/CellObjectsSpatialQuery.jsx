@@ -157,7 +157,7 @@ export class CellObjectsSpatialQuery extends React.Component {
     let whereClause = '';
     if (types && types.length > 0) {
       const conditions = types.map((type) => `n.type = '${type}'`).join(' OR ');
-      whereClause = ` AND ${conditions} `;
+      whereClause = ` AND (${conditions}) `;
     }
     const cypher = `MATCH (n :Element) WHERE distance(point({x:${x}, y:${y}, z:${z}}), n.location) < ${radius} ${whereClause} return ID(n), n.type, n`;
 
