@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import AsyncSelect from 'react-select/async';
 import InputLabel from '@mui/material/InputLabel';
 import withStyles from '@mui/styles/withStyles';
+import { fetchKernelVersion } from './neo4jVersion';
 
 const styles = (theme) => ({
   select: {
@@ -215,19 +216,11 @@ class NeuronInputField extends React.Component {
   checkFulltextSupport() {
     const { dataSet } = this.props;
 
-    // Pinned to the kernel row: on the CalVer line dbms.components() returns a
-    // second row for Cypher (versions ["5", "25"]), so reading the first row
-    // blind depends on row order rather than on asking for what we mean.
-    const versionCypher = `CALL dbms.components() YIELD name, versions
-WITH name, versions WHERE name = 'Neo4j Kernel'
-RETURN versions[0] as version`;
-
-    runCypher(dataSet, versionCypher)
-      .then((resp) => {
-        if (!resp.data || !resp.data[0]) {
+    fetchKernelVersion(dataSet)
+      .then((version) => {
+        if (version === null) {
           return null;
         }
-        const version = resp.data[0][0];
         // 4.4 is the floor because buildFastQuery uses a CALL {} subquery,
         // which 3.5 cannot parse. parseFloat yields 3.5 for '3.5.3' and 2026
         // for '2026.08.1', so both ends of the deployed fleet classify right.
