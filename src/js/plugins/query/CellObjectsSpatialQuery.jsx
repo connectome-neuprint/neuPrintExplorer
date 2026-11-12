@@ -168,6 +168,15 @@ export class CellObjectsSpatialQuery extends React.Component {
       types: [],
     };
     this.lookingUpVersion = false;
+    this.mounted = false;
+  }
+
+  componentDidMount() {
+    this.mounted = true;
+  }
+
+  componentWillUnmount() {
+    this.mounted = false;
   }
 
   isValidCoordinate = (value) => {
@@ -201,14 +210,23 @@ export class CellObjectsSpatialQuery extends React.Component {
     // The form values and the dataset were read above, so the search that
     // runs is the one the user submitted, whatever changes meanwhile.
     fetchKernelVersion(dataSet)
-      .then(distanceFunction, () => null)
-      .then((distance) => {
+      .then((version) => ({ distance: distanceFunction(version) }))
+      // Any failure so far, in the request or in reading its answer, ends in
+      // the message below, and the guard is always released.
+      .catch((error) => ({ distance: null, error }))
+      .then(({ distance, error }) => {
         this.lookingUpVersion = false;
 
+        // The form is gone, so the user has moved on to another plugin, page
+        // or dataset. Drop the search rather than take them to its results.
+        if (!this.mounted) {
+          return;
+        }
+
         if (distance === null) {
+          const reason = error && error.message ? ` (${error.message})` : '';
           this.setState({
-            errorMessage:
-              'Could not read the Neo4j version of this dataset, so the search was not sent. Please try again.',
+            errorMessage: `Could not read the Neo4j version of this dataset${reason}, so the search was not sent. Please try again.`,
           });
           return;
         }

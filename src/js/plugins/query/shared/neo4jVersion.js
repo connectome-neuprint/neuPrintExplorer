@@ -10,10 +10,18 @@ export const KERNEL_VERSION_CYPHER = `CALL dbms.components() YIELD name, version
 WITH name, versions WHERE name = 'Neo4j Kernel'
 RETURN versions[0] as version`;
 
+// neuPrintHTTP puts the reason for a failure in "error" or in "message".
+function errorText(resp) {
+  const text = resp && (resp.error || resp.message);
+  return typeof text === 'string' && text !== '' ? text : null;
+}
+
 // Resolves to the kernel version of the server that holds dataSet, such as
-// '3.5.3', '4.4.16' or '2026.08.1', or to null when the server returns no
-// kernel row. Rejects when the request itself fails. Callers decide what a
-// missing version means for them.
+// '3.5.3', '4.4.16' or '2026.08.1'. Resolves to null when the server returns
+// no kernel row, or a row without a version string. Rejects when the request
+// fails or neuPrintHTTP answers with an error; the Error then carries
+// neuPrintHTTP's reason when there is one, such as "authentication required".
+// Callers decide what a missing version means for them.
 export function fetchKernelVersion(dataSet) {
   return fetch('/api/custom/custom?np_explorer=neo4j_version', {
     headers: {
@@ -24,20 +32,38 @@ export function fetchKernelVersion(dataSet) {
     method: 'POST',
     credentials: 'include',
   })
-    .then((result) => result.json())
-    .then((resp) => {
-      if (!resp.data || !resp.data[0]) {
-        return null;
+    .then((result) => {
+      if (!result.ok) {
+        // The body may not be JSON, for example a proxy's error page.
+        return result.json().then(
+          (resp) => {
+            throw new Error(errorText(resp) || `HTTP ${result.status}`);
+          },
+          () => {
+            throw new Error(`HTTP ${result.status}`);
+          }
+        );
       }
-      return resp.data[0][0];
+      return result.json();
+    })
+    .then((resp) => {
+      // actions/plugins.js also treats an "error" field as a failure.
+      if (resp && resp.error) {
+        throw new Error(errorText(resp) || 'neuPrintHTTP returned an error');
+      }
+      const version = resp && resp.data && resp.data[0] && resp.data[0][0];
+      return typeof version === 'string' ? version : null;
     });
 }
 
 // The major version as a number: 3 for '3.5.3', 4 for '4.4.16', 5 for
-// '5.26.0' and 2026 for '2026.08.1'. Returns null for anything that does not
-// start with "<digits>.<digits>", so that a caller never mistakes an
-// unreadable version for an old server.
+// '5.26.0' and 2026 for '2026.08.1'. Returns null for anything that is not a
+// string starting with "<digits>.<digits>", so that a caller never mistakes
+// an unreadable version for an old server.
 export function kernelMajor(kernelVersion) {
-  const match = /^(\d+)\.\d+/.exec(String(kernelVersion));
+  if (typeof kernelVersion !== 'string') {
+    return null;
+  }
+  const match = /^(\d+)\.\d+/.exec(kernelVersion);
   return match ? Number(match[1]) : null;
 }
